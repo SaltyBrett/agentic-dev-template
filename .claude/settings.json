@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(python3 scripts/banned_feature_scan.py:*)",
+      "Bash(python3 scripts/kb_freshness_scan.py:*)",
+      "Bash(python3 scripts/agent_execution_identity_guard.py)",
+      "Bash(python3 scripts/session_closeout.py:*)",
+      "Bash(pre-commit run:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+# OS / Editor
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+.idea/
+
+# Excel temp locks
+~$*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/        # `pip install .` (pyproject.toml) leaves setuptools output here; never commit it
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Environments / virtualenvs
+.venv/
+venv/
+env/
+.env
+*.env
+.python-version
+
+# Secrets — never commit. See docs/standards/secrets_management_standard_v1.0.md
+*.pem
+*.key
+*.pfx
+*.p12
+.azure/
+profiles.yml
+.user.yml
+credentials.json
+service-account*.json
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Local databases / scratch
+*.duckdb
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+nul

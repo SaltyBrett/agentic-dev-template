@@ -1,0 +1,235 @@
+# Tool-neutral drift gate. These git hooks fire identically under any agent (Claude Code, Codex) and
+# under manual `git commit` — they are NOT part of any tool's harness, which is why they are the
+# portable 100% compliance gate the CONSTITUTION relies on. Install once per clone:
+#   pip install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg
+# BOTH --hook-type flags are required. Plain `pre-commit install` registers only .git/hooks/pre-commit,
+# which leaves every commit-msg-stage gate below present in config and inert in practice.
+repos:
+  - repo: local
+    hooks:
+      # The identity gate's config parser, proved against in-memory fixtures before it is trusted.
+      # The regex it replaced passed a config whose keys sat under an unrelated table, and one no
+      # TOML parser can load. Runs before the gate it validates. Costs milliseconds.
+      - id: agent-execution-identity-selftest
+        name: Execution Identity Parser Self-Test (config boundary is proved, not asserted)
+        entry: python scripts/agent_execution_identity_guard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [tomli]    # fallback for Python < 3.11; 3.11+ uses stdlib tomllib
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: agent-execution-identity
+        name: Agent Execution Identity Gate
+        entry: python scripts/agent_execution_identity_guard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [tomli]    # fallback for Python < 3.11; 3.11+ uses stdlib tomllib
+        stages: [pre-commit]      # a hook with no `stages:` runs at EVERY installed stage — pin it
+        pass_filenames: false
+        always_run: true
+      # A project starts under GCC/Gov constraints or under none. The toggle drives both
+      # the governance documents and the scanner from one file, so they cannot disagree.
+      # An unclosed marker would silently swallow the rest of a document when stripped,
+      # which is why marker balance is a gate rather than a convention.
+      - id: project-profile-selftest
+        name: Project Profile Self-Test (stripping keeps the right half)
+        entry: python scripts/project_profile.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: project-profile
+        name: Project Profile Gate (markers balanced; no foreign profile survives)
+        entry: python scripts/project_profile.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: content-rules-selftest
+        name: Content Rules Self-Test (identifiers are hashed, not named)
+        entry: python scripts/banned_feature_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: banned-feature-scan
+        name: Banned Feature Scan (GCC compliance gate + content rules)
+        entry: python scripts/banned_feature_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # Runs BEFORE the freshness gate: that gate parses frontmatter with regexes, so it reports
+      # green on a file no YAML parser can load. Validate the input before trusting the check.
+      - id: kb-frontmatter-selftest
+        name: KB Index Cross-Check Self-Test (Entries section is scoped, not scanned)
+        entry: python scripts/kb_frontmatter_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: kb-frontmatter-scan
+        name: KB Frontmatter Gate (valid YAML, both gates read it alike, every entry indexed)
+        entry: python scripts/kb_frontmatter_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The freshness gate's own parser, proved against in-memory fixtures before it is trusted.
+      # A parser that reads the wrong region stays green while checking nothing; prose cannot
+      # guard that, so the boundary is asserted on every commit. Costs milliseconds.
+      - id: kb-freshness-selftest
+        name: KB Freshness Parser Self-Test (index boundary is proved, not asserted)
+        entry: python scripts/kb_freshness_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: kb-freshness-scan
+        name: KB Freshness Gate (no mandatory-read doc teaches a stale decision)
+        entry: python scripts/kb_freshness_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # A session ends with a verified handoff pair, and the pair lives one session. The
+      # end-of-session protocol was prose; this is the control. Self-test first, then the
+      # per-commit state check. The two manual-stage hooks are invoked by the agent at session
+      # end (`--closeout`, which also archives older pairs) and at the next cold start
+      # (`--verify`); `stages: [manual]` keeps them out of every commit (decision 2026-09-21-001).
+      - id: session-closeout-selftest
+        name: Session Closeout Self-Test (linters discriminate; rotation keeps two pairs)
+        entry: python scripts/session_closeout.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-closeout-check
+        name: Session State Gate (handoff pairs, personas, tracker counts, entry cap, brain cap)
+        entry: python scripts/session_closeout.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-closeout
+        name: Session Closeout (archive older pairs; verify the pair for the next session)
+        entry: python scripts/session_closeout.py --closeout
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [manual]          # run: pre-commit run session-closeout --hook-stage manual --all-files
+                                  # (--all-files stops pre-commit stashing unstaged edits first)
+        pass_filenames: false
+        always_run: true
+      - id: session-verify
+        name: Session Verify (the previous session closed out; the tree is clean)
+        entry: python scripts/session_closeout.py --verify
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [manual]          # run: pre-commit run session-verify --hook-stage manual
+        pass_filenames: false
+        always_run: true
+      # The project initializer rewrites files, so its guards are proved before it is trusted:
+      # that `${{ secrets.X }}` and `{{PLACEHOLDER}}` survive a token fill, and that the
+      # decision log and knowledge base appear in no mutating list.
+      - id: new-project-selftest
+        name: New Project Initializer Self-Test (never clears the decision log)
+        entry: python scripts/new_project.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The sanitizer returns the template to its pristine state: the initializer's machinery
+      # without the fill (decision 2026-09-23-003). Only its self-test runs on a commit, and it
+      # asks nothing of the tree, so a derived project stays green. `--check` is manual because
+      # this repository fails it until the cut, and it refuses to run anywhere but the template.
+      - id: sanitize-template-selftest
+        name: Sanitize Template Self-Test (build state is named; the reset reaches no framework file)
+        entry: python scripts/sanitize_template.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: sanitize-template-check
+        name: Sanitize Template Check (no build state remains — S1 alone, no TMPL story, no archive, no pair, no probe name)
+        entry: python scripts/sanitize_template.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [manual]          # run: pre-commit run sanitize-template-check --hook-stage manual --all-files
+        pass_filenames: false
+        always_run: true
+      # The updater carries a derived project to a newer release; its ownership map is the
+      # initializer's inverse and the fixtures cross-check the two. It never runs on a commit
+      # here — only its self-test does, so a project can trust the copy it fetches.
+      - id: template-update-selftest
+        name: Template Update Self-Test (ownership map is the initializer's inverse; merges by key)
+        entry: python scripts/template_update.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The persona registry and the resource knowledge entries are a cache of dev-resources,
+      # refreshed at closeout by the sync and grown only through its --publish (decision
+      # 2026-09-23-007). Only its self-test runs on a commit; the closeout gate above refuses
+      # a persona the synced ref lacks.
+      - id: resources-sync-selftest
+        name: Resources Sync Self-Test (verdicts decided by version; a resource entry is marked, never guessed)
+        entry: python scripts/resources_sync.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The template's version was the last hand-maintained value in this repo: a constant
+      # in new_project.py that nothing compared to the actual tag. These two verify every
+      # tag against the commit it points at. Skips cleanly in a derived project, which has
+      # no tags and is not this gate's business.
+      - id: template-version-selftest
+        name: Template Version Gate Self-Test
+        entry: python scripts/template_version.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: template-version
+        name: Template Version Gate (every tag matches the commit it points at)
+        entry: python scripts/template_version.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The gate-suite runbook (docs/governance/gate_suite_runbook.md) describes this file, and
+      # a page that describes the suite is what the next reader consults instead of it. The
+      # hook ids are read here with a YAML parser; the page must hold one section per id, in
+      # this order, each naming the stage the hook declares (decision 2026-09-23-001).
+      - id: gate-runbook-selftest
+        name: Gate Runbook Self-Test (sections are scoped to H2s; an unreadable config never reads as empty)
+        entry: python scripts/gate_runbook_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: gate-runbook
+        name: Gate Runbook Gate (every hook has a section, every section names a hook, order and stage agree)
+        entry: python scripts/gate_runbook_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
+      - id: commit-attribution
+        name: Commit Attribution Gate (no AI attribution in commit messages)
+        entry: python scripts/commit_attribution_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [commit-msg]
+        pass_filenames: true      # receives the commit message file path as its one argument
+        always_run: true
+
+  # Secret scanning. GitHub runs it free on PUBLIC repos only — a private repo on a free
+  # personal account gets nothing, so this is the ONLY secret control on this repository.
+  # `stages:` is mandatory here: gitleaks' upstream manifest declares none, and a hook
+  # without one runs at every installed stage — it would scan twice per commit
+  # (decision 2026-09-20-001).
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+        stages: [pre-commit]

@@ -1,0 +1,13 @@
+# Normalize line endings: store text as LF in the repo, convert on checkout.
+# Keeps diffs clean across Windows/macOS/Linux and every generated project.
+* text=auto eol=lf
+
+# Binary assets — never normalize or diff as text.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.xlsx binary
+*.docx binary
+*.pptx binary

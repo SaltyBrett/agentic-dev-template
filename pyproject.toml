@@ -1,0 +1,31 @@
+# The template's hook-repository role (decision 2026-09-23-005).
+#
+# pre-commit installs a `language: python` hook repository with `pip install .`, so the gates that
+# `.pre-commit-hooks.yaml` publishes must be installable: the modules below, flat, with the console
+# scripts the manifest's `entry:` lines name. Nothing else about this repository is a package.
+#
+# A project created from the template is not a hook repository, and a Python project has a
+# pyproject.toml of its own: the initializer removes this file at birth and the updater never
+# writes it (`new_project.TEMPLATE_ONLY`, `template_update.KEEP`).
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-dev-template-gates"
+description = "The template's gate scripts, consumable as a pre-commit hook repository pinned by rev"
+requires-python = ">=3.10"
+dependencies = ["pyyaml"]     # kb_frontmatter_scan imports yaml at load time
+dynamic = ["version"]         # TEMPLATE_VERSION in scripts/new_project.py: the one value the tag gate verifies
+
+[project.scripts]
+commit-attribution-scan = "commit_attribution_scan:main"
+kb-frontmatter-scan = "kb_frontmatter_scan:main"
+session-closeout = "session_closeout:cli"
+
+[tool.setuptools]
+package-dir = {"" = "scripts"}
+py-modules = ["commit_attribution_scan", "kb_frontmatter_scan", "kb_freshness_scan", "session_closeout"]
+
+[tool.setuptools.dynamic]
+version = {attr = "new_project.TEMPLATE_VERSION"}

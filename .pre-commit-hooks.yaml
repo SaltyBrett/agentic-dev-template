@@ -1,0 +1,46 @@
+# Hooks another repository consumes from this one, pinned by `rev` (decision 2026-09-23-005):
+#
+#   - repo: git@github.com:SaltyBrett/agentic-dev-template.git
+#     rev: v5.1.0
+#     hooks:
+#       - id: persona-lint
+#       - id: kb-frontmatter-scan
+#       - id: commit-attribution
+#
+# This repository is private, so the URL must be one git can authenticate from
+# ~/.cache/pre-commit, where pre-commit clones it: ssh with a key the agent holds, or the ssh
+# host alias a machine's identity setup names. A per-directory git config does not reach there.
+#
+# pre-commit installs this repository with `pip install .` (pyproject.toml), so every `entry:` is a
+# console script, never a path: a remote hook runs from the CONSUMING repository's root, where
+# `scripts/…` does not exist. The gates read that root from git, not from their own location.
+#
+# gitleaks is consumed from its own repository, exactly as .pre-commit-config.yaml here does; a
+# manifest publishes only the hooks that live in its repository.
+#
+# `stages:` is declared on every hook (decision 2026-09-20-001), so a consumer that installs both
+# hook types runs each once. The two content gates are limited by `files:` to the paths they judge:
+# a repository that does not hold that content yet shows them as Skipped, not as a pass over
+# nothing. A consumer may set `always_run: true` once the content exists, as this template's own
+# config does.
+- id: persona-lint
+  name: Persona Registry Lint (required keys and sections; append-only by version against the committed copy)
+  entry: session-closeout --personas
+  language: python
+  files: ^docs/personas/.*\.md$
+  pass_filenames: false
+  stages: [pre-commit]
+- id: kb-frontmatter-scan
+  name: KB Frontmatter Gate (valid YAML, both gates read it alike, every entry indexed)
+  entry: kb-frontmatter-scan
+  language: python
+  files: ^docs/orchestration/knowledge/.*\.md$
+  pass_filenames: false
+  stages: [pre-commit]
+- id: commit-attribution
+  name: Commit Attribution Gate (no AI attribution in commit messages)
+  entry: commit-attribution-scan
+  language: python
+  stages: [commit-msg]
+  pass_filenames: true
+  always_run: true
