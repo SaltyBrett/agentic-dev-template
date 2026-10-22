@@ -24,6 +24,9 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-22-003 | 2026-10-22 | `v2.1.0`: an agentic development team of role subagents whose handoffs are gated artifacts, and a coding standard built as mechanical limits, a process layer and one page of judgement; each opens with a design session, the standard proved against real code before adoption; MINOR | APPROVED |
+| 2026-10-22-002 | 2026-10-22 | Authoritative documents stop going stale: `authority:` frontmatter and a version log on each source of truth, `Affects:` on every decision, a gate that accepts a version-log row or an open tracker story and nothing else, the commit stamped after the fact and verified, a technical-writer agent draining the queue at cold start; part of `v2.0.0` | APPROVED |
+| 2026-10-22-001 | 2026-10-22 | `v2.0.0`: the framework runs on Claude Code's native machinery where that removes overhead without removing a control: one cold start run by a SessionStart hook, a Stop hook for checkpoint discipline, a journal and working notes against compaction, personas as subagents, procedures as forked skills, path-scoped rules, the constitution and checklist slimmed, the interop contract retired; git hooks and CI stay the enforcement; MAJOR | APPROVED |
 | 2026-09-25-004 | 2026-09-25 | The public template's versioning starts at `v1.0.0` on the finished go-live tree: the four go-live tags removed, the tree sanitized to S1, one tag cut; history kept, nothing force-pushed; the earlier "released as" notes read as folded into it | APPROVED |
 | 2026-09-25-003 | 2026-09-25 | A ruleset on `main` in both public repositories blocks deletion and force-push; no required status check, because every checkpoint is a direct push by one developer; revisit at the first second contributor | APPROVED |
 | 2026-09-25-002 | 2026-09-25 | MIT license, copyright Brett Bennett, in the template and in `dev-resources`; a project receives it at birth and owns it from then on, the updater never writes it; PATCH | APPROVED |
@@ -1742,6 +1745,186 @@ copy against a local unmarked one, which is a conflict by 2026-09-23-007's rule.
 
 `source: dev-resources` in the moved entry's frontmatter, read by `template_update.resource_owned`
 and `resources_sync.owned`. Taught by [[reference_resources_sync]].
+
+---
+
+## Decision 2026-10-22-001: `v2.0.0` runs the framework on Claude Code's native machinery
+
+**Date:** 2026-10-22
+**Made By:** Chair + AI
+**Status:** APPROVED
+**Affects:** `AGENTS.md`, `CLAUDE.md`, `AGENT_INTEROP.md`, `CONSTITUTION.md` §2 and §6, `docs/orchestration/AGENT_COLDSTART_CHECKLIST.md`, `docs/standards/session_handoff_standard_v2.0.md`, `docs/personas/`, `.claude/`
+
+### Context
+
+Claude Code does nearly all the agentic work on this framework, with local models as the only
+other reader. Measured on 2026-10-22, the cold start asks an agent to read about 74 KB of
+markdown across ten files before building; the cold-start procedure is written in four places
+and the closeout in three; the interop contract is a 6 KB rationale for a tool split that no
+longer exists. Claude Code's own docs, read the same day: it reads `AGENTS.md` natively from
+v2.1.277 (the operator's install is 2.1.267); a `SessionStart` hook can run commands and inject
+their output into context, and runs again with a `compact` matcher after compaction; a `Stop`
+hook can refuse to end a turn; `PostToolUse` fires after every edit and command; subagents in
+`.claude/agents/` carry their own context and can run the main session by `claude --agent`;
+skills in `.claude/skills/` run forked into a subagent with `context: fork`; rules under
+`.claude/rules/` load only when a matching path is touched. The docs also say that `CLAUDE.md`
+and hooks are context, not enforcement, except permissions and `PreToolUse`.
+
+The operator's standing problem is the compaction cliff: a closeout that dies mid-way, and
+in-flight plans and judgements lost when the conversation is summarized.
+
+### Decision
+
+- **One cold start, run by a hook.** The procedure lives in `AGENTS.md` alone; `CONSTITUTION.md`
+  §2, the checklist and the handoff standard point to it. A `SessionStart` hook runs the identity
+  gate, `git pull`, `session-verify` and the document-queue check, and injects their results, the
+  current kickoff and the newest sprint-status entry; with the `compact` matcher it re-injects the
+  same after compaction. The checklist's comprehension questions, which no script verifies, go.
+- **Checkpoint discipline becomes a `Stop` hook** that refuses to end a turn while sprint files are
+  modified and uncommitted, or while the working notes are older than the turn's edits.
+- **The uncommitted interval is banked mechanically.** A `PostToolUse` hook writes a session
+  journal under `sprint/recovery/` (file changed, command run, exit code) without the model's
+  cooperation; a working-notes file of fixed small shape (plan, open decisions, half-done work)
+  is what the `Stop` hook demands; both are re-injected after compaction and cleared at closeout.
+  `PreCompact` is a backstop, tested before it is relied on, since a block when the context is
+  already full can wedge a session.
+- **Personas are subagents** in `.claude/agents/<slug>.md`: the registry moves there, `persona-lint`
+  and `resources_sync.py` follow it, and a kickoff names the agent instead of copying its
+  invocation. The main session runs as the named agent.
+- **Procedures are skills**, forked where heavy: the closeout, the release cut, the planning
+  session, the sanitize-and-cut, document production. The `SKILL.md` is the one home of the
+  procedure; the standards shrink to the law. A gate keeps a skill's commands in step with the
+  config, as the runbook gate does for hooks.
+- **Judgement rules are path-scoped** under `.claude/rules/`, loaded when a matching file is
+  touched; the constitution and the checklist shrink accordingly.
+- **`AGENT_INTEROP.md` is retired** into `AGENTS.md`; its one law is already a prime directive
+  there. `CLAUDE.md` stays as the `@AGENTS.md` bridge until the installed Claude Code is at least
+  v2.1.277, then goes; the condition is written into the story.
+- **What does not move.** The pre-commit suite, the CI workflow, the sprint files, the decisions,
+  the knowledge base and the closeout gate stay as they are: git hooks and CI enforce for any
+  agent on any machine; Claude hooks are for context and ergonomics.
+- **Settings.** `disableWorkflows` on, so a typed keyword cannot start a multi-agent workflow;
+  `ask` rules for the one-way doors met this month: `gh repo delete`, `git push --delete`,
+  `gh repo edit --visibility`.
+- **MAJOR**, `v2.0.0`, together with 2026-10-22-002: files a project references are removed and
+  renamed, and the registry moves, so every derived project acts once at adoption.
+
+### Consequences
+
+- Compaction becomes a slope: committed state, the brain, the kickoff, the journal and the notes
+  survive it; only reasoning never written down is lost, and the `Stop` hook narrows that window
+  to one turn.
+- A derived project's `template_update.py` must carry `.claude/agents/`, `.claude/skills/`,
+  `.claude/rules/` and `.claude/settings.json` by the ownership rules; the initializer and the
+  sanitizer learn the journal and notes paths.
+- The three existing projects take `v2.0.0` through the updater as the release's own proof.
+
+### Enforcement
+
+To be built as epic TMPL-1; each story names its gate. Taught by a knowledge entry written with
+the build.
+
+---
+
+## Decision 2026-10-22-002: Authoritative documents stop going stale
+
+**Date:** 2026-10-22
+**Made By:** Chair + AI
+**Status:** APPROVED
+**Affects:** `docs/governance/doc_control_standard.md`, every document that carries `authority:`, this file's body format
+
+### Context
+
+Updates, design changes and reversals land in the decision log and the knowledge base, and the
+documents that are supposed to be the source of truth for a scope, the PRD, the architecture,
+the runbooks and the standards, are never brought up to date. The document-control standard says
+"update the documents and the changelog table" and nothing enforces it. The knowledge base does
+not have this problem because `teaches:` and `verified:` are gated; it also cannot catch a
+*missing* update, since a new decision names no document.
+
+The operator's two further constraints: an agent rewriting a document inline at decision time
+produces patchwork, and the remedy cannot be a closeout item, because closeouts are where
+compaction strikes, nor open-ended.
+
+### Decision
+
+- **Authorities declare themselves.** A source-of-truth document carries frontmatter `authority:
+  <scope>`, `implements: [decision-ids]`, `verified: <date>`, and ends with a `## Version log`
+  table: version, date, decision, summary, commit. The frontmatter is the registry.
+- **Decisions declare impact.** Every decision body from this one forward carries `**Affects:**`:
+  the authorities it changes, with the sections and the nature of the change, or `none`. Older
+  decisions read as `none`.
+- **The gate accepts two outcomes and nothing else.** For each decision naming a document, the
+  document's version log holds a row citing that decision, or the tracker holds a story citing the
+  decision and the document, not Done. A row written by a session other than the technical
+  writer must carry a fact marker: a value, a name, a path, a count. Structural changes are queued.
+- **The queue drains at cold start, bounded.** A `doc-queue` manual-stage gate, run by the
+  `SessionStart` hook, fails while any queued story is older than one session, read from a
+  `Queued: S<N>` note on its row. The drain runs as the technical-writer subagent, one document per
+  invocation, in its own context, and returns the rows it wrote. The queue is visible at every
+  closeout and is never a closeout step.
+- **The commit is stamped after the fact and verified.** The newest row reads `pending`;
+  `--stamp` fills the hash once the commit exists, and the gate verifies every stored hash against
+  git. `--history <doc>` derives the commit for any unstamped row. A stored value with a gate is
+  allowed; a hand-maintained one without is not.
+- **Scope at introduction.** The standards and the gate runbook are marked first, so the gate has
+  real content to prove against; a project marks its PRD, architecture and runbooks.
+- **Part of `v2.0.0`.** A new gate that can fail content a project already has.
+
+### Consequences
+
+- The document-control standard is rewritten around the gate and loses its "stays private" fossil.
+- The `technical-writer` is the second subagent in the registry, published to `dev-resources`.
+- The batching is the anti-patchwork control: one writer pass per document over every pending
+  change, instead of one paragraph per deciding session.
+
+### Enforcement
+
+To be built as epic TMPL-2: `scripts/doc_authority_scan.py` with fixtures proved against broken
+variants, the `doc-queue` gate, the writer agent and its forked drain skill.
+
+---
+
+## Decision 2026-10-22-003: `v2.1.0` is the development team and the coding standard, designed first
+
+**Date:** 2026-10-22
+**Made By:** Chair + AI
+**Status:** APPROVED
+**Affects:** none yet; the design sessions name them
+
+### Context
+
+Where a project's task is software, the operator wants a trained team of role agents that hand
+off to each other as a human team does and produce code that passes a security audit, running
+autonomously until something needs the operator. Separately, agents write verbose, run-on,
+repetitive code when nothing stops them, and a coding standard that is prose stops nothing.
+
+### Decision
+
+- **The team is built on the `v2.0.0` substrate, not with it.** Roles are subagents with isolated
+  context and narrow briefs (product owner, architect, planner, implementer, test engineer, code
+  reviewer, security auditor, technical writer, release manager). Every handoff is an artifact in
+  the repository that a gate judges, never a conversation between agents; a role may not start
+  until its input artifact exists and passes. The operator's checkpoints are a written list of
+  review triggers the orchestrating skill stops at: a new dependency, a schema, auth or crypto
+  change, an external service, a cost, a security finding the auditor cannot clear, anything a gate
+  cannot judge. Orchestration is a saved workflow invoked deliberately, one story at a time.
+- **The coding standard has three layers.** Mechanical, in the gate suite: function and file
+  length, complexity ceilings, duplicate detection, formatter and linter, type checks, a coverage
+  floor, dependency audit; a core of numbers with a rule that every stack maps each to a tool,
+  chosen per project at its planning session. Process, in the team: design before code, stories
+  the size of a module, a reviewer whose brief is structure and duplication and who is not the
+  implementer, plan mode forced on for implementation skills. Judgement: one page under
+  `.claude/rules/`, path-scoped to code, opening with `CONSTITUTION.md` §4A.
+- **Each opens with a design session.** The team's: roles, artifacts, triggers, orchestration,
+  with the operator. The standard's: with a specialized reviewer agent, the core limits proved
+  against a known-good and a known-bad codebase before adoption, because this standard is the
+  hardest thing in the framework to unwind once development starts.
+- **MINOR**, `v2.1.0`: agents and a stack profile a project opts into.
+
+### Enforcement
+
+Epics TMPL-3 and TMPL-4; the design sessions log their own decisions.
 
 ---
 
