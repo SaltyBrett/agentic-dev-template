@@ -2,8 +2,8 @@
 
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
-**Last Updated:** 2026-10-22
-**Updated By:** S3
+**Last Updated:** 2026-10-23
+**Updated By:** S4
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,28 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S4 — 2026-10-23 — Procedures as skills; ownership of the new paths
+
+**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
+`session-verify` (PASS); both hook types installed; Claude Code 2.1.308. The skills page was read
+whole (curl, 114 KB) before any build, with the sub-agents page's startup and tool sections. Two
+choices went to the operator, both answered with the recommendation: the forked closeout takes the
+next persona and the session's brief as arguments, and the release and the pristine cut are the
+operator's alone (decision 2026-10-23-001). TMPL-1.4 in progress.
+
+### Done
+
+1. TMPL-1.4 (in progress) — five skills in `.claude/skills/`; `AGENTS.md`'s procedures section
+   rewritten to list them by path for any agent; the handoff, sprint and document standards keep
+   the law and point to them; the scaffold's kickoff section 5 points to the closeout skill;
+   `skill-scan` and its self-test (40 fixtures) added with runbook sections.
+
+### Blockers
+
+- None.
 
 ---
 

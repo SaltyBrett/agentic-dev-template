@@ -2,7 +2,7 @@
 name: What justifies a MAJOR, MINOR or PATCH bump to this template
 description: 'The discriminating question is whether adopting the change forces a human to do something — run a new command, or edit a file to pass a new check. For a gates template that makes most new gates MAJOR, which is the correct and non-obvious answer. Includes every change in this repository mapped to a bump, the tiebreaker for judgement calls, and the release order that keeps the version stamp honest. Read before tagging.'
 teaches: [2026-09-20-006]
-verified: 2026-09-20
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -78,11 +78,8 @@ because worked examples decide arguments that definitions do not.
 
 ## Release order, and why it is that order
 
-    python3 scripts/template_version.py --release v1.1.0
-    git add -A && git commit -m "release: v1.1.0"
-    git tag -a v1.1.0 -m "MINOR: <what changed>"
-
-The constant is set **before** the commit that gets tagged. Tagging first points the tag at a commit
+The steps are the release skill, `.claude/skills/release/SKILL.md`: set the constant, commit, then
+tag. The constant is set **before** the commit that gets tagged. Tagging first points the tag at a commit
 carrying the previous version, every project created from it is stamped wrong, and the gate fails on
 your next commit — after the tag is already published.
 

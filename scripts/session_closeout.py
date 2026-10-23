@@ -757,13 +757,12 @@ Run `{VERIFY_COMMAND}` and do no build work until it passes.
 
 ## 5. Closeout
 
-Before ending: add a `## S{n} — <date> — <title>` entry at the top of `sprint/sprint-status.md`,
-flush durable learnings to `docs/orchestration/knowledge/` with an INDEX row, log decisions, update
-the tracker, sync the registry (`python3 scripts/resources_sync.py --apply`, publishing what it
-reports), then run `python3 scripts/session_closeout.py --scaffold --persona <slug>`, fill both
-files for S{n + 1}, run `{CLOSEOUT_COMMAND}`, commit `checkpoint: closeout S{n}`, push, confirm
-the `gates` run on GitHub is green, and hand the user the contents of `KICKOFF_S{n + 1}.md` as the
-next session's prompt.
+Before ending: commit the `## S{n} — <date> — <title>` entry at the top of `sprint/sprint-status.md`,
+the decisions, the knowledge entries with their INDEX rows, and the tracker. Then run the closeout
+skill, `.claude/skills/closeout/SKILL.md`, with the next persona's slug and the brief for S{n + 1}.
+It syncs the registry, writes and fills the pair for S{n + 1}, runs `{CLOSEOUT_COMMAND}`, commits
+`checkpoint: closeout S{n}`, pushes, confirms the `gates` run on GitHub is green, and returns
+`KICKOFF_S{n + 1}.md`, whose contents go to the user as the next session's prompt.
 """
 
 

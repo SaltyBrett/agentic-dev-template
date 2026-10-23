@@ -5,7 +5,7 @@
 > `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` here or in a parent directory: Claude Code reads
 > any one of them *instead of* this file ([[reference_claude_code_agents_md]]). **Keep this lean**
 > (Codex caps project docs ~32 KiB; bloat lowers adherence). Nouns and non-inferable constraints live
-> here; procedures live in `docs/standards/`.
+> here; procedures live in `.claude/skills/` and the law they obey in `docs/standards/`.
 
 **Project:** {{PROJECT_NAME}} · **Platform:** {{PLATFORM_DESCRIPTION}} · **Scope:** {{PROJECT_SCOPE}}
 
@@ -79,11 +79,14 @@ References do NOT auto-load — you must explicitly Read each file.
 - **Checkpoint discipline:** after each work unit, update `story-tracker.md` / `decision-log.md` /
   `sprint-status.md` and commit `checkpoint: …`. State is never more than one work unit behind reality.
 - **Closeout:** at a natural work-unit boundary, or when the user signals context is running high
-  ("Context is at X%"), run the closeout in `docs/standards/session_handoff_standard_v2.0.md` §7. It
-  produces the next session's handoff and kickoff prompt, verified by `session_closeout.py`. A handoff
-  lives one session; anything needed longer goes to the tracker, decision log, or knowledge base.
-  (You cannot self-measure context; rely on the user's signal and work-unit boundaries.)
-- **Sprint planning:** run the Planning Session Protocol in `docs/standards/sprint_management_standard_v1.0.md`.
+  ("Context is at X%"), commit everything durable, then run the closeout skill with the next
+  persona and a brief for the next session. It produces the next session's handoff and kickoff
+  prompt, verified by `session_closeout.py`. A handoff lives one session; anything needed longer goes
+  to the tracker, decision log, or knowledge base. (You cannot self-measure context; rely on the
+  user's signal and work-unit boundaries.) **Emergency close**, when the user says context is
+  critical: commit a minimal `## S<N> — <date> — emergency checkpoint` entry and say plainly that the
+  closeout was not completed; the next session completes it before building.
+- **Sprint planning:** run the planning-session skill.
 
 ---
 
@@ -119,9 +122,9 @@ References do NOT auto-load — you must explicitly Read each file.
   in the same session; it blocks only where branch protection exists ([[reference_ci_backstop]]).
 - **AUTHORITATIVE REFERENCE** pattern: when a doc marks a file `> **AUTHORITATIVE REFERENCE:** path`,
   read that file before implementing the feature.
-- Document production: follow `docs/standards/document_production_standard_v1.0.md` (authoritative for
-  typography, color, structure, writing mechanics) before generating any Word/Excel/PDF/PPTX document,
-  report, or deck. Raw brand assets (logos, palette, typeface) live in `resources/branding/`.
+- Document production: run the document-production skill before generating any Word/Excel/PDF/PPTX
+  document, report, or deck; its values are in `docs/standards/document_production_standard_v1.0.md`
+  and the raw brand assets (logos, palette, typeface) in `resources/branding/`.
 
 ---
 
@@ -146,15 +149,26 @@ References do NOT auto-load — you must explicitly Read each file.
 | `scripts/session_closeout.py` | Session gate: handoff/kickoff pairs by session number, rotation to `archive/`, persona references, tracker reconciliation, dependency order, no live placeholders in a project |
 | `.claude/rules/` | Judgement scoped by `paths:`: Claude Code loads a rule when it reads or edits a matching file; another agent reads the rules whose `paths:` match what it edits |
 | `.claude/agents/` | Persona registry, one agent file each; a kickoff names one by slug and the `SessionStart` hook injects its prompt. Add one when a task first needs it |
-| `docs/standards/` | `session_handoff`, `sprint_management`, `secrets_management`, `document_production` |
+| `.claude/skills/` | The procedures, one `SKILL.md` each (below). `scripts/skill_scan.py` keeps every hook id, stage and command a skill names in step with the config |
+| `docs/standards/` | The law the procedures obey: `session_handoff`, `sprint_management`, `secrets_management`, `document_production` |
 | `sprint/` | Live state: sprint-status, story-tracker, decision-log, handoffs, recovery |
 | `docs/orchestration/knowledge/` | Accumulated learnings (single source of truth for knowledge) |
 
 ---
 
-## Workflows are portable markdown, not tool skills
+## Procedures are skills, and a skill is repository markdown
 
-Session, handoff, and sprint procedures live in `docs/standards/` and are reached via the cold-start
-gate — so they load **identically under Codex and Claude**. Tool skills (`.claude/skills/`,
-`.agents/skills/`) are discovered per-tool and are **accelerators only, never the source of truth**;
-if you author one, keep the authoritative copy as repo markdown.
+Each procedure has one home, its `SKILL.md`, committed here and read **identically by any agent**:
+Claude Code runs one by name (`/closeout`), or on its own when a task matches its description unless
+the skill is the operator's alone; any other agent opens the file below and follows its body, the
+frontmatter being Claude Code's settings for it. A standard keeps the law the procedure obeys and
+points to its skill. Never copy a skill into another tool's folder (`.agents/skills/`): a copy is a
+second home that drifts (decision 2026-10-23-001).
+
+| Skill | When |
+|-------|------|
+| `.claude/skills/closeout/SKILL.md` | Session end. Forked: it sees the tree and its arguments, not this conversation |
+| `.claude/skills/planning-session/SKILL.md` | Building or re-planning the sprint from an approved PRD and architecture |
+| `.claude/skills/document-production/SKILL.md` | Before any Word, Excel, PDF or PowerPoint deliverable |
+| `.claude/skills/release/SKILL.md` | The template's release cut; the operator's alone |
+| `.claude/skills/pristine-cut/SKILL.md` | The template's sanitize-and-cut; the operator's alone |

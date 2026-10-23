@@ -288,8 +288,8 @@ item: a sprint-status entry numbered above S1, a `TMPL-` story row in the tracke
 `sprint/archive/` or `sprint/handoffs/archive/`, a handoff or kickoff in `sprint/handoffs/`, and
 the probe repository's name in any text file git would commit, the script itself excepted. It
 refuses to run where `origin` is not the template, the inverse of the initializer's refusal, so a
-project that runs it by mistake is told so and nothing is judged. The reset itself is
-`python3 scripts/sanitize_template.py --apply`, dry run without the flag.
+project that runs it by mistake is told so and nothing is judged. The reset, and the cut around
+it, are the pristine-cut skill.
 **Why:** decision 2026-09-23-003; [[reference_template_sanitizer]].
 **Alone:** `pre-commit run sanitize-template-check --hook-stage manual --all-files`
 
@@ -366,6 +366,33 @@ other needs `--hook-stage <stage>`), or a workflow that is missing or unreadable
 **Why:** decision 2026-09-23-001, with the stages rule of 2026-09-20-001 and the CI-step rule of
 2026-09-22-001; [[reference_gate_runbook]], [[reference_ci_backstop]].
 **Alone:** `pre-commit run gate-runbook --all-files`
+
+## `skill-scan-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** `skill-scan`, which it precedes.
+**Blocks:** a commit when the skill checker fails a fixture: a command read from prose, a
+frontmatter that does not parse or an unknown key passing, a hook id the config lacks or a stage it
+does not declare passing, a `pre-commit run` without `--all-files` passing, a flag its script never
+names passing, a hook's entry run bare passing, a skill missing from `AGENTS.md` passing, an
+unreadable config read as an empty suite.
+**Why:** decision 2026-10-23-001; [[reference_claude_code_skills]].
+**Alone:** `pre-commit run skill-scan-selftest --all-files --verbose`
+
+## `skill-scan`
+
+**Stage:** `pre-commit`
+**Pairs with:** `skill-scan-selftest`.
+**Blocks:** a skill under `.claude/skills/` that would load differently than written (line 1 not
+`---`, YAML that does not parse, a key Claude Code does not know, `name:` other than the
+directory, no description or one past the listing cap, `context` other than `fork`, an `agent` or
+`background` without it, an `agent` that names no agent, a flag that is not a boolean, no body, a
+directory with no `SKILL.md`); a command in its code that names a hook the config lacks, a stage
+the hook does not declare, a `pre-commit run` without `--all-files`, a script or flag that does not
+exist, or a hook's entry run bare; and a skill `AGENTS.md` does not name by path, or a path it names
+with no skill. Prose is not read. Exits 2, never 0, without PyYAML.
+**Why:** decision 2026-10-23-001; [[reference_claude_code_skills]].
+**Alone:** `pre-commit run skill-scan --all-files`
 
 ## `commit-attribution`
 

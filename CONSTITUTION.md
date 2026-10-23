@@ -60,8 +60,7 @@ The closeout is in `AGENTS.md` (How I work), which points to its procedure.
 
 ### 2.4 Token/Context Window Management Protocol
 
-Checkpoint discipline and the handoff triggers are in `AGENTS.md` (How I work); the emergency close is
-in `docs/standards/session_handoff_standard_v2.0.md` §7.
+Checkpoint discipline, the handoff triggers and the emergency close are in `AGENTS.md` (How I work).
 
 ---
 

@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
 | 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
 | 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED |
 | 2026-10-22-004 | 2026-10-22 | The session journal and the working notes are local and gitignored: the journal records raw commands that must not enter a public history, an ignored file is outside pre-commit's stash, and the Stop hook excludes both by path as well; the closeout gate clears them | APPROVED |
@@ -2397,3 +2398,72 @@ check by name; a canary rule scoped to one knowledge entry was absent from a ses
 tool and from one that read `README.md`, and present in one that read the entry. The first version
 compared whole sentences and let a rule copying a clause of `AGENTS.md` pass; the check now finds a
 sentence inside the other text either way, and the plant fails it.
+
+---
+
+## Decision 2026-10-23-001: Procedures are skills, and a skill is repository markdown
+
+**Date:** 2026-10-23
+**Made By:** Chair + AI (S4): how the forked closeout receives the session's judgement, and which
+skills are the operator's alone, by the operator, put as questions; the rest by the AI
+**Status:** APPROVED
+**Builds:** the procedures bullet of 2026-10-22-001 (TMPL-1.4)
+**Affects:** `.claude/skills/`, `AGENTS.md` (How I work, Conventions, the governance map, the procedures section), `CONSTITUTION.md` §2.4, `docs/standards/session_handoff_standard_v2.0.md` §4, §5, §7 and §11, `docs/standards/sprint_management_standard_v1.0.md` §1, §5, §6 and §8, `docs/standards/document_production_standard_v1.0.md`, `scripts/skill_scan.py`, `scripts/session_closeout.py` (the kickoff's section 5), `scripts/new_project.py` (the S1 entry and the tracker header), `.pre-commit-config.yaml`, `docs/governance/gate_suite_runbook.md`, `.claude/rules/sprint-documents.md`, `TEMPLATE_GUIDE.md` Step 7, `README.md`
+
+### Context
+
+Decision 2026-10-22-001 makes each procedure a skill whose `SKILL.md` is its one home. `AGENTS.md`
+said the opposite in its section "Workflows are portable markdown, not tool skills": a skill was a
+per-tool accelerator, never the source of truth. That section was written when a skill meant a
+copy in one tool's private folder. A `SKILL.md` committed under `.claude/skills/` is repository
+markdown, as a rule under `.claude/rules/` is (decision 2026-10-22-006); what another agent lacks
+is a way to find it.
+
+The skills reference, read whole on 2026-10-23 (Claude Code 2.1.308): a skill with `context: fork`
+runs as the subagent its `agent:` names, `general-purpose` by default, with the skill's body as
+its task. That subagent sees none of the conversation; it loads `AGENTS.md` and a git-status
+snapshot (Explore and Plan skip both), not the persona the start hook injected. A fork runs in the
+background, with a narrower tool set, unless `background: false`; under `claude -p` it is waited
+for either way. `disable-model-invocation: true` takes the description out of Claude's context, and
+Claude Code blocks Claude's own call and tells it not to do the steps another way. All silent: a
+frontmatter that does not parse loads the skill with no fields, so `context: fork` is lost; a key
+Claude Code does not know is ignored; a directory with no `SKILL.md` is no skill.
+
+### Decision
+
+- **A skill is repository markdown and the one home of its procedure.** `AGENTS.md` lists each by
+  path; Claude Code runs it by name or by its description, and any other agent opens the file and
+  follows the body, the frontmatter being Claude Code's settings. It is never copied into another
+  tool's folder. The standard that held the procedure keeps its law and points to the skill.
+- **Five skills.** `closeout`, forked, `agent: general-purpose`, `background: false`, so the session
+  waits for the kickoff it hands the user. `planning-session` and `document-production` run inline,
+  because the first needs the user's confirmation and the second the conversation's content.
+  `release` and `pristine-cut` run inline and are the operator's alone (`disable-model-invocation`),
+  being one-way doors on GitHub; each refuses outside the template.
+- **The forked closeout takes the session's judgement as arguments** (the operator's choice): the
+  next persona's slug, then a brief of the next session's tasks, success criteria, reads and open
+  questions. Before invoking it the session commits everything durable, as checkpoint discipline
+  already requires; the fork refuses an uncommitted tree, reads the rest from git, syncs, scaffolds,
+  fills, gates, commits, pushes, watches the run and returns the kickoff.
+- **The emergency close moves to `AGENTS.md`**: it is what the main session does when its context is
+  critical, and `AGENTS.md` is the file always loaded. The kickoff's section 5, written by the
+  scaffold, points to the skill instead of restating the procedure.
+- **`scripts/skill_scan.py` keeps the skills honest**, as `gate_runbook_scan.py` keeps the runbook:
+  every silent frontmatter failure above is refused; every `pre-commit run` a skill's code names must
+  name a hook the config declares, at a stage it declares, with `--all-files`; every script and flag
+  must exist; a hook's entry run bare is refused; and `AGENTS.md` must list every skill and no
+  missing one. It reads the config with the runbook gate's own reader.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001): the procedures move and a new gate can fail a
+  project's own skills.
+
+### Consequences
+
+- TMPL-1.6 decides how the initializer, the updater and the sanitizer own `.claude/skills/`, the
+  template-only skills included.
+- A project's own skill must be listed in `AGENTS.md` and pass the gate.
+- TMPL-1.7 proves a forked closeout end to end.
+
+### Enforcement
+
+`scripts/skill_scan.py` (`frontmatter`, `lint_skill`, `precommit_violations`, `script_violations`,
+`scan`) in `skill-scan`, after `skill-scan-selftest`. Taught by [[reference_claude_code_skills]].

@@ -5,9 +5,13 @@
 **Status:** Active. **AUTHORITATIVE** for all Word, Excel, PDF, and PowerPoint deliverables.
 **Brand assets:** `resources/branding/` (logos, color palette, typeface guide) — populate per project.
 
-> **Template note.** Sections 1 through 6 carry `{{TOKENS}}` for per-project brand values. Fill them
-> from the project's own brand source before first use, and record the source in §15. Sections 7
-> through 14 are portable craft rules and apply as written in any project.
+> **Template note.** Sections 1 through 6 carry `{{TOKENS}}` for per-project brand values, each
+> filled from the project's own brand source with the source recorded in §15. Sections 7 through 14
+> are portable craft rules and apply as written in any project.
+>
+> **The procedure** that produces a deliverable from these values is the document-production skill,
+> `.claude/skills/document-production/SKILL.md`, its one home (decision 2026-10-23-001). This
+> standard holds the values it obeys.
 
 ---
 
@@ -23,10 +27,9 @@ reproduces the same look and feel. Align it to the project's official brand asse
 - **[Suggested]** A reasonable default not yet confirmed against a finished document.
 - **[Get from source]** Deliberately unfilled. Retrieve from the brand asset named.
 
-**Production note.** The polish comes from generating real, theme-styled Word and PowerPoint files
-(true heading styles, a defined theme, consistent spacing, tables instead of walls of text), not
-markdown converted crudely. Build actual .docx and .pptx with the theme values below applied at the
-document and theme level. Display and web fonts may not be installed in Office; see the fallback in §1.
+**Production note.** The polish comes from real, theme-styled Word and PowerPoint files (true
+heading styles, a defined theme, consistent spacing, tables instead of walls of text), never from
+markdown converted crudely. Display and web fonts may not be installed in Office; see the fallback in §1.
 
 ---
 
@@ -46,7 +49,7 @@ Windows silently substitutes at render time and breaks the house look without wa
 
 **Starter Word templates [Locked].** Two ready-to-clone templates belong in
 `resources/branding/templates/`, one per pairing; the folder ships empty and the project populates
-it. **Clone the matching one instead of building from scratch** (each carries the theme, branded
+it. A document starts from the matching one, never from scratch (each carries the theme, branded
 heading styles, triangle bullets, logo header, sensitivity banner, and the standard footer):
 - `{{TEMPLATE_BRANDFONT}}` — brand pairing. Outward-facing, designed, contractual. If the recipient may
   not have the brand fonts, embed them (Word: Save, "Embed fonts in the file") or use the fallback.
@@ -156,7 +159,7 @@ template. **[Get from source]**
 
 - **BLUF opening [Locked]:** lead with the bottom line. Where a labeled lead-in is used, the label is "Overview," not "BLUF," "Summary," or "Abstract."
 - **Flow:** Overview/BLUF, then substance organized by decision value, then supporting detail, matrices, and a glossary where warranted. Organized by usefulness, not chronology.
-- **Locked closing lines by type [Locked]:** several document types have an agreed exact closing sentence; reuse it verbatim. Known examples: Informational briefing documents for leadership close with only "Draft for internal leadership review."; tool/assessment documents use a non-recommendation closer such as "This document is informational and is not intended to recommend approval or mandate adoption of any tool." Confirm the current locked closer for a given type before finalizing.
+- **Locked closing lines by type [Locked]:** several document types have an agreed exact closing sentence; reuse it verbatim. Known examples: Informational briefing documents for leadership close with only "Draft for internal leadership review."; tool/assessment documents use a non-recommendation closer such as "This document is informational and is not intended to recommend approval or mandate adoption of any tool."
 
 ---
 
@@ -261,4 +264,5 @@ With those in hand, this guide plus the official brand values should let the new
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.0 | 2026-10-23 | — | Header, production note and §1: the procedure moved to `.claude/skills/document-production/SKILL.md`; this standard keeps the values (decision 2026-10-23-001, TMPL-1.4). |
 | 1.0 | {{DATE}} | — | Initial version. Adopted the project document production style guide as the authoritative standard. |

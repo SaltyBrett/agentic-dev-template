@@ -263,8 +263,8 @@ def sprint_status_skeleton(values: dict[str, str]) -> str:
 S1 has no incoming kickoff, so this list stands in for it. From S2 on, next-session tasks live
 in the kickoff, not here.
 
-1. Run the Planning Session Protocol in `docs/standards/sprint_management_standard_v1.0.md`
-   against the approved PRD and Architecture to populate `story-tracker.md`. The kickoff for S2
+1. Run the planning-session skill (`.claude/skills/planning-session/SKILL.md`) against the
+   approved PRD and Architecture to populate `story-tracker.md`. The kickoff for S2
    can only cite stories that exist, so S1 opens the first epic before it closes out.
 2. Record the first project decision in `decision-log.md`, its ID prefixed
    (`{values['PREFIX'] or 'ACME'}-YYYY-MM-DD-NNN`), and remove the `[EXAMPLE]` entry: the state gate
@@ -291,7 +291,7 @@ def story_tracker_skeleton(values: dict[str, str]) -> str:
 **Source:** PRD (see `docs/prd/`)
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` — read it before creating or
-> updating stories (use its Planning Session Protocol to build this file from the PRD + Architecture).
+> updating stories (build this file from the PRD + Architecture with the planning-session skill).
 >
 > **READ SELECTIVELY (index-first).** Do NOT read this file whole. Read the **Summary Statistics** and
 > **Dependency Order** below, then open only the epic/story rows relevant to the current task. Keep this

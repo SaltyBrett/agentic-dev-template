@@ -12,7 +12,7 @@ correctly across sessions and tools — so every agent produces the same structu
 
 This standard is the authoritative guide for the `sprint/` state documents. It covers:
 
-- **Setup:** turning an approved PRD + Architecture into epics and stories (the Planning Session Protocol, §5).
+- **Setup:** turning an approved PRD + Architecture into epics and stories (the planning session, §5).
 - **Maintenance:** the status lifecycle, update cadence, and sprint boundaries (§7–§10).
 
 It applies to any agent (Claude Code, Codex, future tools) that creates or updates
@@ -76,42 +76,19 @@ A well-formed story is **INVEST-aligned** and, per `CONSTITUTION.md §9`, **huma
 
 ---
 
-## 5. Planning Session Protocol
+## 5. Planning Session
 
-Run this named procedure whenever creating (or materially re-planning) a sprint from a planning session.
-It is the sprint-creation counterpart to the cold-start gate.
-
-### 5.1 Preconditions (do not start until all true)
-- [ ] PRD is finalized and approved, living in `docs/prd/`.
-- [ ] Architecture is finalized and approved, living in `docs/architecture/`.
-- [ ] You have **read both in full** this session (references do not auto-load).
-- [ ] `CONSTITUTION.md` and this standard are read.
-
-### 5.2 Steps
-1. **Derive dependency layers** from the Architecture (e.g. `INFRA --> DATA_INGEST --> TRANSFORM --> SERVE --> VALIDATE`). Record them in the tracker's **Dependency Order** block.
-2. **Group PRD requirements into Epics** — one epic = one coherent capability within a layer. Assign each an `{PREFIX}-{Epic#}` id.
-3. **Decompose each epic into Stories** per §4 (one testable, session-sized unit each). Assign `{PREFIX}-{Epic#}.{Story#}` ids.
-4. **For each story, set:** Dependencies (other story IDs that must be `Done` first), Required Standards (from `docs/standards/`), and PRD Ref.
-5. **Populate `sprint/story-tracker.md`:** fill Summary Statistics, Dependency Order, and one table per epic. **Remove the `[EXAMPLE]` epic.**
-6. **Initialize `sprint/sprint-status.md`:** set Current Phase, Current Focus, session number; write the first session update. Replace all `{{PLACEHOLDER}}` values.
-7. **Seed `sprint/decision-log.md`:** log the planning decisions (layering, scope boundaries, framework/tech choices) with rationale and IDs. **Remove the `[EXAMPLE]` entry** once a real one exists.
-8. **Confirm with the user** before any build work begins (`CONSTITUTION.md §1`).
-
-### 5.3 Output checklist (planning is complete when all true)
-- [ ] Every PRD requirement maps to at least one story; no story lacks a PRD Ref.
-- [ ] Every story has a status, dependencies (or `—`), and Required Standards (or a justified `—`).
-- [ ] Dependency Order recorded; no story depends on a later-layer story.
-- [ ] Summary Statistics counts are accurate.
-- [ ] `sprint-status.md` initialized (no `{{PLACEHOLDER}}` left); first session update written.
-- [ ] Planning decisions logged in `decision-log.md`; `[EXAMPLE]` entries removed.
-- [ ] User has confirmed the plan.
+A sprint is created, or materially re-planned, from an approved PRD and Architecture by the
+planning-session skill, `.claude/skills/planning-session/SKILL.md`, the procedure's one home
+(decision 2026-10-23-001). It builds to §2–§4 and §11 of this standard, and it begins no build work
+until the user has confirmed the plan (`CONSTITUTION.md` §1).
 
 ---
 
 ## 6. Initial Population Notes
 
 - The shipped `sprint/*` files contain `[EXAMPLE]` rows and `{{PLACEHOLDER}}` tokens purely as shape
-  guides. The Planning Session Protocol replaces them — do not leave examples/placeholders in a live sprint.
+  guides. The planning session replaces them — do not leave examples/placeholders in a live sprint.
 - Keep all three files **markdown** (never JSON) and free of accreting changelog paragraphs, per the
   index-first rule (`AGENTS.md` Conventions).
 
@@ -151,7 +128,7 @@ Aligns with checkpoint discipline and the handoff triggers (`AGENTS.md` How I wo
 | When | Update |
 |------|--------|
 | **After each story or work unit** | `story-tracker.md` (status + stats) → `decision-log.md` (if a decision was made) → `sprint-status.md` (focus/blockers) → `git commit -m "checkpoint: …"` |
-| **User signals context is high** | Finish the current work unit only, then run the closeout (`session_handoff_standard_v2.0.md` §7) |
+| **User signals context is high** | Finish the current work unit only, then run the closeout skill (`.claude/skills/closeout/SKILL.md`) |
 | **Session end** | Reconcile all three docs; flush durable learnings to `docs/orchestration/knowledge/`; run the closeout gate; commit |
 
 State must never be more than one work unit behind reality.
@@ -206,6 +183,7 @@ comply with their Required Standards, tracker/decision-log updated, no open ques
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.0 | 2026-10-23 | — | §1, §5, §6 and §8: the Planning Session Protocol moved to `.claude/skills/planning-session/SKILL.md`; §5 keeps the pointer and what it builds to (decision 2026-10-23-001, TMPL-1.4) |
 | 1.0 | 2026-10-22 | — | §1, §4, §5.2, §6, §8, §12: citations of `CONSTITUTION.md` §2 and the retired interop contract point to `AGENTS.md`, their one home (decision 2026-10-22-001, TMPL-1.1) |
 | 1.0 | 2026-09-24 | — | §7 and §11: the dependency rule and the live-placeholder rule are gated by the state gate (decision 2026-09-24-001, TMPL-5.5) |
 | 1.0 | {{DATE}} | — | Initial version |

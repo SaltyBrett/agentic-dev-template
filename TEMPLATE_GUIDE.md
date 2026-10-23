@@ -137,15 +137,10 @@ manual stages, which it does not reach.
 ## Step 7: Define Your Stories
 
 **Governed by `docs/standards/sprint_management_standard_v1.0.md`.** For a real project, don't hand-fill
-the tracker ad hoc — have the agent run that standard's **Planning Session Protocol (§5)** against your
-approved PRD + Architecture. It produces the epics, stories, dependencies, Required Standards, and PRD
-refs in a repeatable structure, and initializes `sprint-status.md` + `decision-log.md`.
-
-Quick shape (the protocol expands each step):
-1. Open `sprint/story-tracker.md`
-2. Define your dependency layers (e.g., `INFRA --> DATA --> TRANSFORM --> SERVE`)
-3. Create epics and stories following the `{PREFIX}-{Epic}.{Story}` pattern
-4. Assign required standards and a PRD ref to each story
+the tracker ad hoc — have the agent run the **planning-session skill**
+(`.claude/skills/planning-session/SKILL.md`; `/planning-session` in Claude Code) against your approved
+PRD + Architecture. It produces the epics, stories, dependencies, Required Standards, and PRD refs in a
+repeatable structure, and initializes `sprint-status.md` + `decision-log.md`.
 
 ---
 

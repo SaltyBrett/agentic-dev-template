@@ -245,6 +245,25 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
+      # A procedure's one home is its skill (decision 2026-10-23-001), and a skill names hooks,
+      # stages and scripts that drift as this file does. The check reads this config with the
+      # runbook gate's reader and refuses every frontmatter Claude Code would load silently wrong.
+      - id: skill-scan-selftest
+        name: Skill Scan Self-Test (commands are read from code; a bad hook, stage or flag fails)
+        entry: python scripts/skill_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: skill-scan
+        name: Skill Scan (every skill parses, names real hooks, stages and scripts, and AGENTS.md lists it)
+        entry: python scripts/skill_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
       # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
       - id: commit-attribution
         name: Commit Attribution Gate (no AI attribution in commit messages)

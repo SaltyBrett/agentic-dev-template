@@ -48,7 +48,7 @@ metadata:
    initializer's sprint-status entry is what the gate numbers the session from.
 7. **S1's closeout is the first real test of the tracker.** Every kickoff task must cite a story
    present in the tracker, and the tracker starts empty, so S1 opens the project's first epic
-   before it can scaffold the S2 pair. That is the Planning Session Protocol doing its job on a
+   before it can scaffold the S2 pair. That is the planning session doing its job on a
    small scale, not friction.
 
 ## What was left by hand, on purpose

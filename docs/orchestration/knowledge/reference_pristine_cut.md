@@ -1,57 +1,47 @@
 ---
-name: How the pristine cut is performed, and the order that keeps two repositories apart
-description: 'The cut under decision 2026-09-23-003 as executed: the sanitize check read first and every item judged against what the reset clears; the GitHub rename before anything else; the sanitizer run while the local clone''s origin still names the template; only tracked files copied to the fresh directory; the old clone''s origin switched to the archive name BEFORE the new repository is created, because the old URL redirects to the renamed repository only until a repository with the old name exists again; the first commit proved against the commit-msg gate with zero commits behind it; what is carried into the new lineage after its v1.0.0 and why the tag itself is the sanitized tree alone. Read before the next cut or before renaming a repository a clone still pushes to.'
+name: Why the pristine cut runs in the order it does, and what keeps two repositories apart
+description: 'The reasons behind each step of the pristine cut under decision 2026-09-23-003, whose steps are the pristine-cut skill: the sanitize check read first and every item judged against what the reset clears; the GitHub rename before anything else; the sanitizer run while the local clone''s origin still names the template; only tracked files copied; the old clone''s origin switched to the archive name BEFORE the new repository is created, because the old URL redirects only until a repository with the old name exists again; the commit-msg gate proved with zero commits behind it; why v1.0.0 is the sanitized tree alone and the cut''s record follows it. Read before the next cut or before renaming a repository a clone still pushes to.'
 teaches: [2026-09-23-003, 2026-09-25-004]
-verified: 2026-09-25
+verified: 2026-10-23
 metadata:
   type: reference
 ---
 
-# How the pristine cut is performed, and the order that keeps two repositories apart
+# Why the pristine cut runs in the order it does
 
 > Durable learning. Wikilink: `[[reference_pristine_cut]]`.
-> Decision 2026-09-23-003. Tools: `scripts/sanitize_template.py` ([[reference_template_sanitizer]]),
-> `scripts/template_version.py` ([[reference_template_versioning]]). The archive is
-> `SaltyBrett/agentic-dev-template-archive`; its final tag names the new lineage's `v1.0.0`.
+> Decision 2026-09-23-003. The steps: `.claude/skills/pristine-cut/SKILL.md`. Tools:
+> `scripts/sanitize_template.py` ([[reference_template_sanitizer]]), `scripts/template_version.py`
+> ([[reference_template_versioning]]). The archive is `SaltyBrett/agentic-dev-template-archive`; its
+> final tag names the new lineage's `v1.0.0`.
 
-## The order, and what forces it
+## What forces each step
 
-1. **Read the sanitize check before touching anything.** `pre-commit run sanitize-template-check
-   --hook-stage manual --all-files` names every item of build state. Group the items by rule and
-   by file: an item inside `sprint/sprint-status.md`, `sprint/story-tracker.md`, `sprint/handoffs/`
-   or `sprint/archive/` is cleared by `--apply`; an item anywhere else is the sweep's, by hand,
-   with `verified:` bumped and committed before the cut. At the cut every item was inside the
-   reset's files, the probe mentions included, so there was nothing to sweep.
-2. **Rename the repository on GitHub first.** The new repository needs the old name, so the old
-   one must give it up before the new one can be created. A rename is reversible.
-3. **Run the sanitizer while the local clone's origin still names the template.** Its refusal
-   judges the URL string, which a rename on GitHub does not change. `--apply` then `--check` to
-   exit 0, in the clone itself; the reset is uncommitted there and `git checkout -- .` restores it
-   once the copy is taken, because the sanitizer deletes and rewrites but never creates.
-4. **Copy tracked files only.** The working tree carries ignored files a plain copy would put into
-   the first commit: `.DS_Store`, `__pycache__/`, the `egg-info/` a local `pip install .` left, a
-   tool's `settings.local.json`. `git ls-files`, filtered to the paths that still exist after the
-   reset, is the list; copy those and nothing else.
-5. **Switch the old clone's origin to the archive name before creating the new repository.**
-   GitHub redirects the old name to the renamed repository only until a repository with the old
-   name exists again. Once the new one is created, the old URL points at the new repository, and a
-   push from a clone whose origin was never switched lands in the wrong lineage. The switch is one
-   `git remote set-url`, done between the sanitizer and the create.
-6. **In the fresh directory:** `git init -b main`, `template_version.py --release v1.0.0` so the
-   constant is set before the commit that gets tagged, create the empty private repository, set
-   origin under the ssh host alias, install both hook types, and prove the commit-msg gate before
-   the first real commit: a trial commit carrying an attribution trailer is refused with zero
-   commits in the repository, and the clean `release: v1.0.0` is accepted. Tag `v1.0.0` annotated;
-   the earliest tag is exempt from the bump rule and the annotation names MAJOR anyway, and it
-   names the archive repository, so the two lineages point at each other. Then, before pushing:
-   the version gate, the sanitize check, `session-verify` at S1 with no pair, the whole suite, and
-   a grep for the probe's name that names the script alone.
-7. **Push `main` and the tag, and read both `gates` runs to completion** with `gh run watch
-   --exit-status`, not by assumption.
-8. **Only then close out in the archive**, because the story the closeout marks Done says the new
-   lineage's `gates` run was observed. The archive's last commits are the closeout and a PATCH
-   release cut with `--release`, whose annotation names `v1.0.0` and the new repository. Then the
-   version gate, the push, its `gates` runs, and `gh repo archive`.
+1. **The check is read before anything is touched**, because only the items inside the files the
+   reset clears (the two sprint documents, the pairs, the archives) go away by themselves; any other
+   item is the sweep's, by hand, and has to be committed before the cut. At the cut every item was
+   inside the reset's files, the probe mentions included, so there was nothing to sweep.
+2. **The rename on GitHub comes first.** The new repository needs the old name, so the old one must
+   give it up before the new one can be created. A rename is reversible.
+3. **The sanitizer runs while the local clone's origin still names the template.** Its refusal
+   judges the URL string, which a rename on GitHub does not change. The reset stays uncommitted in
+   the clone, and `git checkout -- .` restores it once the copy is taken, because the sanitizer
+   deletes and rewrites but never creates.
+4. **Tracked files only.** The working tree carries ignored files a plain copy would put into the
+   first commit: `.DS_Store`, `__pycache__/`, the `egg-info/` a local `pip install .` left, a tool's
+   `settings.local.json`.
+5. **The old clone's origin moves to the archive name before the new repository exists.** GitHub
+   redirects the old name to the renamed repository only until a repository with the old name exists
+   again. Once the new one is created, the old URL points at it, and a push from a clone whose origin
+   was never switched lands in the wrong lineage.
+6. **In the fresh directory the constant is set before the commit that gets tagged**, and the
+   `commit-msg` gate is proved with zero commits in the repository, the case no older clone can
+   test. The earliest tag is exempt from the bump rule; its annotation names MAJOR anyway and names
+   the archive repository, so the two lineages point at each other.
+7. **Both `gates` runs are read to the end**, not assumed.
+8. **The archive closes out last**, because the story its closeout marks Done says the new
+   lineage's `gates` runs were observed. Its last tag is a PATCH naming `v1.0.0` and the new
+   repository; then it is archived on GitHub.
 
 ## What v1.0.0 is, and what is carried after it
 
