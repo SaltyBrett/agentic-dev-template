@@ -2317,6 +2317,21 @@ prints (`--publish`) would write the old folder back.
 - Claude may delegate to a persona agent by its description, as to any project agent; that is the
   reuse the role agents of 2026-10-22-003 will build on.
 
+### Verification
+
+Fixtures: the closeout self-test (87 checks) covers the agent shape, the YAML refusals, the
+append-only rules, both forms of section 1 and a module load with PyYAML blocked; the start
+self-test (28) the four persona cases at startup and after compaction; the sync self-test (18)
+pins the owned path. Twenty-two broken variants, each failing at least one fixture. Live, in a
+scratch clone of the committed template: `claude --agent framework-maintainer -p` answered in the
+persona, its hook input carried `agent_type: framework-maintainer` and the hook said the session
+ran as that agent; a plain `claude -p` got the prompt injected verbatim and answered as Claude Code
+holding the persona; a body edited without a bump exited 1 (`invocation-unbumped`), with the bump 0.
+In `dev-resources`, both pins ran (five personas in each tree), the published hook refused the same
+unbumped edit, and its `gates` run was green; the template's sync then reported every agent
+`up-to-date`, and a `v1.0.0` project's own sync, in a scratch clone, still resolved every persona
+from the frozen tree.
+
 ### Enforcement
 
 `scripts/session_closeout.py` (`PERSONAS`, `PERSONA_KEYS`, `persona_frontmatter`, `lint_persona`,
