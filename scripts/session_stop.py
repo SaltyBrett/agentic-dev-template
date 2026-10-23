@@ -25,7 +25,8 @@ must cover it, the commit can wait for the closeout gate.
 WHAT IT DECIDES
 ---------------
   allow, silently   nothing holds; not a git repository; plan mode, where nothing can be written
-  block             the first stop of a turn with a violation: the reasons go back to the agent
+  send back         the first stop of a turn with a violation: the reasons go back to the agent as
+                    `additionalContext` and the turn continues
   allow, and say so a stop that is already a continuation from this hook (`stop_hook_active`):
                     the user sees what is still unbanked. The hook asks once and never wedges a
                     session; an agent with a reason it cannot commit says so, and the user hears it
@@ -129,7 +130,10 @@ def decide(event: dict, root: Path) -> dict | None:
     if rules & {"notes-stale", "notes-shape"}:
         lines.append(f"Update `{journal.NOTES_REL}` (Plan, Open decisions, Half-done) so the uncommitted work "
                      "survives compaction.")
-    return {"decision": "block", "reason": "\n".join(lines)}
+    # additionalContext, not `decision: "block"`: both send the agent back under the same loop
+    # protections, but a block also raises a "Stop hook error" notice to the user, and nothing here
+    # is an error (observed in S2; the reference recommends this form for guidance).
+    return {"hookSpecificOutput": {"hookEventName": "Stop", "additionalContext": "\n".join(lines)}}
 
 
 # ==============================================================================
@@ -186,12 +190,13 @@ def run_self_test() -> int:
         _git(root, "add", "sprint/sprint-status.md")
         check_("staging it is not enough: it is still uncommitted", rules(root) == ["sprint-uncommitted"])
         out = decide({"stop_hook_active": False}, root) or {}
-        check_("the first stop blocks, naming the file and asking for a checkpoint commit",
-               out.get("decision") == "block" and "sprint/sprint-status.md" in out.get("reason", "")
-               and "checkpoint" in out.get("reason", ""), str(out))
+        sent = (out.get("hookSpecificOutput") or {})
+        check_("the first stop sends the agent back, naming the file and asking for a checkpoint commit",
+               sent.get("hookEventName") == "Stop" and "sprint/sprint-status.md" in sent.get("additionalContext", "")
+               and "checkpoint" in sent.get("additionalContext", "") and "decision" not in out, str(out))
         out = decide({"stop_hook_active": True}, root) or {}
         check_("a stop that is already a continuation is allowed, and the user is told what is unbanked",
-               "decision" not in out and "sprint/sprint-status.md" in out.get("systemMessage", ""), str(out))
+               set(out) == {"systemMessage"} and "sprint/sprint-status.md" in out["systemMessage"], str(out))
         check_("plan mode is allowed silently: nothing can be committed there",
                decide({"permission_mode": "plan"}, root) is None)
         _git(root, "commit", "-q", "-m", "checkpoint: s")
@@ -224,10 +229,16 @@ def run_self_test() -> int:
         (root / ".gitignore").write_text("", encoding="utf-8")
         _git(root, "add", ".gitignore")
         _git(root, "commit", "-q", "-m", "drop ignores")
+        jfile = root / journal.JOURNAL_REL
+        jfile.write_text(journal.JOURNAL_HEADER, encoding="utf-8")
         _touch(pair, base + 700)
+        _touch(notes, base + 800)
+        _touch(jfile, base + 900)  # the journal is written after every tool call, the notes edit included
+        check_("the journal never counts as uncommitted work, even when nothing ignores it "
+               "(it would make the notes stale forever)", rules(root) == [], str(violations(root, changes(root) or [])))
         _touch(notes, base + 650)
-        check_("the notes never count as the newest change, even when nothing ignores them",
-               "notes-stale" in rules(root), str(violations(root, changes(root) or [])))
+        check_("…while the notes are still judged against the real work", rules(root) == ["notes-stale"],
+               str(violations(root, changes(root) or [])))
 
         outside = Path(tmp).resolve() / "plain"
         outside.mkdir()

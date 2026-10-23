@@ -19,7 +19,7 @@ metadata:
 | Event | Matcher | Script | Effect |
 |-------|---------|--------|--------|
 | `SessionStart` | `startup\|clear\|compact` | `session_start.py` | plain stdout becomes context |
-| `Stop` | (none; Stop takes no matcher) | `session_stop.py` | `{"decision":"block","reason":…}` sends the agent back |
+| `Stop` | (none; Stop takes no matcher) | `session_stop.py` | `hookSpecificOutput.additionalContext` sends the agent back |
 | `PostToolUse` | `Edit\|Write\|Bash` | `session_journal.py` | one journal line |
 | `PostToolUseFailure` | `Edit\|Write\|Bash` | `session_journal.py` | one journal line with the exit code |
 
@@ -68,6 +68,14 @@ metadata:
   then allows the stop and shows the user a `systemMessage` naming what is unbanked. Blocking again
   would loop until Claude Code's cap of eight consecutive continuations; an agent with a real reason
   not to commit says so once and the user hears it.
+- **The agent is sent back with `additionalContext`, not `decision: "block"`.** Both continue the
+  turn under the same loop protections, but in the live probe a block also raised a user-facing
+  "Stop hook error occurred" notice; the reference recommends `additionalContext` for guidance of
+  the "do this before finishing" kind, and with it the notice disappeared.
+- The journal is excluded from "uncommitted work" by path because it is written after every tool
+  call, the notes edit included: counted, it would leave the notes stale forever. The broken
+  variant passed the first fixture, which had the notes older than other work anyway; the fixture
+  now puts the journal newest.
 - Plan mode is allowed silently: nothing can be committed or written there.
 - `onFailure: "block"` has no effect on Stop hooks (the reference: Claude cannot repair a hook that
   will not run), so a crashing script allows the stop; it prints its error to stderr.
@@ -80,6 +88,36 @@ parallel tool call cannot land inside a stash-and-restore window. Each line is o
 `O_APPEND` descriptor under `flock`, bounded far below `PIPE_BUF`; the self-test runs eight
 processes appending sixty lines each and requires every line whole. The closeout gate resets both
 on a pass; the start script recreates the notes when missing.
+
+## What was observed (S2, `claude -p` in scratch clones of the committed hooks)
+
+- **Injection at startup:** a fresh session's first turn quoted the "Cold-start gates" lines and the
+  kickoff heading verbatim.
+- **Re-injection after compaction:** a real `/compact` fired `SessionStart:compact`; the next turn
+  quoted the restore header, a canary line from the notes and the kickoff heading. The journal
+  held `start S2` then `compact S2` for the one session, which is how "still S2" was derived.
+- **Stop:** with `sprint/sprint-status.md` modified the turn was sent back; the agent answered why
+  it could not commit (tools were forbidden), the second stop was allowed and the user saw the
+  unbanked list. Committed, the same prompt ended in one turn with no feedback.
+- **Journal:** an Edit and a failing `ls` gave `Edit docs/README.md` and `Bash exit=1 ls …`.
+- **`ask` rules:** `git push <r> --delete`, `git push <r> -d`, `gh repo delete` and
+  `gh repo edit --visibility` were each refused in `-p` despite a matching allow rule (a `-p`
+  session cannot answer a prompt); an ordinary push under the same allow rule ran. A trailing
+  `:*` is the legacy wildcard, so `git push * :*` would ask on every push; the refspec-delete form
+  (`git push <r> :branch`) is therefore not covered.
+- **Concurrency beside the suite:** four writers paced to span nine `pre-commit run` stash windows.
+  Ignored journal: 2,400 of 2,400 lines, no warning, the unstaged edit restored. The same with the
+  journal tracked: "files were modified by this hook" failed the scan, the roll-back's
+  `git apply` failed and pre-commit crashed nine times, 2,306 of 2,400 lines were lost, and the
+  operator's unstaged edit to `README.md` was left only in pre-commit's cache patch.
+- **`PreCompact`:** exit 2 blocked a manual `/compact` (`compact_result: failed`, "Compaction blocked
+  by PreCompact hook"). The reference adds that a block on the compaction that recovers from a
+  context-limit error makes the request fail, so the agent, out of context, cannot act on the
+  reason. No `PreCompact` hook is registered: the `Stop` hook bounds the unbanked interval to one
+  turn, and the `compact` branch restores what the files hold.
+- **The sanitize check** named 18 items of mid-session build state and neither file, both on disk.
+- **Broken variants:** nineteen, across the three scripts and `.gitignore`; every one fails at least
+  one fixture (the two concurrency variants by a race, caught on every run so far).
 
 ## Rules
 

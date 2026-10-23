@@ -42,15 +42,27 @@ no live document; `session-verify --hook-stage manual` remains in the gate runbo
    `reference_macos_toolchain` §6 (true before and after 2.1.277; a resource entry, published at
    closeout).
 
-2. Found while building TMPL-1.2: the cold start's `session-verify` passed a dirty tree, because
+2. TMPL-1.2 — the hooks reference read in full before any hook was written. `session_start.py`
+   (`SessionStart`, matchers startup, clear and compact), `session_stop.py` (`Stop`) and
+   `session_journal.py` (`PostToolUse` and `PostToolUseFailure` on Edit, Write, Bash), each with a
+   self-test hook and a runbook section; the notes' fixed shape; `disableWorkflows`; `ask` rules for
+   the one-way doors; the closeout gate clears journal and notes. Decision 2026-10-22-004: both
+   files gitignored. Observed in scratch clones, not assumed: the first turn quoted the gate lines
+   and the kickoff; a real `/compact` re-injected the notes and the kickoff; the `Stop` hook sent a
+   turn back with `sprint-status.md` modified and allowed it once committed; the journal gained a
+   line per Edit and per Bash with the failing exit code; the four one-way doors were refused under
+   a matching allow rule. Nineteen broken variants, each failing a fixture. Beside nine pre-commit
+   stash windows the ignored journal kept 2,400 of 2,400 lines; tracked, it lost 2,306 and
+   pre-commit crashed leaving an unstaged edit only in its cache. `PreCompact` blocking a manual
+   `/compact` works; not registered, since blocking the recovery compaction fails the request
+   ([[reference_claude_code_hooks]]). `clear` was added to the kickoff's two matchers: it empties
+   the context as a new session does. The `Stop` hook answers with `additionalContext`, not a
+   block, after a block raised a "hook error" notice in the probe. Two defects the first live
+   run found: `git pull --ff-only` refuses a dirty tree under `pull.rebase` (now `--no-rebase`);
+   untracked directories hid their files from the stale-notes rule (now `--untracked-files=all`).
+3. Found while building TMPL-1.2: the cold start's `session-verify` passed a dirty tree, because
    pre-commit's stash hid an unstaged edit (measured at the S1 closeout commit). Decision
    2026-09-22-003 amended; the command carries `--all-files` everywhere it is written.
-
-### In progress
-
-- TMPL-1.2 — the three session scripts, their self-tests and runbook sections, the settings, and
-  decision 2026-10-22-004 are committed; live proofs in a scratch clone, broken-variant proofs and
-  the `PreCompact` test remain.
 
 ### Blockers
 

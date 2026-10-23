@@ -235,8 +235,8 @@ the session number from another session's journal line.
 **Stage:** `pre-commit`
 **Pairs with:** no gate. `scripts/session_stop.py` is the Claude Code `Stop` hook.
 **Blocks:** a commit when the stop check lets a turn end with a tracked sprint file uncommitted or
-the working notes older than the newest uncommitted file, blocks a turn twice, blocks in plan mode,
-or counts the notes themselves as the newest change.
+the working notes older than the newest uncommitted file, sends a turn back twice, sends one back in
+plan mode, or counts the journal as uncommitted work (which would make the notes stale forever).
 **Why:** decision 2026-10-22-001; [[reference_claude_code_hooks]].
 **Alone:** `pre-commit run session-stop-selftest --all-files --verbose`
 
