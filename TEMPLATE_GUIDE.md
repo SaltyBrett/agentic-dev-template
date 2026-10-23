@@ -100,7 +100,7 @@ It needs no configuration: decision IDs are read literally from the first column
 `sprint/decision-log.md` index and of `docs/governance/framework_decisions.md`, the template's own
 log, as one set, so any convention works (`DEC-041`, `2026-07-30-001`, `ADR-7`); prefix yours so
 they cannot collide with the framework's bare dates. Rows marked `[EXAMPLE]` are ignored. Just stamp
-each knowledge entry (CONSTITUTION §6.3, INDEX header):
+each knowledge entry (`.claude/rules/knowledge-entries.md`; why, [[reference_kb_freshness]]):
 
 ```yaml
 teaches: [2026-07-30-001]     # decisions this entry EXPLAINS

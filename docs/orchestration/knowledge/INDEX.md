@@ -4,54 +4,21 @@
 agent (Claude Code, Codex, future tools) reads and writes here, never into a tool's private memory.
 `AGENTS.md` holds the law and the cold-start sequence that points here.
 
-> **★ Every entry declares its decision provenance (CONSTITUTION §6.3).** YAML frontmatter carries
-> `teaches: [<decision-id>, …]` (decisions the entry *explains*) and `verified: <date>` (when it was last
-> confirmed against them):
->
-> ```yaml
-> ---
-> name: <short title>
-> description: <one line — used to judge relevance at recall time>
-> teaches: [2026-07-30-001]
-> verified: 2026-07-30
-> metadata:
->   type: reference | decision | feedback | project
-> ---
-> ```
->
-> **If `verified:` predates a change to something the entry teaches, the entry is SUSPECT** — verify against
-> the decision *and* the canonical source before acting on it. `scripts/kb_freshness_scan.py` enforces this
-> on every commit. It exists because teaching documents are what the next agent reads **instead of** the
-> source, so a fossil here is worse than one in code.
->
-> **Clearing a freshness failure means re-verifying and CORRECTING, then bumping `verified:` — never bumping
-> the date alone.** And never treat any entry here as authority for a **value**: values live in canonical
-> source; these entries explain *why*.
+> **Every entry declares what it teaches and when it was verified** (`teaches:`, `verified:`). An entry
+> whose `verified:` predates a change to a decision it teaches is SUSPECT: check it against the decision
+> and the canonical source before acting on it. `scripts/kb_freshness_scan.py` enforces this on every
+> commit ([[reference_kb_freshness]]). The frontmatter shape and the writing rules are in
+> `.claude/rules/knowledge-entries.md`, which Claude Code loads when an entry is read or edited.
 
 ---
 
-## How this works (the flush discipline)
+## How this works
 
 - **Read:** at session start, read this index, then only the entries relevant to the current task.
-- **Write:** when you learn something durable (a gotcha, a convention, a resolved decision, a
-  non-obvious constraint) — **or when you catch a mistake or take a correction** — create
-  `docs/orchestration/knowledge/<slug>.md` and add a one-line pointer to the table below. This is how the
-  base compounds: every corrected mistake becomes a permanent rule so it can't recur. **Never** leave the
-  learning only in a tool's private memory or chat history.
+- **Write:** one fact per file, `docs/orchestration/knowledge/<slug>.md`, with a row in the table below;
+  every corrected mistake becomes an entry so it cannot recur.
 - **Link:** reference other entries with the wikilink convention `[[<slug>]]`, which resolves to
   `docs/orchestration/knowledge/<slug>.md`.
-- **One fact per file.** Keep entries small and single-purpose so ingestion stays cheap as the base grows.
-
-### Entry template
-
-```markdown
-# <Title>
-
-**Type:** convention | gotcha | decision | reference
-**Added:** YYYY-MM-DD
-
-<the durable learning; link related entries with [[other-slug]]>
-```
 
 ---
 
@@ -59,6 +26,7 @@ agent (Claude Code, Codex, future tools) reads and writes here, never into a too
 
 | Slug | Summary | Type |
 |------|---------|------|
+| [reference_kb_freshness](reference_kb_freshness.md) | Why an entry declares `teaches:` and `verified:` and a gate fails it when a taught decision changed later: six missed amendment sweeps, all leaving the teaching document stale. Why decisions outrank prose, why an entry is never the authority for a value, amend and supersede on both sides, what the gate computes and its honest limit, and why counts of a growing set are fossils. Moved from `CONSTITUTION.md` §6.3. | reference |
 | [reference_claude_code_hooks](reference_claude_code_hooks.md) | The session hooks in `.claude/settings.json`, read against the hooks reference: the 10,000-character cap on injected context and the priority cut; why compaction runs no gate; the session number from the journal; `--no-rebase` and `--all-files` on the start's commands; the Stop hook that asks once and never wedges; why the journal and notes are gitignored and how concurrent lines stay whole. | reference |
 | [reference_claude_code_agents_md](reference_claude_code_agents_md.md) | Claude Code reads `AGENTS.md` natively from v2.1.277, but any `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` on the path is read instead, silently; observed on 2.1.308 with a canary, both halves. Why the template retired its bridge, the hazard that creates, and why a `SessionStart` hook never injects `AGENTS.md`. | reference |
 | [reference_pristine_cut](reference_pristine_cut.md) | The cut as executed: read the sanitize check and judge every item against what the reset clears; rename on GitHub first; run the sanitizer while the clone's origin still names the template; copy tracked files only; switch the old clone's origin to the archive name before the new repository takes the old one, because the redirect lasts only until the name is reused; prove the commit-msg gate with zero commits behind it; `v1.0.0` is the sanitized tree alone and the cut's record is carried in after it. | reference |

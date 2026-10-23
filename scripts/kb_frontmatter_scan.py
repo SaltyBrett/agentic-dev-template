@@ -125,7 +125,7 @@ import kb_freshness_scan  # noqa: E402  — imported for its parser, not its mai
 FIXES = {
     "no-frontmatter": (
         "Give the entry a YAML frontmatter block: three dashes, the keys, three dashes,\n"
-        "    as the very first lines of the file. See knowledge/INDEX.md for the template."
+        "    as the very first lines of the file. See .claude/rules/knowledge-entries.md for the template."
     ),
     "invalid-yaml": (
         "Make the block parse. The usual cause is an unquoted scalar containing a colon —\n"

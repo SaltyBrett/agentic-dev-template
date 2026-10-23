@@ -40,6 +40,10 @@ WHAT IT CHECKS
     <slug>.md, with an allow set for the convention's own placeholders and the fixture slug
     the self-test uses (TMPL-5.2); the handoff linter above proved it for handoffs alone
   * AGENTS.md is at most 32 KiB, the Codex project-doc cap
+  * every .claude/rules/**/*.md is path-scoped judgement (decision 2026-10-22-006): its
+    frontmatter parses with a `paths:` list, since Claude Code loads a rule without one, or whose
+    YAML does not parse, in every session, a second brain beside AGENTS.md; at least one file git
+    would commit matches it, or it never loads; and it repeats no sentence of AGENTS.md
 --closeout  session end: archives every pair older than the session being closed, then verifies
             that the pair for the next session exists and passes every check above, and on a pass
             clears the session journal and working notes (session_journal.py); refuses a
@@ -108,6 +112,7 @@ LOG = ROOT / "sprint" / "decision-log.md"
 DECISION_LOGS = {"sprint/decision-log.md": LOG, "docs/governance/framework_decisions.md": ROOT / "docs" / "governance" / "framework_decisions.md"}
 KB = ROOT / "docs" / "orchestration" / "knowledge"
 BRAIN = ROOT / "AGENTS.md"
+RULES = ROOT / ".claude" / "rules"     # path-scoped judgement Claude Code loads beside a matching file
 PROFILE = ROOT / ".project-profile"             # present in a project, absent in the template
 RESOURCES_STAMP = ROOT / ".resources-version"   # `<ref> <sha>`, written by resources_sync.py
 # The three sprint documents the live-placeholder rule reads, by the path the report names.
@@ -155,6 +160,7 @@ STATUSES = ("Not Started", "In Progress", "Blocked", "Done")
 STARTED = ("In Progress", "Done")   # a story in one of these has begun, so its dependencies were due
 MAX_STATUS_ENTRIES = 10
 MAX_BRAIN_BYTES = 32 * 1024
+MIN_SENTENCE_WORDS = 6   # shorter shared phrases ("run the gate suite") are vocabulary, not a restatement
 NONE_MARKERS = {"none", "none."}
 # `--all-files` is load-bearing: without it pre-commit stashes unstaged changes to tracked files
 # before running the hook, and the gate then judges the last commit's sprint-status and tracker
@@ -398,6 +404,69 @@ def persona_version(text: str) -> str:
     keys, _ = persona_frontmatter(text)
     version = (keys or {}).get("version")
     return str(version) if positive_int(version) else ""
+
+
+def expand_braces(pattern: str) -> list[str]:
+    """`src/*.{ts,tsx}` -> both patterns, innermost group first, as Claude Code expands `paths:`."""
+    m = re.search(r"\{([^{}]*)\}", pattern)
+    if not m:
+        return [pattern]
+    return [p for alt in m.group(1).split(",") for p in expand_braces(pattern[:m.start()] + alt + pattern[m.end():])]
+
+
+def glob_regex(pattern: str) -> re.Pattern:
+    """A brace-free `paths:` glob, relative to the project root: `**/` is any run of directories
+    (none included), `**` anything, `*` and `?` stay within one path segment."""
+    out, i = [], 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out.append("(?:.*/)?")
+            i += 3
+        elif pattern.startswith("**", i):
+            out.append(".*")
+            i += 2
+        else:
+            out.append({"*": "[^/]*", "?": "[^/]"}.get(pattern[i], re.escape(pattern[i])))
+            i += 1
+    return re.compile("".join(out) + r"\Z")
+
+
+def sentences(text: str) -> set[str]:
+    """Normalized sentences of MIN_SENTENCE_WORDS or more: split at sentence ends, list items,
+    headings and blank lines, then lower-cased with punctuation and markdown dropped."""
+    out = set()
+    for chunk in re.split(r"(?<=[.!?])\s+|\n\s*\n|\n\s*(?:[-*>]|\d+\.|#+)\s", "\n" + text):
+        words = re.sub(r"[^a-z0-9 ]+", " ", chunk.lower()).split()
+        if len(words) >= MIN_SENTENCE_WORDS:
+            out.add(" ".join(words))
+    return out
+
+
+def lint_rule(text: str, files: list[str], brain: str) -> list:
+    """A rule under .claude/rules/ against the files git would commit and the text of AGENTS.md."""
+    v: list[tuple[str, str]] = []
+    fm, body = split_frontmatter(text)
+    paths = None
+    if fm is not None:
+        import yaml   # lazily, as persona_frontmatter does
+        try:
+            keys = yaml.safe_load(fm)
+        except yaml.YAMLError:
+            keys = None
+        paths = keys.get("paths") if isinstance(keys, dict) else None
+        if isinstance(paths, str):
+            paths = [p.strip() for p in paths.split(",") if p.strip()]
+    if not (isinstance(paths, list) and paths and all(isinstance(p, str) and p.strip() for p in paths)):
+        v.append(("rule-paths", "a rule here opens with a --- block whose `paths:` parses as a list of globs; "
+                                "Claude Code loads a rule without one, or whose YAML does not parse, in every "
+                                "session, and always-loaded text belongs in AGENTS.md"))
+    else:
+        regs = [glob_regex(x) for p in paths for x in expand_braces(p)]
+        if not any(r.match(f) for f in files for r in regs):
+            v.append(("rule-dead", f"no file git would commit matches {paths}, so the rule never loads"))
+    for s in sorted(sentences(body if fm is not None else text) & sentences(brain)):
+        v.append(("rule-restates", f"repeats a sentence of AGENTS.md: `{s[:90]}`; a fact has one home"))
+    return v
 
 
 def published_state(local: str, published: str | None) -> tuple[str, str] | None:
@@ -834,6 +903,13 @@ def check_all() -> tuple[list, dict[int, set[str]], int | None]:
                       f"{count} entries; keep at most {MAX_STATUS_ENTRIES} — move the oldest to "
                       "sprint/archive/sprint-status_<year>.md"))
 
+    if RULES.is_dir():
+        files = committed_files()
+        brain = BRAIN.read_text(encoding="utf-8") if BRAIN.is_file() else ""
+        for p in sorted(RULES.rglob("*.md")):
+            for rule, detail in lint_rule(p.read_text(encoding="utf-8"), files, brain):
+                v.append((rule, p.relative_to(ROOT).as_posix(), detail))
+
     if BRAIN.is_file():
         size = BRAIN.stat().st_size
         if size > MAX_BRAIN_BYTES:
@@ -1135,6 +1211,41 @@ def run_self_test() -> int:
            lint_persona(_GOOD_PERSONA.replace("  - gates\n", "  - gates and hooks\n"), "framework-maintainer", _GOOD_PERSONA))
     expect("a committed copy from before the version rule constrains nothing",
            lint_persona(_GOOD_PERSONA, "framework-maintainer", _GOOD_PERSONA.replace("version: 1\n", "")))
+    files = ["docs/orchestration/knowledge/INDEX.md", "docs/orchestration/knowledge/reference_a.md",
+             "scripts/x.py", "README.md", "src/app.tsx"]
+    brain = ("# Brain\n\n- **Verify before done:** give yourself an executable check and iterate until it passes.\n"
+             "- Never guess.\n- **Plan, then build:** settle a plan with the user before a change\n")
+    rule = "---\npaths:\n  - \"docs/orchestration/knowledge/**\"\n---\n\n# Entries\n\n- One fact per file, with its row in the index.\n"
+    expect("rules: a path-scoped rule that matches a tracked file and restates nothing passes", lint_rule(rule, files, brain))
+    expect("rules: no frontmatter fails — Claude Code would load the rule in every session",
+           lint_rule("# Entries\n\n- One fact per file, with its row in the index.\n", files, brain), "rule-paths")
+    expect("rules: YAML that does not parse fails — Claude Code would load the rule unscoped",
+           lint_rule(rule.replace('  - "docs', '  - [docs'), files, brain), "rule-paths")
+    expect("rules: a frontmatter without paths: fails",
+           lint_rule(rule.replace('paths:\n  - "docs/orchestration/knowledge/**"\n', "name: x\n"), files, brain), "rule-paths")
+    expect("rules: paths as a comma-separated string is read as Claude Code reads it",
+           lint_rule(rule.replace('paths:\n  - "docs/orchestration/knowledge/**"', 'paths: "nowhere/**, scripts/*.py"'), files, brain))
+    expect("rules: globs that match no tracked file fail — the rule never loads",
+           lint_rule(rule.replace("knowledge/**", "knowlege/**"), files, brain), "rule-dead")
+    expect("rules: a rule matched only through a brace group passes",
+           lint_rule(rule.replace("docs/orchestration/knowledge/**", "src/*.{ts,tsx}"), files, brain))
+    expect("rules: a sentence of AGENTS.md repeated in a rule fails",
+           lint_rule(rule + "- Verify before done: give yourself an executable check and iterate until it passes.\n", files, brain),
+           "rule-restates")
+    expect("rules: a short sentence both share is vocabulary, not a restatement",
+           lint_rule(rule + "- Never guess.\n", files, brain))
+    expect("rules: an unpunctuated list item repeated is found — list items are sentences",
+           lint_rule(rule.replace("in the index.", "in the index") + "- Plan, then build: settle a plan with the user "
+                     "before a change\n", files, brain), "rule-restates")
+    check("globs: `**` crosses directories and `**/` may match none; `*` and `?` stay in one segment",
+          bool(glob_regex("docs/**").match("docs/a/b/c.md") and glob_regex("**/*.py").match("a.py")
+               and glob_regex("**/*.py").match("x/y/a.py") and glob_regex("*.md").match("README.md")
+               and glob_regex("scripts/?.py").match("scripts/a.py"))
+          and not glob_regex("*.md").match("docs/README.md") and not glob_regex("scripts/?.py").match("scripts/ab.py")
+          and not glob_regex("a?b").match("a/b") and not glob_regex("scripts/*.py").match("scripts/x.pyc"))
+    check("globs: brace groups expand and multiply",
+          sorted(expand_braces("src/*.{ts,tsx}")) == ["src/*.ts", "src/*.tsx"] and len(expand_braces("{a,b}/{c,d}/x")) == 4)
+
     check("closeout: a persona dev-resources lacks is unpublished",
           (published_state(_GOOD_PERSONA, None) or ("",))[0] == "unpublished")
     check("closeout: a local version above the published one is unpublished",

@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
 | 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED |
 | 2026-10-22-004 | 2026-10-22 | The session journal and the working notes are local and gitignored: the journal records raw commands that must not enter a public history, an ignored file is outside pre-commit's stash, and the Stop hook excludes both by path as well; the closeout gate clears them | APPROVED |
 | 2026-10-22-003 | 2026-10-22 | `v2.1.0`: an agentic development team of role subagents whose handoffs are gated artifacts, and a coding standard built as mechanical limits, a process layer and one page of judgement; each opens with a design session, the standard proved against real code before adoption; MINOR | APPROVED |
@@ -2339,3 +2340,50 @@ from the frozen tree.
 section), `scripts/resources_sync.py` (`PERSONAS`), `.pre-commit-hooks.yaml` (`persona-lint`'s
 `files:`), and in `dev-resources` its `.pre-commit-config.yaml`. Taught by
 [[reference_session_closeout]] and [[reference_resources_sync]].
+
+---
+
+## Decision 2026-10-22-006: Rules are path-scoped judgement, and a gate keeps them so
+
+**Date:** 2026-10-22
+**Made By:** AI (S3), within decision 2026-10-22-001; reported to the operator at the S3 handover
+**Status:** APPROVED
+**Builds:** the path-scoped rules bullet of 2026-10-22-001 (TMPL-1.5)
+**Affects:** `.claude/rules/`, `CONSTITUTION.md` §6.3, `docs/orchestration/knowledge/INDEX.md`, `scripts/session_closeout.py` (`--check`), `AGENTS.md` (governance map)
+
+### Context
+
+Decision 2026-10-22-001 moves judgement that applies only when certain files are touched into
+`.claude/rules/`. The memory reference, read 2026-10-22: a rule with `paths:` loads when Claude
+reads, writes or edits a matching file; a rule without `paths:` loads in every session, like
+`CLAUDE.md`; a frontmatter that does not parse is ignored and the rule loads as if it had no
+`paths:`; a glob that matches nothing makes a rule that never loads. Claude Code reports none of
+these. And a rule is Claude's alone: Codex reads `AGENTS.md` and what it points to.
+
+### Decision
+
+- **A rule here is path-scoped or it is refused.** Always-loaded text belongs in `AGENTS.md`, the
+  one brain; an unscoped rule would be a second one. The session state gate refuses a rule whose
+  `paths:` does not parse as a list of globs, a rule no file git would commit matches, and a rule
+  that repeats a sentence of `AGENTS.md`.
+- **Rules are repository markdown and the home of their instructions.** `AGENTS.md`'s governance
+  map tells any agent to read the rules whose `paths:` match what it edits, so the instructions stay
+  portable. A rule points to the knowledge entry that holds the why, and never restates it.
+- **Three subjects, four files:** gate scripts and the suite, knowledge entries, decision logs and
+  the sprint documents. `CONSTITUTION.md` §6.3 becomes a pointer: its reasoning moves to a
+  knowledge entry and its reading and writing rules to the knowledge-entry and decision-log rules.
+  The knowledge index keeps its reading rule and sheds its frontmatter block, and its template
+  (which had no frontmatter at all), to the knowledge-entry rule.
+- Part of `v2.0.0` (decision 2026-10-22-001): a project's own unscoped rules fail the new check.
+
+### Consequences
+
+- A project that kept instructions in an unscoped rule moves them to `AGENTS.md` or scopes them.
+- The sprint documents keep their own headers: the generators write them, and the header is read
+  at cold start, when the reading rule matters.
+- TMPL-1.6 carries `.claude/rules/` through the initializer, the updater and the sanitizer.
+
+### Enforcement
+
+`scripts/session_closeout.py` (`RULES`, `lint_rule`, `glob_regex`, `expand_braces`, `sentences`)
+in `session-closeout-check`. Taught by [[reference_kb_freshness]] for the moved section.

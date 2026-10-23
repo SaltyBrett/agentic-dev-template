@@ -141,8 +141,8 @@ superseding or amending it; an entry teaching an ID in neither decision index (t
 set); an unstamped entry; and a decision index that cannot be located in a log that exists. It
 flags staleness risk, not wrongness: clearing it means re-verifying and correcting the entry, then
 bumping the date.
-**Why:** `CONSTITUTION.md` §6.3 and decisions 2026-09-20-004 and 2026-09-23-003;
-[[reference_kb_frontmatter_validation]], [[reference_framework_decisions]].
+**Why:** [[reference_kb_freshness]] (once `CONSTITUTION.md` §6.3) and decisions 2026-09-20-004 and
+2026-09-23-003; [[reference_kb_frontmatter_validation]], [[reference_framework_decisions]].
 **Alone:** `pre-commit run kb-freshness-scan --all-files` (add `--list` by direct invocation to see
 which entries the gate reaches)
 
@@ -154,7 +154,8 @@ which share its linters.
 **Blocks:** a commit when a linter fails a fixture: an unfilled scaffold passing, an extra handoff
 section accepted, a kickoff's section 1 that neither names the agent nor copies its prompt
 accepted, an agent file whose frontmatter does not parse or whose list item is a mapping accepted,
-the module needing PyYAML to read a prompt, a kickoff task citing no story passing, tracker
+the module needing PyYAML to read a prompt, an unscoped, dead or restating rule passing, a glob
+reading `*` across directories, a kickoff task citing no story passing, tracker
 statistics that do not reconcile passing, a Done story on an undone dependency passing, an example
 row in a live sprint passing, a fresh project's closeout producing no pair.
 **Why:** decisions 2026-09-21-001 and 2026-10-22-005; [[reference_session_closeout]].
@@ -179,9 +180,13 @@ sprint-status or the decision log outside inline or fenced code (`live-placehold
 with no `.project-profile`, is exempt), a sprint-status whose newest entry is not headed
 `## S<N> — date — title` or that holds more than ten, a `[[slug]]` in any text file git would
 commit that resolves to no knowledge entry and is not in the gate's allow set (the convention's
-own placeholders and the fixture slug), and an `AGENTS.md` over the Codex project-doc cap.
+own placeholders and the fixture slug), an `AGENTS.md` over the Codex project-doc cap, and a rule
+under `.claude/rules/` whose `paths:` does not parse as a list of globs (Claude Code would load it
+in every session), that no file git would commit matches (it would never load), or that repeats a
+sentence of `AGENTS.md`.
 **Why:** decisions 2026-09-21-001 (amended for the tree-wide wikilink rule), 2026-09-23-002,
-2026-09-24-001 (the tracker's two rules) and 2026-10-22-005 (agent files); [[reference_session_closeout]].
+2026-09-24-001 (the tracker's two rules), 2026-10-22-005 (agent files) and 2026-10-22-006 (rules);
+[[reference_session_closeout]].
 **Alone:** `pre-commit run session-closeout-check --all-files`
 
 ## `session-closeout`

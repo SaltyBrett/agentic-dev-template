@@ -206,7 +206,7 @@ Layer 4: Human code review (final check)
 Before committing, `pre-commit run --all-files` exits 0. The suite is the set of hooks in
 `.pre-commit-config.yaml`; `docs/governance/gate_suite_runbook.md` describes each one in run order,
 and a gate keeps that page in step with the config. This section names the set, not its members:
-a list here would be a count of a growing set (§6.3, corollary).
+a list here would be a count of a growing set ([[reference_kb_freshness]], corollary).
 <!-- profile:gcc -->
 
 The banned-feature scan applies the GCC-incompatible feature set (§3.2) under this profile.
@@ -214,61 +214,11 @@ The banned-feature scan applies the GCC-incompatible feature set (§3.2) under t
 
 If pre-commit hooks fail, fix the issues before committing. Do not bypass hooks.
 
-### 6.3 Decision Currency and KB Freshness — how amendments stay swept
+### 6.3 Decision Currency and KB Freshness
 
-**The failure this closes.** On the project this framework came from, an amendment sweep was missed
-**six times**. Every miss had the same shape: the decision body, the canonical source and the live
-system were all updated correctly — and the **teaching document** was left stale.
-
-That shape is the dangerous one, because **teaching documents are what the next agent reads *instead
-of* the source.** The worst instance told agents that a value **two ratified decisions required** was
-"legacy, retained only until parity proves it has no remaining consumer." It had five live consumers.
-
-**A sweep that stops at code and decision bodies is not a sweep.**
-
-Root cause, once measured: nothing linked a decision to the documents that teach it, and amendment
-dates were not machine-readable — so neither a human nor a script could answer *"which decisions
-changed since this document was written?"*
-
-#### Reading rules — how to consume governance
-
-1. **A decision's Status and dates outrank any prose that teaches it.** When they disagree, the
-   decision wins and the prose is a fossil to be fixed **in the same work unit** — not "surfaced".
-2. **If a knowledge entry's `verified:` predates a decision it `teaches:`, treat the entry as
-   SUSPECT** — verify against the decision *and* the canonical source before acting on it.
-3. **Never treat a teaching document as authority for a VALUE.** Values live in canonical source;
-   teaching documents explain *why*. Where a value must be restated for the explanation to work,
-   state its authority and a one-line re-verification command beside it. *This rule is the one that
-   shrinks the problem permanently — the others manage duplication; this removes it.*
-
-#### Writing rules — how to land a change
-
-4. **Amending a decision** → set the Date cell to `<original>; amended <YYYY-MM-DD>` **and** sweep
-   every consumer, teaching documents included.
-5. **Superseding a decision** → record `SUPERSEDED [(scope)] by <id>` in the old row's Status, and a
-   `**Supersedes:** <id>` line in the new decision's body. **Bidirectional or it is not done.** A
-   partial supersession names its scope; the remainder stays in force.
-6. **Every knowledge entry declares `teaches: [<id>, …]` and `verified: <YYYY-MM-DD>`** in YAML
-   frontmatter. `teaches:` lists decisions the entry *explains* — not every ID it mentions in
-   passing, and never a sister-repo or unratified-draft decision.
-
-#### The gate
-
-`scripts/kb_freshness_scan.py` (pre-commit) fails when a taught decision changed after the entry was
-last verified, where change = `max(amended date, date of any decision recorded as superseding or
-amending it)`. Supersession dates are taken from the *superseding* decision, so historical rows need
-no backfill. Decision IDs are read literally from the index, so any ID convention works.
-
-**Clearing a failure means re-reading the decision and the canonical source, correcting the entry,
-then bumping `verified:`. Bumping the date alone re-creates the exact fossil the gate exists to
-catch.**
-
-**Honest limit:** it flags staleness **risk**, not wrongness — it cannot read prose. A green scan
-means nothing has changed *since someone last looked*, not that the entry is right. That is still the
-whole win: it converts a silent failure into a blocking one.
-
-**Corollary — counts of a growing set are fossils waiting to happen.** "All five drift scans" had
-already drifted to six. **Name the set, not its size.**
+Why a knowledge entry declares what it teaches and when it was verified, and what
+`scripts/kb_freshness_scan.py` computes, is in [[reference_kb_freshness]]. The instructions sit
+beside the files they govern: `.claude/rules/knowledge-entries.md` and `.claude/rules/decision-logs.md`.
 
 ---
 
