@@ -21,14 +21,23 @@
 whole (curl, 114 KB) before any build, with the sub-agents page's startup and tool sections. Two
 choices went to the operator, both answered with the recommendation: the forked closeout takes the
 next persona and the session's brief as arguments, and the release and the pristine cut are the
-operator's alone (decision 2026-10-23-001). TMPL-1.4 in progress.
+operator's alone (decision 2026-10-23-001). TMPL-1.4 done.
 
 ### Done
 
-1. TMPL-1.4 (in progress) — five skills in `.claude/skills/`; `AGENTS.md`'s procedures section
-   rewritten to list them by path for any agent; the handoff, sprint and document standards keep
-   the law and point to them; the scaffold's kickoff section 5 points to the closeout skill;
-   `skill-scan` and its self-test (40 fixtures) added with runbook sections.
+1. TMPL-1.4 — five skills in `.claude/skills/` (closeout forked as `general-purpose` with
+   `background: false`; planning-session and document-production inline; release and pristine-cut
+   the operator's alone). `AGENTS.md`'s procedures section rewritten to list them by path for any
+   agent, the emergency close moved into its closeout bullet; the handoff, sprint and document
+   standards keep the law and point to them; the scaffold's kickoff section 5 points to the
+   closeout skill; [[reference_pristine_cut]] and [[reference_template_versioning]] keep the why.
+   `skill-scan` and its self-test (43 fixtures) with runbook sections; 38 broken variants, each
+   caught, one first written as a no-op and rewritten. Live: plants of a missing hook id and a
+   missing stage each failed `pre-commit run skill-scan --all-files` (exit 1) and a real commit;
+   the one-home grep finds each procedure's command in its skill alone; `claude -p "/closeout …"`
+   in a scratch clone ran as a `general-purpose` subagent, first command `git status --short`,
+   and stopped at the sync it could not get approved, tree untouched
+   ([[reference_claude_code_skills]]).
 
 ### Blockers
 

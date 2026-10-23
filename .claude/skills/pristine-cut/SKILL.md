@@ -28,14 +28,13 @@ before running it: a rename, a create and an archive are visible to everyone who
    still exist after the reset. Then `git checkout -- .` restores the clone.
 5. **Point the old clone at the archive** with `git remote set-url origin <archive URL>`, before the
    new repository exists.
-6. **In the fresh directory:** `git init -b main`;
-   `python3 scripts/template_version.py --release v1.0.0`; create the empty private repository with
+6. **In the fresh directory:** `git init -b main`; create the empty private repository with
    `gh repo create`; set `origin` under the ssh host alias;
    `pre-commit install --hook-type pre-commit --hook-type commit-msg`; prove the `commit-msg` gate
-   with zero commits (a trial commit carrying an attribution trailer is refused); commit
-   `release: v1.0.0`; tag it with `git tag -a v1.0.0` and an annotation naming MAJOR and the archive
-   repository. Then, before pushing: `pre-commit run template-version --all-files`, the sanitize
-   check, `pre-commit run session-verify --hook-stage manual --all-files` at S1 with no pair,
+   with zero commits (a trial commit carrying an attribution trailer is refused). Then cut `v1.0.0`
+   by the release skill's steps 3 to 6, its annotation naming MAJOR and the archive repository; the
+   earliest tag has no bump to judge. Then, before pushing: the sanitize check,
+   `pre-commit run session-verify --hook-stage manual --all-files` at S1 with no pair,
    `pre-commit run --all-files`, and a search for the probe's name that finds only the sanitizer.
 7. **Push `main` and the tag**, and read both `gates` runs to the end with
    `gh run watch <id> --exit-status`.

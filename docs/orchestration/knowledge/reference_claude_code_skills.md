@@ -35,6 +35,20 @@ metadata:
 - After compaction each invoked skill is re-attached, first 5,000 tokens only, so the important steps
   go first.
 
+## What was observed (2026-10-23, 2.1.308)
+
+- In the session that wrote them, the skill listing in context gained `closeout`,
+  `planning-session` and `document-production` within the turn, and never `release` or
+  `pristine-cut`, whose `disable-model-invocation` keeps their descriptions out. A `claude -p` run's
+  init event listed all five as commands.
+- `claude -p "/closeout <slug> <brief>"` in a scratch clone with no remote: the skill ran as a
+  subagent (its events carried a `parent_tool_use_id`, and the `PostToolUse` journal tagged each
+  command `[general-purpose]`, so hooks fire for a forked skill's tools). Its first command was
+  step 1's `git status --short`; step 2 came from git alone, finding the previous closeout commit
+  and the decisions added since. At step 3 the sync needed an approval `-p` could not give, and it
+  stopped there with the tree untouched and every exit code reported. It also noticed that the
+  brief's task could not start under the dependency rule.
+
 ## Why the closeout takes its brief as arguments
 
 A forked closeout starts with the tree and nothing else, which is the point: it cannot die of the

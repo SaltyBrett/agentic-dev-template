@@ -483,6 +483,7 @@ def run_self_test() -> int:
     expect("a description past the listing cap fails",
            run(inline=_INLINE.replace("Cut a release.", "x" * 1600)), "description")
     expect("a flag that is not a boolean fails", run(inline=_INLINE.replace("invocation: true", "invocation: 'true'")), "field")
+    expect("`background` that is not a boolean fails", run(fork=_FORK.replace("background: false", "background: 'false'")), "field")
     expect("`context` other than fork fails", run(fork=_FORK.replace("context: fork", "context: forked")), "field", "field", "field")
     expect("`agent` without `context: fork` fails", run(inline=_INLINE.replace("---\n\nRun", "agent: Explore\n---\n\nRun")), "field")
     expect("an `agent` that is no built-in and no agent file fails",
@@ -492,6 +493,8 @@ def run_self_test() -> int:
     expect("an empty body fails", run(inline=_INLINE.split("\n\nRun")[0] + "\n"), "body")
     expect("a directory with no SKILL.md fails", run(extra={f"{SKILLS}draft/notes.md": "x"}), "no-skill")
     expect("a supporting file beside SKILL.md is not a skill", run(extra={f"{SKILLS}closeout/reference.md": "x"}))
+    expect("a SKILL.md one level too deep is no skill",
+           run(extra={f"{SKILLS}draft/sub/SKILL.md": "---\nname: sub\ndescription: x\n---\nbody\n"}), "no-skill")
     # hooks and stages
     expect("a hook id the config lacks fails",
            run(fork=_FORK.replace("pre-commit run closeout", "pre-commit run close-out")), "hook")
@@ -505,6 +508,9 @@ def run_self_test() -> int:
     expect("a whole-suite run at a stage no hook declares fails",
            run(fork=_FORK.replace("pre-commit run --all-files", "pre-commit run --hook-stage pre-push --all-files")), "stage")
     expect("a run without --all-files fails", run(fork=_FORK.replace("--hook-stage manual --all-files", "--hook-stage manual")), "all-files")
+    expect("an option's value is never read as a hook id (the CI's commit-msg form passes)",
+           run(fork=_FORK.replace("pre-commit run --all-files",
+                                  "pre-commit run --hook-stage commit-msg --commit-msg-filename msg.txt --all-files")))
     expect("a placeholder hook id is not judged", run(inline=_INLINE.replace("run alpha --all", "run <hook-id> --all")))
     # scripts
     expect("a script that does not exist fails", run(fork=_FORK.replace("scripts/closer.py --scaffold", "scripts/closure.py --scaffold")), "script")

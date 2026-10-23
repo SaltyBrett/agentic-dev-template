@@ -2467,3 +2467,16 @@ Claude Code does not know is ignored; a directory with no `SKILL.md` is no skill
 
 `scripts/skill_scan.py` (`frontmatter`, `lint_skill`, `precommit_violations`, `script_violations`,
 `scan`) in `skill-scan`, after `skill-scan-selftest`. Taught by [[reference_claude_code_skills]].
+
+### Verification
+
+Fixtures in the skill self-test for every rule, among them an option's value never read as a hook
+id and a `SKILL.md` one level too deep; thirty-eight broken variants of the gate, each failing at
+least one fixture without crashing (the first draft of one variant changed nothing and passed; it
+was rewritten to break the code). On the tree the gate reads five skills and the commands in each.
+Live plants in a skill, a hook id and then a stage the config lacks, each failed
+`pre-commit run skill-scan --all-files` and a real commit. A grep over the markdown, decision
+records and handoff pairs aside, finds each procedure's distinctive command in its skill alone.
+`claude -p "/closeout framework-maintainer <brief>"` in a scratch clone ran the skill as a
+`general-purpose` subagent whose first command was step 1's `git status --short`; it read step 2
+from git and stopped at step 3, whose sync needed an approval `-p` cannot give, the tree untouched.
