@@ -311,8 +311,10 @@ decisions kept rather than merged, a keyed insert landing at the table's end ins
 `[EXAMPLE]` row travelling, both-sides-changed lines silently taking the template's, a conflict
 reported clean, template markdown compared without the profile strip, a `.claude/` path or a
 local file classified other than decided, the roster's or the library's path differing among the
-state gate, the initializer, the sanitizer and this map.
-**Why:** decisions 2026-09-22-004, 2026-09-23-003 and 2026-10-23-002; [[reference_template_update]].
+state gate, the initializer, the sanitizer and this map; a `v1.0.0` persona converted to anything
+but the agent file, or a file the shape cannot hold converted rather than refused; the roster
+overwritten, the sync's stamp kept, or a marked entry's body touched at adoption.
+**Why:** decisions 2026-09-22-004, 2026-09-23-003, 2026-10-23-002 and 2026-10-23-005; [[reference_template_update]].
 **Alone:** `pre-commit run template-update-selftest --all-files`
 
 ## `template-version-selftest`

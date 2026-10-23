@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 18 |
-| **Not Started** | 10 |
+| **Not Started** | 9 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 8 |
+| **Completed** | 9 |
 
 ---
 
@@ -63,7 +63,7 @@ that decision 2026-09-23-003 names.
 | TMPL-1.7 | Proof: a scratch birth, a hook-driven cold start, a compaction re-injection observed, a forked closeout; a knowledge entry for the substrate | Not Started | TMPL-1.6, TMPL-1.8, TMPL-1.9, TMPL-1.10 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
 | TMPL-1.8 | Persona library mechanism: `personas/` in the template, inactive, in the agent-file shape and linted as the roster is; `.claude/agents/` the project's roster; the first-session skill that asks which specializations the project needs, recommends from the library, drafts what it lacks and activates the chosen; the closeout's report of a library version newer than the roster's; the initializer, the updater and the sanitizer following; the five existing personas moved into the library; the `dev-resources` sync removed from the template, since it would write every persona into the roster (script, hook, closeout rule, stamp; the shared knowledge entry made the template's own); the supersessions marked on both sides. Done at S5: twenty broken variants caught; plants refused; a scratch birth's session lists no library persona | Done | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
 | TMPL-1.9 | The full team in the library: roles across the software development lifecycle, data science, document management, writing including technical writing, and quality control, designed with the operator, each persona written in the agent-file shape and linted. Done at S5: the team approved with BI, reporting and game roles added (2026-10-23-004) | Done | TMPL-1.8 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
-| TMPL-1.10 | Adoption from `v1.0.0`: the updater converts a project's `docs/personas/` into `.claude/agents/` and settles its synced knowledge entries and stamp, proved against the real `v1.0.0` persona files (the sync itself left the template in TMPL-1.8) | Not Started | TMPL-1.8 | doc_control_standard.md | 2026-10-23-003 |
+| TMPL-1.10 | Adoption from `v1.0.0`: the updater converts a project's `docs/personas/` into `.claude/agents/` and settles its synced knowledge entries and stamp, proved against the real `v1.0.0` persona files (the sync itself left the template in TMPL-1.8). Done at S6: every real persona file converts to its library copy byte for byte; scratch adoptions of the three projects green after a `.gitignore` conflict resolved by hand (2026-10-23-005) | Done | TMPL-1.8 | doc_control_standard.md | 2026-10-23-003 |
 
 ---
 

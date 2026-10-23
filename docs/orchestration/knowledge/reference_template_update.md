@@ -1,7 +1,7 @@
 ---
 name: How a derived project takes a newer template release
-description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: a project''s persona roster kept, the persona library, skills, rules and settings three-way, the journal, notes and local settings untouched; and how a project''s docs/personas/ reaches its roster at v2.0.0.'
-teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002, 2026-10-23-003]
+description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: a project''s persona roster kept, the persona library, skills, rules and settings three-way, the journal, notes and local settings untouched; and adoption from v1.0.0: each docs/personas/ file converted into the roster exactly or refused, by a converter that imports nothing from the project''s old scripts, the sync''s stamp removed and its marked entry merged as content.'
+teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002, 2026-10-23-003, 2026-10-23-005]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -62,7 +62,7 @@ project's log is kept with the rest of `sprint/`. A project that took a release 
 still carries the old copies in its log, and the gates let the framework file win those duplicate
 IDs ([[reference_framework_decisions]]).
 
-## The Claude Code paths, the local files, and how personas adopt `v2.0.0`
+## The Claude Code paths and the local files
 
 Decisions 2026-10-23-002 and 2026-10-23-003. A project's persona roster, `.claude/agents/`, is
 kept: it holds what the project activated or drafted, and a release ships only the library,
@@ -76,11 +76,30 @@ three scripts, kept here. That ignore is checked with `git -c core.excludesFile=
 operator's global excludes file once covered `settings.local.json` and hid that the repository's
 did not.
 
-A project on `v1.0.0` holds its personas in `docs/personas/`, which `v2.0.0` no longer ships.
-Decision 2026-10-23-003, the operator's choice, has this script convert every one into an agent file
-in the project's roster and remove the old folder, at the cost that each becomes a live agent until
-the project deactivates it; TMPL-1.10 builds the conversion and proves it against the real `v1.0.0`
-files. Until then the map treats `docs/personas/` as an ordinary removed path.
+## Adoption from `v1.0.0`: what the retired sync left
+
+Decisions 2026-10-23-003 and 2026-10-23-005. A `v1.0.0` project holds its personas in
+`docs/personas/`, a `.resources-version` stamp, and a knowledge entry marked `source: dev-resources`.
+The `adopt` class settles all three by what the project holds rather than by either release, so a
+project that skips releases adopts the same way:
+
+- **Every persona is converted into the roster, exactly or not at all**, at the operator's chosen
+  cost that each becomes a live agent until the project deactivates it. The converter reads the old
+  file as `v1.0.0` read it (flat `key: value` lines, a title, four sections) and refuses anything the
+  agent file has no place for, because a dropped line is lost silently and a refusal is not. It
+  writes an item plain only where YAML reads it back unchanged, and re-parses the whole frontmatter
+  before it writes, because Claude Code skips an agent file it cannot parse without a word. Proved on
+  the eighteen real files: each library persona converts to its library copy byte for byte.
+- **The converter imports nothing from the sibling scripts.** The target's updater runs beside the
+  project's old copies, and `v1.0.0`'s persona lint judges the old shape: calling it would pass or
+  fail the wrong file. The suite run after `--apply` is the release's, and judges the roster there.
+- **The stamp is removed** and **a marked entry is merged like any other**, the declaration one more
+  line, so an unedited copy takes the template's unmarked one; a marked entry no release writes just
+  loses the line. A wrapped bullet is one item: the real file that had one showed a fixture written
+  from assumption had the rule backwards.
+
+The three real adoptions also conflicted on `.gitignore`, where project and template both append at
+the end; that is the ordinary three-way rule working, resolved by keeping both blocks.
 
 ## Three things that were not obvious until the probe ran
 
@@ -110,6 +129,8 @@ would be indistinguishable from a `keep` that saw nothing.
 - A kickoff written before a release names the release it knows. When the template moves on
   before the session runs, take the newer release and say so in the sprint-status entry.
 - The updater never writes a project's persona roster, `.claude/agents/` (decision 2026-10-23-003),
-  nor a knowledge entry whose frontmatter declares `source: dev-resources`, which a `v1.0.0`
-  project synced from the retired `dev-resources` ([[reference_resources_sync]]). The template's own packaging (`pyproject.toml`,
+  except to convert a `v1.0.0` project's `docs/personas/` into it at adoption (decision
+  2026-10-23-005, [[reference_resources_sync]]). The template's own packaging (`pyproject.toml`,
   `.pre-commit-hooks.yaml`) is never written either; a project is not a hook repository.
+- Adoption needs PyYAML in the `python3` that runs the updater, since the conversion writes YAML and
+  reads it back.

@@ -195,9 +195,10 @@ What it does per path is decided by ownership, and the initializer's lists are t
 
 | Class | Paths | Behaviour |
 |---|---|---|
-| keep | `sprint/` (the decision log included), `.project-profile`, the content folders shipped empty, the persona roster `.claude/agents/`, a `v1.0.0` project's synced knowledge entries (declaring `source: dev-resources`), the template's own packaging | never written; template changes there are named in one line |
+| keep | `sprint/` (the decision log included), `.project-profile`, the content folders shipped empty, the persona roster `.claude/agents/`, the template's own packaging | never written; template changes there are named in one line |
 | merge | `docs/orchestration/knowledge/INDEX.md` by slug; `docs/governance/framework_decisions.md` by decision ID, rows and bodies | project rows never touched; a framework decision the file lacks is inserted, because the framework's entries `teaches:` it; an edited row or body is reported and left |
 | three-way | everything else, through `git merge-file` | an unedited copy takes the template's version; an edited copy takes the change where it does not overlap; an overlap is a conflict, left alone and named |
+| adopt | what a `v1.0.0` project holds from the retired `dev-resources` sync: `docs/personas/`, `.resources-version`, a knowledge entry declaring `source: dev-resources` | each persona converted into an agent file in `.claude/agents/` and the old folder removed; the stamp removed; a marked entry merged three-way like any other, and the declaration dropped from one no release step writes. A persona that does not convert exactly is a conflict. Needs PyYAML in the `python3` that runs it |
 
 Template markdown is stripped to your profile before it is compared or written, as at birth. A
 conflict withholds the stamp: edit the file and re-run with `--keep <path>`, or take the template's

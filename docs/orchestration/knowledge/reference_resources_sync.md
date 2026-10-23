@@ -1,7 +1,7 @@
 ---
 name: The persona registry was a cache of dev-resources, and why the sync was retired
 description: 'Until v2.0.0, personas and shared knowledge entries lived in dev-resources and reached each project by resources_sync.py: verdicts decided by version, a same-version difference a conflict never picked silently, growth only through --publish, the closeout refusing an unpublished persona. Decision 2026-10-23-003 retired it: the template ships the persona library itself and each project keeps its own roster. Why the sync was the wrong shape for that, what still holds for a project on v1.0.0, and what any future cache inherits. Read before reviving a cross-repository sync, or when a v1.0.0 project syncs.'
-teaches: [2026-09-23-002, 2026-09-23-007, 2026-10-22-005, 2026-10-23-003]
+teaches: [2026-09-23-002, 2026-09-23-007, 2026-09-23-008, 2026-10-22-005, 2026-10-23-003, 2026-10-23-005]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -48,8 +48,10 @@ was the wrong shape for that, three ways:
 
 - A project on `v1.0.0` keeps its own copy of the script, its stamp and its closeout rule until it
   adopts `v2.0.0`; `dev-resources` keeps serving it and is archived once all have adopted (TMPL-2.4).
-  The `v2.0.0` updater still keeps an entry marked `source: dev-resources`, and TMPL-1.10 settles
-  what adoption does with those entries and with `docs/personas/`.
+  Adoption settles what the sync left (decision 2026-10-23-005, [[reference_template_update]]): each
+  `docs/personas/` file is converted into the roster, the stamp removed, and a marked entry merged as
+  content, so the `source: dev-resources` declaration, the resource-entry class of decision
+  2026-09-23-008, ends with the sync.
 - The version verdicts live on in the closeout's roster rule: a roster copy above its library
   version is a fork, the same version with other text is drift, a lower one is noted
   ([[reference_session_closeout]]).

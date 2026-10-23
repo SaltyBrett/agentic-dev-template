@@ -194,6 +194,7 @@ repos:
         name: Template Update Self-Test (ownership map is the initializer's inverse; merges by key)
         entry: python scripts/template_update.py --self-test
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the persona conversion writes and re-reads YAML (decision 2026-10-23-005)
         stages: [pre-commit]
         pass_filenames: false
         always_run: true

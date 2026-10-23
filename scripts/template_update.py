@@ -40,6 +40,22 @@ WHO OWNS WHAT — three classes, decided by path (`classify`)
              An overlap is a conflict: the file is left alone and named, and the run
              refuses to stamp until `--take` or `--keep` settles it.
 
+ADOPTION FROM v1.0.0 — judged by what the project holds, not by either release
+-------------------------------------------------------------------------------
+Decision 2026-10-23-005. A v1.0.0 project kept its personas in `docs/personas/` and synced
+them, with one knowledge entry, from the retired `dev-resources`. Whenever the project still
+holds them (`adoption_steps`):
+  * every persona in `docs/personas/` is converted into an agent file in the roster
+    `.claude/agents/` and the old file removed: the only write this script makes into the
+    roster. A file that does not convert exactly, or a roster file already holding other text,
+    is a conflict, left alone and named.
+  * the sync's stamp `.resources-version` is removed; nothing reads it.
+  * a knowledge entry declaring `source: dev-resources` is merged three-way like any other, the
+    declaration being content; one that no release step writes loses the declaration and is
+    the project's own.
+The converter reads nothing from the sibling scripts: during adoption they are still the
+project's v1.0.0 copies, and their persona lint knows only the old shape.
+
 Template markdown is stripped to the project's profile before it is compared or
 written, because the initializer stripped it at birth; without that, every document
 with a profile block would look project-edited. `.template-version` is stamped last,
@@ -71,6 +87,8 @@ Exit 0 = clean, 1 = refused, a conflict, or the suite failed, 2 = cannot run.
 from __future__ import annotations
 
 import argparse
+import importlib.util
+import json
 import re
 import subprocess
 import sys
@@ -89,8 +107,11 @@ VERSION_FILE = ".template-version"
 REF_PREFIX = "refs/template/"
 VERSION = re.compile(r"^v\d+\.\d+\.\d+$")
 
-# Project-owned: never written. The decision log sits under sprint/ but is merged (MERGE
-# is consulted first). Everything not listed here or in MERGE is three-way merged.
+ROSTER = ".claude/agents/"
+LIBRARY = "personas/"
+
+# Project-owned: never written. Everything not listed here, in MERGE or in the adoption paths
+# below is three-way merged.
 KEEP = [
     "sprint/",
     ".project-profile",
@@ -101,11 +122,7 @@ KEEP = [
     "pyproject.toml", ".pre-commit-hooks.yaml",
     # The roster: the personas this project activated from the library or drafted itself
     # (decision 2026-10-23-003). A release ships the library in personas/ and never a roster.
-    ".claude/agents/",
-    # A v1.0.0 project's sync stamp. v2.0.0 has no sync (decision 2026-10-23-003); the stamp is
-    # the project's own state, never written here. Resource knowledge entries a v1.0.0 project
-    # synced are told apart by content: see resource_owned().
-    ".resources-version",
+    ROSTER,
     # One operator's Claude Code permissions (new_project.LOCAL_STATE): gitignored, so a release
     # should never hold it; kept in case one ever does, since it would carry personal grants.
     ".claude/settings.local.json",
@@ -114,17 +131,12 @@ KEEP = [
     # (decision 2026-09-25-002).
     "LICENSE",
 ]
-RESOURCE_KEY = re.compile(r"^source:\s*dev-resources\s*$", re.M)
-
-
-def resource_owned(data: bytes | None) -> bool:
-    """A knowledge entry that declares `source: dev-resources` in its frontmatter belongs to the
-    sync, and this script leaves it alone whichever side changed it."""
-    if not data or not data.startswith(b"---"):
-        return False
-    text = data.decode("utf-8", errors="replace")
-    end = text.find("\n---", 3)
-    return end != -1 and bool(RESOURCE_KEY.search(text[3:end]))
+# Adoption from v1.0.0 (decision 2026-10-23-005): what the retired dev-resources sync left in a
+# project. Judged by the project's own files in adoption_steps, never by either release.
+LEGACY_PERSONAS = "docs/personas/"   # the v1.0.0 registry, converted into the roster
+RETIRED = [".resources-version"]     # the sync's stamp, which nothing reads any longer
+KB_DIR = "docs/orchestration/knowledge/"
+RESOURCE_KEY = re.compile(r"^source:\s*dev-resources\s*$")
 MERGE = {
     "docs/orchestration/knowledge/INDEX.md": "index",
     "docs/governance/framework_decisions.md": "decisions",
@@ -150,6 +162,8 @@ def classify(path: str) -> str:
         return "special"
     if path in MERGE:
         return "merge"
+    if path in RETIRED or path.startswith(LEGACY_PERSONAS):
+        return "adopt"
     for prefix in KEEP:
         if path == prefix or path.startswith(prefix):
             return "keep"
@@ -321,6 +335,207 @@ MERGERS = {"index": merge_index, "decisions": merge_decisions}
 
 
 # ==============================================================================
+# Adoption from v1.0.0 — pure over the project's files (decision 2026-10-23-005)
+# ==============================================================================
+
+V1_KEYS = ["name", "slug", "description", "version"]
+V1_SECTIONS = ["Expertise", "Insists on", "Invocation", "Changelog"]
+V1_LISTS = {"Expertise": "expertise", "Insists on": "insists_on", "Changelog": "changelog"}
+V1_LINE = re.compile(r"^([a-z_]+):\s*(.*)$")   # how v1.0.0's persona lint read the flat frontmatter
+H2 = re.compile(r"^##\s+(.+?)\s*$")
+FENCE = re.compile(r"^\s*(```|~~~)")
+
+
+class ConversionError(Exception):
+    """A docs/personas/ file that would not convert without losing or changing something."""
+
+
+def blank_trimmed(lines: list[str]) -> list[str]:
+    while lines and not lines[0].strip():
+        lines = lines[1:]
+    while lines and not lines[-1].strip():
+        lines = lines[:-1]
+    return lines
+
+
+def v1_persona(stem: str, data: bytes) -> tuple[dict, str]:
+    """(agent frontmatter values, Invocation) from a v1.0.0 persona, read as v1.0.0 read it: flat
+    `key: value` lines, then a title and four H2 sections. Anything the agent-file shape has no
+    place for is refused rather than dropped."""
+    text = data.decode("utf-8").replace("\r\n", "\n")
+    end = text.find("\n---\n", 3)
+    if not text.startswith("---\n") or end == -1:
+        raise ConversionError("no --- frontmatter block")
+    keys: dict[str, str] = {}
+    for line in text[4:end].splitlines():
+        m = V1_LINE.match(line)
+        if not m:
+            if line.strip():
+                raise ConversionError(f"frontmatter line {line!r} is not `key: value`")
+            continue
+        if m.group(1) in keys:
+            raise ConversionError(f"frontmatter key `{m.group(1)}` appears twice")
+        keys[m.group(1)] = m.group(2).strip()
+    if set(keys) != set(V1_KEYS) or not all(keys.values()):
+        raise ConversionError(f"frontmatter must hold exactly {V1_KEYS}, each non-empty; found {list(keys)}")
+    if keys["slug"] != stem:
+        raise ConversionError(f"`slug: {keys['slug']}` differs from the filename stem `{stem}`")
+    if not re.fullmatch(r"[1-9]\d*", keys["version"]):
+        raise ConversionError(f"`version: {keys['version']}` is not a positive integer")
+
+    preamble: list[str] = []
+    secs: list[tuple[str, list[str]]] = []
+    fenced = False
+    for line in text[end + 5:].splitlines():
+        if FENCE.match(line):
+            fenced = not fenced
+        m = None if fenced else H2.match(line)
+        if m:
+            secs.append((m.group(1), []))
+        else:
+            (secs[-1][1] if secs else preamble).append(line)
+    heads = [h for h, _ in secs]
+    if heads != V1_SECTIONS:
+        raise ConversionError(f"H2 headings must be exactly {V1_SECTIONS}, found {heads}")
+    title = [ln for ln in preamble if ln.strip()]
+    if len(title) > 1 or (title and not title[0].startswith("# ")):
+        raise ConversionError("text before `## Expertise` other than the `# ` title has no place in an agent file")
+
+    values: dict = {"name": stem, "description": keys["description"], "version": int(keys["version"])}
+    invocation = ""
+    for heading, lines in secs:
+        lines = blank_trimmed(lines)
+        if not lines:
+            raise ConversionError(f"`## {heading}` is empty")
+        if heading == "Invocation":
+            invocation = "\n".join(lines)
+            continue
+        # A bullet wrapped onto the next line is one item, as Markdown reads it and as the hand
+        # conversion joined the real one; a line after a blank one belongs to no bullet.
+        items: list[str] = []
+        joinable = False
+        for ln in lines:
+            s = ln.strip()
+            if s.startswith("- "):
+                items.append(s[2:].strip())
+                joinable = True
+            elif s and joinable:
+                items[-1] += " " + s
+            elif s:
+                raise ConversionError(f"`## {heading}` holds {s!r} outside any `- ` bullet")
+            else:
+                joinable = False
+        values[V1_LISTS[heading]] = items
+    return values, invocation
+
+
+def yaml_scalar(value: str, item: bool) -> str:
+    """`value` plain when YAML reads it back unchanged where it sits, else double-quoted. A list item
+    holding `: ` reads as a mapping unless quoted, the trap the hand conversion met (decision
+    2026-10-22-005); a backtick cannot open a plain scalar; `yes` reads as a bool."""
+    import yaml
+    doc, want = (f"- {value}", [value]) if item else (f"k: {value}", {"k": value})
+    try:
+        if "\n" not in value and yaml.safe_load(doc) == want:
+            return value
+    except yaml.YAMLError:
+        pass
+    return json.dumps(value, ensure_ascii=False)   # JSON's string is YAML's double-quoted scalar
+
+
+def agent_file(values: dict, invocation: str, scalar=yaml_scalar) -> bytes:
+    """The agent file the library's shape prescribes, refused unless its frontmatter parses back
+    to exactly `values`: Claude Code skips an agent file it cannot parse, without a word."""
+    import yaml
+    fm = [f"name: {scalar(values['name'], False)}", f"description: {scalar(values['description'], False)}",
+          f"version: {values['version']}"]
+    for key in ("expertise", "insists_on", "changelog"):
+        fm += [f"{key}:"] + [f"  - {scalar(i, True)}" for i in values[key]]
+    try:
+        parsed = yaml.safe_load("\n".join(fm))
+    except yaml.YAMLError as e:
+        raise ConversionError(f"the frontmatter written would not parse: {e}") from None
+    if parsed != values:
+        raise ConversionError("the frontmatter written would not read back as the persona's values")
+    return "\n".join(["---", *fm, "---", "", invocation, ""]).encode("utf-8")
+
+
+def convert_persona(stem: str, data: bytes) -> bytes:
+    return agent_file(*v1_persona(stem, data))
+
+
+def frontmatter_end(lines: list[str]) -> int | None:
+    """Index of the closing `---` of a frontmatter block opening on the first line, or None."""
+    if not lines or lines[0].rstrip("\r\n") != "---":
+        return None
+    return next((i for i in range(1, len(lines)) if lines[i].rstrip("\r\n") == "---"), None)
+
+
+def marked(data: bytes | None) -> bool:
+    """A knowledge entry whose frontmatter declares `source: dev-resources`: synced by the retired sync."""
+    lines = (data or b"").decode("utf-8", errors="replace").splitlines(keepends=True)
+    end = frontmatter_end(lines)
+    return end is not None and any(RESOURCE_KEY.match(ln.rstrip("\r\n")) for ln in lines[1:end])
+
+
+def unmarked(data: bytes) -> bytes:
+    """The entry without its `source: dev-resources` line; a mention in the body is prose and stays."""
+    lines = data.decode("utf-8").splitlines(keepends=True)
+    end = frontmatter_end(lines)
+    if end is None:
+        return data
+    kept = [ln for i, ln in enumerate(lines) if not (0 < i < end and RESOURCE_KEY.match(ln.rstrip("\r\n")))]
+    return "".join(kept).encode("utf-8")
+
+
+def adoption_steps(files: dict[str, bytes], library: dict[str, bytes | None],
+                   planned: set[str], keeps: set[str]) -> list[Step]:
+    """The steps that settle what a v1.0.0 project holds from the retired sync.
+
+    `files`: the project's tracked files under docs/personas/, the roster and the knowledge base,
+    and each RETIRED path, with their bytes. `library`: slug -> the target release's library copy,
+    or None. `planned`: the paths the release's own steps already settle."""
+    steps: list[Step] = []
+    for path in sorted(p for p in files if p.startswith(LEGACY_PERSONAS)):
+        if path in keeps:
+            steps.append(Step(path, "keep", notes=["kept by --keep; not converted"]))
+            continue
+        name = path[len(LEGACY_PERSONAS):]
+        try:
+            if "/" in name or not name.endswith(".md"):
+                raise ConversionError("not a persona file; move it out of docs/personas/")
+            stem = name[:-3]
+            converted = convert_persona(stem, files[path])
+        except ConversionError as e:
+            steps.append(Step(path, "CONFLICT", notes=[f"cannot convert: {e}",
+                              "fix it to the v1.0.0 persona shape or move it, then re-run; --keep leaves it as it is"]))
+            continue
+        target = ROSTER + name
+        held = files.get(target)
+        if held is not None and held != converted:
+            steps.append(Step(path, "CONFLICT", notes=[f"{target} already holds other text; the roster is the "
+                              "project's, so settle the two by hand, then re-run"]))
+            continue
+        lib = library.get(stem)
+        where = ("the library holds the same text" if lib == converted
+                 else "not in the library: the project's own" if lib is None
+                 else "differs from the library copy: the suite's library rule judges it")
+        if held is None:
+            steps.append(Step(target, "convert", converted, notes=[f"from {path}; {where}"]))
+        steps.append(Step(path, "delete", delete=True, notes=[f"converted into {target}"]))
+    for path in RETIRED:
+        if path in files:
+            steps.append(Step(path, "keep", notes=["kept by --keep"]) if path in keeps else
+                         Step(path, "retire", delete=True, notes=["the retired dev-resources sync's stamp; nothing reads it"]))
+    for path in sorted(files):
+        if path.startswith(KB_DIR) and path.endswith(".md") and path not in planned and marked(files[path]):
+            steps.append(Step(path, "keep", notes=["kept by --keep"]) if path in keeps else
+                         Step(path, "unmark", unmarked(files[path]),
+                              notes=["synced from the retired dev-resources; the declaration goes and the entry is the project's own"]))
+    return steps
+
+
+# ==============================================================================
 # The plan over a real project
 # ==============================================================================
 
@@ -359,54 +574,63 @@ def current_bytes(path: str) -> bytes | None:
     return normalized(p.read_bytes()) if p.is_file() else None
 
 
+def plan_path(path: str, cls: str, current: bytes | None, base: bytes | None, other: bytes | None,
+              takes: set[str], keeps: set[str]) -> Step | None:
+    """One path the template changed between the releases: its step, or None when nothing is to be
+    done. A project-owned path comes back as `not applied`."""
+    if cls == "keep":
+        return Step(path, "not applied")
+    if path in takes and other is not None:
+        return Step(path, "take", other)
+    if path in keeps:
+        return Step(path, "keep", notes=["kept by --keep"])
+    if cls == "merge":
+        if current is None:
+            return Step(path, "add", other)
+        try:
+            text, actions = MERGERS[MERGE[path]](
+                current.decode("utf-8"),
+                None if base is None else base.decode("utf-8"),
+                other.decode("utf-8") if other is not None else current.decode("utf-8"),
+            )
+        except MergeError as e:
+            return Step(path, "CONFLICT", notes=[str(e)])
+        changed = text != current.decode("utf-8")
+        return Step(path, "merge" if changed else "up-to-date", text.encode("utf-8") if changed else None,
+                    notes=[f"{kind} {key}" for kind, key in actions])
+    v, content = verdict(current, base, other)
+    if v == "unchanged":
+        return None
+    if v == "merge":
+        clean, merged = three_way(current, base, other)
+        return Step(path, "merge", merged) if clean else Step(path, "CONFLICT")
+    return Step(path, v, content, delete=(v == "delete"))
+
+
+def tracked(*prefixes: str) -> list[str]:
+    return [p for p in git("ls-files", "-z", "--", *prefixes).stdout.split("\0") if p]
+
+
 def build_plan(frm: str, to: str, profile: str | None, takes: set[str], keeps: set[str]) -> tuple[list[Step], list[str]]:
     steps: list[Step] = []
     kept: list[str] = []
     for path in sorted(tree(frm) | tree(to)):
         cls = classify(path)
-        if cls == "special":
+        if cls in ("special", "adopt"):
             continue
         base = normalized(prepared(path, blob(frm, path), profile))
         other = normalized(prepared(path, blob(to, path), profile))
         if base == other:
             continue
-        current = current_bytes(path)
-        if cls == "keep" or any(resource_owned(d) for d in (current, base, other)):
+        step = plan_path(path, cls, current_bytes(path), base, other, takes, keeps)
+        if step is not None and step.verdict == "not applied":
             kept.append(path)
-            continue
-        if path in takes and other is not None:
-            steps.append(Step(path, "take", other))
-            continue
-        if path in keeps:
-            steps.append(Step(path, "keep", notes=["kept by --keep"]))
-            continue
-        if cls == "merge":
-            if current is None:
-                steps.append(Step(path, "add", other))
-                continue
-            try:
-                text, actions = MERGERS[MERGE[path]](
-                    current.decode("utf-8"),
-                    None if base is None else base.decode("utf-8"),
-                    other.decode("utf-8") if other is not None else current.decode("utf-8"),
-                )
-            except MergeError as e:
-                steps.append(Step(path, "CONFLICT", notes=[str(e)]))
-                continue
-            step = Step(path, "merge" if text != current.decode("utf-8") else "up-to-date",
-                        text.encode("utf-8") if text != current.decode("utf-8") else None)
-            for kind, key in actions:
-                step.notes.append(f"{kind} {key}")
+        elif step is not None:
             steps.append(step)
-            continue
-        v, content = verdict(current, base, other)
-        if v == "unchanged":
-            continue
-        if v == "merge":
-            clean, merged = three_way(current, base, other)
-            steps.append(Step(path, "merge", merged) if clean else Step(path, "CONFLICT"))
-            continue
-        steps.append(Step(path, v, content, delete=(v == "delete")))
+    files = {p: b for p in tracked(LEGACY_PERSONAS, ROSTER, KB_DIR, *RETIRED) if (b := current_bytes(p)) is not None}
+    library = {p[len(LEGACY_PERSONAS):-3]: normalized(prepared(p, blob(to, LIBRARY + p[len(LEGACY_PERSONAS):]), profile))
+               for p in files if p.startswith(LEGACY_PERSONAS) and p.endswith(".md")}
+    steps += adoption_steps(files, library, {s.path for s in steps}, keeps)
     return steps, kept
 
 
@@ -481,6 +705,10 @@ def main() -> int:
         print(f"\nREFUSED: the tree has {len(dirty)} uncommitted path(s). Commit or stash first, so "
               "`git diff` afterwards shows exactly what the update did.")
         return 1
+    if tracked(LEGACY_PERSONAS) and importlib.util.find_spec("yaml") is None:
+        print(f"template_update: converting {LEGACY_PERSONAS} needs PyYAML in this python3: "
+              "`python3 -m pip install pyyaml`, then re-run.", file=sys.stderr)
+        return 2
 
     steps, kept = build_plan(frm, args.to, profile, set(args.take), set(args.keep))
     conflicts = [s for s in steps if s.verdict == "CONFLICT"]
@@ -492,9 +720,11 @@ def main() -> int:
         print(f"  {'not applied':<12}{len(kept)} template change(s) under project-owned paths: "
               + ", ".join(kept))
     if conflicts:
-        print(f"\n{len(conflicts)} CONFLICT(s): both the project and the template changed the same lines.")
+        print(f"\n{len(conflicts)} CONFLICT(s): both the project and the template changed the same lines, "
+              "or a persona would not convert.")
         for s in conflicts:
-            print(f"  git diff {REF_PREFIX}{frm} {REF_PREFIX}{args.to} -- {s.path}")
+            print(f"  {s.path}: its note above" if classify(s.path) == "adopt"
+                  else f"  git diff {REF_PREFIX}{frm} {REF_PREFIX}{args.to} -- {s.path}")
         print("  Edit the file and re-run with --keep <path>, or take the template's copy with --take <path>.")
     print(f"  {'stamp':<12}{VERSION_FILE}  ({args.to})" + ("" if not conflicts else "  — withheld until resolved"))
 
@@ -509,6 +739,9 @@ def main() -> int:
         elif s.write is not None:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(s.write)
+    legacy = ROOT / LEGACY_PERSONAS
+    if legacy.is_dir() and not any(legacy.iterdir()):
+        legacy.rmdir()
     if conflicts:
         print("\nApplied what merges cleanly; the conflicted files are untouched and the stamp is withheld.")
         return 1
@@ -554,6 +787,27 @@ _LOG_PROJECT = _LOG_HEAD + _PROJ_ROW + _ROW1 + "\n---\n\n" + _BODY1 + "\n---\n\n
 
 _DOC = "intro\n<!-- profile:gcc -->\ngcc law\n<!-- /profile:gcc -->\n<!-- profile:commercial -->\nnone\n<!-- /profile:commercial -->\ntail\n"
 
+# A v1.0.0 persona and the agent file it converts to. Its description and two items hold `: `, one
+# item opens with a backtick, one reads as a bool, one is wrapped onto a second line, and the
+# Invocation holds a fenced `## ` line.
+_V1 = ("---\nname: Fixture keeper\nslug: fixture-keeper\n"
+       "description: Keeps the fixtures honest: every one proved against broken code\nversion: 2\n---\n\n"
+       "# Fixture keeper\n\n## Expertise\n\n- Gate scripts and\n  their self-tests\n"
+       "- Markdown state: index-first logs\n- `pre-commit` stages\n\n"
+       "## Insists on\n\n- yes\n- A rule is a control only when a script enforces it\n\n"
+       "## Invocation\n\nYou keep the fixtures honest.\n\n```\n## not a heading\n```\n\n"
+       "## Changelog\n\n- 1 — 2026-09-21 — seeded\n- 2 — 2026-10-01 — reworded: tighter\n")
+_AGENT = ("---\nname: fixture-keeper\n"
+          "description: \"Keeps the fixtures honest: every one proved against broken code\"\nversion: 2\n"
+          "expertise:\n  - Gate scripts and their self-tests\n  - \"Markdown state: index-first logs\"\n"
+          "  - \"`pre-commit` stages\"\n"
+          "insists_on:\n  - \"yes\"\n  - A rule is a control only when a script enforces it\n"
+          "changelog:\n  - 1 — 2026-09-21 — seeded\n  - \"2 — 2026-10-01 — reworded: tighter\"\n"
+          "---\n\nYou keep the fixtures honest.\n\n```\n## not a heading\n```\n")
+_KB = (b"---\nname: x\nteaches: []\nverified: 2026-09-23\nsource: dev-resources\nmetadata:\n  type: reference\n---\n\n"
+       b"Synced entries declare `source: dev-resources`.\nsource: dev-resources\n")
+_KB_PLAIN = _KB.replace(b"verified: 2026-09-23\nsource: dev-resources\n", b"verified: 2026-09-23\n")
+
 
 def run_self_test() -> int:
     print("\nTemplate Update Self-Test")
@@ -574,20 +828,20 @@ def run_self_test() -> int:
             ".project-profile": "keep", "sprint/decision-log.md": "keep",
             "docs/governance/framework_decisions.md": "merge", "docs/governance/gate_suite_runbook.md": "three-way",
             "docs/orchestration/knowledge/INDEX.md": "merge", ".template-version": "special",
-            "pyproject.toml": "keep", ".pre-commit-hooks.yaml": "keep", ".resources-version": "keep"}
+            "pyproject.toml": "keep", ".pre-commit-hooks.yaml": "keep", ".resources-version": "adopt",
+            "docs/personas/x.md": "adopt"}
     bad = {p: classify(p) for p, w in want.items() if classify(p) != w}
-    check("paths classify as keep, merge, three-way or special", not bad, str(bad))
+    check("paths classify as keep, merge, three-way, special or adopt", not bad, str(bad))
 
     # Every Claude Code path the template ships, and the session's local banking, as decided by
-    # decision 2026-10-23-002. `docs/personas/` is the pre-v2.0.0 registry: no longer the
-    # registry's path, so a release that removed it deletes a project's unedited copy and
-    # reports an edited one, which is the adoption path the decision names.
+    # decisions 2026-10-23-002 and 2026-10-23-005. `docs/personas/` is the v1.0.0 registry, which
+    # adoption converts into the roster whatever either release holds there.
     decided = {".claude/agents/framework-maintainer.md": "keep", ".claude/settings.local.json": "keep",
                "personas/framework-maintainer.md": "three-way",
                ".claude/skills/closeout/SKILL.md": "three-way", ".claude/skills/new-one/notes.md": "three-way",
                ".claude/rules/gate-scripts.md": "three-way", ".claude/settings.json": "three-way",
                "sprint/recovery/journal.md": "keep", "sprint/recovery/WORKING_NOTES.md": "keep",
-               "docs/personas/framework-maintainer.md": "three-way"}
+               "docs/personas/framework-maintainer.md": "adopt"}
     bad = {p: classify(p) for p, w in decided.items() if classify(p) != w}
     check("the Claude Code paths and the recovery files classify as decided", not bad, str(bad))
 
@@ -600,14 +854,14 @@ def run_self_test() -> int:
     roster = session_closeout.PERSONAS.relative_to(session_closeout.ROOT).as_posix() + "/"
     library = session_closeout.LIBRARY.relative_to(session_closeout.ROOT).as_posix() + "/"
     check("the roster the gate reads is kept here and by the sanitizer, and cleared by the initializer at birth",
-          roster == ".claude/agents/" and roster in KEEP and classify(roster + "p.md") == "keep"
+          roster == ROSTER and roster in KEEP and classify(roster + "p.md") == "keep"
           and roster in sanitize_template.NEVER_RESET and roster + "*.md" in new_project.CLEAR_GLOBS
           and roster not in new_project.NEVER_RESET,
           f"gate={roster} clear={new_project.CLEAR_GLOBS}")
     mutating = (set(new_project.FILL_FILES) | set(new_project.REGENERATE_FILES)
                 | set(new_project.CLEAR_GLOBS) | set(new_project.TEMPLATE_ONLY))
     check("the library the gate reads is merged here, kept by the sanitizer, and in no list of the initializer",
-          library == "personas/" and classify(library + "p.md") == "three-way" and library in sanitize_template.NEVER_RESET
+          library == LIBRARY and classify(library + "p.md") == "three-way" and library in sanitize_template.NEVER_RESET
           and not any(m.startswith(library) for m in mutating | set(new_project.NEVER_RESET)),
           f"gate={library}")
     check("the initializer's local files are kept here, never carried by a release",
@@ -635,11 +889,112 @@ def run_self_test() -> int:
           classify("docs/governance/framework_decisions.md") == "merge" and classify("sprint/decision-log.md") == "keep"
           and classify("docs/orchestration/knowledge/x.md") == "three-way" and set(never) <= {"merge", "keep", "three-way"},
           f"never={never}")
-    marked = b"---\nname: x\nteaches: []\nverified: 2026-09-23\nsource: dev-resources\n---\n\nbody\n"
-    check("a knowledge entry that declares source: dev-resources is the sync's; an ordinary one, or the "
-          "declaration outside the frontmatter, is not",
-          resource_owned(marked) and not resource_owned(marked.replace(b"source: dev-resources\n", b""))
-          and not resource_owned(b"no frontmatter\nsource: dev-resources\n") and not resource_owned(None))
+
+    # Adoption from v1.0.0 (decision 2026-10-23-005). A converter that raises is reported as a
+    # failed fixture, never as a crash of the self-test.
+    def attempt(text: str) -> bytes | str:
+        try:
+            return convert_persona("fixture-keeper", text.encode())
+        except Exception as e:   # noqa: BLE001 — reported in the fixture's detail
+            return f"{type(e).__name__}: {e}"
+
+    out = attempt(_V1)
+    check("convert: a v1.0.0 persona becomes the agent file, every item quoted only where YAML needs it",
+          out == _AGENT.encode(), out.decode(errors="replace") if isinstance(out, bytes) else out)
+    check("convert: the agent file written passes the state gate's persona lint",
+          not session_closeout.lint_persona(_AGENT, "fixture-keeper"), str(session_closeout.lint_persona(_AGENT, "fixture-keeper")))
+    check("convert: a CRLF checkout converts the same", attempt(_V1.replace("\n", "\r\n")) == _AGENT.encode())
+    refused = {
+        "slug differs from the filename": ("slug: fixture-keeper", "slug: other-keeper"),
+        "a key the agent file has no place for": ("version: 2\n", "version: 2\nmodel: opus\n"),
+        "a key missing": ("description: Keeps the fixtures honest: every one proved against broken code\n", ""),
+        "a key twice": ("version: 2\n", "version: 2\nversion: 3\n"),
+        "a version not an integer": ("version: 2\n", "version: 2.0\n"),
+        "a frontmatter line not `key: value`": ("version: 2\n", "version: 2\n  - stray\n"),
+        "a section renamed": ("## Insists on", "## Insists On"),
+        "a section added": ("## Changelog", "## Notes\n\nlost?\n\n## Changelog"),
+        "prose before the sections": ("# Fixture keeper\n", "# Fixture keeper\n\nAn introduction.\n"),
+        "a line after a blank one in a list": ("- Gate scripts and\n  their self-tests\n", "- Gate scripts and\n\n  their self-tests\n"),
+        "a line before any bullet": ("## Expertise\n\n", "## Expertise\n\nThese skills:\n\n"),
+        "an empty Invocation": ("You keep the fixtures honest.\n\n```\n## not a heading\n```\n", ""),
+        "a heading outside a fence": ("```\n## not a heading\n```", "## not a heading"),
+        "no frontmatter": ("---\nname: Fixture keeper\n", "name: Fixture keeper\n"),
+    }
+    def refuses(fn) -> bool:
+        """True only when `fn` raises ConversionError: a crash is not a refusal."""
+        try:
+            fn()
+        except ConversionError:
+            return True
+        except Exception:   # noqa: BLE001 — any other exception is the converter failing, reported as such
+            return False
+        return False
+
+    accepted = [label if old in _V1 else f"{label} (the fixture's text is not in _V1)"
+                for label, (old, new) in refused.items()
+                if old not in _V1 or not refuses(lambda: convert_persona("fixture-keeper", _V1.replace(old, new, 1).encode()))]
+    check("convert: what the agent file cannot hold is refused, never dropped", not accepted, str(accepted))
+    values = {"name": "fixture-keeper", "description": "d: e", "version": 1, "expertise": ["a: b"],
+              "insists_on": ["yes"], "changelog": ["1 — 2026-09-21 — seeded"]}
+    check("convert: frontmatter that would not parse, or would read back otherwise, is refused",
+          refuses(lambda: agent_file(values, "p", scalar=lambda v, item: v))
+          and refuses(lambda: agent_file(values, "p", scalar=lambda v, item: v if v == "yes" else yaml_scalar(v, item))))
+
+    check("a knowledge entry declaring source: dev-resources in its frontmatter is marked; in the body, "
+          "or with no frontmatter, it is not",
+          marked(_KB) and marked(_KB.replace(b"\n", b"\r\n")) and not marked(_KB_PLAIN)
+          and not marked(b"no frontmatter\nsource: dev-resources\n") and not marked(None))
+    check("unmarking removes the frontmatter line alone; the body's mention stays",
+          unmarked(_KB) == _KB_PLAIN and _KB_PLAIN.count(b"source: dev-resources") == 2, unmarked(_KB).decode())
+    step = plan_path(KB_DIR + "reference_m.md", "three-way", _KB, _KB, _KB_PLAIN + b"amended\n", set(), set())
+    check("a synced entry the template now ships takes the template's copy: the declaration is content, "
+          "merged like any other line",
+          step is not None and (step.verdict, step.write) == ("update", _KB_PLAIN + b"amended\n"), str(step))
+    step = plan_path(ROSTER + "p.md", "keep", b"mine", b"a", b"b", set(), set())
+    check("a template change under a project-owned path is not applied",
+          step is not None and step.verdict == "not applied" and step.write is None, str(step))
+
+    legacy, own, roster_copy = LEGACY_PERSONAS + "fixture-keeper.md", LEGACY_PERSONAS + "own.md", ROSTER + "fixture-keeper.md"
+    files = {legacy: _V1.encode(), own: _V1.replace("fixture-keeper", "own").encode(), ".resources-version": b"main abc\n",
+             KB_DIR + "reference_m.md": _KB, KB_DIR + "reference_t.md": _KB, KB_DIR + "reference_p.md": _KB_PLAIN}
+    steps = adoption_steps(files, {"fixture-keeper": _AGENT.encode(), "own": None}, {KB_DIR + "reference_t.md"}, set())
+    got = {(s.path, s.verdict) for s in steps}
+    by = {s.path: s for s in steps}
+    blank = Step("", "")
+
+    def note(path: str) -> str:
+        return " ".join(by.get(path, blank).notes)
+
+    check("adopt: each persona converts into the roster and its old file goes; the stamp is retired; a marked "
+          "entry no release step writes is unmarked; a planned or plain one is left",
+          got == {(roster_copy, "convert"), (legacy, "delete"), (ROSTER + "own.md", "convert"), (own, "delete"),
+                  (".resources-version", "retire"), (KB_DIR + "reference_m.md", "unmark")}
+          and by[roster_copy].write == _AGENT.encode() and by[legacy].delete and by[".resources-version"].delete
+          and by[KB_DIR + "reference_m.md"].write == _KB_PLAIN, str(sorted(got)))
+    check("adopt: the note says whether the library holds the same text or the persona is the project's own",
+          "same text" in note(roster_copy) and "project's own" in note(ROSTER + "own.md"),
+          f"{note(roster_copy)} | {note(ROSTER + 'own.md')}")
+    steps = adoption_steps({legacy: _V1.encode()}, {"fixture-keeper": b"other text"}, set(), set())
+    check("adopt: a persona whose library copy differs is converted and named for the suite to judge",
+          "differs" in steps[0].notes[0], str(steps[0].notes))
+    steps = adoption_steps({legacy: _V1.encode(), roster_copy: _AGENT.encode()}, {}, set(), set())
+    check("adopt: a roster already holding the converted text is not written again; the old file goes",
+          [(s.path, s.verdict) for s in steps] == [(legacy, "delete")], str([(s.path, s.verdict) for s in steps]))
+    steps = adoption_steps({legacy: _V1.encode(), roster_copy: b"the project's own text\n"}, {}, set(), set())
+    check("adopt: a roster holding other text is a conflict: nothing written, nothing deleted",
+          [(s.path, s.verdict, s.write, s.delete) for s in steps] == [(legacy, "CONFLICT", None, False)],
+          str([(s.path, s.verdict) for s in steps]))
+    files = {LEGACY_PERSONAS + "bad.md": b"no frontmatter\n", LEGACY_PERSONAS + "notes.txt": b"x\n",
+             LEGACY_PERSONAS + "sub/x.md": _V1.encode(), ".resources-version": b"main abc\n", KB_DIR + "reference_m.md": _KB}
+    steps = adoption_steps(files, {}, set(), set())
+    check("adopt: a file that is no v1.0.0 persona is a conflict, left in place",
+          {(s.path, s.verdict) for s in steps if s.path.startswith(LEGACY_PERSONAS)}
+          == {(p, "CONFLICT") for p in files if p.startswith(LEGACY_PERSONAS)} and not any(s.delete for s in steps
+          if s.path.startswith(LEGACY_PERSONAS)), str([(s.path, s.verdict) for s in steps]))
+    steps = adoption_steps(files, {}, set(), set(files))
+    check("adopt: --keep leaves a persona unconverted, the stamp and a marked entry as they are",
+          {s.verdict for s in steps} == {"keep"} and not any(s.write or s.delete for s in steps),
+          str([(s.path, s.verdict) for s in steps]))
 
     check("verdict: a path the template did not change is untouched, even if the project edited it",
           verdict(b"mine", b"a", b"a") == ("unchanged", None))

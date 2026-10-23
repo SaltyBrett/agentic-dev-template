@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-23
-**Updated By:** S4
+**Updated By:** S6
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,32 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S6 — 2026-10-23 — Adoption from v1.0.0
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-1.10
+done; TMPL-1.7 next.
+
+### Done
+
+1. TMPL-1.10 — `scripts/template_update.py` converts every `docs/personas/` file into the roster,
+   exactly or as a named conflict, with a converter that imports nothing from the project's old
+   scripts; removes `.resources-version`; merges a `source: dev-resources` entry as content and
+   unmarks one no release writes (decision 2026-10-23-005, superseding 2026-09-23-008). Proof:
+   sixteen new fixtures; twenty-eight broken variants each caught, three first caught wrongly and
+   the fixtures rewritten; every real persona file (`v1.0.0`'s, `dev-resources`' frozen tree, the
+   three projects') converted to its library copy byte for byte, the one project persona lint-clean;
+   the first run refused a real wrapped bullet, which showed a fixture had the rule backwards. Scratch
+   clones of the three projects adopted a scratch `v2.0.0`: personas converted, stamp and marker
+   gone, one `.gitignore` conflict each; resolved by hand, the whole suite passed on its first run.
+
+### Blockers
+
+- None. Open for the operator: whether the updater should union-merge `.gitignore`, which conflicts
+  in all three projects' adoptions (TMPL-2.4).
 
 ---
 

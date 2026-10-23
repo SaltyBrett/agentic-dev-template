@@ -2,7 +2,7 @@
 
 **Purpose:** The decisions that shaped this template — why every gate, script and rule is the way it is
 **Source:** `agentic-dev-template`; carried to a project by `scripts/template_update.py`, merged by decision ID
-**Last Updated:** 2026-10-22
+**Last Updated:** 2026-10-23
 
 > **READ SELECTIVELY (index-first).** Do NOT read this file whole. Read the **Decision Index**, then only
 > the entries a task, a handoff or a knowledge entry's `teaches:` points at. Markdown only (never JSON).
@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-005 | 2026-10-23 | Adoption from `v1.0.0`, judged by what the project holds: every `docs/personas/` file converted into the roster exactly or refused as a conflict, by a converter that reads nothing from the project's old scripts; the sync's stamp removed; a `source: dev-resources` entry merged like any other and, where no release writes it, stripped of the declaration | APPROVED |
 | 2026-10-23-004 | 2026-10-23 | The library's team: roles across the software lifecycle, data science with BI and reporting, document management, writing and quality control, and game development, each a persona in the agent-file shape with the shared habits; a code reviewer left to TMPL-4 | APPROVED |
 | 2026-10-23-003 | 2026-10-23; amended 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the full team ships in `v2.0.0`; `dev-resources` retires; a project's own personas stay in it; the updater converts a `v1.0.0` project's `docs/personas/`; built as TMPL-1.8 to TMPL-1.10 | APPROVED |
 | 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED; SUPERSEDED (bullets 1, 4 and 5) by 2026-10-23-003 |
@@ -39,7 +40,7 @@
 | 2026-09-25-002 | 2026-09-25 | MIT license, copyright Brett Bennett, in the template and in `dev-resources`; a project receives it at birth and owns it from then on, the updater never writes it; PATCH | APPROVED |
 | 2026-09-25-001 | 2026-09-25 | The template and `dev-resources` are public; a project made from the template is private by default, refused by the initializer when public unless `--public`; the archive stays private; branch protection still not enabled; `dev-resources` pins https and gets a `gates` workflow; MINOR | APPROVED |
 | 2026-09-24-001 | 2026-09-24; amended 2026-09-24 | Rules with no control found in the fossil sweep: the tracker's dependency and placeholder rules get a gate (TMPL-5.5, built: `dependency-order` and `live-placeholder`, MAJOR); the pull-request workflow, review checklist and manifest are deleted; evidence capture is procedure, marked ungated; PATCH for the sweep | APPROVED |
-| 2026-09-23-008 | 2026-09-23 | A knowledge entry is a resource entry when it teaches no decision and explains a machine, a tool or a workflow rather than this repository; the macOS toolchain entry moves, every gate entry stays | APPROVED |
+| 2026-09-23-008 | 2026-09-23 | A knowledge entry is a resource entry when it teaches no decision and explains a machine, a tool or a workflow rather than this repository; the macOS toolchain entry moves, every gate entry stays | APPROVED; SUPERSEDED by 2026-10-23-005 |
 | 2026-09-23-007 | 2026-09-23; amended 2026-09-23 | The registry and resource entries are synced from `dev-resources` by `resources_sync.py`: verdicts decided by version, conflicts never picked silently, growth only through `--publish`, the updater keeps those paths, the closeout refuses an unpublished persona; MAJOR | SUPERSEDED by 2026-10-23-003 |
 | 2026-09-23-006 | 2026-09-23 | Personas are append-only, gated: `version:` and a `## Changelog` in every persona, an Invocation change refused without a bump against the committed copy, the kickoff names the version; MAJOR | APPROVED |
 | 2026-09-23-005 | 2026-09-23; amended 2026-09-23; amended 2026-09-25 | The template is a pre-commit hook repository: `.pre-commit-hooks.yaml` publishes the persona linter, the frontmatter gate and the attribution gate as console scripts of a `pyproject.toml` package that leaves a project at birth; the gates read their root from git | APPROVED |
@@ -1731,7 +1732,9 @@ by a scratch persona the ref lacks, by exit code without a pipe.
 
 **Date:** 2026-09-23
 **Made By:** Chair + AI (the class in 2026-09-23-002; the rule decided here)
-**Status:** APPROVED
+**Status:** APPROVED; SUPERSEDED by 2026-10-23-005 (with the sync retired, no entry is a resource
+entry: the macOS toolchain entry is the template's own again, and a project's marked copy is settled
+at adoption)
 **Builds:** the "handbook-class knowledge" of 2026-09-23-002 (TMPL-3.4)
 
 ### Context
@@ -2728,3 +2731,100 @@ version 1. A plant that unquoted one list item holding `: ` was refused as `list
 ### Enforcement
 
 `scripts/session_closeout.py` (`library_findings`, `lint_persona`) in `session-closeout-check`.
+
+---
+
+## Decision 2026-10-23-005: Adoption from `v1.0.0` converts the personas and settles what the sync left
+
+**Date:** 2026-10-23
+**Made By:** AI (S6), within decision 2026-10-23-003, whose amendment made the conversion the
+operator's choice; reported to the operator at the S6 handover
+**Status:** APPROVED
+**Supersedes:** 2026-09-23-008
+**Builds:** the adoption bullet of 2026-10-23-003's amendment (TMPL-1.10)
+**Affects:** `scripts/template_update.py` (`classify`, `ROSTER`, `LIBRARY`, `LEGACY_PERSONAS`,
+`RETIRED`, `v1_persona`, `yaml_scalar`, `agent_file`, `marked`, `unmarked`, `adoption_steps`,
+`plan_path`, `build_plan`, the self-test), `.pre-commit-config.yaml` (`template-update-selftest`),
+`TEMPLATE_GUIDE.md` Step 9, `docs/governance/gate_suite_runbook.md`
+
+### Context
+
+Decision 2026-10-23-003, as amended, has the updater convert a `v1.0.0` project's `docs/personas/`
+into agent files in its roster and remove the folder, and settle what the retired sync left behind:
+the knowledge entries marked `source: dev-resources` and the `.resources-version` stamp. Until now
+the updater kept a marked entry and the stamp untouched (`resource_owned`, `KEEP`), and treated
+`docs/personas/` as an ordinary path the release removed, so a project's own persona would have
+stayed in the old folder, read by nothing.
+
+The three projects on `v1.0.0` each hold `docs/personas/`, one persona in it the project's own, and
+the marked `reference_macos_toolchain.md`, equal to the `v1.0.0` copy; two hold a stamp. One real
+persona wraps an Expertise bullet onto a second line, which the hand conversion of decision
+2026-10-22-005 joined with a space. And during adoption the target's updater runs beside the
+project's `v1.0.0` sibling scripts, whose persona lint knows only the old shape.
+
+### Decision
+
+- **Adoption is judged by what the project holds**, never by either release, so a project that
+  skips releases adopts the same way. A fourth class, `adopt`, covers `docs/personas/` and
+  `.resources-version`; the release loop leaves them to `adoption_steps`.
+- **Every persona converts exactly or not at all.** The file is read as `v1.0.0` read it: flat
+  `key: value` frontmatter with exactly `name`, `slug`, `description` and `version`, then a title and
+  the four sections. A bullet wrapped onto the next line is one item, as Markdown reads it. The agent
+  file takes the library's shape (decision 2026-10-22-005): `name` the slug, an item plain where YAML
+  reads it back unchanged and double-quoted otherwise, the body the Invocation; it is refused unless
+  its frontmatter parses back to exactly the values read. Anything the shape has no place for
+  (another key, prose outside the sections, a line after a blank one in a list) is a conflict, left
+  in place and named, never dropped. A roster file already holding the slug with other text is a
+  conflict; with the same text, only the old file goes. The emptied folder is removed.
+- **The converter reads nothing from the sibling scripts.** The suite the updater runs after
+  `--apply`, by then the release's, judges the roster with the current persona lint and the library
+  rule; the dry run already says, per persona, whether the library holds the same text.
+- **The stamp is removed**: nothing in `v2.0.0` reads it.
+- **A marked entry is merged three-way like any other**, the declaration being one more line, so a
+  copy equal to `v1.0.0`'s takes the template's unmarked copy. A marked entry that no release step
+  writes loses the declaration and is the project's own. `resource_owned` and the keep it drove go,
+  and with them the resource-entry class of decision 2026-09-23-008, superseded whole: with no sync,
+  no entry is anyone's copy.
+- `--keep <path>` leaves any of these as it is.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001).
+
+### Consequences
+
+- The updater writes the roster in one case, the conversion; the rule that it never writes the
+  roster otherwise stands.
+- Adoption needs PyYAML in the `python3` that runs the updater; with `docs/personas/` present and no
+  PyYAML it exits 2 naming the install. The self-test hook declares it.
+- Each of the three projects conflicts on `.gitignore`, where the project and `v2.0.0` both append at
+  the end of the file. It is resolved by hand, keeping both blocks, then `--keep .gitignore`; whether
+  the updater should union-merge `.gitignore` is put to the operator for TMPL-2.4.
+
+### Verification
+
+Fixtures: the updater's self-test lost the resource-entry fixture and gained sixteen: the conversion of a fixture persona to exact bytes
+(a description and two items holding `: `, one opening with a backtick, one reading as a bool, one
+wrapped, a fenced `## ` line in the Invocation), the output passing the state gate's persona lint,
+CRLF, fourteen refusals, the read-back check through a broken scalar writer, the marker in the
+frontmatter only, unmarking that keeps the body's mention, a marked entry merged as content, and
+the adoption steps (convert and delete, the library note, a roster already equal, a roster holding
+other text, a file that is no persona, the stamp retired, `--keep`). Twenty-eight broken variants of
+the converter and the adoption pass, each failing at least one fixture without crashing. Two first
+crashed the self-test instead of failing a fixture; the fixture rewritten to stop the crash then let
+a third variant through, because it no longer reached the parse error that variant breaks; both
+were rewritten. Without PyYAML declared, the hook failed on the first conversion fixture.
+
+On the real files: the two `v1.0.0` personas, the five in `dev-resources`' frozen tree and every
+persona the three projects hold, eighteen files, each converted to a file that passes the persona
+lint, and each of the library's equals its library copy byte for byte; the one project persona
+converts and lints. The first run refused the wrapped bullet, and the hand conversion, the
+expected output, showed the fixture had encoded the wrong rule. Scratch clones of the three projects
+adopted a scratch `v2.0.0` built from this tree: each converted every persona, the dry run naming
+each library persona's text as the same, removed `docs/personas/`, removed the stamp where one
+existed, took the template's unmarked macOS entry, and conflicted on `.gitignore` alone. Resolved by
+hand and re-run with `--keep .gitignore`, each wrote the stamp and passed the whole suite on its
+first run, the state gate included.
+
+### Enforcement
+
+`scripts/template_update.py --self-test` in `template-update-selftest`; the state gate's persona
+lint and library rule on the roster after adoption. Taught by [[reference_template_update]] and
+[[reference_resources_sync]].
