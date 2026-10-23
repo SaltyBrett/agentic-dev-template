@@ -725,15 +725,15 @@ def handoff_skeleton(n: int, date: str) -> str:
 
 ## 3. In progress
 
-- None.
+- {{{{FILL: each In Progress story with its exact state, or None.}}}}
 
 ## 4. Decisions logged
 
-- None.
+- {{{{FILL: each decision ID the session logged, with its title, or None.}}}}
 
 ## 5. Blockers and open questions
 
-- None.
+- {{{{FILL: blockers and open questions, or None.}}}}
 
 ## 6. Verification observed
 
@@ -1059,7 +1059,9 @@ def _good_handoff() -> str:
                   "- [[reference_session_closeout]] — the gate this session extends")
     t = t.replace("- {{FILL: what was done, by story ID and file}}", "- TMPL-1.2 shipped `scripts/session_closeout.py`")
     t = t.replace("- {{FILL: which gates ran and their exit codes}}", "- `pre-commit run --all-files` exit 0")
-    return t.replace("## 4. Decisions logged\n\n- None.", "## 4. Decisions logged\n\n- 2026-09-21-001 closeout gate")
+    t = t.replace("- {{FILL: each In Progress story with its exact state, or None.}}", "- None.")
+    t = t.replace("- {{FILL: blockers and open questions, or None.}}", "- None.")
+    return t.replace("- {{FILL: each decision ID the session logged, with its title, or None.}}", "- 2026-09-21-001 closeout gate")
 
 
 def _good_kickoff() -> str:
@@ -1138,8 +1140,14 @@ def run_self_test() -> int:
 
     h = _good_handoff()
     expect("a filled handoff passes", lint_handoff(h, 2, _IDS, _KB))
-    expect("an unfilled scaffold fails on its tokens",
-           lint_handoff(handoff_skeleton(2, "2026-09-21"), 2, _IDS, _KB), "unfilled-token")
+    expect("an unfilled scaffold fails on its tokens, section 4's as no decision ID too",
+           lint_handoff(handoff_skeleton(2, "2026-09-21"), 2, _IDS, _KB), "unfilled-token", "decision-id")
+    # A section the scaffold pre-filled with `- None.` passed unwritten: the S6 probe's closeout
+    # found section 4 saying None beside the decision its session had logged.
+    _, scaffold = sections(handoff_skeleton(2, "2026-09-21"))
+    check("the scaffold leaves every handoff section after the first read as a token to fill",
+          all(TOKEN.search(body) for head, body in scaffold if head != HANDOFF_SECTIONS[0]),
+          str([head for head, body in scaffold if not TOKEN.search(body)]))
     expect("a missing section fails", lint_handoff(h.replace("## 3. In progress\n\n- None.\n", ""), 2, _IDS, _KB),
            "sections")
     expect("an extra section is refused — durable content has no home here",

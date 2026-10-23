@@ -17,8 +17,8 @@
 ## S6 — 2026-10-23 — Adoption from v1.0.0
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-1.10
-done; TMPL-1.7 next.
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-1.10 and
+TMPL-1.7 done; epic TMPL-1 complete.
 
 ### Done
 
@@ -32,11 +32,23 @@ done; TMPL-1.7 next.
    the first run refused a real wrapped bullet, which showed a fixture had the rule backwards. Scratch
    clones of the three projects adopted a scratch `v2.0.0`: personas converted, stamp and marker
    gone, one `.gitignore` conflict each; resolved by hand, the whole suite passed on its first run.
+2. TMPL-1.7 — a scratch birth beside the template (`tmpl-s6-probe`, origin a local bare repository
+   by the operator's choice): `new_project.py --apply` exit 0, suite green, roster empty, library
+   whole, `session-verify` exit 0 at S1 once the birth was committed. The operator ran one live
+   session there: the start report arrived after the trust dialog; team selection asked, waited,
+   activated two personas and drafted one, gate exit 0, committed; `/compact` re-injected "still
+   S1" with the notes and journal; the forked closeout ran as `general-purpose` through scaffold,
+   gate, commit and push, `gh run list` exit 1 with no GitHub remote, and left out the attribution
+   trailer the harness asked for. Read from the session's transcript. Two gaps it reported, fixed
+   (decision 2026-10-23-006): handoff sections 3 to 5 are now tokens to fill, three reverted
+   variants each caught; S1's range starts at the first commit. Knowledge entry
+   [[reference_claude_code_substrate]].
 
 ### Blockers
 
 - None. Open for the operator: whether the updater should union-merge `.gitignore`, which conflicts
-  in all three projects' adoptions (TMPL-2.4).
+  in all three projects' adoptions (TMPL-2.4). Still unobserved: `disableWorkflows` in a live
+  session. The probe folder `tmpl-s6-probe` beside the template can be deleted.
 
 ---
 

@@ -66,7 +66,9 @@ metadata:
 - Text is written as statements of state; the reference warns that imperative "system" phrasing can
   trip Claude's prompt-injection defences.
 - In an interactive session, hooks from settings files wait until the folder is trusted; in a `-p`
-  session the folder is treated as trusted and committed hooks run at once.
+  session the folder is treated as trusted and committed hooks run at once. Observed live in a fresh
+  clone: the start report was the first record after the operator accepted the dialog
+  ([[reference_claude_code_substrate]]).
 
 ## Stop: ask once, never wedge
 

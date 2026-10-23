@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-006 | 2026-10-23 | What the substrate's live proof found: the closeout's scaffold leaves handoff sections 3 to 5 as tokens to fill, since a pre-filled `- None.` passed unwritten beside a logged decision, and S1's range starts at the repository's first commit | APPROVED |
 | 2026-10-23-005 | 2026-10-23 | Adoption from `v1.0.0`, judged by what the project holds: every `docs/personas/` file converted into the roster exactly or refused as a conflict, by a converter that reads nothing from the project's old scripts; the sync's stamp removed; a `source: dev-resources` entry merged like any other and, where no release writes it, stripped of the declaration | APPROVED |
 | 2026-10-23-004 | 2026-10-23 | The library's team: roles across the software lifecycle, data science with BI and reporting, document management, writing and quality control, and game development, each a persona in the agent-file shape with the shared habits; a code reviewer left to TMPL-4 | APPROVED |
 | 2026-10-23-003 | 2026-10-23; amended 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the full team ships in `v2.0.0`; `dev-resources` retires; a project's own personas stay in it; the updater converts a `v1.0.0` project's `docs/personas/`; built as TMPL-1.8 to TMPL-1.10 | APPROVED |
@@ -2828,3 +2829,59 @@ first run, the state gate included.
 `scripts/template_update.py --self-test` in `template-update-selftest`; the state gate's persona
 lint and library rule on the roster after adoption. Taught by [[reference_template_update]] and
 [[reference_resources_sync]].
+
+---
+
+## Decision 2026-10-23-006: What the substrate's live proof found, and the two closeout fixes
+
+**Date:** 2026-10-23
+**Made By:** AI (S6), within decisions 2026-09-21-001 and 2026-10-23-001; reported to the operator
+at the S6 handover
+**Status:** APPROVED
+**Builds:** TMPL-1.7, the proof of decision 2026-10-22-001's substrate
+**Affects:** `scripts/session_closeout.py` (`handoff_skeleton`, the self-test),
+`.claude/skills/closeout/SKILL.md` (step 2)
+
+### Context
+
+TMPL-1.7 ran the substrate end to end on a scratch project born from the committed template: the
+operator opened an interactive session in the fresh clone, accepted the trust dialog, ran the
+team-selection skill, compacted, and ran the forked closeout ([[reference_claude_code_substrate]]).
+Everything ran as designed. The closeout's fork reported two things the procedure did not settle:
+
+- Its step 2 finds the session's range from the commit `checkpoint: closeout S<N-1>`. A project's S1
+  has none, so the fork chose a base itself.
+- The scaffold wrote handoff sections 3, 4 and 5 as `- None.`, not as tokens. The session had logged
+  a decision; the fork replaced section 4's `- None.` because the skill told it to, but nothing
+  required it: a closeout that skipped the step would have passed the gate saying no decision was
+  logged.
+
+### Decision
+
+- **The scaffold leaves every judged section of the handoff as a `{{FILL}}` token**, sections 3 to
+  5 included, so `unfilled-token` refuses the pair until each is written, `- None.` where there is
+  nothing. A written rule in the skill becomes a control in the gate.
+- **S1's range starts at the repository's first commit** (`git rev-list --max-parents=0 HEAD`), which
+  in a project made with `gh repo create --template` is the template's tree.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001).
+
+### Consequences
+
+- Every closeout writes three more lines; a session with nothing in progress, no decision and no
+  blocker writes `- None.` three times.
+- Not observed, and carried: `disableWorkflows` in a live session (no keyword that would trigger a
+  workflow is named in this repository), and the `gates` watch on a scratch project, whose origin was
+  a local bare repository by the operator's choice; every template closeout watches its run.
+
+### Verification
+
+The closeout self-test gained a fixture that every handoff section after the first read holds a
+token; reverting any one of sections 3, 4 or 5 to `- None.` failed it, without crashing. The fixture
+for the unfilled scaffold now expects `decision-id` beside `unfilled-token`, since section 4's token
+is no decision ID either. The probe's observations are in [[reference_claude_code_substrate]].
+
+### Enforcement
+
+`scripts/session_closeout.py` (`handoff_skeleton`, `lint_handoff`) in `session-closeout-selftest`,
+`session-closeout-check` and `session-closeout`; the closeout skill's step 2, held by `skill-scan`.
+Taught by [[reference_claude_code_substrate]] and [[reference_session_closeout]].

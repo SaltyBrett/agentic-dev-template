@@ -48,6 +48,8 @@ metadata:
   and the decisions added since. At step 3 the sync needed an approval `-p` could not give, and it
   stopped there with the tree untouched and every exit code reported. It also noticed that the
   brief's task could not start under the dependency rule.
+- In a live session the operator could approve, the forked closeout ran through commit and push
+  ([[reference_claude_code_substrate]]).
 
 ## Why the closeout takes its brief as arguments
 

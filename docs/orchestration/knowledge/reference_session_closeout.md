@@ -1,7 +1,7 @@
 ---
 name: Session closeout is a gate and its artifacts live one session
 description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, a project''s roster held to the template''s library by version, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
-teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005, 2026-10-23-003]
+teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005, 2026-10-23-003, 2026-10-23-006]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -159,6 +159,9 @@ exit codes together are what the handoff records.
 
 - Never hand-type handoff or kickoff headings. `--scaffold --persona <slug>` writes them, and it
   needs PyYAML in the interpreter that runs it, as the published `persona-lint` does.
+- The scaffold pre-fills no section a session must judge: each is a token the gate refuses until
+  written, `- None.` included. A pre-filled `- None.` once passed beside a logged decision
+  (decision 2026-10-23-006, [[reference_claude_code_substrate]]).
 - The sprint-status entry comes first; the scaffold and the closeout both read the session number
   from it.
 - If the closeout cannot be completed, commit an emergency entry and say so. `--verify` failing next

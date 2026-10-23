@@ -33,8 +33,11 @@ next one: its tasks by story ID, their success criteria, the mandatory reads, op
 
 - This session's commits: `git log --oneline <base>..HEAD`, where `<base>` is the commit whose
   subject is `checkpoint: closeout S<N-1>` (`git log --grep '^checkpoint: closeout S<N-1>$' -1 --format=%H`).
+  S1 has no previous closeout: its `<base>` is the repository's first commit
+  (`git rev-list --max-parents=0 HEAD`), the template's tree.
 - The decisions it logged: the index rows that range added to `docs/governance/framework_decisions.md`
-  and `sprint/decision-log.md` (`git diff <base> HEAD -- <both files>`).
+  and `sprint/decision-log.md` (`git diff <base> HEAD -- <both files>`). The scaffold leaves
+  sections 3 to 5 of the handoff as `{{FILL}}` tokens, so each is a judgement written, never a default.
 - `sprint/handoffs/HANDOFF_S<N>.md` and `KICKOFF_S<N>.md`, the pair this session consumed.
 
 ## 3. Scaffold and fill the pair
