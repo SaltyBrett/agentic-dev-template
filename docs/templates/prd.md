@@ -77,4 +77,4 @@ sensitivity, budget, timeline. -->
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | The PRD template: eleven sections, goals, functional and non-functional requirements numbered for the tracker and the architecture (TMPL-5.1) | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | The PRD template: eleven sections, goals, functional and non-functional requirements numbered for the tracker and the architecture (TMPL-5.1) | e155edf |

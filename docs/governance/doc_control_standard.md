@@ -115,5 +115,5 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | pending |
+| 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | 515f1a5 |

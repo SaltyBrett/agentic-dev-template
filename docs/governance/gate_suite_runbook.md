@@ -476,5 +476,5 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | pending |
+| 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007, 2026-10-23-010 | Marked as the authority for the gate suite (TMPL-2.3); reflects the skill gate, the persona library, the adoption fixtures, the `.gitignore` union and the authority gate. The README catalog's change to `skill-scan` (2026-10-23-009) is queued in TMPL-5.5 | 515f1a5 |

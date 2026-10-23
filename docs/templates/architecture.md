@@ -98,4 +98,4 @@ LAYER_1 --> LAYER_2 --> LAYER_3
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | The architecture template: thirteen sections, built from a PRD version, tracing each FR to a component and each NFR to its check, ending in the dependency layers planning uses (TMPL-5.1) | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | The architecture template: thirteen sections, built from a PRD version, tracing each FR to a component and each NFR to its check, ending in the dependency layers planning uses (TMPL-5.1) | e155edf |
