@@ -492,7 +492,7 @@ def library_state(roster: str, library: str) -> tuple[str, str] | None:
     if int(rv) > int(lv):
         return ("library-fork", f"version {rv} here, {lv} in personas/; a library persona changes in the library — "
                                 "write the variant as the project's own persona, under its own slug")
-    if int(rv) == int(lv) and roster.replace("\r\n", "\n") != library.replace("\r\n", "\n"):
+    if int(rv) == int(lv) and roster != library:   # .gitattributes checks out LF everywhere
         return ("library-drift", f"differs from personas/ at the same version {rv}; activation is a copy — "
                                  "activate it again from the library with the team-selection skill")
     if int(rv) < int(lv):
@@ -1279,8 +1279,7 @@ def run_self_test() -> int:
 
     def state(roster: str, library: str) -> str:
         return (library_state(roster, library) or ("",))[0]
-    check("library: a roster copy equal to the library passes, line endings aside",
-          state(_GOOD_PERSONA, _GOOD_PERSONA) == "" and state(_GOOD_PERSONA.replace("\n", "\r\n"), _GOOD_PERSONA) == "")
+    check("library: a roster copy equal to the library passes", state(_GOOD_PERSONA, _GOOD_PERSONA) == "")
     check("library: a roster version above the library's is a fork and fails",
           state(_BUMPED_PERSONA, _GOOD_PERSONA) == "library-fork" and "library-fork" not in NOTE_RULES)
     check("library: the same version with other text is drift and fails, frontmatter included",

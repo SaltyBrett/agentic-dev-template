@@ -87,7 +87,9 @@ Activation is a copy of the whole file, so a roster persona the library also hol
 it: the same version with any other text is drift and fails, and a higher version is a fork and
 fails, because a project's variant of a library persona is a persona of its own under its own slug.
 A lower version is the library moving on in a later release, and is only noted: the project chooses
-when to take the new text, by copying it again, as it chooses when to take a release. The verdicts
+when to take the new text, by copying it again, as it chooses when to take a release. The note
+reaches the session through the start hook's cold-start report, because pre-commit hides a passing
+hook's output; observed in the live plant, where the gate passed and printed nothing. The verdicts
 are the retired sync's, turned inward ([[reference_resources_sync]]). The library itself is linted
 as the roster is, append-only against its committed copy.
 

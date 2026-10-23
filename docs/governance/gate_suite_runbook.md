@@ -237,9 +237,11 @@ notes, which keeps them out of pre-commit's stash and out of the scanners.
 **Blocks:** a commit when the start report can exceed Claude Code's 10,000-character context cap,
 cuts a high-priority section before a low one, runs a gate or a pull after compaction, runs the
 verify without `--all-files`, counts the user-level `~/.claude/CLAUDE.md` as a shadow, takes
-the session number from another session's journal line, or leaves the kickoff's persona out of a
-session not run as that agent (or repeats it in one that is).
-**Why:** decisions 2026-10-22-001 and 2026-10-22-005; [[reference_claude_code_hooks]].
+the session number from another session's journal line, leaves the kickoff's persona out of a
+session not run as that agent (or repeats it in one that is), or leaves out a roster persona the
+library has moved past (or repeats a drift `session-verify` already fails, or crashes where
+PyYAML is absent).
+**Why:** decisions 2026-10-22-001, 2026-10-22-005 and 2026-10-23-003; [[reference_claude_code_hooks]].
 **Alone:** `pre-commit run session-start-selftest --all-files --verbose`
 
 ## `session-stop-selftest`

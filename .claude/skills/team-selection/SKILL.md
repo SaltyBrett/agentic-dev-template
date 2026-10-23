@@ -1,6 +1,6 @@
 ---
 name: team-selection
-description: 'Build or extend this project''s persona roster from the template''s library: ask which specializations the project needs, recommend personas from personas/, draft any the library lacks, and activate the chosen into .claude/agents/. Use at a project''s first session, when the work needs a specialization no active persona covers, or when the state gate notes that the library holds a newer version of an active persona.'
+description: 'Build or extend this project''s persona roster from the template''s library: ask which specializations the project needs, recommend personas from personas/, draft any the library lacks, and activate the chosen into .claude/agents/. Use at a project''s first session, when the work needs a specialization no active persona covers, or when the cold-start report notes that the library holds a newer version of an active persona.'
 ---
 
 # Team selection
@@ -21,8 +21,8 @@ delegate to unprompted, so activate what the work needs and no more (decision 20
    persona covers. Wait for the operator's yes or changes.
 4. **Activate** each chosen library persona by copying it whole:
    `cp personas/<slug>.md .claude/agents/<slug>.md`. Never edit the copy. The state gate refuses a
-   roster copy that differs from the library at its version or runs ahead of it, and notes one the
-   library has moved past; copying it again takes the newer text.
+   roster copy that differs from the library at its version or runs ahead of it; the cold-start
+   report names one the library has moved past, and copying it again takes the newer text.
 5. **Draft** a persona for each uncovered need as `.claude/agents/<slug>.md`, the project's own,
    and show it to the operator before writing it:
    - frontmatter: `name` equal to the slug (lowercase words joined by hyphens, never a library

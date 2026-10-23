@@ -243,6 +243,29 @@ def ensure_notes(root: Path) -> str:
 # The two reports
 # ==============================================================================
 
+def roster_lines(root: Path) -> list[str]:
+    """The roster against the library (decision 2026-10-23-003): each persona the library has moved
+    past. The state gate only notes it, and pre-commit hides a passing hook's output, so the note
+    reaches the session here or nowhere. The parser needs PyYAML, which this hook does not."""
+    roster = root / closeout.PERSONAS.relative_to(closeout.ROOT)
+    library = root / closeout.LIBRARY.relative_to(closeout.ROOT)
+    if not roster.is_dir() or not library.is_dir():
+        return []
+    try:
+        import yaml  # noqa: F401 — the persona parser's dependency, checked before it is needed
+    except ImportError:
+        return ["- Roster: not compared with the library (no PyYAML in this python3); "
+                "`pre-commit run session-closeout-check --all-files --verbose` shows it."]
+    lines = []
+    for p in sorted(roster.glob("*.md")):
+        twin = library / p.name
+        if twin.is_file():
+            state = closeout.library_state(p.read_text(encoding="utf-8"), twin.read_text(encoding="utf-8"))
+            if state and state[0] in closeout.NOTE_RULES:
+                lines.append(f"- Roster: `{p.stem}`: {state[1]}")
+    return lines
+
+
 def gate_lines(root: Path, runner: Runner, n: int | None, home: Path) -> str:
     lines = []
     rc, out = runner(IDENTITY_COMMAND, root)
@@ -261,6 +284,7 @@ def gate_lines(root: Path, runner: Runner, n: int | None, home: Path) -> str:
         why = "; ".join(detail[:8]) or last_line(out)
         lines.append(f"- session-verify: FAILED (exit {rc}). {why}")
         lines.append("  `AGENTS.md` makes completing the previous session's closeout this session's first task.")
+    lines.extend(roster_lines(root))
     missing = missing_hook_types(root)
     if missing is None:
         lines.append("- Hook types: not a git repository, not checked.")
@@ -404,6 +428,30 @@ def run_self_test() -> int:
     check_("the newest entry is the first `## S<N>` section, without the trailing rule",
            entry.startswith("## S2 — 2026-10-22 — Second") and "### Done" in entry and "S1" not in entry
            and not entry.rstrip().endswith("---"), entry)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = _tree(Path(tmp).resolve())
+        (root / "personas").mkdir()
+        lib = root / "personas" / "framework-maintainer.md"
+        lib.write_text(_AGENT, encoding="utf-8")
+        check_("roster: a copy equal to the library is not mentioned", roster_lines(root) == [], str(roster_lines(root)))
+        lib.write_text(_AGENT.replace("description: builds gates", "description: builds other gates"), encoding="utf-8")
+        check_("roster: drift is session-verify's failure to report, never repeated here as a note",
+               roster_lines(root) == [], str(roster_lines(root)))
+        lib.write_text(_AGENT.replace("version: 1", "version: 2").replace("changelog:\n", "changelog:\n  - 2 — 2026-10-23 — more\n")
+                       + "More.\n", encoding="utf-8")
+        found = roster_lines(root)
+        check_("roster: a persona the library has moved past is named, with the version it holds",
+               len(found) == 1 and "framework-maintainer" in found[0] and "version 2" in found[0], str(found))
+        probe = ("import sys; sys.modules['yaml'] = None; sys.path.insert(0, sys.argv[1]); import session_start as s; "
+                 "from pathlib import Path; print(s.roster_lines(Path(sys.argv[2])))")
+        out = subprocess.run([sys.executable, "-I", "-c", probe, str(Path(__file__).resolve().parent), str(root)],
+                             capture_output=True, text=True, check=False)
+        check_("roster: with no PyYAML the hook says it did not compare, and never crashes",
+               out.returncode == 0 and "not compared" in out.stdout, (out.stdout + out.stderr).strip()[-300:])
+        gates = gate_lines(root, lambda cmd, where: (0, "Passed\n"), 3, Path(tmp))
+        check_("roster: the note reaches the cold-start report, beside a passing session-verify",
+               "session-verify: PASS" in gates and "- Roster: `framework-maintainer`" in gates, gates)
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp).resolve()

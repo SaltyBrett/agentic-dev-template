@@ -1,7 +1,7 @@
 ---
 name: Claude Code hooks run the cold start, bank the uncommitted interval, and guard the turn
 description: 'How the SessionStart, Stop, PostToolUse and PostToolUseFailure hooks in .claude/settings.json carry decision 2026-10-22-001, read against the hooks reference on 2026-10-22: the 10,000-character cap on injected context, why compaction runs no gate, why the Stop hook asks once and never wedges, why the journal and notes are gitignored, what blocking PreCompact does, and which details only a live session showed. Read before editing a session hook, its script, or the settings that register it.'
-teaches: [2026-10-22-001, 2026-10-22-004, 2026-10-22-005]
+teaches: [2026-10-22-001, 2026-10-22-004, 2026-10-22-005, 2026-10-23-003]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -56,6 +56,10 @@ metadata:
   injected at priority 1, at startup and after compaction. A plain session and the VS Code
   extension so hold the persona and keep Claude Code's own system prompt, which `--agent`
   replaces whole. A kickoff that already copies the prompt verbatim gets no second copy.
+- **The roster against the library** (decision 2026-10-23-003). A roster persona the library has
+  moved past is a note the state gate prints and pre-commit hides on a pass, so the hook compares
+  the two itself with the gate's `library_state` and names each one. The parser needs PyYAML, which
+  the hook does not: without it the report says the roster was not compared.
 - The report also says whether both hook types are installed and whether a `CLAUDE.md` on the path
   hides `AGENTS.md` ([[reference_claude_code_agents_md]]); the user-level `~/.claude/CLAUDE.md`
   does not count. It never prints `AGENTS.md` itself.

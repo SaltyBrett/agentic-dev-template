@@ -148,6 +148,7 @@ repos:
         name: Session Start Self-Test (fits the context cap; compaction runs no gate)
         entry: python scripts/session_start.py --self-test
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the roster fixtures parse personas; the live hook needs none
         stages: [pre-commit]
         pass_filenames: false
         always_run: true

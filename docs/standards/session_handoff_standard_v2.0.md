@@ -156,7 +156,8 @@ and the gate refuses a body that differs from the committed copy at the same ver
 never goes down. A bump that changes only `expertise` or `insists_on` is allowed. A kickoff names the
 version the roster held when it was written, so a reader knows which text the session was addressed
 with. A roster persona taken from the library is a copy of it: the gate refuses one that differs
-from the library at its version or runs ahead of it, and notes one the library has moved past.
+from the library at its version or runs ahead of it, and the cold-start report names one the
+library has moved past.
 
 **Personas are shape-gated, not list-gated.** When a session's task list needs expertise no roster
 persona has, the agent writing the kickoff activates it from the library with the team-selection
