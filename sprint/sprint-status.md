@@ -21,7 +21,7 @@ request; the persona is unchanged (`framework-maintainer`). Cold start by hand: 
 `session-verify` exit 0 at 5cccd1e, the handoff's reads read. Decision 2026-10-23-003's four
 questions went to the operator first: the full team ships in `v2.0.0`, `dev-resources` retires, a
 project's own personas stay in it, and the updater converts a `v1.0.0` project's `docs/personas/`
-(the decision amended). TMPL-1.8 split into TMPL-1.8, TMPL-1.9 and TMPL-1.10; TMPL-1.8 done.
+(the decision amended). TMPL-1.8 split into TMPL-1.8, TMPL-1.9 and TMPL-1.10; TMPL-1.8 and TMPL-1.9 done.
 
 ### Done
 
@@ -40,6 +40,10 @@ project's own personas stay in it, and the updater converts a `v1.0.0` project's
    because pre-commit hides a passing hook's output, so the start hook now names it. A scratch
    birth: `new_project.py --apply` exit 0, the roster emptied, the library whole, `session-verify`
    exit 0 at S1, and a `claude -p` session listing only the built-in agents.
+3. TMPL-1.9 — the library's team designed with the operator, who added business intelligence and
+   reporting roles and the missing game development roles (decision 2026-10-23-004); thirty new
+   personas written into `personas/` from one generator, every one passing the persona lint, and a
+   plant of an unquoted `: ` item refused as `list`.
 
 ### Blockers
 

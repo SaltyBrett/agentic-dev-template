@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-004 | 2026-10-23 | The library's team: roles across the software lifecycle, data science with BI and reporting, document management, writing and quality control, and game development, each a persona in the agent-file shape with the shared habits; a code reviewer left to TMPL-4 | APPROVED |
 | 2026-10-23-003 | 2026-10-23; amended 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the full team ships in `v2.0.0`; `dev-resources` retires; a project's own personas stay in it; the updater converts a `v1.0.0` project's `docs/personas/`; built as TMPL-1.8 to TMPL-1.10 | APPROVED |
 | 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED; SUPERSEDED (bullets 1, 4 and 5) by 2026-10-23-003 |
 | 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
@@ -2677,3 +2678,53 @@ built-in agents, with the `team-selection` skill available.
 (`KEEP`), cross-checked in the updater's self-test; `.claude/skills/team-selection/SKILL.md`, held by
 `skill-scan`. Taught by [[reference_session_closeout]], [[reference_claude_code_agents_md]],
 [[reference_resources_sync]] and [[reference_template_update]].
+
+---
+
+## Decision 2026-10-23-004: The persona library's team
+
+**Date:** 2026-10-23
+**Made By:** Chair (S5): the team approved, with business intelligence and reporting roles and the
+missing game development roles added at the Chair's request; the role definitions by the AI
+**Status:** APPROVED
+**Builds:** the full-team answer in decision 2026-10-23-003 (TMPL-1.9)
+**Affects:** `personas/`, `.claude/skills/team-selection/SKILL.md`
+
+### Context
+
+Decision 2026-10-23-003, as amended, ships the full team in `v2.0.0`: personas across the software
+development lifecycle, data science, document management, writing including technical writing, and
+quality control for all three. The library held five personas, three of them built for one project
+each. The roles were put to the operator as a table by area.
+
+### Decision
+
+- **The team, by area.** Software lifecycle: `product-manager`, `business-analyst`,
+  `solution-architect`, `software-engineer`, `frontend-engineer`, `ux-designer`, `devops-engineer`,
+  `security-engineer`, `delivery-manager`. Data science, business intelligence and reporting:
+  `data-engineer`, `analytics-engineer`, `bi-developer`, `reporting-analyst`, `data-analyst`,
+  `data-scientist`, `ml-engineer`, beside `data-platform-engineer` for the Microsoft stack. Document
+  management: `document-controller`, `information-architect`. Writing: `technical-writer`, `editor`,
+  `business-writer`. Quality control: `qa-engineer`, `data-quality-engineer`, `document-reviewer`.
+  Game development: `game-designer`, `game-artist`, `game-audio-designer`, `narrative-designer`,
+  `game-producer`, `game-qa-tester`, beside `game-engine-developer` and `game-ui-ux-designer`.
+  `framework-maintainer` and `generative-video-engineer` stay.
+- **One shape and shared habits.** Each persona is an agent file at version 1: a description that
+  says what the role does, so Claude can delegate to it once a project activates it; expertise and
+  insists_on as lists of strings; and a prompt that addresses the agent as the role. Each reads its
+  story's Required Standards first and calls nothing done on an unobserved check; a role that
+  touches data keeps raw data out of the session.
+- **A code reviewer is left to TMPL-4**, whose coding-standard design defines the reviewer and
+  auditor briefs.
+- Adding a persona to the library later is MINOR (decision 2026-10-23-003); these ship with
+  `v2.0.0`.
+
+### Verification
+
+Each persona passes `session-closeout-check`'s persona lint in the library: YAML frontmatter that
+parses, `name` equal to the filename, the required keys, string lists, and a changelog item for
+version 1. A plant that unquoted one list item holding `: ` was refused as `list`.
+
+### Enforcement
+
+`scripts/session_closeout.py` (`library_findings`, `lint_persona`) in `session-closeout-check`.

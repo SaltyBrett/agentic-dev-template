@@ -14,8 +14,9 @@ delegate to unprompted, so activate what the work needs and no more (decision 20
    if there is one, and the current roster. For each file in `personas/`, its frontmatter: `name`,
    `description`, `expertise` and `version`. The body is the prompt and need not be read to choose.
 2. **Ask the operator** which specializations the project needs. Offer the library's personas
-   grouped by area (software lifecycle, data science, document management, writing, quality
-   control) and leave room for a need the library does not name. Ask which persona leads the
+   grouped by area (software lifecycle; data science, BI and reporting; document management;
+   writing; quality control; game development and other specialists) and leave room for a need the
+   library does not name. Ask which persona leads the
    sessions: that is the one the next kickoff names.
 3. **Recommend** the library persona that covers each need and why, and name every need no library
    persona covers. Wait for the operator's yes or changes.
