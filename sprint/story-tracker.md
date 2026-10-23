@@ -18,9 +18,9 @@
 |--------|-------|
 | **Total Stories** | 18 |
 | **Not Started** | 11 |
-| **In Progress** | 1 |
+| **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 6 |
+| **Completed** | 7 |
 
 ---
 
@@ -61,7 +61,7 @@ that decision 2026-09-23-003 names.
 | TMPL-1.5 | Path-scoped rules under `.claude/rules/`; `CONSTITUTION.md` slimmed (§2 a pointer, §6.3 a pointer to the knowledge entry); the checklist reduced to what a script does not already prove. §2 and the checklist were done by TMPL-1.1 (S2). Done at S3: four rules, gated (2026-10-22-006) | Done | TMPL-1.1 | doc_control_standard.md | 2026-10-22-001 |
 | TMPL-1.6 | Ownership of the new paths in the initializer, the updater and the sanitizer (`.claude/agents`, `.claude/skills`, `.claude/rules`, `.claude/settings.json`, the journal and notes), with fixtures proved against broken variants; TMPL-1.3 renamed `docs/personas/` to `.claude/agents/` in the three scripts' lists, with no ownership fixture yet; a project's own `docs/personas/` carried into `.claude/agents/` at adoption. Done at S4: the registry kept and held equal in five places, skills, rules and settings three-way, the local files untouched and ignored by the repository; personas adopt through `dev-resources` (2026-10-23-002) | Done | TMPL-1.2, TMPL-1.3, TMPL-1.4, TMPL-1.5 | doc_control_standard.md | 2026-10-22-001 |
 | TMPL-1.7 | Proof: a scratch birth, a hook-driven cold start, a compaction re-injection observed, a forked closeout; a knowledge entry for the substrate | Not Started | TMPL-1.6, TMPL-1.8, TMPL-1.9, TMPL-1.10 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
-| TMPL-1.8 | Persona library mechanism: `personas/` in the template, inactive, in the agent-file shape and linted as the roster is; `.claude/agents/` the project's roster; the first-session skill that asks which specializations the project needs, recommends from the library, drafts what it lacks and activates the chosen; the closeout's report of a library version newer than the roster's; the initializer, the updater and the sanitizer following; the five existing personas moved into the library; the `dev-resources` sync removed from the template, since it would write every persona into the roster (script, hook, closeout rule, stamp; the shared knowledge entry made the template's own); the supersessions marked on both sides | In Progress | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
+| TMPL-1.8 | Persona library mechanism: `personas/` in the template, inactive, in the agent-file shape and linted as the roster is; `.claude/agents/` the project's roster; the first-session skill that asks which specializations the project needs, recommends from the library, drafts what it lacks and activates the chosen; the closeout's report of a library version newer than the roster's; the initializer, the updater and the sanitizer following; the five existing personas moved into the library; the `dev-resources` sync removed from the template, since it would write every persona into the roster (script, hook, closeout rule, stamp; the shared knowledge entry made the template's own); the supersessions marked on both sides. Done at S5: twenty broken variants caught; plants refused; a scratch birth's session lists no library persona | Done | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
 | TMPL-1.9 | The full team in the library: roles across the software development lifecycle, data science, document management, writing including technical writing, and quality control, designed with the operator, each persona written in the agent-file shape and linted | Not Started | TMPL-1.8 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
 | TMPL-1.10 | Adoption from `v1.0.0`: the updater converts a project's `docs/personas/` into `.claude/agents/` and settles its synced knowledge entries and stamp, proved against the real `v1.0.0` persona files (the sync itself left the template in TMPL-1.8) | Not Started | TMPL-1.8 | doc_control_standard.md | 2026-10-23-003 |
 

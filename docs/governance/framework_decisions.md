@@ -2653,3 +2653,27 @@ the registry as the sync's and the adoption through `dev-resources`).
 - TMPL-2.2's technical writer becomes a library persona; TMPL-2.4's port of `dev-resources`' frozen
   tree is replaced by whatever the adoption question settles; TMPL-3.1's design session designs the
   full team as library personas.
+
+### Verification
+
+Fixtures: the closeout gate's library rules, the start hook's roster notes, and the initializer's,
+the updater's and the sanitizer's checks on the roster and the library. Twenty broken variants
+across those five scripts, each failing at least one fixture without crashing; three were first
+written wrong (one changed nothing, one targeted a line already rewritten, one crashed instead of
+failing) and were rewritten. Live plants in the real tree: a roster copy edited at the same version
+failed `session-closeout-check` as `library-drift` and was refused by a real commit; one bumped ahead
+of the library failed as `library-fork`, and was refused too. The library bumped past the roster
+passed and printed nothing, because pre-commit hides a passing hook's output; that is why the start
+hook now names such a persona itself. A scratch birth from the committed template:
+`new_project.py --apply` exit 0 with the suite green, the template's roster removed and the library
+whole, `session-verify` exit 0 at S1, and a `claude -p` session whose init event listed only the
+built-in agents, with the `team-selection` skill available.
+
+### Enforcement
+
+`scripts/session_closeout.py` (`LIBRARY`, `library_state`, `NOTE_RULES`, `library_findings`) in
+`session-closeout-check`; `scripts/session_start.py` (`roster_lines`); `scripts/new_project.py`
+(`CLEAR_GLOBS`), `scripts/sanitize_template.py` (`NEVER_RESET`) and `scripts/template_update.py`
+(`KEEP`), cross-checked in the updater's self-test; `.claude/skills/team-selection/SKILL.md`, held by
+`skill-scan`. Taught by [[reference_session_closeout]], [[reference_claude_code_agents_md]],
+[[reference_resources_sync]] and [[reference_template_update]].
