@@ -1,8 +1,8 @@
 ---
 name: How a derived project takes a newer template release
-description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work.'
-teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002]
-verified: 2026-09-25
+description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: the persona registry kept for the sync, the skills, rules and settings three-way, the journal, notes and local settings untouched; and how a project''s docs/personas/ reaches .claude/agents/ through dev-resources at v2.0.0.'
+teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -61,6 +61,25 @@ reported and left; nothing is ever removed; `[EXAMPLE]` rows and bodies never tr
 project's log is kept with the rest of `sprint/`. A project that took a release before the split
 still carries the old copies in its log, and the gates let the framework file win those duplicate
 IDs ([[reference_framework_decisions]]).
+
+## The Claude Code paths, the local files, and how personas adopt `v2.0.0`
+
+Decision 2026-10-23-002. The persona registry, `.claude/agents/`, is kept: it is the sync's, and a
+fixture holds its path equal in the five places that name it, because a rename that missed one
+would leave a project syncing into a folder no gate reads. `.claude/skills/`, `.claude/rules/` and
+`.claude/settings.json` are three-way like the scripts: the template's, which a project may edit
+and extend. The journal, the notes and `.claude/settings.local.json` belong to the running session
+(`new_project.LOCAL_STATE`): ignored by the repository's own `.gitignore`, touched by none of the
+three scripts, kept here. That ignore is checked with `git -c core.excludesFile=`, because an
+operator's global excludes file once covered `settings.local.json` and hid that the repository's
+did not.
+
+A project on `v1.0.0` holds its personas in `docs/personas/`, which `v2.0.0` no longer ships, so
+this script treats it as an ordinary removed path: an unedited copy is deleted, an edited one
+reported. The personas reach `.claude/agents/` through `dev-resources`, never by conversion here:
+publish what `dev-resources` lacks with the project's own `v1.0.0` sync, let `dev-resources` port
+its frozen tree once (TMPL-2.4), take the release, then run the `v2.0.0` sync before expecting the
+suite to pass, since the current kickoff's persona is looked for in `.claude/agents/`.
 
 ## Three things that were not obvious until the probe ran
 

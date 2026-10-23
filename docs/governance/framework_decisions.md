@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED |
 | 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
 | 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
 | 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED |
@@ -2480,3 +2481,82 @@ records and handoff pairs aside, finds each procedure's distinctive command in i
 `claude -p "/closeout framework-maintainer <brief>"` in a scratch clone ran the skill as a
 `general-purpose` subagent whose first command was step 1's `git status --short`; it read step 2
 from git and stopped at step 3, whose sync needed an approval `-p` cannot give, the tree untouched.
+
+---
+
+## Decision 2026-10-23-002: The Claude Code paths and the local files are owned by decision; personas adopt through `dev-resources`
+
+**Date:** 2026-10-23
+**Made By:** AI (S4), within decisions 2026-10-22-001 and 2026-10-22-005; reported to the operator
+at the S4 handover
+**Status:** APPROVED
+**Builds:** the ownership consequence of 2026-10-22-001 and the adoption consequence of 2026-10-22-005 (TMPL-1.6)
+**Affects:** `scripts/new_project.py` (`LOCAL_STATE`, the self-test), `scripts/template_update.py` (`KEEP`, the docstring, the self-test), `scripts/sanitize_template.py` (`LOCAL_STATE`, the self-test), `.gitignore`
+
+### Context
+
+Decision 2026-10-22-001 left the initializer, the updater and the sanitizer to learn the new
+paths: `.claude/agents/`, `.claude/skills/`, `.claude/rules/`, `.claude/settings.json`, the
+journal and the working notes. TMPL-1.3 renamed the registry from `docs/personas/` in three lists
+with no fixture to say they agree. Decision 2026-10-22-005 left a project's own `docs/personas/`
+to be carried into `.claude/agents/` when it adopts `v2.0.0`.
+
+Reading the tree for this found `.claude/settings.local.json`, one operator's permissions, ignored
+on the template's machine only by that operator's global excludes file: the repository's
+`.gitignore` lacked it, so on any other machine it could be committed, and a release would then
+have carried one person's grants into every project. `git check-ignore` reads the global file too,
+so the journal's own ignore check could not have seen the gap; with `-c core.excludesFile=` it can.
+
+### Decision
+
+- **The registry, `.claude/agents/`, is kept**, being the resources sync's alone: preserved at
+  birth, kept by the sanitizer, never written by a release. It is one path in five places (the
+  closeout gate reads it, the sync writes it, the initializer, the sanitizer and the updater keep
+  it), and a fixture holds all five to the same string.
+- **`.claude/skills/`, `.claude/rules/` and `.claude/settings.json` are merged three-way**: the
+  template's, which a project may edit and extend. A skill or rule the project added is in
+  neither release and never touched. The initializer and the sanitizer leave them as shipped. The
+  template-only skills stay in a project: each says it runs only in the template and stops
+  elsewhere, and neither's description enters Claude's context.
+- **The journal, the notes and `.claude/settings.local.json` are the running session's**
+  (`new_project.LOCAL_STATE`): gitignored by the repository's own `.gitignore`, checked with the
+  global excludes off; never written or removed by the initializer or the sanitizer, which may run
+  from inside a session; kept by the updater.
+- **A project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`**, in this
+  order: (1) before adopting, the project publishes every persona `dev-resources` lacks with its
+  own `v1.0.0` sync; (2) TMPL-2.4 ports `dev-resources`' frozen `docs/personas/` into
+  `.claude/agents/` before any project adopts; (3) `template_update.py` deletes the template's
+  unedited `docs/personas/` copies, now an ordinary three-way path the target release removed, and
+  reports the edited ones; (4) the project's `v2.0.0` `resources_sync.py --apply` writes
+  `.claude/agents/`, which the suite needs before it can pass, since the current kickoff's persona
+  is looked for there; (5) the project removes what is left of `docs/personas/` once every slug in
+  it is in `.claude/agents/` at an equal or higher version. A persona left behind cannot pass
+  silently: the closeout gate refuses a kickoff whose persona `.claude/agents/` lacks.
+- **Not converted in the project**, because the registry grows only through `--publish` (decision
+  2026-09-23-007) and a conversion per project would make copies outside it; the conversion met
+  YAML traps when it was done once by hand (decision 2026-10-22-005), and one conversion in
+  `dev-resources` serves every project.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001).
+
+### Consequences
+
+- TMPL-2.4 runs the adoption in that order on a scratch project first. The updater's own suite
+  run after `--apply` fails until step 4 has run; TMPL-2.4 judges whether the updater should say so.
+- A machine whose global excludes already cover a local file no longer hides a gap in the
+  repository's own `.gitignore`.
+
+### Verification
+
+Fixtures: the initializer's self-test gained five, the updater's four, the sanitizer's one.
+Nineteen broken variants across the three scripts, the sync's and the gate's registry path and
+`.gitignore`, each failing at least one fixture and none crashing; one was first written so that
+it never applied, and was rewritten. On the real tree every tracked `.claude/` path and the three
+local files classify as decided: ten three-way, eight kept. Before the `.gitignore` line,
+`git -c core.excludesFile= check-ignore` reported `.claude/settings.local.json` not ignored, while
+the plain command reported it ignored.
+
+### Enforcement
+
+`scripts/new_project.py` (`LOCAL_STATE`, `--self-test`), `scripts/template_update.py` (`KEEP`,
+`--self-test`: the decided paths, the registry across five places, the initializer's agreement),
+`scripts/sanitize_template.py` (`LOCAL_STATE`, `--self-test`). Taught by [[reference_template_update]].

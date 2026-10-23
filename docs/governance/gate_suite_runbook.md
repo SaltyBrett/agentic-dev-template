@@ -258,8 +258,10 @@ commit here; only its guards are proved.
 `${{ secrets.X }}` expression or the convention's own `{{PLACEHOLDER}}`, the framework decisions,
 the decision log or the knowledge base appearing in a mutating list, a regenerated tracker that still carries real stories
 or statistics that do not reconcile at zero, the template's own origin not refused, a public
-project not refused without `--public` or an unreadable visibility treated as a verdict.
-**Why:** decisions 2026-09-20-009, 2026-09-22-002 and 2026-09-25-001; [[reference_derived_project_start]].
+project not refused without `--public` or an unreadable visibility treated as a verdict, a mutating
+list reaching `.claude/` or the session's local files, or a local file the repository's own
+`.gitignore` does not cover (read from the tree, global excludes off).
+**Why:** decisions 2026-09-20-009, 2026-09-22-002, 2026-09-25-001 and 2026-10-23-002; [[reference_derived_project_start]], [[reference_template_update]].
 **Alone:** `pre-commit run new-project-selftest --all-files --verbose`
 
 ## `sanitize-template-selftest`
@@ -273,9 +275,9 @@ from the tree, so the hook passes in every derived project.
 prose mention of a `TMPL-` ID or of the name in the script itself reported; a regenerated
 sprint-status not at S1 or a regenerated tracker that carries a story, loses its `{{DATE}}` token
 or does not reconcile at zero; a plan that reaches the framework decisions, the decision log, the
-knowledge base, the personas, the sync stamp, a filled file or a profile file; the refusal not
-the initializer's inverse.
-**Why:** decision 2026-09-23-003; [[reference_template_sanitizer]].
+knowledge base, the personas, the sync stamp, a filled file, a profile file, anything under
+`.claude/` or the session's local files; the refusal not the initializer's inverse.
+**Why:** decisions 2026-09-23-003 and 2026-10-23-002; [[reference_template_sanitizer]].
 **Alone:** `pre-commit run sanitize-template-selftest --all-files --verbose`
 
 ## `sanitize-template-check`
@@ -302,8 +304,10 @@ self-test is what lets a project trust the copy it fetches.
 the initializer's lists, the project's decision log merged rather than kept or the framework
 decisions kept rather than merged, a keyed insert landing at the table's end instead of the top, an
 `[EXAMPLE]` row travelling, both-sides-changed lines silently taking the template's, a conflict
-reported clean, template markdown compared without the profile strip.
-**Why:** decisions 2026-09-22-004 and 2026-09-23-003; [[reference_template_update]].
+reported clean, template markdown compared without the profile strip, a `.claude/` path or a
+local file classified other than decided, the persona registry's path differing among the sync,
+the state gate, the initializer, the sanitizer and this map.
+**Why:** decisions 2026-09-22-004, 2026-09-23-003 and 2026-10-23-002; [[reference_template_update]].
 **Alone:** `pre-commit run template-update-selftest --all-files`
 
 ## `resources-sync-selftest`

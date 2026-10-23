@@ -73,6 +73,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import project_profile  # noqa: E402 — shared profile resolution
+import session_journal  # noqa: E402 — the journal's and the notes' paths, its one home
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -121,6 +122,13 @@ NEVER_RESET = [
     "docs/orchestration/knowledge/",
     ".claude/agents/",
 ]
+
+# The running session's own files: gitignored by the repository's own .gitignore, never committed,
+# so never the template's to carry. The journal and the working notes bank the uncommitted interval
+# (decision 2026-10-22-004); settings.local.json holds one operator's permissions. Never written and
+# never removed, at birth or by a release: a project initialized from inside a Claude session is
+# mid-session. Asserted by a fixture (decision 2026-10-23-002).
+LOCAL_STATE = [session_journal.JOURNAL_REL, session_journal.NOTES_REL, ".claude/settings.local.json"]
 
 # Left for the project to fill when it needs them. Reported, not an error.
 DEFERRED_TOKENS = {
@@ -453,6 +461,27 @@ def run_self_test() -> int:
           "docs/governance/framework_decisions.md" in NEVER_RESET
           and not any("framework_decisions" in m for m in mutating))
 
+    # The Claude Code tree arrives as the template ships it: the registry is the sync's, the
+    # skills, rules and settings are merged by later releases. No list here writes under it.
+    claude_touched = sorted(m for m in mutating if m.startswith(".claude/"))
+    check("no mutating list reaches .claude/: the registry is preserved, the rest arrives as shipped",
+          not claude_touched and ".claude/agents/" in NEVER_RESET, str(claude_touched))
+    check("the local files are the journal, the notes and the local settings, by the journal's own paths",
+          LOCAL_STATE == ["sprint/recovery/journal.md", "sprint/recovery/WORKING_NOTES.md", ".claude/settings.local.json"]
+          and LOCAL_STATE[:2] == [session_journal.JOURNAL_REL, session_journal.NOTES_REL], str(LOCAL_STATE))
+    local_touched = sorted(m for m in mutating | set(NEVER_RESET)
+                           if any(m == p or p.startswith(m.split("*")[0]) for p in LOCAL_STATE))
+    check("the running session's local files (journal, notes, local settings) are in no list that writes "
+          "or preserves the template's content", not local_touched, str(local_touched))
+    # Read from the tree, as the journal's own self-test does, with the global excludes file
+    # switched off: an operator's ~/.gitignore_global covered settings.local.json on the template's
+    # own machine and hid that the repository's .gitignore did not (decision 2026-10-23-002).
+    unignored = [p for p in LOCAL_STATE
+                 if subprocess.run(["git", "-c", "core.excludesFile=", "check-ignore", "-q", "--no-index", p],
+                                   cwd=ROOT, capture_output=True, check=False).returncode != 0]
+    check("the repository's own .gitignore covers every local file, whatever the machine ignores",
+          not unignored, f"not ignored by .gitignore: {unignored}")
+
     _, unknown_in_skeleton = remaining_tokens(sprint_status_skeleton(_VALUES))
     check("the generated sprint-status carries no unfilled tokens", not unknown_in_skeleton,
           f"{sorted(unknown_in_skeleton)}")
@@ -477,7 +506,7 @@ def run_self_test() -> int:
     check("a template version is set", bool(re.fullmatch(r"v\d+\.\d+\.\d+", TEMPLATE_VERSION)),
           TEMPLATE_VERSION)
 
-    total = 17
+    total = 21
     print(f"\n{'PASSED' if not failures else 'FAILED'}: {total - failures}/{total} checks")
     return 1 if failures else 0
 
@@ -618,6 +647,7 @@ def main() -> int:
     print(f"\n  preserved: {', '.join(NEVER_RESET)}")
     print("             (knowledge entries declare `teaches:` against the framework decisions;")
     print("              the project's log ships with the [EXAMPLE] entry alone)")
+    print(f"  untouched: {', '.join(LOCAL_STATE)}  (the running session's, gitignored)")
 
     # Only MANAGED files can hold an "unknown" token. Tokens elsewhere are either
     # deferred brand/Azure values or documentation of the skeleton itself —

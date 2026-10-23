@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 15 |
-| **Not Started** | 10 |
+| **Not Started** | 9 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 5 |
+| **Completed** | 6 |
 
 ---
 
@@ -59,7 +59,7 @@ that decision 2026-09-23-003 names.
 | TMPL-1.3 | Personas to `.claude/agents/`: `persona-lint` and `resources_sync.py` repointed, the kickoff names the agent, `session_closeout.py` rules updated, the registry republished to `dev-resources`. Done at S3: the start hook injects the persona, `--agent` optional; `dev-resources` holds both trees (2026-10-22-005) | Done | TMPL-1.1 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
 | TMPL-1.4 | Procedures to forked skills: closeout, release cut, planning session, sanitize-and-cut, document production; the standards shrink to the law; a gate keeps each skill's commands in step with the config. Done at S4: five skills listed in `AGENTS.md`, the closeout forked with the brief as arguments, `skill-scan` (2026-10-23-001) | Done | TMPL-1.2, TMPL-1.3 | sprint_management_standard_v1.0.md | 2026-10-22-001 |
 | TMPL-1.5 | Path-scoped rules under `.claude/rules/`; `CONSTITUTION.md` slimmed (§2 a pointer, §6.3 a pointer to the knowledge entry); the checklist reduced to what a script does not already prove. §2 and the checklist were done by TMPL-1.1 (S2). Done at S3: four rules, gated (2026-10-22-006) | Done | TMPL-1.1 | doc_control_standard.md | 2026-10-22-001 |
-| TMPL-1.6 | Ownership of the new paths in the initializer, the updater and the sanitizer (`.claude/agents`, `.claude/skills`, `.claude/rules`, `.claude/settings.json`, the journal and notes), with fixtures proved against broken variants; TMPL-1.3 renamed `docs/personas/` to `.claude/agents/` in the three scripts' lists, with no ownership fixture yet; a project's own `docs/personas/` carried into `.claude/agents/` at adoption | Not Started | TMPL-1.2, TMPL-1.3, TMPL-1.4, TMPL-1.5 | doc_control_standard.md | 2026-10-22-001 |
+| TMPL-1.6 | Ownership of the new paths in the initializer, the updater and the sanitizer (`.claude/agents`, `.claude/skills`, `.claude/rules`, `.claude/settings.json`, the journal and notes), with fixtures proved against broken variants; TMPL-1.3 renamed `docs/personas/` to `.claude/agents/` in the three scripts' lists, with no ownership fixture yet; a project's own `docs/personas/` carried into `.claude/agents/` at adoption. Done at S4: the registry kept and held equal in five places, skills, rules and settings three-way, the local files untouched and ignored by the repository; personas adopt through `dev-resources` (2026-10-23-002) | Done | TMPL-1.2, TMPL-1.3, TMPL-1.4, TMPL-1.5 | doc_control_standard.md | 2026-10-22-001 |
 | TMPL-1.7 | Proof: a scratch birth, a hook-driven cold start, a compaction re-injection observed, a forked closeout; a knowledge entry for the substrate | Not Started | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
 
 ---

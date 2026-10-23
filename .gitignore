@@ -61,3 +61,7 @@ nul
 # journal records raw commands (decision 2026-10-22-004); scripts/session_journal.py owns both.
 sprint/recovery/journal.md
 sprint/recovery/WORKING_NOTES.md
+
+# One operator's Claude Code permissions; .claude/settings.json is the shared file. Ignored here,
+# not only by a machine's global excludes (decision 2026-10-23-002).
+.claude/settings.local.json

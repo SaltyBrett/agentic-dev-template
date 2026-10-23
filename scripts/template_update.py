@@ -13,9 +13,11 @@ converts into a control (decision 2026-09-22-004).
 WHO OWNS WHAT — three classes, decided by path (`classify`)
 ------------------------------------------------------------
   keep       Never written. `sprint/` (the project's decision log included, since decision
-             2026-09-23-003 keeps the framework's decisions out of it), `.project-profile`,
-             and the content folders the template ships empty (`docs/prd/`, `evidence/`,
-             `infra/`, ...). A template change under one of these is named in one
+             2026-09-23-003 keeps the framework's decisions out of it, and the session's
+             gitignored journal and working notes), `.project-profile`, the persona registry
+             `.claude/agents/` (the resources sync's), `.claude/settings.local.json` (one
+             operator's), and the content folders the template ships empty (`docs/prd/`,
+             `evidence/`, `infra/`, ...). A template change under one of these is named in one
              summary line and not applied.
   merge      Two tables merged by key, so project rows are never touched:
              `docs/orchestration/knowledge/INDEX.md` by slug, and
@@ -28,7 +30,10 @@ WHO OWNS WHAT — three classes, decided by path (`classify`)
              release keeps those copies, and the freshness gate lets the framework file
              win the duplicate IDs.
   three-way  Everything else, through `git merge-file` over base (the release the
-             project is on), current (the project's copy) and other (the target).
+             project is on), current (the project's copy) and other (the target). That
+             includes `.claude/skills/`, `.claude/rules/` and `.claude/settings.json`: the
+             template's, which a project may edit and extend (decision 2026-10-23-002); a
+             skill or rule the project added is in neither release and never touched.
              A copy the project never edited takes the template's version outright.
              An edited copy takes the template's change where the two do not overlap.
              An overlap is a conflict: the file is left alone and named, and the run
@@ -102,6 +107,9 @@ KEEP = [
     # clears it at birth and the updater never writes it. Found by the first derived project to
     # take v7.1.0, which received the template's stamp as an `add`.
     ".resources-version",
+    # One operator's Claude Code permissions (new_project.LOCAL_STATE): gitignored, so a release
+    # should never hold it; kept in case one ever does, since it would carry personal grants.
+    ".claude/settings.local.json",
     # The template's MIT license arrives at birth and is the project's from then on: a project
     # keeps it or replaces it with its own, and a release never rewrites a project's license
     # (decision 2026-09-25-002).
@@ -570,6 +578,42 @@ def run_self_test() -> int:
             "pyproject.toml": "keep", ".pre-commit-hooks.yaml": "keep", ".resources-version": "keep"}
     bad = {p: classify(p) for p, w in want.items() if classify(p) != w}
     check("paths classify as keep, merge, three-way or special", not bad, str(bad))
+
+    # Every Claude Code path the template ships, and the session's local banking, as decided by
+    # decision 2026-10-23-002. `docs/personas/` is the pre-v2.0.0 registry: no longer the
+    # registry's path, so a release that removed it deletes a project's unedited copy and
+    # reports an edited one, which is the adoption path the decision names.
+    decided = {".claude/agents/framework-maintainer.md": "keep", ".claude/settings.local.json": "keep",
+               ".claude/skills/closeout/SKILL.md": "three-way", ".claude/skills/new-one/notes.md": "three-way",
+               ".claude/rules/gate-scripts.md": "three-way", ".claude/settings.json": "three-way",
+               "sprint/recovery/journal.md": "keep", "sprint/recovery/WORKING_NOTES.md": "keep",
+               "docs/personas/framework-maintainer.md": "three-way"}
+    bad = {p: classify(p) for p, w in decided.items() if classify(p) != w}
+    check("the Claude Code paths and the recovery files classify as decided", not bad, str(bad))
+
+    # The registry is one path in five places: the closeout gate reads it, the sync writes it, the
+    # initializer preserves it, the sanitizer keeps it and this map keeps it. A rename that missed
+    # one (TMPL-1.3 renamed it in three lists with no fixture) would leave a project syncing into
+    # a folder no gate reads, or a release writing over what the sync owns.
+    import resources_sync    # lazy: it imports this module
+    import session_closeout  # lazy: the state gate, whose PyYAML import is itself lazy
+    import sanitize_template
+    gate_reads = session_closeout.PERSONAS.relative_to(session_closeout.ROOT).as_posix() + "/"
+    registry = resources_sync.PERSONAS
+    check("the registry the sync writes is the one the gate reads, the initializer and sanitizer "
+          "preserve, and this map keeps",
+          registry == gate_reads and registry in new_project.NEVER_RESET
+          and registry in sanitize_template.NEVER_RESET and registry in KEEP and classify(registry + "p.md") == "keep",
+          f"sync={registry} gate={gate_reads} never_reset={new_project.NEVER_RESET}")
+    check("the initializer's local files are kept here, never carried by a release",
+          all(classify(p) == "keep" for p in new_project.LOCAL_STATE),
+          str({p: classify(p) for p in new_project.LOCAL_STATE}))
+    mutating = (set(new_project.FILL_FILES) | set(new_project.REGENERATE_FILES)
+                | set(new_project.CLEAR_GLOBS) | set(new_project.TEMPLATE_ONLY))
+    merged_claude = [p for p in decided if p.startswith(".claude/") and decided[p] == "three-way"]
+    check("what this map merges under .claude/ the initializer leaves as shipped",
+          not any(p.startswith(m.split("*")[0]) for p in merged_claude for m in mutating),
+          f"mutating={sorted(mutating)}")
 
     regen = [classify(p) for p in new_project.REGENERATE_FILES]
     cleared = [classify(g.split("*")[0]) for g in new_project.CLEAR_GLOBS]

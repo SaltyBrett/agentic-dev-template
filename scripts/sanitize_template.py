@@ -90,6 +90,10 @@ CLEAR_GLOBS = ["sprint/handoffs/*.md", "sprint/handoffs/archive/*.md", "sprint/a
 # Never written, never removed. The initializer's list, and the sync stamp on top of it.
 NEVER_RESET = list(new_project.NEVER_RESET) + [".resources-version"]
 
+# The running session's own files, untouched here as at birth: the sanitizer runs from inside a
+# session, whose journal and notes the closeout clears, and the cut copies tracked files only.
+LOCAL_STATE = list(new_project.LOCAL_STATE)
+
 TMPL_STORY = re.compile(r"^TMPL-\d+\.\d+$")
 
 
@@ -314,6 +318,7 @@ def cmd_apply(apply: bool) -> int:
             (ROOT / rel).unlink()
     print(f"\n  kept: {', '.join(NEVER_RESET)}")
     print("        every {{TOKEN}}, both profile blocks; no .project-profile is written")
+    print(f"        the session's own: {', '.join(LOCAL_STATE)}")
     if not apply:
         print("\nDRY RUN — nothing written. Re-run with --apply.")
         return 0
@@ -398,9 +403,11 @@ def run_self_test() -> int:
     check("the regenerated tracker keeps its {{DATE}} token, which the initializer fills at a project's birth",
           "**Last Updated:** {{DATE}}" in tracker)
 
+    claude = [".claude/agents/framework-maintainer.md", ".claude/skills/closeout/SKILL.md",
+              ".claude/rules/gate-scripts.md", ".claude/settings.json"]
     paths = ["AGENTS.md", "CONSTITUTION.md", ".resources-version", "sprint/decision-log.md",
              "docs/governance/framework_decisions.md", "docs/orchestration/knowledge/INDEX.md",
-             ".claude/agents/framework-maintainer.md", "sprint/recovery/README.md",
+             *claude, *LOCAL_STATE, "sprint/recovery/README.md",
              "sprint/handoffs/HANDOFF_S13.md", "sprint/handoffs/KICKOFF_S13.md",
              "sprint/handoffs/archive/HANDOFF_S2.md", "sprint/archive/sprint-status_2026.md"]
     planned = plan(paths)
@@ -413,6 +420,10 @@ def run_self_test() -> int:
     check("the plan reaches no NEVER_RESET path: the framework decisions, the log, the knowledge base, "
           "the personas, the sync stamp",
           not any(rel.startswith(p.rstrip("/")) for rel in touched for p in NEVER_RESET), str(sorted(touched)))
+    check("the plan reaches nothing under .claude/ (the registry, the skills, the rules, the settings) "
+          "and none of the session's local files, as the initializer and the updater decide them",
+          not touched & (set(claude) | set(LOCAL_STATE)) and LOCAL_STATE == new_project.LOCAL_STATE,
+          str(sorted(touched & (set(claude) | set(LOCAL_STATE)))))
     check("without the fill: no filled file, no profile file, no template-only file is touched",
           not touched & (set(new_project.FILL_FILES) | set(new_project.TEMPLATE_ONLY) | {".project-profile", ".template-version"}),
           str(sorted(touched)))

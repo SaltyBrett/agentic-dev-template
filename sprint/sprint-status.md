@@ -21,7 +21,7 @@
 whole (curl, 114 KB) before any build, with the sub-agents page's startup and tool sections. Two
 choices went to the operator, both answered with the recommendation: the forked closeout takes the
 next persona and the session's brief as arguments, and the release and the pristine cut are the
-operator's alone (decision 2026-10-23-001). TMPL-1.4 done.
+operator's alone (decision 2026-10-23-001). TMPL-1.4 and TMPL-1.6 done.
 
 ### Done
 
@@ -38,6 +38,16 @@ operator's alone (decision 2026-10-23-001). TMPL-1.4 done.
    in a scratch clone ran as a `general-purpose` subagent, first command `git status --short`,
    and stopped at the sync it could not get approved, tree untouched
    ([[reference_claude_code_skills]]).
+2. TMPL-1.6 — ownership decided (decision 2026-10-23-002, made within 2026-10-22-001 and -005):
+   `.claude/agents/` kept for the sync, with a fixture holding its path equal in the gate, the
+   sync, the initializer, the sanitizer and the updater; `.claude/skills/`, `.claude/rules/` and
+   `.claude/settings.json` three-way; the journal, the notes and `.claude/settings.local.json`
+   named as `new_project.LOCAL_STATE`, touched by none of the three. Reading the tree found
+   `settings.local.json` ignored only by the operator's global excludes file; `.gitignore` now
+   carries it, and the initializer's fixture checks with the global file off. A project's
+   `docs/personas/` adopts `v2.0.0` through `dev-resources`, never by conversion in the project.
+   Self-tests 21, 36 and 20; 19 broken variants, each caught, one first written so it never
+   applied and rewritten. Every real `.claude/` path and local file classifies as decided.
 
 ### Blockers
 
