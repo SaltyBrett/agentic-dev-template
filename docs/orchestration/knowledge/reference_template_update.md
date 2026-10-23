@@ -1,7 +1,7 @@
 ---
 name: How a derived project takes a newer template release
-description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: a project''s persona roster kept, the persona library, skills, rules and settings three-way, the journal, notes and local settings untouched; and adoption from v1.0.0: each docs/personas/ file converted into the roster exactly or refused, by a converter that imports nothing from the project''s old scripts, the sync''s stamp removed and its marked entry merged as content.'
-teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002, 2026-10-23-003, 2026-10-23-005]
+description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else and git merge-file --union for .gitignore alone, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: a project''s persona roster kept, the persona library, skills, rules and settings three-way, the journal, notes and local settings untouched; and adoption from v1.0.0: each docs/personas/ file converted into the roster exactly or refused, by a converter that imports nothing from the project''s old scripts, the sync''s stamp removed and its marked entry merged as content.'
+teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -98,8 +98,19 @@ project that skips releases adopts the same way:
   loses the line. A wrapped bullet is one item: the real file that had one showed a fixture written
   from assumption had the rule backwards.
 
-The three real adoptions also conflicted on `.gitignore`, where project and template both append at
-the end; that is the ordinary three-way rule working, resolved by keeping both blocks.
+## `.gitignore` is merged by union
+
+The three real adoptions conflicted on `.gitignore` and nowhere else among the files both sides
+edit: each project had appended its own ignores at the end, and the release appended the journal,
+the notes and `.claude/settings.local.json` at the same place. Resolved by hand, the answer was the
+same each time, keep both blocks. It is the reason the index and the decisions file have keyed
+merges: both sides add at one place, so a line merge conflicts every time. So `.gitignore` alone
+goes through `git merge-file --union` (decision 2026-10-23-007): where both sides changed one place,
+both sides' lines are kept, the project's first, and the dry run names the path `union` for the
+operator to read in `git diff`. The one order that matters in an ignore file, a `!` line after the
+pattern it reverses, the template's exact paths never meet. Every other path still conflicts.
+Nested `.gitignore` files were rejected: the journal and the notes live under `sprint/`, which the
+updater never writes, so a `v1.0.0` project would never receive one.
 
 ## Three things that were not obvious until the probe ran
 

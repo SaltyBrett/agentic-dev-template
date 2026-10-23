@@ -14,10 +14,11 @@
 
 ---
 
-## S7 — 2026-10-23 — The authority gate
+## S7 — 2026-10-23 — The authority gate and the `.gitignore` union
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1 done.
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1 and
+TMPL-2.5 done.
 
 ### Done
 
@@ -35,6 +36,15 @@ exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the 
    carries its tracker row, the decision-log rule and the example body name the `**Affects:**` line,
    and TMPL-2.3 gains the retirement of `sprint/recovery/AUTHORITY_MATRIX.md`, a second registry kept
    by hand and already stale on personas.
+2. TMPL-2.5 — `scripts/template_update.py` merges `.gitignore` with `git merge-file --union` where
+   both sides changed one place, the project's lines first, and the dry run names the path `union`;
+   every other path still conflicts (decision 2026-10-23-007). Proof: five new fixtures, seven
+   broken variants each caught. A scratch `v2.0.0` built from this session's tree, and clones of
+   Supplier_Research_Dev, Comfy and PocketGames (`--no-hardlinks`; the originals unchanged, still on
+   `v1.0.0`) taken to it by Step 9 as written: each dry run named `.gitignore` `union` with no
+   conflict, each `--apply` exit 0 with the whole suite green, the authority gate among it; each
+   project's ignores kept whole and the template's block after them. [[reference_template_update]]
+   and `TEMPLATE_GUIDE.md` Step 9 say so.
 
 ### Blockers
 

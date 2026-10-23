@@ -38,7 +38,10 @@ WHO OWNS WHAT — three classes, decided by path (`classify`)
              A copy the project never edited takes the template's version outright.
              An edited copy takes the template's change where the two do not overlap.
              An overlap is a conflict: the file is left alone and named, and the run
-             refuses to stamp until `--take` or `--keep` settles it.
+             refuses to stamp until `--take` or `--keep` settles it. One path is the
+             exception: `.gitignore`, where project and template both append at the end,
+             is merged with `--union`, both sides' lines kept, the project's first, and
+             the dry run names it `union` (decision 2026-10-23-007).
 
 ADOPTION FROM v1.0.0 — judged by what the project holds, not by either release
 -------------------------------------------------------------------------------
@@ -142,6 +145,12 @@ MERGE = {
     "docs/governance/framework_decisions.md": "decisions",
 }
 SPECIAL = {VERSION_FILE}
+# Merged with `git merge-file --union` where both sides changed one place: both sides' lines are
+# kept, the project's first. Project and template both append at the end of this file, so a line
+# merge conflicts every time; the one order that matters, a `!` line after the pattern it reverses,
+# the template's exact paths never meet. Every other three-way path still conflicts (decision
+# 2026-10-23-007).
+UNION = {".gitignore"}
 
 ENTRIES_HEADING = re.compile(r"^##\s+Entries\s*$", re.IGNORECASE)
 INDEX_ROW = re.compile(r"^\|\s*\[([^\]]+)\]\(")
@@ -199,8 +208,9 @@ def normalized(data: bytes | None) -> bytes | None:
     return None if data is None else data.replace(b"\r\n", b"\n")
 
 
-def three_way(current: bytes, base: bytes, other: bytes) -> tuple[bool, bytes]:
-    """`git merge-file` on temp copies. Returns (clean, merged); merged carries markers when not clean."""
+def three_way(current: bytes, base: bytes, other: bytes, union: bool = False) -> tuple[bool, bytes]:
+    """`git merge-file` on temp copies. Returns (clean, merged); merged carries markers when not clean.
+    With `union`, an overlap keeps both sides' lines, the project's first, and is never a conflict."""
     with tempfile.TemporaryDirectory() as d:
         paths = []
         for name, data in (("current", current), ("base", base), ("other", other)):
@@ -208,7 +218,8 @@ def three_way(current: bytes, base: bytes, other: bytes) -> tuple[bool, bytes]:
             p.write_bytes(data)
             paths.append(str(p))
         r = subprocess.run(
-            ["git", "merge-file", "-L", "project", "-L", "previous release", "-L", "template", *paths],
+            ["git", "merge-file", *(["--union"] if union else []),
+             "-L", "project", "-L", "previous release", "-L", "template", *paths],
             capture_output=True, check=False,
         )
         merged = Path(paths[0]).read_bytes()
@@ -602,6 +613,10 @@ def plan_path(path: str, cls: str, current: bytes | None, base: bytes | None, ot
     if v == "unchanged":
         return None
     if v == "merge":
+        if path in UNION:
+            _, merged = three_way(current, base, other, union=True)
+            return Step(path, "union", merged, notes=[
+                "both sides' lines kept where both changed one place, the project's first: read it in `git diff`"])
         clean, merged = three_way(current, base, other)
         return Step(path, "merge", merged) if clean else Step(path, "CONFLICT")
     return Step(path, v, content, delete=(v == "delete"))
@@ -1014,6 +1029,27 @@ def run_self_test() -> int:
     clean, merged = three_way(b"a\nPROJECT\nc\n", b"a\nb\nc\n", b"a\nTEMPLATE\nc\n")
     check("three-way: the same line changed on both sides is a conflict, not a silent pick",
           not clean and b"<<<<<<<" in merged and b"PROJECT" in merged and b"TEMPLATE" in merged)
+
+    # .gitignore by union (decision 2026-10-23-007): the shape of every real adoption so far.
+    gi_base = b"# ignores\n*.pyc\n"
+    gi_project = gi_base + b"node_modules/\n.venv/\n"
+    gi_template = gi_base + b"sprint/recovery/journal.md\n.claude/settings.local.json\n"
+    step = plan_path(".gitignore", classify(".gitignore"), gi_project, gi_base, gi_template, set(), set())
+    check("union: .gitignore appended at the end on both sides keeps both blocks, the project's first, named `union`",
+          step is not None and step.verdict == "union"
+          and step.write == gi_base + b"node_modules/\n.venv/\nsprint/recovery/journal.md\n.claude/settings.local.json\n",
+          str(step))
+    step = plan_path(".gitignore", "three-way", b"a\n.env*\nz\n", b"a\n.env\nz\n", b"a\n.env.local\nz\n", set(), set())
+    check("union: the same line changed on both sides is kept twice, never a conflict or a pick",
+          step is not None and step.verdict == "union" and step.write == b"a\n.env*\n.env.local\nz\n", str(step))
+    step = plan_path("AGENTS.md", "three-way", gi_project, gi_base, gi_template, set(), set())
+    check("union: any other path changed at the same place on both sides still conflicts",
+          step is not None and step.verdict == "CONFLICT" and step.write is None, str(step))
+    step = plan_path(".gitignore", "three-way", gi_base, gi_base, gi_template, set(), set())
+    check("union: an unedited .gitignore takes the template's copy, as any path does",
+          step is not None and step.verdict == "update" and step.write == gi_template, str(step))
+    check("union: .gitignore is three-way, and the union set holds it alone",
+          classify(".gitignore") == "three-way" and UNION == {".gitignore"})
     base = prepared("d.md", _DOC.encode(), "commercial")
     other = prepared("d.md", _DOC.replace("gcc law", "gcc law, amended").encode(), "commercial")
     check("a template change inside the other profile's block is no change for this project",

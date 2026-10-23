@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 24 |
-| **Not Started** | 13 |
+| **Not Started** | 12 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 11 |
+| **Completed** | 12 |
 
 ---
 
@@ -75,7 +75,7 @@ that decision 2026-09-23-003 names.
 | TMPL-2.2 | The `technical-writer` agent published to `dev-resources` (a library persona, written in TMPL-1.9); the `doc-queue` gate run at cold start by the `SessionStart` hook; the per-document forked drain skill | Not Started | TMPL-2.1, TMPL-1.3, TMPL-1.9 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.3 | The document-control standard rewritten around the gate; the standards and the gate runbook marked as authorities with version logs; the "stays private" fossil fixed; `sprint/recovery/AUTHORITY_MATRIX.md` retired into the frontmatter registry (2026-10-23-010) | Not Started | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
 | TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
-| TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict | Not Started | — | doc_control_standard.md | 2026-10-23-007 |
+| TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict. Done at S7: the dry run names it `union`; the three scratch adoptions of a scratch `v2.0.0` had no conflict and passed the suite | Done | — | doc_control_standard.md | 2026-10-23-007 |
 
 ---
 
