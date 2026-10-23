@@ -3,7 +3,6 @@ name: macOS toolchain constraints for this framework
 description: 'Silent portability and environment defects that surface when this framework is cloned on macOS: the per-clone pre-commit hook with a baked-in interpreter path, Windows-originated git config, case-insensitive APFS versus case-sensitive git, Microsoft fonts absent, and the per-app consent gate on Downloads/Desktop/Documents that presents as a hung command. Read before the first clone on any new machine.'
 teaches: []
 verified: 2026-10-22
-source: dev-resources
 metadata:
   type: reference
 ---

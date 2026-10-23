@@ -71,8 +71,9 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 | `LICENSE` | MIT; the project's own from birth |
 | `sprint/` | Active project state (sprint-status, story-tracker, decision-log, handoffs, recovery) |
 | `docs/orchestration/knowledge/` | Knowledge base (single source of truth for accumulated learnings) |
-| `.claude/agents/` | Persona registry, as Claude Code agent files; every kickoff prompt names one |
-| `.claude/skills/` | The procedures (closeout, planning session, document production, release, pristine cut), one `SKILL.md` each, readable by any agent |
+| `personas/` | The persona library: every persona the template ships, as Claude Code agent files, inactive until a project activates it |
+| `.claude/agents/` | The project's roster: the personas it activated or drafted, each a live agent; every kickoff prompt names one |
+| `.claude/skills/` | The procedures (closeout, team selection, planning session, document production, release, pristine cut), one `SKILL.md` each, readable by any agent |
 | `docs/standards/` | Implementation standards: the law the procedures obey |
 | `docs/governance/` | Document control, the gate-suite runbook, the framework's own decision log, compliance policies |
 | `docs/prd/` | Product requirements document(s) |

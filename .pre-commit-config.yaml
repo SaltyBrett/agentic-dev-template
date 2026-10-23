@@ -196,17 +196,6 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
-      # The persona registry and the resource knowledge entries are a cache of dev-resources,
-      # refreshed at closeout by the sync and grown only through its --publish (decision
-      # 2026-09-23-007). Only its self-test runs on a commit; the closeout gate above refuses
-      # a persona the synced ref lacks.
-      - id: resources-sync-selftest
-        name: Resources Sync Self-Test (verdicts decided by version; a resource entry is marked, never guessed)
-        entry: python scripts/resources_sync.py --self-test
-        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
-        stages: [pre-commit]
-        pass_filenames: false
-        always_run: true
       # The template's version was the last hand-maintained value in this repo: a constant
       # in new_project.py that nothing compared to the actual tag. These two verify every
       # tag against the commit it points at. Skips cleanly in a derived project, which has

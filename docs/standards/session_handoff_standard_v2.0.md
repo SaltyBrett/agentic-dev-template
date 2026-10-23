@@ -125,7 +125,7 @@ Run `pre-commit run session-verify --hook-stage manual --all-files` and do no bu
 <the scaffold's pointer to the closeout skill, naming `pre-commit run session-closeout --hook-stage manual --all-files`>
 ```
 
-Rules the linter applies: the persona slug is registered, `Persona version` equals the registry's
+Rules the linter applies: the persona slug is in the roster, `Persona version` equals the roster's
 `version:`, and section 1 is the scaffold's line (whitespace-normalized; a verbatim copy of the
 agent's prompt, the rule before decision 2026-10-22-005, is accepted too); section 2 names
 `AGENTS.md` and `HANDOFF_S<N>.md`; every task bullet cites a story ID present in
@@ -135,8 +135,11 @@ agent's prompt, the rule before decision 2026-10-22-005, is accepted too); secti
 
 ## 6. Personas
 
-`.claude/agents/<slug>.md` holds one persona as a Claude Code agent file (decision
-2026-10-22-005). Its YAML frontmatter has `name` (the slug, equal to the filename stem),
+A persona is a Claude Code agent file (decision 2026-10-22-005). The template ships them as a
+library in `personas/<slug>.md`, inactive; a project's roster, `.claude/agents/<slug>.md`, holds
+the ones it activated from the library or drafted itself, and only those are live agents (decision
+2026-10-23-003). The team-selection skill builds the roster at a project's first session. Its YAML
+frontmatter has `name` (the slug, equal to the filename stem),
 `description`, `version` (a positive integer, 1 at first release), and `expertise`, `insists_on`
 and `changelog` as lists of strings; an item holding `: ` is quoted. The body is the Invocation,
 the text an agent is addressed with, and nothing else, because Claude Code makes the body the
@@ -147,17 +150,19 @@ The session holds the persona through the `SessionStart` hook, which injects the
 session already runs as the agent. `claude --agent <slug>` is optional: it makes the prompt the
 system prompt, replacing Claude Code's own whole.
 
-**Personas are append-only** (decision 2026-09-23-002). An Invocation is never edited in place: an
-enhancement bumps `version:` and appends its changelog item, and the gate refuses a body that
-differs from the committed copy at the same version. The version never goes down. A bump that
-changes only `expertise` or `insists_on` is allowed. A kickoff names the version the registry held
-when it was written, so a reader knows which text the session was addressed with.
+**Personas are append-only** (decision 2026-09-23-002), in the library and the roster alike. An
+Invocation is never edited in place: an enhancement bumps `version:` and appends its changelog item,
+and the gate refuses a body that differs from the committed copy at the same version. The version
+never goes down. A bump that changes only `expertise` or `insists_on` is allowed. A kickoff names the
+version the roster held when it was written, so a reader knows which text the session was addressed
+with. A roster persona taken from the library is a copy of it: the gate refuses one that differs
+from the library at its version or runs ahead of it, and notes one the library has moved past.
 
-**Personas are shape-gated, not list-gated.** No list of future personas is predicted. When a
-session's task list needs expertise no registered persona has, the agent writing the kickoff writes
-the persona and registers it in the same commit. The gate proves the reference resolves and the copy
-matches; it does not judge whether the persona is the right one. That judgement is the author's, and
-the registry grows only from real sessions.
+**Personas are shape-gated, not list-gated.** When a session's task list needs expertise no roster
+persona has, the agent writing the kickoff activates it from the library with the team-selection
+skill, or drafts it there as the project's own, in the same commit. The gate proves the reference
+resolves and the copy matches; it does not judge whether the persona is the right one. A drafted
+persona stays in its project; the library grows only by template release.
 
 ---
 
@@ -169,8 +174,6 @@ The procedure is the closeout skill, `.claude/skills/closeout/SKILL.md`, its one
 - Everything durable banked and committed by the session itself before the closeout runs: the
   `## S<N>` entry (Status, Done by story ID, Blockers), every decision, every learning as a
   knowledge entry, the tracker. Next-session tasks belong in the kickoff, never in the entry.
-- The registry synced from `dev-resources` before the pair is scaffolded, so the kickoff names the
-  version just synced; the sync runs at closeout, never at cold start ([[reference_resources_sync]]).
 - The pair for S<N+1>, passed by `session-closeout`, then `checkpoint: closeout S<N>` pushed with its
   `gates` run green ([[reference_ci_backstop]]), and the kickoff's text handed to the user. The file
   is the source; the chat copy is a convenience.
@@ -223,6 +226,7 @@ governs.
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0 | 2026-10-23 | §6 and §7: personas ship as a library in `personas/` and a project activates its roster into `.claude/agents/`; the `dev-resources` sync is gone from the closeout (decision 2026-10-23-003, TMPL-1.8). |
 | 2.0 | 2026-10-23 | §4, §5 and §7: the closeout procedure moved to `.claude/skills/closeout/SKILL.md` and the emergency close to `AGENTS.md`; §7 keeps what a closeout must leave (decision 2026-10-23-001, TMPL-1.4). |
 | 2.0 | 2026-10-22 | §3, §5 and §6: personas are agent files in `.claude/agents/`; the kickoff names the agent and the `SessionStart` hook injects its prompt (decision 2026-10-22-005, TMPL-1.3). |
 | 2.0 | 2026-10-22 | §5: the kickoff's verify command carries `--all-files`; without it a dirty tree passed (decision 2026-09-22-003, amended). |

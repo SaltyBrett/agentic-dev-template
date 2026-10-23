@@ -24,5 +24,4 @@ Why each of these exists: [[reference_kb_freshness]]. The frontmatter traps: [[r
 - `teaches:` names the decisions the entry explains: not every ID it mentions, never another repository's, never one still unratified.
 - `verified:` moves only after each taught decision and the canonical source have been re-read and the entry corrected to match. A freshness failure is cleared that way, never by the date alone.
 - An entry explains why; it is never the authority for a value. A value the explanation needs carries its authority and a one-line command that re-checks it.
-- An entry marked `source: dev-resources` is a cache of that repository: publish an edit with `resources_sync.py --publish` and take it back by sync, never edit it in place ([[reference_resources_sync]]).
 - Name a growing set, never its count.

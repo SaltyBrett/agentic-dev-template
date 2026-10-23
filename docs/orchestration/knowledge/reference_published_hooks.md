@@ -2,7 +2,7 @@
 name: The template is a pre-commit hook repository, and what that forced
 description: 'Another repository consumes the persona linter, the frontmatter gate and the attribution gate from `.pre-commit-hooks.yaml`, pinned by `rev`, instead of copying a script. Publishing forced three mechanics: pre-commit pip-installs a python hook repository, so `pyproject.toml` exists and every entry is a console script; a remote hook runs from the consumer''s root, so the gates read their root from git rather than `__file__`, which would have judged the virtualenv; and the packaging leaves a project at birth because a Python project owns its own pyproject. Also why the content gates are `files:`-gated, why gitleaks stays upstream, and what a private hook repository costs a consumer: pre-commit clones into ~/.cache, outside every per-directory git config, so only an ssh host alias worked; the template is public since 2026-09-25 and the consumer pins plain https.'
 teaches: [2026-09-23-002, 2026-09-23-005, 2026-09-25-001]
-verified: 2026-09-25
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -10,7 +10,8 @@ metadata:
 # The template is a pre-commit hook repository
 
 > Durable learning. Wikilink: `[[reference_published_hooks]]`.
-> Manifest: `.pre-commit-hooks.yaml`. Packaging: `pyproject.toml`. Consumer: `dev-resources`.
+> Manifest: `.pre-commit-hooks.yaml`. Packaging: `pyproject.toml`. Consumer: `dev-resources`, until
+> it is archived (decision 2026-10-23-003).
 > Companions: [[reference_commit_attribution_gate]] (the gate that was being copied),
 > [[reference_precommit_interpreter]] (why `language: python` and never a bare interpreter).
 
@@ -93,7 +94,8 @@ check that said so read the exit code of `head` at the end of a pipe, the exact 
 - A consumer keeps the layout the gates judge at the rev it pins: `.claude/agents/` from decision
   2026-10-22-005 (`docs/personas/` at `v1.0.0`) and `docs/orchestration/knowledge/` with its
   `INDEX.md`. To judge two layouts during a move, pin the repository twice, one entry per rev;
-  `dev-resources` does that until TMPL-2.4.
+  `dev-resources` does that until it is archived. The template itself needs no consumer for its
+  personas: it lints its own library and roster in `session-closeout-check`.
 - Adding a hook to the manifest means a console script in `pyproject.toml` for it, and its
   module must find the repository through git, not `__file__`.
 - Never run `pip install .` from inside the repository without cleaning up: setuptools writes

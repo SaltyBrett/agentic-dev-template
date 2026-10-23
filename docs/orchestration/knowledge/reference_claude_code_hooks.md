@@ -2,7 +2,7 @@
 name: Claude Code hooks run the cold start, bank the uncommitted interval, and guard the turn
 description: 'How the SessionStart, Stop, PostToolUse and PostToolUseFailure hooks in .claude/settings.json carry decision 2026-10-22-001, read against the hooks reference on 2026-10-22: the 10,000-character cap on injected context, why compaction runs no gate, why the Stop hook asks once and never wedges, why the journal and notes are gitignored, what blocking PreCompact does, and which details only a live session showed. Read before editing a session hook, its script, or the settings that register it.'
 teaches: [2026-10-22-001, 2026-10-22-004, 2026-10-22-005]
-verified: 2026-10-22
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -49,7 +49,8 @@ metadata:
   with nothing to pull; observed in S2 as exit 128 on the first live run.
 - **The verify runs with `--all-files`.** Without it pre-commit's stash hides an unstaged edit and a
   dirty tree passes (decision 2026-09-22-003, amended; [[reference_precommit_stash]]).
-- **The persona** (decision 2026-10-22-005). The kickoff names an agent in `.claude/agents/`, and
+- **The persona** (decision 2026-10-22-005). The kickoff names an agent in the project's roster,
+  `.claude/agents/` (decision 2026-10-23-003), and
   the event's `agent_type`, present only when the session started with `claude --agent <name>`,
   decides: equal to the kickoff's persona, one line says so; otherwise the agent's body is
   injected at priority 1, at startup and after compaction. A plain session and the VS Code

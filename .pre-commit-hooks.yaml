@@ -11,7 +11,8 @@
 # from ~/.cache/pre-commit where pre-commit clones it and from a CI job alike.
 #
 # persona-lint judges .claude/agents/ from decision 2026-10-22-005; at v1.0.0 it judged
-# docs/personas/, which is why dev-resources pins the template at both revs until TMPL-2.4.
+# docs/personas/, which is why dev-resources pins the template at both revs until it is archived
+# (decision 2026-10-23-003); the template itself lints its library and roster in session-closeout-check.
 #
 # pre-commit installs this repository with `pip install .` (pyproject.toml), so every `entry:` is a
 # console script, never a path: a remote hook runs from the CONSUMING repository's root, where

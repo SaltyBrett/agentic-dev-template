@@ -1,8 +1,8 @@
 ---
 name: Claude Code reads AGENTS.md natively, and any CLAUDE.md on the path hides it
 description: 'From v2.1.277 Claude Code reads AGENTS.md itself, but only when no CLAUDE.md, .claude/CLAUDE.md or CLAUDE.local.md sits in the working directory or above it; observed on 2.1.308 with a canary in a scratch repository, both halves. Why the template retired its CLAUDE.md bridge, the silent hazard that creates, and what a SessionStart hook must not inject. Read before adding any Claude instruction file, or when Claude seems not to know the brain.'
-teaches: [2026-10-22-001, 2026-10-22-005]
-verified: 2026-10-22
+teaches: [2026-10-22-001, 2026-10-22-005, 2026-10-23-003]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -43,6 +43,16 @@ Observed in S3, a scratch clone, `claude --agent framework-maintainer -p`: a can
 body and the heading of `AGENTS.md` both came back, and the prompt was about 2,500 tokens smaller
 than a control run without the flag. That replacement is why the template's sessions take their
 persona from the start hook instead (decision 2026-10-22-005, [[reference_claude_code_hooks]]).
+
+## Every agent file is live, which is why the persona library sits outside them
+
+Claude delegates to any agent the session knows by its description, and every file in
+`.claude/agents/` is one: its description is listed in every session's context. Observed on
+2026-10-23: the session's agent list carried each of the five personas then in `.claude/agents/`
+beside the built-in agents, with its description. A full team in that folder would cost every
+session of every project that context, and invite delegation nobody chose. So the template ships
+its library in `personas/`, which Claude Code does not read as agents, and a project activates into
+`.claude/agents/` only what its work needs (decision 2026-10-23-003).
 
 ## Why the template retired its CLAUDE.md
 

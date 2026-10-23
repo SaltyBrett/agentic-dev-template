@@ -144,11 +144,11 @@ References do NOT auto-load — you must explicitly Read each file.
 | `scripts/new_project.py` | Initializes a project from this template; `--profile` required. Fills the decision log's header and leaves it with the `[EXAMPLE]` entry alone |
 | `scripts/template_update.py` | Takes a derived project to a newer release: keyed merges for the knowledge index and the framework decisions, three-way for the rest, `sprint/` never written |
 | `scripts/sanitize_template.py` | Returns the template to its pristine state: the initializer's machinery without the fill. `--check` names every item of build state; runs only in the template |
-| `scripts/resources_sync.py` | The persona registry and resource knowledge entries are a cache of `dev-resources`: synced at closeout, grown only through `--publish`; the closeout refuses an unpublished persona |
 | `scripts/template_version.py` | Verifies every tag against the commit it points at, and that its annotation names the bump |
 | `scripts/session_closeout.py` | Session gate: handoff/kickoff pairs by session number, rotation to `archive/`, persona references, tracker reconciliation, dependency order, no live placeholders in a project |
 | `.claude/rules/` | Judgement scoped by `paths:`: Claude Code loads a rule when it reads or edits a matching file; another agent reads the rules whose `paths:` match what it edits |
-| `.claude/agents/` | Persona registry, one agent file each; a kickoff names one by slug and the `SessionStart` hook injects its prompt. Add one when a task first needs it |
+| `personas/` | The persona library the template ships, one agent file each, inactive; it grows by template release |
+| `.claude/agents/` | The project's roster: the personas it activated from the library or drafted itself, each a live agent. A kickoff names one by slug and the `SessionStart` hook injects its prompt |
 | `.claude/skills/` | The procedures, one `SKILL.md` each (below). `scripts/skill_scan.py` keeps every hook id, stage and command a skill names in step with the config |
 | `docs/standards/` | The law the procedures obey: `session_handoff`, `sprint_management`, `secrets_management`, `document_production` |
 | `sprint/` | Live state: sprint-status, story-tracker, decision-log, handoffs, recovery |
@@ -168,6 +168,7 @@ second home that drifts (decision 2026-10-23-001).
 | Skill | When |
 |-------|------|
 | `.claude/skills/closeout/SKILL.md` | Session end. Forked: it sees the tree and its arguments, not this conversation |
+| `.claude/skills/team-selection/SKILL.md` | A project's first session, and whenever the work needs a persona the roster lacks |
 | `.claude/skills/planning-session/SKILL.md` | Building or re-planning the sprint from an approved PRD and architecture |
 | `.claude/skills/document-production/SKILL.md` | Before any Word, Excel, PDF or PowerPoint deliverable |
 | `.claude/skills/release/SKILL.md` | The template's release cut; the operator's alone |

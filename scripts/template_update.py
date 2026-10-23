@@ -14,8 +14,8 @@ WHO OWNS WHAT — three classes, decided by path (`classify`)
 ------------------------------------------------------------
   keep       Never written. `sprint/` (the project's decision log included, since decision
              2026-09-23-003 keeps the framework's decisions out of it, and the session's
-             gitignored journal and working notes), `.project-profile`, the persona registry
-             `.claude/agents/` (the resources sync's), `.claude/settings.local.json` (one
+             gitignored journal and working notes), `.project-profile`, the project's persona
+             roster `.claude/agents/`, `.claude/settings.local.json` (one
              operator's), and the content folders the template ships empty (`docs/prd/`,
              `evidence/`, `infra/`, ...). A template change under one of these is named in one
              summary line and not applied.
@@ -33,7 +33,8 @@ WHO OWNS WHAT — three classes, decided by path (`classify`)
              project is on), current (the project's copy) and other (the target). That
              includes `.claude/skills/`, `.claude/rules/` and `.claude/settings.json`: the
              template's, which a project may edit and extend (decision 2026-10-23-002); a
-             skill or rule the project added is in neither release and never touched.
+             skill or rule the project added is in neither release and never touched. And the
+             persona library `personas/`, which a project activates from (decision 2026-10-23-003).
              A copy the project never edited takes the template's version outright.
              An edited copy takes the template's change where the two do not overlap.
              An overlap is a conflict: the file is left alone and named, and the run
@@ -98,14 +99,12 @@ KEEP = [
     # The template's hook-repository packaging, removed at birth (new_project.TEMPLATE_ONLY):
     # a project's pyproject.toml is its own, and a project is not a hook repository.
     "pyproject.toml", ".pre-commit-hooks.yaml",
-    # The persona registry is dev-resources' (decision 2026-09-23-007): only resources_sync.py
-    # writes it. Resource knowledge entries are the sync's too, but they share a directory with
-    # the template's own entries, so they are told apart by content: see resource_owned().
-    # Agent files since decision 2026-10-22-005.
+    # The roster: the personas this project activated from the library or drafted itself
+    # (decision 2026-10-23-003). A release ships the library in personas/ and never a roster.
     ".claude/agents/",
-    # The sync's stamp is this project's own state, like .project-profile: the initializer
-    # clears it at birth and the updater never writes it. Found by the first derived project to
-    # take v7.1.0, which received the template's stamp as an `add`.
+    # A v1.0.0 project's sync stamp. v2.0.0 has no sync (decision 2026-10-23-003); the stamp is
+    # the project's own state, never written here. Resource knowledge entries a v1.0.0 project
+    # synced are told apart by content: see resource_owned().
     ".resources-version",
     # One operator's Claude Code permissions (new_project.LOCAL_STATE): gitignored, so a release
     # should never hold it; kept in case one ever does, since it would carry personal grants.
@@ -584,6 +583,7 @@ def run_self_test() -> int:
     # registry's path, so a release that removed it deletes a project's unedited copy and
     # reports an edited one, which is the adoption path the decision names.
     decided = {".claude/agents/framework-maintainer.md": "keep", ".claude/settings.local.json": "keep",
+               "personas/framework-maintainer.md": "three-way",
                ".claude/skills/closeout/SKILL.md": "three-way", ".claude/skills/new-one/notes.md": "three-way",
                ".claude/rules/gate-scripts.md": "three-way", ".claude/settings.json": "three-way",
                "sprint/recovery/journal.md": "keep", "sprint/recovery/WORKING_NOTES.md": "keep",
@@ -591,25 +591,28 @@ def run_self_test() -> int:
     bad = {p: classify(p) for p, w in decided.items() if classify(p) != w}
     check("the Claude Code paths and the recovery files classify as decided", not bad, str(bad))
 
-    # The registry is one path in five places: the closeout gate reads it, the sync writes it, the
-    # initializer preserves it, the sanitizer keeps it and this map keeps it. A rename that missed
-    # one (TMPL-1.3 renamed it in three lists with no fixture) would leave a project syncing into
-    # a folder no gate reads, or a release writing over what the sync owns.
-    import resources_sync    # lazy: it imports this module
+    # The roster and the library are one path each, named in four places: the closeout gate reads
+    # both, and the initializer, the sanitizer and this map each decide them. A rename that missed
+    # one (TMPL-1.3 renamed the registry in three lists with no fixture) would leave a project
+    # activating into a folder no gate reads, or a release writing over a project's roster.
     import session_closeout  # lazy: the state gate, whose PyYAML import is itself lazy
     import sanitize_template
-    gate_reads = session_closeout.PERSONAS.relative_to(session_closeout.ROOT).as_posix() + "/"
-    registry = resources_sync.PERSONAS
-    check("the registry the sync writes is the one the gate reads, the initializer and sanitizer "
-          "preserve, and this map keeps",
-          registry == gate_reads and registry in new_project.NEVER_RESET
-          and registry in sanitize_template.NEVER_RESET and registry in KEEP and classify(registry + "p.md") == "keep",
-          f"sync={registry} gate={gate_reads} never_reset={new_project.NEVER_RESET}")
+    roster = session_closeout.PERSONAS.relative_to(session_closeout.ROOT).as_posix() + "/"
+    library = session_closeout.LIBRARY.relative_to(session_closeout.ROOT).as_posix() + "/"
+    check("the roster the gate reads is kept here and by the sanitizer, and cleared by the initializer at birth",
+          roster == ".claude/agents/" and roster in KEEP and classify(roster + "p.md") == "keep"
+          and roster in sanitize_template.NEVER_RESET and roster + "*.md" in new_project.CLEAR_GLOBS
+          and roster not in new_project.NEVER_RESET,
+          f"gate={roster} clear={new_project.CLEAR_GLOBS}")
+    mutating = (set(new_project.FILL_FILES) | set(new_project.REGENERATE_FILES)
+                | set(new_project.CLEAR_GLOBS) | set(new_project.TEMPLATE_ONLY))
+    check("the library the gate reads is merged here, kept by the sanitizer, and in no list of the initializer",
+          library == "personas/" and classify(library + "p.md") == "three-way" and library in sanitize_template.NEVER_RESET
+          and not any(m.startswith(library) for m in mutating | set(new_project.NEVER_RESET)),
+          f"gate={library}")
     check("the initializer's local files are kept here, never carried by a release",
           all(classify(p) == "keep" for p in new_project.LOCAL_STATE),
           str({p: classify(p) for p in new_project.LOCAL_STATE}))
-    mutating = (set(new_project.FILL_FILES) | set(new_project.REGENERATE_FILES)
-                | set(new_project.CLEAR_GLOBS) | set(new_project.TEMPLATE_ONLY))
     merged_claude = [p for p in decided if p.startswith(".claude/") and decided[p] == "three-way"]
     check("what this map merges under .claude/ the initializer leaves as shipped",
           not any(p.startswith(m.split("*")[0]) for p in merged_claude for m in mutating),
@@ -628,9 +631,9 @@ def run_self_test() -> int:
           all(classify(p) == "three-way" for p in new_project.FILL_FILES if p != "sprint/decision-log.md")
           and classify("sprint/decision-log.md") == "keep", f"filled={filled}")
     check("what it preserves at birth is carried by a release (the framework decisions and the knowledge "
-          "base) or by the resources sync (the persona registry) — never by nothing",
+          "base) or is the project's own (its decision log) — never by nothing",
           classify("docs/governance/framework_decisions.md") == "merge" and classify("sprint/decision-log.md") == "keep"
-          and classify("docs/orchestration/knowledge/x.md") == "three-way" and classify(".claude/agents/") == "keep",
+          and classify("docs/orchestration/knowledge/x.md") == "three-way" and set(never) <= {"merge", "keep", "three-way"},
           f"never={never}")
     marked = b"---\nname: x\nteaches: []\nverified: 2026-09-23\nsource: dev-resources\n---\n\nbody\n"
     check("a knowledge entry that declares source: dev-resources is the sync's; an ordinary one, or the "

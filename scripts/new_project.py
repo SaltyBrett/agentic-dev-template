@@ -104,9 +104,10 @@ REGENERATE_FILES = ["sprint/sprint-status.md", "sprint/story-tracker.md"]
 # means nothing to a new project; it starts at S1 with no incoming pair, which
 # `session_closeout.py --verify` accepts as a fresh project.
 CLEAR_GLOBS = ["sprint/handoffs/*.md", "sprint/handoffs/archive/*.md",
-               # The resources sync's stamp names the ref THIS repository last synced; a new
-               # project starts unsynced and stamps at its first closeout (decision 2026-09-23-007).
-               ".resources-version"]
+               # The template's own roster: the personas its maintenance sessions activated. A
+               # project starts with an empty roster and builds its own from the library in
+               # personas/ at its first session, with the team-selection skill (decision 2026-10-23-003).
+               ".claude/agents/*.md"]
 
 # The template's hook-repository role: the packaging that lets another repository consume its
 # gates through `.pre-commit-hooks.yaml` (decision 2026-09-23-005). A project is not a hook
@@ -114,13 +115,12 @@ CLEAR_GLOBS = ["sprint/handoffs/*.md", "sprint/handoffs/archive/*.md",
 # and the updater never writes them (its map keeps them; a fixture cross-checks).
 TEMPLATE_ONLY = ["pyproject.toml", ".pre-commit-hooks.yaml"]
 
-# Never reset, never regenerated, never deleted. Asserted by a self-test fixture.
-# Personas are reusable across projects; a new one is added when a task needs it.
+# Never reset, never regenerated, never deleted. Asserted by a self-test fixture. The persona
+# library, personas/, is in no list either: it arrives as the template ships it.
 NEVER_RESET = [
     "docs/governance/framework_decisions.md",
     "sprint/decision-log.md",
     "docs/orchestration/knowledge/",
-    ".claude/agents/",
 ]
 
 # The running session's own files: gitignored by the repository's own .gitignore, never committed,
@@ -271,10 +271,14 @@ def sprint_status_skeleton(values: dict[str, str]) -> str:
 S1 has no incoming kickoff, so this list stands in for it. From S2 on, next-session tasks live
 in the kickoff, not here.
 
-1. Run the planning-session skill (`.claude/skills/planning-session/SKILL.md`) against the
+1. Run the team-selection skill (`.claude/skills/team-selection/SKILL.md`): it asks which
+   specializations the project needs, recommends personas from the library in `personas/`,
+   drafts any it lacks and activates the chosen into `.claude/agents/`. The roster starts empty,
+   and the S2 kickoff must name a persona in it.
+2. Run the planning-session skill (`.claude/skills/planning-session/SKILL.md`) against the
    approved PRD and Architecture to populate `story-tracker.md`. The kickoff for S2
    can only cite stories that exist, so S1 opens the first epic before it closes out.
-2. Record the first project decision in `decision-log.md`, its ID prefixed
+3. Record the first project decision in `decision-log.md`, its ID prefixed
    (`{values['PREFIX'] or 'ACME'}-YYYY-MM-DD-NNN`), and remove the `[EXAMPLE]` entry: the state gate
    refuses it once a real epic exists. The framework's own decisions are in
    `docs/governance/framework_decisions.md`; knowledge entries declare `teaches:` against them.
@@ -461,11 +465,13 @@ def run_self_test() -> int:
           "docs/governance/framework_decisions.md" in NEVER_RESET
           and not any("framework_decisions" in m for m in mutating))
 
-    # The Claude Code tree arrives as the template ships it: the registry is the sync's, the
-    # skills, rules and settings are merged by later releases. No list here writes under it.
-    claude_touched = sorted(m for m in mutating if m.startswith(".claude/"))
-    check("no mutating list reaches .claude/: the registry is preserved, the rest arrives as shipped",
-          not claude_touched and ".claude/agents/" in NEVER_RESET, str(claude_touched))
+    # The Claude Code tree arrives as the template ships it, but for the template's own roster,
+    # cleared so the project builds its own; the library arrives whole and inactive.
+    claude_touched = sorted(m for m in mutating | set(NEVER_RESET) if m.startswith(".claude/"))
+    library_touched = sorted(m for m in mutating | set(NEVER_RESET) if m.startswith("personas"))
+    check("the roster is the one .claude/ path a list reaches, cleared at birth; the library is in none",
+          claude_touched == [".claude/agents/*.md"] and not library_touched,
+          f"claude={claude_touched} library={library_touched}")
     check("the local files are the journal, the notes and the local settings, by the journal's own paths",
           LOCAL_STATE == ["sprint/recovery/journal.md", "sprint/recovery/WORKING_NOTES.md", ".claude/settings.local.json"]
           and LOCAL_STATE[:2] == [session_journal.JOURNAL_REL, session_journal.NOTES_REL], str(LOCAL_STATE))

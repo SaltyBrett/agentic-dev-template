@@ -1,8 +1,8 @@
 ---
 name: Session closeout is a gate and its artifacts live one session
-description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
-teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005]
-verified: 2026-10-22
+description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, a project''s roster held to the template''s library by version, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
+teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005, 2026-10-23-003]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -39,14 +39,16 @@ constraints, so durable facts accumulated in files that no index listed and no f
 ## Personas are gated by shape, not by list
 
 Predicting every persona a future project needs is impossible, so the gate never checks membership
-in a list. It checks that the slug a kickoff names resolves to a registered agent file of the
-required shape, and that the kickoff's section 1 names it. A persona is written when a task first
-needs it and registered in the same commit, exactly as a knowledge entry is. The registry grows
-from real sessions.
+in a list. It checks that the slug a kickoff names resolves to an agent file of the required shape
+in the project's roster, and that the kickoff's section 1 names it. A persona enters the roster when
+a task first needs it, in the same commit: activated from the template's library with the
+team-selection skill, or drafted as the project's own.
 
 ## Personas are agent files, and the session gets the prompt from the hook
 
-Since decision 2026-10-22-005 a persona is `.claude/agents/<slug>.md`. Claude Code makes the body
+Since decision 2026-10-22-005 a persona is an agent file: in the template's library as
+`personas/<slug>.md`, and live in a project only in its roster, `.claude/agents/<slug>.md` (decision
+2026-10-23-003). Claude Code makes the body
 the agent's prompt, so the body is the Invocation and nothing else; `version`, `expertise`,
 `insists_on` and `changelog` sit in the frontmatter, where Claude Code ignores keys it does not know.
 Three things follow from the sub-agents reference:
@@ -65,20 +67,29 @@ Three things follow from the sub-agents reference:
 
 ## Personas are append-only, against the committed copy
 
-A persona is reused across projects and, once `dev-resources` is its home (decision
-2026-09-23-002), across repositories, so a kickoff written against one text must not be silently
-answered by another. The gate reads each persona as committed at HEAD (`git show`) beside the
+A persona is reused across projects, the library shipping it to every one (decision
+2026-10-23-003), so a kickoff written against one text must not be silently answered by another. The gate reads each persona as committed at HEAD (`git show`) beside the
 working copy: a body that differs at the same `version:` is refused, a version never goes down,
 and the changelog must carry an item for the current version. The comparison is against HEAD
 because that is what every stage of the gate can see, in this repository and in a consumer that
 runs the published `persona-lint` hook; a bump that changes only `expertise` or `insists_on` is
 allowed, since the rule guards the text an agent is addressed with. The kickoff names the version
-the registry held, and the linter checks it against the registry; with no copy in the kickoff, the
+the roster held, and the linter checks it against the roster; with no copy in the kickoff, the
 field is its only record of which text the session was addressed with.
 
 A committed copy from before the rule, with no `version:`, constrains nothing, and neither does a
 file new at its path: the migration commit that added the key was legal, and so was the move to
 `.claude/agents/`.
+
+## A roster copy is held to the library by version
+
+Activation is a copy of the whole file, so a roster persona the library also holds is judged against
+it: the same version with any other text is drift and fails, and a higher version is a fork and
+fails, because a project's variant of a library persona is a persona of its own under its own slug.
+A lower version is the library moving on in a later release, and is only noted: the project chooses
+when to take the new text, by copying it again, as it chooses when to take a release. The verdicts
+are the retired sync's, turned inward ([[reference_resources_sync]]). The library itself is linted
+as the roster is, append-only against its committed copy.
 
 ## Every wikilink in the tree resolves, not only a handoff's
 

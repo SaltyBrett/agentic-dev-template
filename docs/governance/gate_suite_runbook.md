@@ -167,13 +167,15 @@ row in a live sprint passing, a fresh project's closeout producing no pair.
 **Pairs with:** `session-closeout-selftest`. The per-commit state gate.
 **Blocks:** a stray file in `sprint/handoffs/`, an incomplete or non-consecutive pair, more than
 two session numbers outside `archive/`, a handoff or kickoff with the wrong headings, an unfilled
-token, an unresolved wikilink or unindexed decision ID, a kickoff naming an unregistered persona,
-a kickoff whose section 1 is neither the scaffold's line naming the agent nor a verbatim copy of
-its prompt, or naming a persona version the registry is not at, a task citing a story absent from
-the tracker, an agent file in `.claude/agents/` of the wrong shape (frontmatter that does not parse
+token, an unresolved wikilink or unindexed decision ID, a kickoff naming a persona the roster
+lacks, a kickoff whose section 1 is neither the scaffold's line naming the agent nor a verbatim copy
+of its prompt, or naming a persona version the roster is not at, a task citing a story absent from
+the tracker, an agent file in `.claude/agents/` or `personas/` of the wrong shape (frontmatter that does not parse
 as YAML, which Claude Code would skip silently; a `name` that is not the filename stem; a list that
 is not strings), a persona whose body (the Invocation) differs from the committed copy without a
-higher `version:`, a version that went down or has no changelog item, tracker Summary Statistics that do not equal the counted rows, a story `In Progress` or
+higher `version:`, a version that went down or has no changelog item, a roster persona that
+differs from its library copy at the same version or runs ahead of it (one the library has moved
+past is noted, not blocked), tracker Summary Statistics that do not equal the counted rows, a story `In Progress` or
 `Done` whose listed dependency is not `Done` (`dependency-order`), in a project whose tracker holds
 a non-example epic an `[EXAMPLE]` row or heading or an unfilled `{{TOKEN}}` in the tracker,
 sprint-status or the decision log outside inline or fenced code (`live-placeholder`; the template,
@@ -185,7 +187,8 @@ under `.claude/rules/` whose `paths:` does not parse as a list of globs (Claude 
 in every session), that no file git would commit matches (it would never load), or that repeats a
 sentence of `AGENTS.md`.
 **Why:** decisions 2026-09-21-001 (amended for the tree-wide wikilink rule), 2026-09-23-002,
-2026-09-24-001 (the tracker's two rules), 2026-10-22-005 (agent files) and 2026-10-22-006 (rules);
+2026-09-24-001 (the tracker's two rules), 2026-10-22-005 (agent files), 2026-10-22-006 (rules) and
+2026-10-23-003 (the library and the roster);
 [[reference_session_closeout]].
 **Alone:** `pre-commit run session-closeout-check --all-files`
 
@@ -305,22 +308,10 @@ the initializer's lists, the project's decision log merged rather than kept or t
 decisions kept rather than merged, a keyed insert landing at the table's end instead of the top, an
 `[EXAMPLE]` row travelling, both-sides-changed lines silently taking the template's, a conflict
 reported clean, template markdown compared without the profile strip, a `.claude/` path or a
-local file classified other than decided, the persona registry's path differing among the sync,
-the state gate, the initializer, the sanitizer and this map.
+local file classified other than decided, the roster's or the library's path differing among the
+state gate, the initializer, the sanitizer and this map.
 **Why:** decisions 2026-09-22-004, 2026-09-23-003 and 2026-10-23-002; [[reference_template_update]].
 **Alone:** `pre-commit run template-update-selftest --all-files`
-
-## `resources-sync-selftest`
-
-**Stage:** `pre-commit`
-**Pairs with:** no gate. The sync runs at session closeout, never on a commit; the closeout gate
-(`session-closeout`) is what refuses a persona the synced ref lacks.
-**Blocks:** a commit when a sync verdict fails a fixture: a higher fetched version not taken, a
-higher local version overwritten, same-version or unversioned differences silently picked, a
-fetched entry without `source: dev-resources` accepted, `--take` reaching a path the fetched tree
-lacks, or the ownership rule drifting from the updater's.
-**Why:** decision 2026-09-23-007; [[reference_resources_sync]].
-**Alone:** `pre-commit run resources-sync-selftest --all-files --verbose`
 
 ## `template-version-selftest`
 

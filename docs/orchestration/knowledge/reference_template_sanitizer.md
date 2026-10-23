@@ -1,8 +1,8 @@
 ---
 name: The template is reset to pristine by a script, and what pristine means
-description: 'Why scripts/sanitize_template.py exists and what it is not: the initializer''s machinery without the fill, run only in the template, its --check naming every item of build state (a sprint-status entry above S1, a TMPL- story row, either archive, a pair, the probe repository''s name) while the sweep of session numbers, probe references and commit hashes out of the knowledge entries and decision bodies stays by hand. Why the script excludes itself from the name check, why the sync stamp stays, why --check is a manual hook, and what the scratch proof showed. Read before running the sanitizer, before the pristine cut, or before writing a session number into a knowledge entry.'
+description: 'Why scripts/sanitize_template.py exists and what it is not: the initializer''s machinery without the fill, run only in the template, its --check naming every item of build state (a sprint-status entry above S1, a TMPL- story row, either archive, a pair, the probe repository''s name) while the sweep of session numbers, probe references and commit hashes out of the knowledge entries and decision bodies stays by hand. Why the script excludes itself from the name check, why the template''s roster stays, why --check is a manual hook, and what the scratch proof showed. Read before running the sanitizer, before the pristine cut, or before writing a session number into a knowledge entry.'
 teaches: [2026-09-23-003]
-verified: 2026-09-24
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -32,11 +32,11 @@ in. The operator asked for a pristine tree and for the unsanitized repository to
   `archive/` and `sprint/archive/`, then runs the suite. It fills no token, strips no profile block
   and writes no `.project-profile`, so the template keeps every shape it ships. The tracker keeps
   its `{{DATE}}` token, which the initializer fills at a project's birth.
-- **NEVER_RESET holds, plus the sync stamp.** The framework decisions, the project's decision log,
-  the knowledge base and the personas are in no mutating list, pinned by the same kind of fixture
-  the initializer carries. `.resources-version` stays too: it names the `dev-resources` ref this
-  repository last synced, which is the template's own state and what the closeout's persona rule
-  reads, not session state.
+- **NEVER_RESET holds, plus the roster and the library.** The framework decisions, the project's
+  decision log, the knowledge base, the template's roster `.claude/agents/` and the persona library
+  `personas/` are in no mutating list, pinned by the same kind of fixture the initializer carries.
+  The roster is the template's own working state, which the initializer clears at a project's
+  birth; the library is content (decision 2026-10-23-003).
 - **`--check` names build state; it does not sweep.** Five rules, each pure over a snapshot of
   the tree: a sprint-status entry numbered above S1, a table row whose Story ID is `TMPL-`, a file
   in either archive, a handoff or kickoff in `sprint/handoffs/`, and the probe repository's name

@@ -29,10 +29,10 @@ Regenerates sprint/sprint-status.md with the template's own S1 entry and sprint/
 with the initializer's skeleton (the `[EXAMPLE]` epic, statistics at zero, `{{DATE}}` kept),
 removes every file under sprint/handoffs/, sprint/handoffs/archive/ and sprint/archive/, then
 runs the suite. It writes no `.project-profile`, strips no profile block and fills no token.
-`.resources-version` stays: it is the template's own sync state, not session state, and the
-closeout's persona rule reads it. NEVER_RESET of the initializer holds here too, pinned by a
-fixture: the framework decisions, the project's decision log, the knowledge base and the
-personas are in no mutating list.
+The template's roster, `.claude/agents/`, stays: it is the template's own working state, which the
+initializer clears at a project's birth, and the library in `personas/` is content. NEVER_RESET
+of the initializer holds here too, pinned by a fixture: the framework decisions, the project's
+decision log, the knowledge base, the roster and the library are in no mutating list.
 
 The sweep of session numbers, probe references and commit hashes out of the knowledge entries
 and decision bodies is by hand; the decision says so, and --check proves only the probe name.
@@ -87,8 +87,9 @@ REGENERATE_FILES = list(new_project.REGENERATE_FILES)
 # sees because a project's cap has not fired at birth.
 CLEAR_GLOBS = ["sprint/handoffs/*.md", "sprint/handoffs/archive/*.md", "sprint/archive/*.md"]
 
-# Never written, never removed. The initializer's list, and the sync stamp on top of it.
-NEVER_RESET = list(new_project.NEVER_RESET) + [".resources-version"]
+# Never written, never removed. The initializer's list, the template's own roster (which the
+# initializer clears at a project's birth, not here) and the persona library.
+NEVER_RESET = list(new_project.NEVER_RESET) + [".claude/agents/", "personas/"]
 
 # The running session's own files, untouched here as at birth: the sanitizer runs from inside a
 # session, whose journal and notes the closeout clears, and the cut copies tracked files only.
@@ -405,7 +406,7 @@ def run_self_test() -> int:
 
     claude = [".claude/agents/framework-maintainer.md", ".claude/skills/closeout/SKILL.md",
               ".claude/rules/gate-scripts.md", ".claude/settings.json"]
-    paths = ["AGENTS.md", "CONSTITUTION.md", ".resources-version", "sprint/decision-log.md",
+    paths = ["AGENTS.md", "CONSTITUTION.md", "personas/framework-maintainer.md", "sprint/decision-log.md",
              "docs/governance/framework_decisions.md", "docs/orchestration/knowledge/INDEX.md",
              *claude, *LOCAL_STATE, "sprint/recovery/README.md",
              "sprint/handoffs/HANDOFF_S13.md", "sprint/handoffs/KICKOFF_S13.md",
@@ -418,18 +419,18 @@ def run_self_test() -> int:
                           "sprint/handoffs/KICKOFF_S13.md", "sprint/handoffs/archive/HANDOFF_S2.md"], str(planned))
     touched = {rel for _, rel in planned}
     check("the plan reaches no NEVER_RESET path: the framework decisions, the log, the knowledge base, "
-          "the personas, the sync stamp",
+          "the roster, the library",
           not any(rel.startswith(p.rstrip("/")) for rel in touched for p in NEVER_RESET), str(sorted(touched)))
-    check("the plan reaches nothing under .claude/ (the registry, the skills, the rules, the settings) "
+    check("the plan reaches nothing under .claude/ (the roster, the skills, the rules, the settings) "
           "and none of the session's local files, as the initializer and the updater decide them",
           not touched & (set(claude) | set(LOCAL_STATE)) and LOCAL_STATE == new_project.LOCAL_STATE,
           str(sorted(touched & (set(claude) | set(LOCAL_STATE)))))
     check("without the fill: no filled file, no profile file, no template-only file is touched",
           not touched & (set(new_project.FILL_FILES) | set(new_project.TEMPLATE_ONLY) | {".project-profile", ".template-version"}),
           str(sorted(touched)))
-    check("the clear globs are the initializer's plus the sprint-status archive",
-          set(new_project.CLEAR_GLOBS) - {".resources-version"} < set(CLEAR_GLOBS)
-          and "sprint/archive/*.md" in CLEAR_GLOBS)
+    check("the clear globs are the initializer's, less the roster the template keeps, plus the sprint-status archive",
+          set(new_project.CLEAR_GLOBS) - {".claude/agents/*.md"} < set(CLEAR_GLOBS)
+          and "sprint/archive/*.md" in CLEAR_GLOBS and not any(g.startswith(".claude/") for g in CLEAR_GLOBS))
 
     accepted = [u for u, is_tmpl in [("git@github.com-personal:SaltyBrett/agentic-dev-template.git", True),
                                       ("/Users/x/code/agentic-dev-template", True),

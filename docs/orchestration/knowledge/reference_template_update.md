@@ -1,7 +1,7 @@
 ---
 name: How a derived project takes a newer template release
-description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: the persona registry kept for the sync, the skills, rules and settings three-way, the journal, notes and local settings untouched; and how a project''s docs/personas/ reaches .claude/agents/ through dev-resources at v2.0.0.'
-teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002]
+description: 'A project created with gh repo create --template has no git relationship to the template, so the first adoption was a file list in a kickoff. scripts/template_update.py replaces it: ownership decided by path as the inverse of the initializer, keyed merges for the knowledge index and the framework decisions file, git merge-file for everything else, template markdown stripped to the project profile before comparison, the stamp written last, and the target release''s own copy of the script doing the work. The Claude Code paths: a project''s persona roster kept, the persona library, skills, rules and settings three-way, the journal, notes and local settings untouched; and how a project''s docs/personas/ reaches its roster at v2.0.0.'
+teaches: [2026-09-22-004, 2026-09-23-003, 2026-09-25-002, 2026-10-23-002, 2026-10-23-003]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -64,22 +64,23 @@ IDs ([[reference_framework_decisions]]).
 
 ## The Claude Code paths, the local files, and how personas adopt `v2.0.0`
 
-Decision 2026-10-23-002. The persona registry, `.claude/agents/`, is kept: it is the sync's, and a
-fixture holds its path equal in the five places that name it, because a rename that missed one
-would leave a project syncing into a folder no gate reads. `.claude/skills/`, `.claude/rules/` and
-`.claude/settings.json` are three-way like the scripts: the template's, which a project may edit
-and extend. The journal, the notes and `.claude/settings.local.json` belong to the running session
+Decisions 2026-10-23-002 and 2026-10-23-003. A project's persona roster, `.claude/agents/`, is
+kept: it holds what the project activated or drafted, and a release ships only the library,
+`personas/`, which is three-way like the scripts. The initializer clears the template's own roster
+at birth and the sanitizer keeps it; a fixture holds each path equal in every place that names it,
+because a rename that missed one would leave a project activating into a folder no gate reads.
+`.claude/skills/`, `.claude/rules/` and `.claude/settings.json` are three-way too: the template's,
+which a project may edit and extend. The journal, the notes and `.claude/settings.local.json` belong to the running session
 (`new_project.LOCAL_STATE`): ignored by the repository's own `.gitignore`, touched by none of the
 three scripts, kept here. That ignore is checked with `git -c core.excludesFile=`, because an
 operator's global excludes file once covered `settings.local.json` and hid that the repository's
 did not.
 
-A project on `v1.0.0` holds its personas in `docs/personas/`, which `v2.0.0` no longer ships, so
-this script treats it as an ordinary removed path: an unedited copy is deleted, an edited one
-reported. The personas reach `.claude/agents/` through `dev-resources`, never by conversion here:
-publish what `dev-resources` lacks with the project's own `v1.0.0` sync, let `dev-resources` port
-its frozen tree once (TMPL-2.4), take the release, then run the `v2.0.0` sync before expecting the
-suite to pass, since the current kickoff's persona is looked for in `.claude/agents/`.
+A project on `v1.0.0` holds its personas in `docs/personas/`, which `v2.0.0` no longer ships.
+Decision 2026-10-23-003, the operator's choice, has this script convert every one into an agent file
+in the project's roster and remove the old folder, at the cost that each becomes a live agent until
+the project deactivates it; TMPL-1.10 builds the conversion and proves it against the real `v1.0.0`
+files. Until then the map treats `docs/personas/` as an ordinary removed path.
 
 ## Three things that were not obvious until the probe ran
 
@@ -108,9 +109,7 @@ would be indistinguishable from a `keep` that saw nothing.
   the whole result as one checkpoint and observe the push's `gates` run.
 - A kickoff written before a release names the release it knows. When the template moves on
   before the session runs, take the newer release and say so in the sprint-status entry.
-- Since decision 2026-09-23-007 the updater never writes the persona registry (`.claude/agents/`
-  since decision 2026-10-22-005, `docs/personas/` before) or a knowledge entry
-  whose frontmatter declares `source: dev-resources`; those are the resources sync's, told apart
-  by content because they share a directory with the template's own entries
-  ([[reference_resources_sync]]). The template's own packaging (`pyproject.toml`,
+- The updater never writes a project's persona roster, `.claude/agents/` (decision 2026-10-23-003),
+  nor a knowledge entry whose frontmatter declares `source: dev-resources`, which a `v1.0.0`
+  project synced from the retired `dev-resources` ([[reference_resources_sync]]). The template's own packaging (`pyproject.toml`,
   `.pre-commit-hooks.yaml`) is never written either; a project is not a hook repository.

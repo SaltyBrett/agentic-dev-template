@@ -1,90 +1,58 @@
 ---
-name: The registry is a cache of dev-resources, synced at closeout and grown only by publishing
-description: 'Why the persona registry and resource knowledge entries are refreshed from `dev-resources` by a script in the updater''s idiom rather than merged by the template: verdicts decided by version, a same-version or unversioned difference is a conflict never picked silently, a resource entry is told from the template''s own by a frontmatter declaration the updater honours, the closeout refuses a persona the synced ref lacks, and the first sync seeded an empty registry through --publish. Read before editing a persona or a resource entry in any project.'
-teaches: [2026-09-23-002, 2026-09-23-007, 2026-10-22-005]
-verified: 2026-10-22
+name: The persona registry was a cache of dev-resources, and why the sync was retired
+description: 'Until v2.0.0, personas and shared knowledge entries lived in dev-resources and reached each project by resources_sync.py: verdicts decided by version, a same-version difference a conflict never picked silently, growth only through --publish, the closeout refusing an unpublished persona. Decision 2026-10-23-003 retired it: the template ships the persona library itself and each project keeps its own roster. Why the sync was the wrong shape for that, what still holds for a project on v1.0.0, and what any future cache inherits. Read before reviving a cross-repository sync, or when a v1.0.0 project syncs.'
+teaches: [2026-09-23-002, 2026-09-23-007, 2026-10-22-005, 2026-10-23-003]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
 
-# The registry is a cache of `dev-resources`
+# The registry was a cache of `dev-resources`, and why the sync was retired
 
 > Durable learning. Wikilink: `[[reference_resources_sync]]`.
-> Script: `scripts/resources_sync.py`. Procedure: `session_handoff_standard_v2.0.md` §7 step 4.
-> Companions: [[reference_template_update]] (the idiom and the ownership split),
-> [[reference_session_closeout]] (the append-only rule the publish path relies on),
-> [[reference_published_hooks]] (the linter `dev-resources` judges contributions with).
+> The script was `scripts/resources_sync.py`, removed from the template by decision 2026-10-23-003;
+> a project on `v1.0.0` keeps running its own copy until it adopts `v2.0.0`.
+> Companions: [[reference_session_closeout]] (the roster rule that replaced it),
+> [[reference_template_update]] (the ownership map), [[reference_claude_code_agents_md]].
 
-## Why a cache and not a pointer
+## What it was
 
-Claude Code loads agents from the project's own `.claude/agents/`, the start hook injects the
-kickoff's persona from there, the session gate proves the kickoff names a registered agent, and CI
-reads local files, so the registry must be in every project's tree. A submodule is not initialized by
-`gh repo create --template` and needs a checkout flag in CI; a subtree is a second merge channel
-over paths the updater already handles. So the project holds a copy, one script refreshes it, and
-`.resources-version` says which ref it matches: the repository's own single-source-of-truth law,
-one level up.
+Decisions 2026-09-23-002 and 2026-09-23-007. Personas, and knowledge entries that belonged to no
+one project, lived in `dev-resources`; each project held a copy refreshed at closeout by a script
+in the updater's idiom: fetch a ref, judge every owned path, write, stamp `.resources-version`. A
+persona carried `version:`, so a higher fetched version was an update and a higher local one was
+ahead; the same version with different text was a conflict, never picked silently, and so was any
+difference in an unversioned knowledge entry. The closeout refused a persona `dev-resources` lacked,
+and the registry grew only through `--publish` into a clone of `dev-resources`, judged there by the
+published `persona-lint`. A synced knowledge entry declared `source: dev-resources`, and the updater
+kept any entry so marked. Decision 2026-10-22-005 moved the registry into `.claude/agents/` and left
+`dev-resources` holding the old tree beside it for the projects still on `v1.0.0`.
 
-## How a verdict is decided
+## Why it was retired
 
-The sync has the fetched copy and the local copy, and nothing else. Personas carry `version:`, so
-the higher one wins in the direction it points: fetched higher is `update`, local higher is
-`ahead`. The same version with different text is a `CONFLICT`, since the append-only rule says
-that cannot happen legitimately. Resource knowledge entries carry no version, so any difference
-is a conflict too, resolved by `--take <path>` (the fetched copy) or `--publish` (yours). Nothing
-is ever picked silently, for the same reason the updater conflicts on overlapping edits.
+Decision 2026-10-23-003, the operator's: the public template ships a persona library itself, inactive
+in `personas/`, and each project activates what it needs into `.claude/agents/`, its roster. The sync
+was the wrong shape for that, three ways:
 
-## How a resource entry is told from the template's own
+- **Every file in `.claude/agents/` is a live agent.** A sync that writes the whole registry into
+  every project activates every persona everywhere: a description in every session's context, and
+  delegation Claude may choose unprompted ([[reference_claude_code_agents_md]]).
+- **Growth ran the wrong way for a public template.** `--publish` carried a project's persona into a
+  public repository, while a project is private by default (decision 2026-09-25-001). The library
+  now grows only by template release, and a project's own persona stays in the project.
+- **A second repository was a second channel.** Personas reached a project by sync and everything
+  else by release: two stamps, two update paths, and a window in which `dev-resources` held two
+  trees. One release now carries the library like any template file.
 
-Both kinds live in `docs/orchestration/knowledge/`. A resource entry declares
-`source: dev-resources` in its frontmatter; `template_update.resource_owned` reads it and the
-updater keeps the file whichever side changed it, and the sync imports that one function rather
-than keeping a second rule. A fetched entry without the declaration is refused as `unmarked`,
-because a synced copy the updater does not recognize would be three-way merged at the next
-release. Resource entries carry `teaches: []`: they explain no project decision.
+## What still holds
 
-## What the closeout refuses, and why the sync runs there
-
-A persona this project holds that `dev-resources` lacks at the synced ref, or holds at a lower
-version, blocks the closeout with `unpublished`. The registry grows only through `--publish`,
-which writes into a local clone of `dev-resources` for commit there under its own persona
-linter. The sync runs at closeout, before the scaffold, so the pair the next session consumes was
-scaffolded from the registry as just synced; a cold-start sync could change the registry under a
-kickoff already written against it. A project that has never synced has no stamp and is not held
-to the rule, which is what let the migration land.
-
-## The stamp is the project's, and a moved entry costs one `--take`
-
-`.resources-version` names the ref this repository last synced. The template's own stamp
-travelled to the first derived project that took `v7.1.0`, as an `add`, because nothing had
-told the updater otherwise; it now keeps the file and the initializer clears it at birth, like
-`.project-profile`. And a project whose copy of a moved entry predates the mark holds an
-unmarked file the updater keeps (any of the three copies marked means keep), so its first sync
-sees a fetched marked copy against a local unmarked one: a conflict by the rule above, resolved
-by `--take <path>` once. The probe recorded both.
-
-## The registry moved, and `dev-resources` holds both trees for a while
-
-Decision 2026-10-22-005 made the registry agent files in `.claude/agents/`, which is the path the
-sync owns from then on. Projects still on `v1.0.0` run their own copy of this script, which owns
-`docs/personas/`; had that folder left `dev-resources`, their next sync would have found every
-persona missing there and their closeout would have refused them all as unpublished, with a
-remedy (`--publish`) that writes the old folder back. So `dev-resources` keeps `docs/personas/`
-frozen beside `.claude/agents/`, each tree judged by the `persona-lint` of its own template rev,
-until TMPL-2.4 takes the projects to `v2.0.0`; TMPL-2.4 compares the trees, ports anything a
-`v1.0.0` project published meanwhile, and removes the old one.
-
-## The first run
-
-`dev-resources` held no registry. The first sync reported both personas `unpublished`,
-`--apply --publish` wrote them into the clone, the clone's commit ran its `persona-lint` on real
-content for the first time, and the sync back found both `up-to-date` and wrote the stamp. A
-project created from the template starts with the template's cached copy and syncs from there.
-
-## Rules
-
-- Never edit a persona or a resource entry in place. Bump the persona's version and publish; for
-  a resource entry, publish the edit and take it back by sync.
-- Run the sync before every closeout; the gate refuses a stamp whose ref is not fetched.
-- A conflict is a decision: `--take <path>` or `--publish`, never a hand-merge that leaves the
-  file equal to neither side.
+- A project on `v1.0.0` keeps its own copy of the script, its stamp and its closeout rule until it
+  adopts `v2.0.0`; `dev-resources` keeps serving it and is archived once all have adopted (TMPL-2.4).
+  The `v2.0.0` updater still keeps an entry marked `source: dev-resources`, and TMPL-1.10 settles
+  what adoption does with those entries and with `docs/personas/`.
+- The version verdicts live on in the closeout's roster rule: a roster copy above its library
+  version is a fork, the same version with other text is drift, a lower one is noted
+  ([[reference_session_closeout]]).
+- What any future cache inherits: refresh it by a script that judges by version, never by hand; a
+  conflict is a decision for one side, never a hand-merge that equals neither; tell a copy from an
+  original by a declaration in the file, never by guessing from its path.

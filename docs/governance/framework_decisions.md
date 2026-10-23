@@ -25,10 +25,10 @@
 | ID | Date | Title | Status |
 |----|------|-------|--------|
 | 2026-10-23-003 | 2026-10-23; amended 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the full team ships in `v2.0.0`; `dev-resources` retires; a project's own personas stay in it; the updater converts a `v1.0.0` project's `docs/personas/`; built as TMPL-1.8 to TMPL-1.10 | APPROVED |
-| 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED |
+| 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED; SUPERSEDED (bullets 1, 4 and 5) by 2026-10-23-003 |
 | 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
 | 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
-| 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED |
+| 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED; SUPERSEDED (dev-resources holding the registry) by 2026-10-23-003 |
 | 2026-10-22-004 | 2026-10-22 | The session journal and the working notes are local and gitignored: the journal records raw commands that must not enter a public history, an ignored file is outside pre-commit's stash, and the Stop hook excludes both by path as well; the closeout gate clears them | APPROVED |
 | 2026-10-22-003 | 2026-10-22 | `v2.1.0`: an agentic development team of role subagents whose handoffs are gated artifacts, and a coding standard built as mechanical limits, a process layer and one page of judgement; each opens with a design session, the standard proved against real code before adoption; MINOR | APPROVED |
 | 2026-10-22-002 | 2026-10-22 | Authoritative documents stop going stale: `authority:` frontmatter and a version log on each source of truth, `Affects:` on every decision, a gate that accepts a version-log row or an open tracker story and nothing else, the commit stamped after the fact and verified, a technical-writer agent draining the queue at cold start; part of `v2.0.0` | APPROVED |
@@ -39,12 +39,12 @@
 | 2026-09-25-001 | 2026-09-25 | The template and `dev-resources` are public; a project made from the template is private by default, refused by the initializer when public unless `--public`; the archive stays private; branch protection still not enabled; `dev-resources` pins https and gets a `gates` workflow; MINOR | APPROVED |
 | 2026-09-24-001 | 2026-09-24; amended 2026-09-24 | Rules with no control found in the fossil sweep: the tracker's dependency and placeholder rules get a gate (TMPL-5.5, built: `dependency-order` and `live-placeholder`, MAJOR); the pull-request workflow, review checklist and manifest are deleted; evidence capture is procedure, marked ungated; PATCH for the sweep | APPROVED |
 | 2026-09-23-008 | 2026-09-23 | A knowledge entry is a resource entry when it teaches no decision and explains a machine, a tool or a workflow rather than this repository; the macOS toolchain entry moves, every gate entry stays | APPROVED |
-| 2026-09-23-007 | 2026-09-23; amended 2026-09-23 | The registry and resource entries are synced from `dev-resources` by `resources_sync.py`: verdicts decided by version, conflicts never picked silently, growth only through `--publish`, the updater keeps those paths, the closeout refuses an unpublished persona; MAJOR | APPROVED |
+| 2026-09-23-007 | 2026-09-23; amended 2026-09-23 | The registry and resource entries are synced from `dev-resources` by `resources_sync.py`: verdicts decided by version, conflicts never picked silently, growth only through `--publish`, the updater keeps those paths, the closeout refuses an unpublished persona; MAJOR | SUPERSEDED by 2026-10-23-003 |
 | 2026-09-23-006 | 2026-09-23 | Personas are append-only, gated: `version:` and a `## Changelog` in every persona, an Invocation change refused without a bump against the committed copy, the kickoff names the version; MAJOR | APPROVED |
 | 2026-09-23-005 | 2026-09-23; amended 2026-09-23; amended 2026-09-25 | The template is a pre-commit hook repository: `.pre-commit-hooks.yaml` publishes the persona linter, the frontmatter gate and the attribution gate as console scripts of a `pyproject.toml` package that leaves a project at birth; the gates read their root from git | APPROVED |
 | 2026-09-23-004 | 2026-09-23 | Commit classification is not built: the release bump stays a documented judgement, because the decision that introduces a change already names its bump and the windows it would compute over are small | APPROVED |
 | 2026-09-23-003 | 2026-09-23; amended 2026-09-24 | The template is sanitized to a pristine `v1.0.0` from a fresh init after its build history is archived; framework decisions move to `docs/governance/framework_decisions.md` (built as TMPL-4.1, MAJOR); the sanitizer and the sweep (built as TMPL-4.2, MINOR); the archive repository named; the cut done (TMPL-4.4), this repository archived and the new lineage at `v1.0.0` | APPROVED |
-| 2026-09-23-002 | 2026-09-23 | `dev-resources` is the durable home for personas and reference knowledge: projects hold a stamped snapshot synced at closeout, ownership is disjoint from the template's, personas are append-only and enhanced by version | APPROVED |
+| 2026-09-23-002 | 2026-09-23 | `dev-resources` is the durable home for personas and reference knowledge: projects hold a stamped snapshot synced at closeout, ownership is disjoint from the template's, personas are append-only and enhanced by version | APPROVED; SUPERSEDED (personas and shared knowledge in dev-resources) by 2026-10-23-003 |
 | 2026-09-23-001 | 2026-09-23 | The gate suite is described by one runbook page that a gate keeps in step with the config; every hook declares its stage; released MAJOR | APPROVED |
 | 2026-09-22-004 | 2026-09-22; amended 2026-09-24 | A derived project takes a newer release through `template_update.py`: ownership by path as the initializer's inverse, keyed merges for the index and the framework decisions file (the project's decision log until 2026-09-23-003 was built), three-way for the rest | APPROVED |
 | 2026-09-22-003 | 2026-09-22; amended 2026-10-22 | The closeout command runs with `--all-files`, because pre-commit stashes unstaged edits and the gate then judges the wrong tree; amended: the cold-start verify too, where the stash made a dirty tree pass | APPROVED |
@@ -1249,7 +1249,7 @@ removed exited 1 on `no-stages`. The real tree: 22 hooks, 0 violations.
 
 **Date:** 2026-09-23
 **Made By:** Chair + AI
-**Status:** APPROVED
+**Status:** APPROVED; SUPERSEDED (personas and shared knowledge in dev-resources) by 2026-10-23-003
 
 ### Context
 
@@ -1656,7 +1656,7 @@ the initializer clears it at birth, released as `v7.1.1` (PATCH).
 
 **Date:** 2026-09-23; amended 2026-09-23
 **Made By:** Chair + AI (the design in 2026-09-23-002; the mechanics decided here)
-**Status:** APPROVED
+**Status:** SUPERSEDED by 2026-10-23-003
 **Builds:** the sync, ownership and contribution bullets of 2026-09-23-002 (TMPL-3.3)
 
 ### Context
@@ -2253,7 +2253,7 @@ files.
 **Date:** 2026-10-22
 **Made By:** Chair + AI (S3): the persona's path to the session and the `dev-resources` window by
 the operator, put as questions; the format by the AI
-**Status:** APPROVED
+**Status:** APPROVED; SUPERSEDED (dev-resources holding the registry) by 2026-10-23-003
 **Amends:** 2026-10-22-001 (its personas bullet: the main session no longer runs as the agent by default)
 **Builds:** the personas bullet of 2026-10-22-001 (TMPL-1.3)
 **Affects:** `.claude/agents/`, `docs/personas/` (removed), `scripts/session_closeout.py`, `scripts/session_start.py`, `scripts/resources_sync.py`, `scripts/template_update.py`, `scripts/new_project.py`, `scripts/sanitize_template.py`, `.pre-commit-hooks.yaml`, `.pre-commit-config.yaml`, `docs/standards/session_handoff_standard_v2.0.md` §3, §5 and §6, `dev-resources`
@@ -2490,7 +2490,7 @@ from git and stopped at step 3, whose sync needed an approval `-p` cannot give, 
 **Date:** 2026-10-23
 **Made By:** AI (S4), within decisions 2026-10-22-001 and 2026-10-22-005; reported to the operator
 at the S4 handover
-**Status:** APPROVED
+**Status:** APPROVED; SUPERSEDED (bullets 1, 4 and 5) by 2026-10-23-003
 **Builds:** the ownership consequence of 2026-10-22-001 and the adoption consequence of 2026-10-22-005 (TMPL-1.6)
 **Affects:** `scripts/new_project.py` (`LOCAL_STATE`, the self-test), `scripts/template_update.py` (`KEEP`, the docstring, the self-test), `scripts/sanitize_template.py` (`LOCAL_STATE`, the self-test), `.gitignore`
 
@@ -2590,10 +2590,15 @@ the plain command reported it ignored.
 **Made By:** Chair (S4, after its closeout): the library in the template and activation at the first
 session, approved as proposed; the mechanics by the AI, to be settled in the build
 **Status:** APPROVED
-**Affects:** to be named by the build (TMPL-1.8): at least `.claude/agents/`, the library's folder,
-`.claude/skills/`, `scripts/session_closeout.py`, `scripts/resources_sync.py`,
+**Supersedes:** 2026-09-23-007; 2026-09-23-002 (personas and shared knowledge in `dev-resources`);
+2026-10-22-005 (`dev-resources` holding the registry); 2026-10-23-002 (its first, fourth and fifth
+bullets)
+**Affects:** `personas/`, `.claude/agents/`, `.claude/skills/team-selection/`, `.claude/skills/closeout/`,
+`scripts/session_closeout.py`, `scripts/resources_sync.py` (removed), `.resources-version` (removed),
 `scripts/new_project.py`, `scripts/template_update.py`, `scripts/sanitize_template.py`,
-`.pre-commit-hooks.yaml`, `AGENTS.md`, `docs/standards/session_handoff_standard_v2.0.md`
+`.pre-commit-config.yaml`, `.pre-commit-hooks.yaml`, `AGENTS.md`, `CONSTITUTION.md`, `README.md`,
+`TEMPLATE_GUIDE.md`, `docs/standards/session_handoff_standard_v2.0.md`,
+`docs/governance/gate_suite_runbook.md`, `.claude/rules/knowledge-entries.md`
 
 ### Context
 
@@ -2634,12 +2639,13 @@ every session of every project and make delegation unpredictable.
 - Whether a persona a project drafts for itself can be proposed back to the library, and how.
 - How a `v1.0.0` project's `docs/personas/` reaches its roster when it adopts `v2.0.0`.
 
-### Supersession, marked on both sides when TMPL-1.8 builds it
+### Supersession
 
-Decisions 2026-09-23-002 and 2026-09-23-007 (scope: personas), 2026-10-22-005 (scope:
-`dev-resources` holding the registry) and 2026-10-23-002 (scope: its first, fourth and fifth
-bullets, the registry as the sync's and the adoption through `dev-resources`). Until then they stand
-and describe the code as it is.
+Marked on both sides by TMPL-1.8, with the code: decisions 2026-09-23-007 (the sync, whole),
+2026-09-23-002 (personas and shared knowledge in `dev-resources`; its append-only rule and the
+published hooks stand), 2026-10-22-005 (`dev-resources` holding the registry; the agent-file shape
+and the persona from the start hook stand) and 2026-10-23-002 (its first, fourth and fifth bullets,
+the registry as the sync's and the adoption through `dev-resources`).
 
 ### Consequences
 

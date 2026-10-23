@@ -18,15 +18,19 @@ WHAT IT CHECKS
   * each handoff and kickoff carries exactly the required H2 sections, in order, non-empty, with
     no unfilled {{TOKEN}}; wikilinks resolve; every decision ID cited is in a decision index — the
     project's (sprint/decision-log.md) or the framework's (docs/governance/framework_decisions.md)
-  * each kickoff names a registered persona and the version the registry holds, section 1 is the
+  * each kickoff names a persona in the roster and the version the roster holds, section 1 is the
     scaffold's line naming the agent (or, written before decision 2026-10-22-005, a verbatim copy
     of its prompt), and every task cites a story ID present in sprint/story-tracker.md
-  * each persona is an agent file, .claude/agents/<slug>.md, whose frontmatter parses as YAML
-    (Claude Code skips the file silently otherwise) with name equal to the slug, description, an
-    integer version, and expertise, insists_on and changelog as lists of strings; the body is the
-    Invocation, the agent's prompt. Personas are append-only (decision 2026-09-23-002): a body
-    that differs from the committed copy needs a higher version, the version never goes down, and
-    the changelog carries an item for the current version
+  * each persona is an agent file, in the roster .claude/agents/<slug>.md or the library
+    personas/<slug>.md, whose frontmatter parses as YAML (Claude Code skips the file silently
+    otherwise) with name equal to the slug, description, an integer version, and expertise,
+    insists_on and changelog as lists of strings; the body is the Invocation, the agent's prompt.
+    Personas are append-only (decision 2026-09-23-002): a body that differs from the committed
+    copy needs a higher version, the version never goes down, and the changelog carries an item
+    for the current version
+  * a roster persona the library also holds was activated from it by copy (decision
+    2026-10-23-003): a higher version than the library's is a fork, the same version with other
+    text is drift, and both fail; a lower version is the library moving on, reported, never failed
   * sprint/sprint-status.md: newest entry headed `## S<N> — YYYY-MM-DD — title`; at most 10 entries
   * sprint/story-tracker.md Summary Statistics equal the counted rows ([EXAMPLE] epics skipped)
   * a story In Progress or Done whose listed dependency is not Done fails (TMPL-5.5, decision
@@ -46,11 +50,7 @@ WHAT IT CHECKS
     would commit matches it, or it never loads; and it repeats no sentence of AGENTS.md
 --closeout  session end: archives every pair older than the session being closed, then verifies
             that the pair for the next session exists and passes every check above, and on a pass
-            clears the session journal and working notes (session_journal.py); refuses a
-            persona this project holds that dev-resources lacks at the synced ref, or holds at a
-            lower version — the registry grows only through resources_sync.py --publish
-            (decision 2026-09-23-007). A project that has never synced (no .resources-version)
-            is not held to it.
+            clears the session journal and working notes (session_journal.py).
 --verify    cold start: the verification of --closeout without the rotation, plus a clean tree.
             A fresh project — no pairs and sprint-status at S1 — passes.
 --scaffold  writes the next session's HANDOFF/KICKOFF skeletons; they fail --check until filled
@@ -103,7 +103,8 @@ def repo_root() -> Path:
 ROOT = repo_root()
 HANDOFFS = ROOT / "sprint" / "handoffs"
 ARCHIVE = HANDOFFS / "archive"
-PERSONAS = ROOT / ".claude" / "agents"   # the registry: one Claude Code agent file per persona
+PERSONAS = ROOT / ".claude" / "agents"   # the roster: the personas this project activated, one agent file each
+LIBRARY = ROOT / "personas"              # the library the template ships, inactive (decision 2026-10-23-003)
 STATUS = ROOT / "sprint" / "sprint-status.md"
 TRACKER = ROOT / "sprint" / "story-tracker.md"
 LOG = ROOT / "sprint" / "decision-log.md"
@@ -114,10 +115,8 @@ KB = ROOT / "docs" / "orchestration" / "knowledge"
 BRAIN = ROOT / "AGENTS.md"
 RULES = ROOT / ".claude" / "rules"     # path-scoped judgement Claude Code loads beside a matching file
 PROFILE = ROOT / ".project-profile"             # present in a project, absent in the template
-RESOURCES_STAMP = ROOT / ".resources-version"   # `<ref> <sha>`, written by resources_sync.py
 # The three sprint documents the live-placeholder rule reads, by the path the report names.
 SPRINT_FILES = {"sprint/story-tracker.md": TRACKER, "sprint/sprint-status.md": STATUS, "sprint/decision-log.md": LOG}
-RESOURCES_REF_PREFIX = "refs/resources/"
 
 HANDOFF_NAME = re.compile(r"^HANDOFF_S(\d+)\.md$")
 KICKOFF_NAME = re.compile(r"^KICKOFF_S(\d+)\.md$")
@@ -153,7 +152,7 @@ CHANGELOG_ENTRY = re.compile(r"^(\d+)\s+—")
 
 
 class Persona(NamedTuple):
-    """What a kickoff checks against the registry: the Invocation (the agent's prompt) and its version."""
+    """What a kickoff checks against the roster: the Invocation (the agent's prompt) and its version."""
     invocation: str
     version: str
 STATUSES = ("Not Started", "In Progress", "Blocked", "Done")
@@ -275,8 +274,8 @@ def lint_kickoff(text: str, n: int, personas: dict[str, Persona], story_ids: set
     v, secs = lint_common(text, "Kickoff", n, KICKOFF_SECTIONS)
     slug = field(text, "Persona")
     if slug not in personas:
-        v.append(("persona", f"`**Persona:** {slug}` is not registered; add .claude/agents/{slug}.md "
-                             "in the same commit — a persona is written when a task first needs it"))
+        v.append(("persona", f"`**Persona:** {slug}` is not in the roster; activate it from personas/ with the "
+                             f"team-selection skill, or draft .claude/agents/{slug}.md in the same commit"))
     else:
         # The agent file is the source; the start hook injects it. A verbatim copy of its prompt was
         # the rule before decision 2026-10-22-005 and still says nothing false, so it is accepted.
@@ -285,7 +284,7 @@ def lint_kickoff(text: str, n: int, personas: dict[str, Persona], story_ids: set
                                        f"`{persona_line(slug)}`"))
         version = field(text, "Persona version")
         if version != personas[slug].version:
-            v.append(("persona-version", f"`**Persona version:** {version}` must name the registry's "
+            v.append(("persona-version", f"`**Persona version:** {version}` must name the roster's "
                                          f"`version: {personas[slug].version}` for {slug}; the scaffold "
                                          "writes it — a kickoff says which persona version it was written against"))
     cold = secs.get(KICKOFF_SECTIONS[1], "")
@@ -478,16 +477,27 @@ def lint_rule(text: str, files: list[str], brain: str) -> list:
     return v
 
 
-def published_state(local: str, published: str | None) -> tuple[str, str] | None:
-    """The closeout rule for one persona against its copy in dev-resources at the synced ref:
-    absent there, or behind the local version, is unpublished. Behind locally is the sync's
-    business, not the closeout's."""
-    if published is None:
-        return ("unpublished", "not in dev-resources at the synced ref; run `python3 scripts/resources_sync.py "
-                               "--apply --publish <clone>`, commit and push there, then sync again")
-    lv, pv = persona_version(local), persona_version(published)
-    if lv.isdigit() and pv.isdigit() and int(lv) > int(pv):
-        return ("unpublished", f"version {lv} here, {pv} published; publish the enhancement before closing")
+# Reported beside a verdict, never a violation: the library moved on and the roster may follow.
+NOTE_RULES = {"library-newer"}
+
+
+def library_state(roster: str, library: str) -> tuple[str, str] | None:
+    """One roster persona against its copy in the library (decision 2026-10-23-003). Activation is
+    a copy, so the same version must be the same file. A higher roster version is a fork of a
+    library persona, which a project writes as a persona of its own under its own slug instead; a
+    lower one is the library moving on, reported for the team-selection skill to re-activate."""
+    rv, lv = persona_version(roster), persona_version(library)
+    if not (rv.isdigit() and lv.isdigit()):
+        return None   # a malformed version is lint_persona's to report
+    if int(rv) > int(lv):
+        return ("library-fork", f"version {rv} here, {lv} in personas/; a library persona changes in the library — "
+                                "write the variant as the project's own persona, under its own slug")
+    if int(rv) == int(lv) and roster.replace("\r\n", "\n") != library.replace("\r\n", "\n"):
+        return ("library-drift", f"differs from personas/ at the same version {rv}; activation is a copy — "
+                                 "activate it again from the library with the team-selection skill")
+    if int(rv) < int(lv):
+        return ("library-newer", f"the library holds version {lv}, the roster {rv}; activate it again with the "
+                                 "team-selection skill to take the newer text")
     return None
 
 
@@ -760,7 +770,7 @@ Run `{VERIFY_COMMAND}` and do no build work until it passes.
 Before ending: commit the `## S{n} — <date> — <title>` entry at the top of `sprint/sprint-status.md`,
 the decisions, the knowledge entries with their INDEX rows, and the tracker. Then run the closeout
 skill, `.claude/skills/closeout/SKILL.md`, with the next persona's slug and the brief for S{n + 1}.
-It syncs the registry, writes and fills the pair for S{n + 1}, runs `{CLOSEOUT_COMMAND}`, commits
+It writes and fills the pair for S{n + 1}, runs `{CLOSEOUT_COMMAND}`, commits
 `checkpoint: closeout S{n}`, pushes, confirms the `gates` run on GitHub is green, and returns
 `KICKOFF_S{n + 1}.md`, whose contents go to the user as the next session's prompt.
 """
@@ -802,26 +812,27 @@ def load_personas() -> tuple[dict[str, Persona], list]:
     return personas, v
 
 
-def unpublished_personas() -> list:
-    """Every local persona against refs/resources/<ref>, where <ref> is the stamp's. No stamp: the
-    project has never synced, and nothing is checked."""
-    if not RESOURCES_STAMP.is_file():
-        return []
-    parts = RESOURCES_STAMP.read_text(encoding="utf-8").split()
-    if len(parts) != 2:
-        return [("resources-stamp", ".resources-version", "must read `<ref> <sha>`; re-run resources_sync.py --apply")]
-    ref = f"{RESOURCES_REF_PREFIX}{parts[0]}"
-    if subprocess.run(["git", "rev-parse", "--verify", "-q", ref], cwd=ROOT, capture_output=True, check=False).returncode:
-        return [("resources-ref", ".resources-version", f"{ref} is not fetched in this clone; run resources_sync.py first")]
+def library_findings() -> tuple[list, list]:
+    """(violations, notes): every library persona linted as a roster persona is, append-only
+    against its committed copy, then every roster persona the library holds against its copy."""
     v: list[tuple[str, str, str]] = []
+    notes: list[tuple[str, str, str]] = []
+    if not LIBRARY.is_dir():
+        return v, notes
+    library: dict[str, str] = {}
+    for p in sorted(LIBRARY.glob("*.md")):
+        rel = p.relative_to(ROOT).as_posix()
+        text = p.read_text(encoding="utf-8")
+        for rule, detail in lint_persona(text, p.stem, committed_text(rel)):
+            v.append((rule, rel, detail))
+        library[p.stem] = text
     if PERSONAS.is_dir():
         for p in sorted(PERSONAS.glob("*.md")):
-            rel = p.relative_to(ROOT).as_posix()
-            out = subprocess.run(["git", "cat-file", "blob", f"{ref}:{rel}"], cwd=ROOT, capture_output=True, text=True, check=False)
-            state = published_state(p.read_text(encoding="utf-8"), out.stdout if out.returncode == 0 else None)
-            if state:
-                v.append((state[0], rel, state[1]))
-    return v
+            if p.stem in library:
+                state = library_state(p.read_text(encoding="utf-8"), library[p.stem])
+                if state:
+                    (notes if state[0] in NOTE_RULES else v).append((state[0], p.relative_to(ROOT).as_posix(), state[1]))
+    return v, notes
 
 
 def committed_files() -> list[str]:
@@ -862,14 +873,17 @@ def folder_names() -> list[str]:
     return sorted(p.name for p in HANDOFFS.iterdir() if p.name != "archive" and not p.name.startswith("."))
 
 
-def check_all() -> tuple[list, dict[int, set[str]], int | None]:
-    """Every --check rule over the real tree. Returns (violations, pair numbers, newest session)."""
+def check_all() -> tuple[list, dict[int, set[str]], int | None, list]:
+    """Every --check rule over the real tree. Returns (violations, pair numbers, newest session,
+    notes), the notes reported beside the verdict and never counted in it."""
     v: list[tuple[str, str, str]] = []
     ids, log_v = decision_ids()
     v.extend(log_v)
     kb_slugs = {p.stem for p in KB.glob("*.md")} if KB.is_dir() else set()
     personas, persona_v = load_personas()
     v.extend(persona_v)
+    library_v, notes = library_findings()
+    v.extend(library_v)
 
     story_ids: set[str] = set()
     if TRACKER.is_file():
@@ -924,12 +938,14 @@ def check_all() -> tuple[list, dict[int, set[str]], int | None]:
             v.append(("brain-cap", "AGENTS.md",
                       f"{size} bytes; the Codex project-doc cap is {MAX_BRAIN_BYTES}. Move procedure "
                       "to docs/standards/ and keep only nouns and non-inferable constraints here"))
-    return v, nums, current
+    return v, nums, current, notes
 
 
-def report(title: str, violations: list) -> int:
+def report(title: str, violations: list, notes: list | None = None) -> int:
     print(f"\n{title}")
     print("=" * 60)
+    for rule, where, detail in notes or []:
+        print(f"  note  {where} ({rule}): {detail}")
     if not violations:
         print("PASSED")
         return 0
@@ -946,8 +962,8 @@ def git_dirty() -> list[str]:
 
 
 def cmd_check() -> int:
-    v, _, _ = check_all()
-    return report("Session State Gate", v)
+    v, _, _, notes = check_all()
+    return report("Session State Gate", v, notes)
 
 
 def cmd_personas() -> int:
@@ -957,7 +973,7 @@ def cmd_personas() -> int:
 
 
 def cmd_closeout() -> int:
-    v, nums, current = check_all()
+    v, nums, current, notes = check_all()
     if current is not None:
         ARCHIVE.mkdir(exist_ok=True)
         for n in rotation_plan(set(nums), current):
@@ -970,8 +986,7 @@ def cmd_closeout() -> int:
         nums = {n: k for n, k in nums.items() if n >= current}
     for rule, detail in verify_state(current, set(nums), closing=True):
         v.append((rule, "sprint/handoffs/", detail))
-    v.extend(unpublished_personas())
-    rc = report(f"Session Closeout (closing S{current})" if current else "Session Closeout", v)
+    rc = report(f"Session Closeout (closing S{current})" if current else "Session Closeout", v, notes)
     if rc == 0:
         # Imported here, not at the top: the published package (pyproject.toml) ships this module
         # for `--personas` alone, without session_journal.
@@ -984,14 +999,14 @@ def cmd_closeout() -> int:
 
 
 def cmd_verify() -> int:
-    v, nums, current = check_all()
+    v, nums, current, notes = check_all()
     for rule, detail in verify_state(current, set(nums)):
         v.append((rule, "sprint/handoffs/", detail))
     dirty = git_dirty()
     if dirty:
         v.append(("dirty-tree", "git status", f"{len(dirty)} uncommitted path(s); the previous session "
                                               "must have committed its closeout"))
-    rc = report("Session Verify (previous session closed out)", v)
+    rc = report("Session Verify (previous session closed out)", v, notes)
     if rc == 0 and current is not None:
         nxt = current + 1 if nums else current
         print(f"\nThis is S{nxt}. Add `## S{nxt} — <date> — <title>` to sprint-status at the first checkpoint.")
@@ -1262,12 +1277,20 @@ def run_self_test() -> int:
     check("globs: brace groups expand and multiply",
           sorted(expand_braces("src/*.{ts,tsx}")) == ["src/*.ts", "src/*.tsx"] and len(expand_braces("{a,b}/{c,d}/x")) == 4)
 
-    check("closeout: a persona dev-resources lacks is unpublished",
-          (published_state(_GOOD_PERSONA, None) or ("",))[0] == "unpublished")
-    check("closeout: a local version above the published one is unpublished",
-          (published_state(_BUMPED_PERSONA, _GOOD_PERSONA) or ("",))[0] == "unpublished")
-    check("closeout: published at the same version passes; behind locally is the sync's business, not a violation",
-          published_state(_GOOD_PERSONA, _GOOD_PERSONA) is None and published_state(_GOOD_PERSONA, _BUMPED_PERSONA) is None)
+    def state(roster: str, library: str) -> str:
+        return (library_state(roster, library) or ("",))[0]
+    check("library: a roster copy equal to the library passes, line endings aside",
+          state(_GOOD_PERSONA, _GOOD_PERSONA) == "" and state(_GOOD_PERSONA.replace("\n", "\r\n"), _GOOD_PERSONA) == "")
+    check("library: a roster version above the library's is a fork and fails",
+          state(_BUMPED_PERSONA, _GOOD_PERSONA) == "library-fork" and "library-fork" not in NOTE_RULES)
+    check("library: the same version with other text is drift and fails, frontmatter included",
+          state(_GOOD_PERSONA.replace("enforce rules with scripts", "enforce rules with prose"), _GOOD_PERSONA) == "library-drift"
+          and state(_GOOD_PERSONA.replace("  - gates\n", "  - gates and hooks\n"), _GOOD_PERSONA) == "library-drift"
+          and "library-drift" not in NOTE_RULES)
+    check("library: a roster behind the library is reported as a note, never a violation",
+          state(_GOOD_PERSONA, _BUMPED_PERSONA) == "library-newer" and "library-newer" in NOTE_RULES)
+    check("library: a malformed version is left to the persona lint",
+          state(_GOOD_PERSONA.replace("version: 1\n", ""), _GOOD_PERSONA) == "")
 
     _, v = folder_state(["HANDOFF_S3.md", "KICKOFF_S3.md", "HANDOFF_S4.md", "KICKOFF_S4.md"])
     expect("two consecutive complete pairs pass", v)
