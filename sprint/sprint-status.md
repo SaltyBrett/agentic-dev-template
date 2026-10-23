@@ -14,6 +14,26 @@
 
 ---
 
+## S5 — 2026-10-23 — The persona library
+
+**Status:** Started in the same Claude session as S4, after its closeout, at the operator's
+request; the persona is unchanged (`framework-maintainer`). Cold start by hand: pull exit 0,
+`session-verify` exit 0 at 5cccd1e, the handoff's reads read. Decision 2026-10-23-003's four
+questions went to the operator first: the full team ships in `v2.0.0`, `dev-resources` retires, a
+project's own personas stay in it, and the updater converts a `v1.0.0` project's `docs/personas/`
+(the decision amended). TMPL-1.8 split into TMPL-1.8, TMPL-1.9 and TMPL-1.10; TMPL-1.8 in progress.
+
+### Done
+
+1. Decision 2026-10-23-003 amended with the answers; the tracker re-planned (TMPL-1.9, TMPL-1.10
+   added; TMPL-1.7, TMPL-2.2, TMPL-2.4 and TMPL-3.1 follow).
+
+### Blockers
+
+- None.
+
+---
+
 ## S4 — 2026-10-23 — Procedures as skills; ownership of the new paths
 
 **Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and

@@ -16,9 +16,9 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 16 |
-| **Not Started** | 10 |
-| **In Progress** | 0 |
+| **Total Stories** | 18 |
+| **Not Started** | 11 |
+| **In Progress** | 1 |
 | **Blocked** | 0 |
 | **Completed** | 6 |
 
@@ -60,8 +60,10 @@ that decision 2026-09-23-003 names.
 | TMPL-1.4 | Procedures to forked skills: closeout, release cut, planning session, sanitize-and-cut, document production; the standards shrink to the law; a gate keeps each skill's commands in step with the config. Done at S4: five skills listed in `AGENTS.md`, the closeout forked with the brief as arguments, `skill-scan` (2026-10-23-001) | Done | TMPL-1.2, TMPL-1.3 | sprint_management_standard_v1.0.md | 2026-10-22-001 |
 | TMPL-1.5 | Path-scoped rules under `.claude/rules/`; `CONSTITUTION.md` slimmed (§2 a pointer, §6.3 a pointer to the knowledge entry); the checklist reduced to what a script does not already prove. §2 and the checklist were done by TMPL-1.1 (S2). Done at S3: four rules, gated (2026-10-22-006) | Done | TMPL-1.1 | doc_control_standard.md | 2026-10-22-001 |
 | TMPL-1.6 | Ownership of the new paths in the initializer, the updater and the sanitizer (`.claude/agents`, `.claude/skills`, `.claude/rules`, `.claude/settings.json`, the journal and notes), with fixtures proved against broken variants; TMPL-1.3 renamed `docs/personas/` to `.claude/agents/` in the three scripts' lists, with no ownership fixture yet; a project's own `docs/personas/` carried into `.claude/agents/` at adoption. Done at S4: the registry kept and held equal in five places, skills, rules and settings three-way, the local files untouched and ignored by the repository; personas adopt through `dev-resources` (2026-10-23-002) | Done | TMPL-1.2, TMPL-1.3, TMPL-1.4, TMPL-1.5 | doc_control_standard.md | 2026-10-22-001 |
-| TMPL-1.7 | Proof: a scratch birth, a hook-driven cold start, a compaction re-injection observed, a forked closeout; a knowledge entry for the substrate | Not Started | TMPL-1.6, TMPL-1.8 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
-| TMPL-1.8 | Persona library in the template, inactive; `.claude/agents/` becomes the project's roster; a first-session skill asks which specializations the project needs, recommends from the library, drafts what it lacks and activates the chosen; the gates, the sync, the initializer, the updater and the sanitizer follow; the four open questions settled with the operator first; the supersessions marked on both sides | Not Started | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
+| TMPL-1.7 | Proof: a scratch birth, a hook-driven cold start, a compaction re-injection observed, a forked closeout; a knowledge entry for the substrate | Not Started | TMPL-1.6, TMPL-1.8, TMPL-1.9, TMPL-1.10 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
+| TMPL-1.8 | Persona library mechanism: `personas/` in the template, inactive, in the agent-file shape and linted as the roster is; `.claude/agents/` the project's roster; the first-session skill that asks which specializations the project needs, recommends from the library, drafts what it lacks and activates the chosen; the closeout's report of a library version newer than the roster's; the initializer, the updater and the sanitizer following; the five existing personas moved into the library; the supersessions marked on both sides | In Progress | TMPL-1.6 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
+| TMPL-1.9 | The full team in the library: roles across the software development lifecycle, data science, document management, writing including technical writing, and quality control, designed with the operator, each persona written in the agent-file shape and linted | Not Started | TMPL-1.8 | session_handoff_standard_v2.0.md | 2026-10-23-003 |
+| TMPL-1.10 | `dev-resources` retired from `v2.0.0`: `resources_sync.py`, its closeout step and the unpublished-persona rule removed, the shared knowledge entries made the template's own; the updater converts a `v1.0.0` project's `docs/personas/` into `.claude/agents/`, proved against the real `v1.0.0` persona files | Not Started | TMPL-1.8 | doc_control_standard.md | 2026-10-23-003 |
 
 ---
 
@@ -70,9 +72,9 @@ that decision 2026-09-23-003 names.
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-2.1 | `scripts/doc_authority_scan.py`: `authority:` frontmatter and version logs, `Affects:` on decisions, the row-or-story rule, the fact marker, `--stamp` verified against git, `--history`; fixtures proved against broken variants; runbook section | Not Started | — | doc_control_standard.md | 2026-10-22-002 |
-| TMPL-2.2 | The `technical-writer` agent published to `dev-resources` (a library persona since 2026-10-23-003); the `doc-queue` gate run at cold start by the `SessionStart` hook; the per-document forked drain skill | Not Started | TMPL-2.1, TMPL-1.3 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.2 | The `technical-writer` agent published to `dev-resources` (a library persona, written in TMPL-1.9); the `doc-queue` gate run at cold start by the `SessionStart` hook; the per-document forked drain skill | Not Started | TMPL-2.1, TMPL-1.3, TMPL-1.9 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.3 | The document-control standard rewritten around the gate; the standards and the gate runbook marked as authorities with version logs; the "stays private" fossil fixed | Not Started | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
-| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green; then (re-planned by 2026-10-23-003's adoption question) `dev-resources`' frozen `docs/personas/` compared with `.claude/agents/`, anything published meanwhile ported, the old tree and its `v1.0.0` pin removed (2026-10-22-005); Supplier_Research_Dev has never synced and holds `osint-risk-engineer` unpublished, so its first sync must publish it | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 
 ---
 
@@ -80,7 +82,7 @@ that decision 2026-09-23-003 names.
 
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
-| TMPL-3.1 | Design session with the operator: roles (the full persona library's team, 2026-10-23-003), the artifact each produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions | Not Started | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
+| TMPL-3.1 | Design session with the operator: over the library's team (designed in TMPL-1.9, 2026-10-23-003), the artifact each role produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions | Not Started | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
 | TMPL-3.2 | Build: the role agents, their skills, the saved workflow, the trigger list as a gate; proof on one project through a story end to end | Not Started | TMPL-3.1, TMPL-4.2 | doc_control_standard.md | 2026-10-22-003 |
 
 ---

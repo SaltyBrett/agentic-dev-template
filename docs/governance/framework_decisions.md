@@ -24,7 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
-| 2026-10-23-003 | 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the library grows by template release; part of `v2.0.0`, built as TMPL-1.8 | APPROVED |
+| 2026-10-23-003 | 2026-10-23; amended 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the full team ships in `v2.0.0`; `dev-resources` retires; a project's own personas stay in it; the updater converts a `v1.0.0` project's `docs/personas/`; built as TMPL-1.8 to TMPL-1.10 | APPROVED |
 | 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED |
 | 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
 | 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
@@ -2566,7 +2566,27 @@ the plain command reported it ignored.
 
 ## Decision 2026-10-23-003: Personas ship as a library in the template, activated per project at its first session
 
-**Date:** 2026-10-23
+**Amended 2026-10-23 (S5): the four open questions, answered by the operator.**
+
+- **The full team ships in `v2.0.0`.** The roles across the software development lifecycle, data
+  science, document management, writing including technical writing, and quality control are
+  designed with the operator and written into the library before the release (TMPL-1.9). TMPL-3
+  keeps the orchestration, the gated handoffs and the review triggers that build on them.
+- **`dev-resources` is retired.** `v2.0.0` carries no sync: `scripts/resources_sync.py`, its
+  closeout step and the closeout's unpublished-persona rule go, and the shared knowledge entries
+  become the template's own (TMPL-1.10). `dev-resources` keeps serving the projects still on
+  `v1.0.0` and is archived once all three have adopted (TMPL-2.4).
+- **A project's own personas stay in the project.** The library holds only the personas built and
+  released in the template; nothing travels from a project to the template.
+- **The updater converts a `v1.0.0` project's `docs/personas/`** into agent files in
+  `.claude/agents/`, every one, and removes the old folder (TMPL-1.10). Chosen over a judgement step
+  at adoption, with the cost named: every converted persona becomes a live subagent, and the project
+  deactivates what it does not use. The conversion is proved against the real `v1.0.0` persona
+  files, whose conversion by hand under decision 2026-10-22-005 is the expected output.
+- The library's folder is `personas/` at the repository's root, each file in the agent-file shape,
+  so activation is a copy (the AI's choice of mechanics). The mechanism is TMPL-1.8.
+
+**Date:** 2026-10-23; amended 2026-10-23
 **Made By:** Chair (S4, after its closeout): the library in the template and activation at the first
 session, approved as proposed; the mechanics by the AI, to be settled in the build
 **Status:** APPROVED
