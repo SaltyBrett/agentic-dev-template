@@ -1,7 +1,7 @@
 ---
 name: Claude Code reads AGENTS.md natively, and any CLAUDE.md on the path hides it
 description: 'From v2.1.277 Claude Code reads AGENTS.md itself, but only when no CLAUDE.md, .claude/CLAUDE.md or CLAUDE.local.md sits in the working directory or above it; observed on 2.1.308 with a canary in a scratch repository, both halves. Why the template retired its CLAUDE.md bridge, the silent hazard that creates, and what a SessionStart hook must not inject. Read before adding any Claude instruction file, or when Claude seems not to know the brain.'
-teaches: [2026-10-22-001]
+teaches: [2026-10-22-001, 2026-10-22-005]
 verified: 2026-10-22
 metadata:
   type: reference
@@ -32,6 +32,17 @@ metadata:
 asked for the canary word in its project instructions: with `AGENTS.md` alone it answered the word
 `AGENTS.md` held; with an empty `CLAUDE.md` added beside it, `NONE`. Nothing in the output said the
 brain had been dropped.
+
+## Under `claude --agent`, and in a subagent
+
+The sub-agents reference (read whole 2026-10-22): a project subagent loads the same instruction
+files the main session does, `AGENTS.md` included, unless its definition sets `omitClaudeMd`;
+Explore and Plan skip them. Run as the main session with `claude --agent <name>`, an agent with a
+non-empty body replaces Claude Code's built-in system prompt whole, and `AGENTS.md` still loads.
+Observed in S3, a scratch clone, `claude --agent framework-maintainer -p`: a canary from the agent's
+body and the heading of `AGENTS.md` both came back, and the prompt was about 2,500 tokens smaller
+than a control run without the flag. That replacement is why the template's sessions take their
+persona from the start hook instead (decision 2026-10-22-005, [[reference_claude_code_hooks]]).
 
 ## Why the template retired its CLAUDE.md
 

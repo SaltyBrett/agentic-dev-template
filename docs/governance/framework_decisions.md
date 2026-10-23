@@ -2,7 +2,7 @@
 
 **Purpose:** The decisions that shaped this template — why every gate, script and rule is the way it is
 **Source:** `agentic-dev-template`; carried to a project by `scripts/template_update.py`, merged by decision ID
-**Last Updated:** 2026-09-24
+**Last Updated:** 2026-10-22
 
 > **READ SELECTIVELY (index-first).** Do NOT read this file whole. Read the **Decision Index**, then only
 > the entries a task, a handoff or a knowledge entry's `teaches:` points at. Markdown only (never JSON).
@@ -24,10 +24,11 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-22-005 | 2026-10-22 | Personas are agent files in `.claude/agents/`, the body the Invocation and the rest in frontmatter; the session takes its persona from the `SessionStart` hook, `claude --agent` optional because it replaces Claude Code's built-in prompt; the kickoff names the agent; `dev-resources` holds both trees until TMPL-2.4; amends 2026-10-22-001 | APPROVED |
 | 2026-10-22-004 | 2026-10-22 | The session journal and the working notes are local and gitignored: the journal records raw commands that must not enter a public history, an ignored file is outside pre-commit's stash, and the Stop hook excludes both by path as well; the closeout gate clears them | APPROVED |
 | 2026-10-22-003 | 2026-10-22 | `v2.1.0`: an agentic development team of role subagents whose handoffs are gated artifacts, and a coding standard built as mechanical limits, a process layer and one page of judgement; each opens with a design session, the standard proved against real code before adoption; MINOR | APPROVED |
 | 2026-10-22-002 | 2026-10-22 | Authoritative documents stop going stale: `authority:` frontmatter and a version log on each source of truth, `Affects:` on every decision, a gate that accepts a version-log row or an open tracker story and nothing else, the commit stamped after the fact and verified, a technical-writer agent draining the queue at cold start; part of `v2.0.0` | APPROVED |
-| 2026-10-22-001 | 2026-10-22 | `v2.0.0`: the framework runs on Claude Code's native machinery where that removes overhead without removing a control: one cold start run by a SessionStart hook, a Stop hook for checkpoint discipline, a journal and working notes against compaction, personas as subagents, procedures as forked skills, path-scoped rules, the constitution and checklist slimmed, the interop contract retired; git hooks and CI stay the enforcement; MAJOR | APPROVED |
+| 2026-10-22-001 | 2026-10-22; amended 2026-10-22 | `v2.0.0`: the framework runs on Claude Code's native machinery where that removes overhead without removing a control: one cold start run by a SessionStart hook, a Stop hook for checkpoint discipline, a journal and working notes against compaction, personas as subagents, procedures as forked skills, path-scoped rules, the constitution and checklist slimmed, the interop contract retired; git hooks and CI stay the enforcement; MAJOR | APPROVED |
 | 2026-09-25-004 | 2026-09-25 | The public template's versioning starts at `v1.0.0` on the finished go-live tree: the four go-live tags removed, the tree sanitized to S1, one tag cut; history kept, nothing force-pushed; the earlier "released as" notes read as folded into it | APPROVED |
 | 2026-09-25-003 | 2026-09-25 | A ruleset on `main` in both public repositories blocks deletion and force-push; no required status check, because every checkpoint is a direct push by one developer; revisit at the first second contributor | APPROVED |
 | 2026-09-25-002 | 2026-09-25 | MIT license, copyright Brett Bennett, in the template and in `dev-resources`; a project receives it at birth and owns it from then on, the updater never writes it; PATCH | APPROVED |
@@ -1769,7 +1770,12 @@ and `resources_sync.owned`. Taught by [[reference_resources_sync]].
 
 ## Decision 2026-10-22-001: `v2.0.0` runs the framework on Claude Code's native machinery
 
-**Date:** 2026-10-22
+**Amended 2026-10-22 (S3):** a session takes its persona from the `SessionStart` hook, which injects
+the agent's prompt unless the session already runs as that agent. `claude --agent` is available, not
+required: under it the agent's prompt replaces Claude Code's built-in system prompt whole (decision
+2026-10-22-005).
+
+**Date:** 2026-10-22; amended 2026-10-22
 **Made By:** Chair + AI
 **Status:** APPROVED
 **Affects:** `AGENTS.md`, `CLAUDE.md`, `AGENT_INTEROP.md`, `CONSTITUTION.md` §2 and §6, `docs/orchestration/AGENT_COLDSTART_CHECKLIST.md`, `docs/standards/session_handoff_standard_v2.0.md`, `docs/personas/`, `.claude/`
@@ -2235,3 +2241,86 @@ files.
 `.gitignore` covers both paths and that concurrent appends keep every line whole;
 `scripts/session_stop.py --self-test` that the notes never count as the newest change. Taught by
 [[reference_claude_code_hooks]].
+
+---
+
+## Decision 2026-10-22-005: Personas are agent files, and the start hook gives the session its persona
+
+**Date:** 2026-10-22
+**Made By:** Chair + AI (S3): the persona's path to the session and the `dev-resources` window by
+the operator, put as questions; the format by the AI
+**Status:** APPROVED
+**Amends:** 2026-10-22-001 (its personas bullet: the main session no longer runs as the agent by default)
+**Builds:** the personas bullet of 2026-10-22-001 (TMPL-1.3)
+**Affects:** `.claude/agents/`, `docs/personas/` (removed), `scripts/session_closeout.py`, `scripts/session_start.py`, `scripts/resources_sync.py`, `scripts/template_update.py`, `scripts/new_project.py`, `scripts/sanitize_template.py`, `.pre-commit-hooks.yaml`, `.pre-commit-config.yaml`, `docs/standards/session_handoff_standard_v2.0.md` §3, §5 and §6, `dev-resources`
+
+### Context
+
+Decision 2026-10-22-001 moved the persona registry to `.claude/agents/` and said the main session
+runs as the named agent. The sub-agents reference, read whole on 2026-10-22 (Claude Code 2.1.308),
+settles the mechanics: the file's body is the agent's system prompt; only `name` and `description`
+are required, and a key Claude Code does not know is ignored without a word; a frontmatter that
+does not parse makes Claude Code skip the file, also without a word; `name` is the identity hooks
+receive as `agent_type`. And under `claude --agent <name>` a non-empty prompt **replaces Claude
+Code's built-in system prompt whole**, as `--system-prompt` does, while `AGENTS.md` still loads.
+
+A probe in a scratch clone of the committed hooks: `claude --agent framework-maintainer -p` gave back
+a canary from the agent's body, quoted the heading of `AGENTS.md`, saw the kickoff the start hook
+injected, and the hook's input carried `agent_type: framework-maintainer`. Its prompt was about
+2,500 tokens smaller than a control run without `--agent`, whose hook input carried no `agent_type`
+and whose answer had no persona.
+
+Separately, `dev-resources` pins `persona-lint` at `v1.0.0`, and the three projects on `v1.0.0`
+sync `docs/personas/` from its `main`. Two of them hold a sync stamp, so if the folder left
+`dev-resources`, their next closeout would refuse every persona as unpublished, and the remedy it
+prints (`--publish`) would write the old folder back.
+
+### Decision
+
+- **The format.** `.claude/agents/<slug>.md`. The frontmatter holds `name` (the slug, equal to the
+  filename stem), `description`, `version` (a positive integer) and `expertise`, `insists_on` and
+  `changelog` as YAML lists of strings. The body is the Invocation, verbatim, and nothing else,
+  because the body is the prompt. `slug:` and the human title go: `name` is the slug. The five
+  personas move with their text unchanged, so each keeps its version and the S3 kickoff's copy
+  still matches.
+- **The linter parses the frontmatter as YAML**, since Claude Code skips a file whose frontmatter
+  does not parse and says nothing. The import is lazy, so the session hook, which imports the
+  closeout module, needs no PyYAML. The append-only rules of 2026-09-23-006 carry over unchanged
+  against the committed copy at HEAD, the body standing for the Invocation. A moved file has no
+  committed copy at its new path and constrains nothing, which makes the move commit legal.
+- **The session takes its persona from the start hook, not from `--agent`** (the operator's
+  choice). The kickoff names the agent, and `session_start.py` reads `agent_type`: equal to the
+  kickoff's persona, it says so; otherwise it injects the agent's prompt as context, at startup and
+  after compaction. A plain `claude` session, the VS Code extension and `claude --agent` all end
+  with the persona in context; only `--agent` also drops Claude Code's built-in prompt, so it is
+  available, not required.
+- **The kickoff names the agent.** Section 1 is one line, written by the scaffold, naming
+  `.claude/agents/<slug>.md`. The linter accepts that line or a verbatim copy of the prompt, so
+  `KICKOFF_S3.md`, written under the old rule, stays valid. `**Persona version:**` stays and is
+  still checked against the registry.
+- **`dev-resources` holds both trees until TMPL-2.4** (the operator's choice). It gains
+  `.claude/agents/`, judged by `persona-lint` at a template commit that reads the new location, and
+  keeps `docs/personas/` frozen, still judged by `persona-lint` at `v1.0.0`, so a project on
+  `v1.0.0` keeps syncing unchanged. TMPL-2.4, which takes the three projects to `v2.0.0`, removes the
+  old tree. The template pushes first; `dev-resources` then pins that commit by its SHA, there being
+  no `v2` tag yet. Between the two pushes neither repository's gates read the other's new state.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001): the registry's path, the persona's shape and
+  the kickoff's section 1 change for every project.
+
+### Consequences
+
+- A persona enhanced during the window is published by the template to `.claude/agents/`. A
+  `v1.0.0` project's publish writes `docs/personas/` and reaches `.claude/agents/` only when
+  TMPL-2.4 ports it, so TMPL-2.4 compares the two trees before removing the old one.
+- A project adopting `v2.0.0` must carry its own `docs/personas/` into `.claude/agents/`; the
+  ownership rules (TMPL-1.6) and the adoption (TMPL-2.4) own that migration.
+- Claude may delegate to a persona agent by its description, as to any project agent; that is the
+  reuse the role agents of 2026-10-22-003 will build on.
+
+### Enforcement
+
+`scripts/session_closeout.py` (`PERSONAS`, `PERSONA_KEYS`, `persona_frontmatter`, `lint_persona`,
+`persona_line`, `lint_kickoff`, `kickoff_skeleton`), `scripts/session_start.py` (the persona
+section), `scripts/resources_sync.py` (`PERSONAS`), `.pre-commit-hooks.yaml` (`persona-lint`'s
+`files:`), and in `dev-resources` its `.pre-commit-config.yaml`. Taught by
+[[reference_session_closeout]] and [[reference_resources_sync]].

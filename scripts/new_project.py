@@ -119,7 +119,7 @@ NEVER_RESET = [
     "docs/governance/framework_decisions.md",
     "sprint/decision-log.md",
     "docs/orchestration/knowledge/",
-    "docs/personas/",
+    ".claude/agents/",
 ]
 
 # Left for the project to fill when it needs them. Reported, not an error.

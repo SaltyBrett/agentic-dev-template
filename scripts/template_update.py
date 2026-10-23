@@ -96,7 +96,8 @@ KEEP = [
     # The persona registry is dev-resources' (decision 2026-09-23-007): only resources_sync.py
     # writes it. Resource knowledge entries are the sync's too, but they share a directory with
     # the template's own entries, so they are told apart by content: see resource_owned().
-    "docs/personas/",
+    # Agent files since decision 2026-10-22-005.
+    ".claude/agents/",
     # The sync's stamp is this project's own state, like .project-profile: the initializer
     # clears it at birth and the updater never writes it. Found by the first derived project to
     # take v7.1.0, which received the template's stamp as an `add`.
@@ -560,7 +561,7 @@ def run_self_test() -> int:
             print(f"        {detail}")
         failures += 0 if ok else 1
 
-    want = {"scripts/x.py": "three-way", "AGENTS.md": "three-way", "docs/personas/p.md": "keep",
+    want = {"scripts/x.py": "three-way", "AGENTS.md": "three-way", ".claude/agents/p.md": "keep",
             "docs/orchestration/knowledge/reference_x.md": "three-way", "docs/runbooks/new.md": "keep",
             "sprint/story-tracker.md": "keep", "sprint/handoffs/HANDOFF_S9.md": "keep",
             ".project-profile": "keep", "sprint/decision-log.md": "keep",
@@ -585,7 +586,7 @@ def run_self_test() -> int:
     check("what it preserves at birth is carried by a release (the framework decisions and the knowledge "
           "base) or by the resources sync (the persona registry) — never by nothing",
           classify("docs/governance/framework_decisions.md") == "merge" and classify("sprint/decision-log.md") == "keep"
-          and classify("docs/orchestration/knowledge/x.md") == "three-way" and classify("docs/personas/") == "keep",
+          and classify("docs/orchestration/knowledge/x.md") == "three-way" and classify(".claude/agents/") == "keep",
           f"never={never}")
     marked = b"---\nname: x\nteaches: []\nverified: 2026-09-23\nsource: dev-resources\n---\n\nbody\n"
     check("a knowledge entry that declares source: dev-resources is the sync's; an ordinary one, or the "

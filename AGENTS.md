@@ -144,7 +144,7 @@ References do NOT auto-load — you must explicitly Read each file.
 | `scripts/resources_sync.py` | The persona registry and resource knowledge entries are a cache of `dev-resources`: synced at closeout, grown only through `--publish`; the closeout refuses an unpublished persona |
 | `scripts/template_version.py` | Verifies every tag against the commit it points at, and that its annotation names the bump |
 | `scripts/session_closeout.py` | Session gate: handoff/kickoff pairs by session number, rotation to `archive/`, persona references, tracker reconciliation, dependency order, no live placeholders in a project |
-| `docs/personas/` | Persona registry; a kickoff names one by slug and copies its invocation. Add one when a task first needs it |
+| `.claude/agents/` | Persona registry, one agent file each; a kickoff names one by slug and the `SessionStart` hook injects its prompt. Add one when a task first needs it |
 | `docs/standards/` | `session_handoff`, `sprint_management`, `secrets_management`, `document_production` |
 | `sprint/` | Live state: sprint-status, story-tracker, decision-log, handoffs, recovery |
 | `docs/orchestration/knowledge/` | Accumulated learnings (single source of truth for knowledge) |

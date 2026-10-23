@@ -16,11 +16,16 @@ plain-text stdout is added to Claude's context. SessionStart cannot block, so it
 startup, clear  runs the identity gate, `git pull --ff-only` and session-verify, the gates through
                 pre-commit exactly as `AGENTS.md` runs them; reports whether both hook types are
                 installed and whether a CLAUDE.md on the path hides `AGENTS.md`; writes the
-                journal's start line; prints the results, the session's kickoff, the newest
-                sprint-status entry, and any notes or journal an unfinished session left.
+                journal's start line; prints the results, the persona, the session's kickoff, the
+                newest sprint-status entry, and any notes or journal an unfinished session left.
 compact         runs nothing that judges the tree, which is dirty mid-session by design (a verify
                 there would report the previous session unclosed); prints the working notes, the
-                uncommitted paths, the journal's tail, the kickoff and the newest entry.
+                persona, the uncommitted paths, the journal's tail, the kickoff and the newest entry.
+
+The persona: the kickoff names an agent in .claude/agents/. A session started with
+`claude --agent <slug>` holds its prompt as the system prompt, and the event's `agent_type` says
+so; any other session gets the prompt here, keeping Claude Code's own system prompt, which
+`--agent` replaces whole (decision 2026-10-22-005).
 
 The output stays under Claude Code's 10,000-character cap on injected text; past it Claude gets a
 2,000-character preview and is not told to read the rest. Sections are cut lowest priority first,
@@ -175,11 +180,41 @@ def read(path: Path) -> str | None:
     return path.read_text(encoding="utf-8") if path.is_file() else None
 
 
+def kickoff_text(root: Path, n: int | None) -> str | None:
+    return read(root / "sprint" / "handoffs" / f"KICKOFF_S{n}.md") if n else None
+
+
 def kickoff_section(root: Path, n: int | None, priority: int) -> Section:
     rel = f"sprint/handoffs/KICKOFF_S{n}.md"
-    text = read(root / rel) if n else None
+    text = kickoff_text(root, n)
     body = text.strip() if text else f"No `{rel}` exists (a fresh project's S1 starts without one)."
     return Section(f"Kickoff for S{n} ({rel}, verbatim)", body, priority, rel)
+
+
+def persona_section(root: Path, kickoff: str | None, agent_type: str | None, priority: int) -> Section | None:
+    """The kickoff names an agent; the session holds its prompt either as its system prompt (run with
+    `claude --agent <slug>`, which Claude Code reports as `agent_type`) or as this section. A plain
+    session keeps Claude Code's own system prompt, which `--agent` replaces (decision 2026-10-22-005)."""
+    slug = closeout.field(kickoff, "Persona") if kickoff else None
+    if not slug:
+        return None
+    rel = f".claude/agents/{slug}.md"
+    if agent_type == slug:
+        return Section(f"Persona: {slug}", f"The kickoff names `{slug}`, and this session runs as that agent "
+                       f"(`claude --agent {slug}`), so its prompt is the system prompt.", priority, rel)
+    text = read(root / rel)
+    if text is None:
+        return Section(f"Persona: {slug}", f"The kickoff names `{slug}`, and `{rel}` does not exist, so no persona "
+                       "prompt is in this context; the session gate refuses a kickoff naming an unregistered persona.",
+                       priority, rel)
+    prompt = closeout.persona_invocation(text)
+    if closeout.norm(prompt) and closeout.norm(prompt) in closeout.norm(kickoff):
+        return None   # a kickoff written before decision 2026-10-22-005 carries the prompt verbatim already
+    running = (f"as `{agent_type}`, not the kickoff's agent, so `{agent_type}`'s prompt is the system prompt and"
+               if agent_type else "with no agent, so Claude Code's own system prompt stands and")
+    return Section(f"Persona: {slug} ({rel}, its prompt verbatim)",
+                   f"The kickoff names `{slug}`. This session runs {running} the persona's prompt follows.\n\n{prompt}",
+                   priority, rel)
 
 
 def entry_section(root: Path, priority: int) -> Section | None:
@@ -253,8 +288,11 @@ def startup_report(root: Path, event: dict, runner: Runner, home: Path) -> str:
     header = (f"Session start: Claude Code ran `scripts/session_start.py` as its SessionStart hook "
               f"(source: {source}). It ran the mechanical steps of the `AGENTS.md` cold start; the "
               f"reading steps remain.")
-    secs = [Section("Cold-start gates", gate_lines(root, runner, n, home), 1, "the gate output (re-run the command)"),
-            kickoff_section(root, n, 2)]
+    secs = [Section("Cold-start gates", gate_lines(root, runner, n, home), 1, "the gate output (re-run the command)")]
+    persona = persona_section(root, kickoff_text(root, n), event.get("agent_type"), 1)
+    if persona:
+        secs.append(persona)
+    secs.append(kickoff_section(root, n, 2))
     entry = entry_section(root, 3)
     if entry:
         secs.append(entry)
@@ -281,7 +319,9 @@ def compact_report(root: Path, event: dict, runner: Runner) -> str:
     header = (f"Context restored after compaction: Claude Code ran `scripts/session_start.py` as its "
               f"SessionStart hook (source: compact). This is still S{n}. The conversation was summarized; "
               f"the sections below are the files that hold what it held.")
+    persona = persona_section(root, kickoff_text(root, n), event.get("agent_type"), 1)
     secs = [Section(f"Working notes ({journal.NOTES_REL})", notes.strip(), 1, journal.NOTES_REL),
+            *([persona] if persona else []),
             kickoff_section(root, n, 2),
             Section("Uncommitted paths (git status --short)", status, 3, "`git status`"),
             Section(f"Journal tail ({journal.JOURNAL_REL}, newest last)",
@@ -309,7 +349,12 @@ def report(event: dict, runner: Runner = run, home: Path | None = None) -> str:
 # Self-test
 # ==============================================================================
 
-_KICKOFF = "# Kickoff — S3\n\n**For session:** S3\n\n## 2. Cold start\n\nRun the cold start in `AGENTS.md`.\n"
+_KICKOFF = ("# Kickoff — S3\n\n**For session:** S3\n**Persona:** framework-maintainer\n\n"
+            f"## 1. Persona\n\n{closeout.persona_line('framework-maintainer')}\n\n"
+            "## 2. Cold start\n\nRun the cold start in `AGENTS.md`.\n")
+_PROMPT = "You are a senior platform engineer. Your canary is QUINCE."
+_AGENT = ("---\nname: framework-maintainer\ndescription: builds gates\nversion: 1\nexpertise:\n  - gates\n"
+          f"insists_on:\n  - proof\nchangelog:\n  - 1 — 2026-10-22 — seeded\n---\n\n{_PROMPT}\n")
 _STATUS = ("# Sprint Status\n\n---\n\n## S2 — 2026-10-22 — Second\n\n**Status:** two.\n\n### Done\n\n1. X\n\n---\n\n"
            "## S1 — 2026-10-21 — First\n\n**Status:** one.\n\n---\n")
 
@@ -321,6 +366,8 @@ def _tree(tmp: Path, kickoff_next: bool = True) -> Path:
     (root / "sprint" / "handoffs" / "KICKOFF_S2.md").write_text(_KICKOFF.replace("S3", "S2"), encoding="utf-8")
     if kickoff_next:
         (root / "sprint" / "handoffs" / "KICKOFF_S3.md").write_text(_KICKOFF, encoding="utf-8")
+    (root / ".claude" / "agents").mkdir(parents=True)
+    (root / ".claude" / "agents" / "framework-maintainer.md").write_text(_AGENT, encoding="utf-8")
     subprocess.run(["git", "init", "-q", str(root)], check=True)
     return root
 
@@ -383,6 +430,25 @@ def run_self_test() -> int:
         (tmp / "CLAUDE.md").unlink()
         (root / "CLAUDE.local.md").unlink()
 
+        s = persona_section(root, _KICKOFF, None, 1)
+        check_("with no agent the kickoff's agent prompt is injected verbatim, and Claude Code's prompt stands",
+               s is not None and _PROMPT in s.body and "Claude Code's own system prompt stands" in s.body
+               and s.source == ".claude/agents/framework-maintainer.md", str(s))
+        s = persona_section(root, _KICKOFF, "framework-maintainer", 1)
+        check_("run as the kickoff's agent, the session is told so and the prompt is not repeated",
+               s is not None and _PROMPT not in s.body and "runs as that agent" in s.body, str(s))
+        s = persona_section(root, _KICKOFF, "data-platform-engineer", 1)
+        check_("run as another agent, both are named and the kickoff's prompt is injected",
+               s is not None and _PROMPT in s.body and "`data-platform-engineer`" in s.body, str(s))
+        legacy = _KICKOFF.replace(closeout.persona_line("framework-maintainer"), _PROMPT)
+        check_("a kickoff that already copies the prompt verbatim gets no second copy",
+               persona_section(root, legacy, None, 1) is None)
+        s = persona_section(tmp / "nowhere", _KICKOFF, None, 1)
+        check_("a kickoff naming an agent file that does not exist says so",
+               s is not None and "does not exist" in s.body, str(s))
+        check_("a kickoff naming no persona adds no section",
+               persona_section(root, _KICKOFF.replace("**Persona:** framework-maintainer\n", ""), None, 1) is None)
+
         root2 = _tree(tmp / "b")
         calls: list[list[str]] = []
 
@@ -406,8 +472,15 @@ def run_self_test() -> int:
         check_("startup reports each gate and a failed verify's rule, and says what the failure means",
                "Identity gate: PASS" in out and "session-verify: FAILED (exit 1). Rule:   dirty-tree" in out
                and "first task" in out, out[:600])
-        check_("startup prints the session's kickoff verbatim and the newest entry",
-               "Kickoff for S3" in out and _KICKOFF.strip() in out and "## S2 — 2026-10-22 — Second" in out)
+        check_("startup prints the persona's prompt, the session's kickoff verbatim and the newest entry",
+               _PROMPT in out and "Kickoff for S3" in out and _KICKOFF.strip() in out and "## S2 — 2026-10-22 — Second" in out)
+        calls.clear()
+        out_agent = report({**ev, "agent_type": "framework-maintainer"}, fake, home)
+        check_("startup under `claude --agent` reads agent_type from the event and does not repeat the prompt",
+               _PROMPT not in out_agent and "runs as that agent" in out_agent, out_agent[:600])
+        calls.clear()
+        (root2 / journal.JOURNAL_REL).unlink()
+        out = report(ev, fake, home)
         check_("startup creates the blank notes and writes this session's start line",
                journal.notes_blank((root2 / journal.NOTES_REL).read_text(encoding="utf-8"))
                and "abcd1234 start S3 (startup)" in (root2 / journal.JOURNAL_REL).read_text(encoding="utf-8"))
@@ -419,9 +492,9 @@ def run_self_test() -> int:
         out = report({**ev, "source": "compact"}, fake, home)
         check_("compaction runs no gate, no pull and no verify (the tree is dirty by design)",
                all(c[:2] == ["git", "status"] for c in calls), str(calls))
-        check_("compaction re-injects the notes, the kickoff, the uncommitted paths and the journal",
-               "- the plan" in out and "Kickoff for S3" in out and " M README.md" in out and "start S3 (startup)" in out
-               and "This is still S3" in out, out[:800])
+        check_("compaction re-injects the notes, the persona, the kickoff, the uncommitted paths and the journal",
+               "- the plan" in out and _PROMPT in out and "Kickoff for S3" in out and " M README.md" in out
+               and "start S3 (startup)" in out and "This is still S3" in out, out[:800])
         check_("compaction records itself in the journal",
                "abcd1234 compact S3" in (root2 / journal.JOURNAL_REL).read_text(encoding="utf-8"))
         check_("resume adds nothing: the conversation is restored whole", report({**ev, "source": "resume"}, fake, home) == "")

@@ -90,8 +90,10 @@ check that said so read the exit code of `head` at the end of a pipe, the exact 
 
 ## Rules
 
-- A consumer keeps the layout the gates judge: `docs/personas/` and
-  `docs/orchestration/knowledge/` with its `INDEX.md`.
+- A consumer keeps the layout the gates judge at the rev it pins: `.claude/agents/` from decision
+  2026-10-22-005 (`docs/personas/` at `v1.0.0`) and `docs/orchestration/knowledge/` with its
+  `INDEX.md`. To judge two layouts during a move, pin the repository twice, one entry per rev;
+  `dev-resources` does that until TMPL-2.4.
 - Adding a hook to the manifest means a console script in `pyproject.toml` for it, and its
   module must find the repository through git, not `__file__`.
 - Never run `pip install .` from inside the repository without cleaning up: setuptools writes

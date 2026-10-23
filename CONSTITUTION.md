@@ -348,7 +348,7 @@ All artifacts must be:
 | `docs/governance/framework_decisions.md` | The template's decisions, read with the project's as one set by the freshness and session gates |
 | `sprint/handoffs/` | The current handoff/kickoff pairs (at most two sessions); `archive/` holds the rest |
 | `scripts/session_closeout.py` | Session closeout gate: pair structure, rotation, personas, tracker reconciliation, dependency order, no live placeholders in a project |
-| `docs/personas/` | Persona registry; a kickoff names one and copies its invocation |
+| `.claude/agents/` | Persona registry, one agent file each; a kickoff names one and the `SessionStart` hook injects its prompt |
 | `docs/standards/` | Implementation standards |
 | `docs/governance/doc_control_standard.md` | Document control procedures |
 

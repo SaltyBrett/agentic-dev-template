@@ -89,7 +89,8 @@ would be indistinguishable from a `keep` that saw nothing.
   the whole result as one checkpoint and observe the push's `gates` run.
 - A kickoff written before a release names the release it knows. When the template moves on
   before the session runs, take the newer release and say so in the sprint-status entry.
-- Since decision 2026-09-23-007 the updater never writes `docs/personas/` or a knowledge entry
+- Since decision 2026-09-23-007 the updater never writes the persona registry (`.claude/agents/`
+  since decision 2026-10-22-005, `docs/personas/` before) or a knowledge entry
   whose frontmatter declares `source: dev-resources`; those are the resources sync's, told apart
   by content because they share a directory with the template's own entries
   ([[reference_resources_sync]]). The template's own packaging (`pyproject.toml`,

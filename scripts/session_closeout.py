@@ -18,12 +18,15 @@ WHAT IT CHECKS
   * each handoff and kickoff carries exactly the required H2 sections, in order, non-empty, with
     no unfilled {{TOKEN}}; wikilinks resolve; every decision ID cited is in a decision index — the
     project's (sprint/decision-log.md) or the framework's (docs/governance/framework_decisions.md)
-  * each kickoff names a registered persona and the version it copied, copies its Invocation
-    block verbatim, and every task cites a story ID present in sprint/story-tracker.md
-  * each docs/personas/<slug>.md has the required frontmatter (name, description, an integer
-    version) and exactly the four sections; personas are append-only (decision 2026-09-23-002):
-    an Invocation that differs from the committed copy needs a higher version, the version never
-    goes down, and the Changelog carries a bullet for the current version
+  * each kickoff names a registered persona and the version the registry holds, section 1 is the
+    scaffold's line naming the agent (or, written before decision 2026-10-22-005, a verbatim copy
+    of its prompt), and every task cites a story ID present in sprint/story-tracker.md
+  * each persona is an agent file, .claude/agents/<slug>.md, whose frontmatter parses as YAML
+    (Claude Code skips the file silently otherwise) with name equal to the slug, description, an
+    integer version, and expertise, insists_on and changelog as lists of strings; the body is the
+    Invocation, the agent's prompt. Personas are append-only (decision 2026-09-23-002): a body
+    that differs from the committed copy needs a higher version, the version never goes down, and
+    the changelog carries an item for the current version
   * sprint/sprint-status.md: newest entry headed `## S<N> — YYYY-MM-DD — title`; at most 10 entries
   * sprint/story-tracker.md Summary Statistics equal the counted rows ([EXAMPLE] epics skipped)
   * a story In Progress or Done whose listed dependency is not Done fails (TMPL-5.5, decision
@@ -96,7 +99,7 @@ def repo_root() -> Path:
 ROOT = repo_root()
 HANDOFFS = ROOT / "sprint" / "handoffs"
 ARCHIVE = HANDOFFS / "archive"
-PERSONAS = ROOT / "docs" / "personas"
+PERSONAS = ROOT / ".claude" / "agents"   # the registry: one Claude Code agent file per persona
 STATUS = ROOT / "sprint" / "sprint-status.md"
 TRACKER = ROOT / "sprint" / "story-tracker.md"
 LOG = ROOT / "sprint" / "decision-log.md"
@@ -137,14 +140,15 @@ HANDOFF_SECTIONS = [
     "6. Verification observed",
 ]
 KICKOFF_SECTIONS = ["1. Persona", "2. Cold start", "3. Tasks", "4. Success criteria", "5. Closeout"]
-PERSONA_SECTIONS = ["Expertise", "Insists on", "Invocation", "Changelog"]
-PERSONA_KEYS = ["name", "description", "version"]
-# A changelog bullet opens with the version it records: `- 2 — 2026-09-24 — what changed`.
+PERSONA_KEYS = ["name", "description", "version", "expertise", "insists_on", "changelog"]
+# Lists of strings. An unquoted item holding `: ` is a YAML mapping, not a string, so it fails.
+PERSONA_LISTS = ("expertise", "insists_on", "changelog")
+# A changelog item opens with the version it records: `2 — 2026-09-24 — what changed`.
 CHANGELOG_ENTRY = re.compile(r"^(\d+)\s+—")
 
 
 class Persona(NamedTuple):
-    """What a kickoff copies from the registry: the Invocation block and the version it is at."""
+    """What a kickoff checks against the registry: the Invocation (the agent's prompt) and its version."""
     invocation: str
     version: str
 STATUSES = ("Not Started", "In Progress", "Blocked", "Done")
@@ -265,12 +269,14 @@ def lint_kickoff(text: str, n: int, personas: dict[str, Persona], story_ids: set
     v, secs = lint_common(text, "Kickoff", n, KICKOFF_SECTIONS)
     slug = field(text, "Persona")
     if slug not in personas:
-        v.append(("persona", f"`**Persona:** {slug}` is not registered; add docs/personas/{slug}.md "
+        v.append(("persona", f"`**Persona:** {slug}` is not registered; add .claude/agents/{slug}.md "
                              "in the same commit — a persona is written when a task first needs it"))
     else:
-        if norm(secs.get(KICKOFF_SECTIONS[0], "")) != norm(personas[slug].invocation):
-            v.append(("persona-copy", f"section 1 must copy the Invocation block of docs/personas/{slug}.md "
-                                      "verbatim; the registry is the source and the kickoff is a copy"))
+        # The agent file is the source; the start hook injects it. A verbatim copy of its prompt was
+        # the rule before decision 2026-10-22-005 and still says nothing false, so it is accepted.
+        if norm(secs.get(KICKOFF_SECTIONS[0], "")) not in (norm(persona_line(slug)), norm(personas[slug].invocation)):
+            v.append(("persona-agent", f"section 1 must be the scaffold's line naming the agent: "
+                                       f"`{persona_line(slug)}`"))
         version = field(text, "Persona version")
         if version != personas[slug].version:
             v.append(("persona-version", f"`**Persona version:** {version}` must name the registry's "
@@ -295,74 +301,103 @@ def lint_kickoff(text: str, n: int, personas: dict[str, Persona], story_ids: set
     return v
 
 
-def persona_frontmatter(text: str) -> tuple[dict[str, str] | None, str]:
-    """(keys, body_after_frontmatter) or (None, '') when the block is absent/unterminated."""
-    if not text.startswith("---"):
+def persona_line(slug: str) -> str:
+    """A kickoff's section 1: the agent it names, and how the session comes to hold its prompt."""
+    return (f"Run as the `{slug}` agent, `.claude/agents/{slug}.md`. The `SessionStart` hook injects its "
+            f"prompt as context unless the session already runs as that agent (`claude --agent {slug}`).")
+
+
+def split_frontmatter(text: str) -> tuple[str | None, str]:
+    """(frontmatter source, body), or (None, '') when the file opens with no terminated block.
+    Splits only; it parses nothing, so the session hook can read a body without PyYAML."""
+    if not text.startswith("---\n"):
         return None, ""
     end = text.find("\n---", 3)
     if end == -1:
         return None, ""
-    fm = text[3:end]
-    keys = {m.group(1): m.group(2).strip() for m in re.finditer(r"^([a-z_]+):\s*(.*)$", fm, re.M)}
-    return keys, text[end + 4:]
+    return text[4:end], text[end + 4:]
+
+
+def persona_frontmatter(text: str) -> tuple[dict | None, str]:
+    """(keys, body), or (None, '') when the frontmatter is absent, unterminated, or not a YAML
+    mapping. Claude Code skips such an agent file without a word, so the linter must refuse it,
+    and only a parser can say which it is (a regex read the old flat keys; lists are YAML).
+
+    PyYAML is imported here rather than at the top: session_start.py imports this module for its
+    parsers under whatever python3 the operator has, and only the persona rules need YAML."""
+    import yaml
+    fm, body = split_frontmatter(text)
+    if fm is None:
+        return None, ""
+    try:
+        keys = yaml.safe_load(fm)
+    except yaml.YAMLError:
+        return None, ""
+    return (keys, body) if isinstance(keys, dict) else (None, "")
+
+
+def positive_int(value: object) -> bool:
+    return type(value) is int and value > 0   # `type`, not isinstance: YAML's `true` is a bool, an int subclass
 
 
 def lint_persona(text: str, slug: str, previous: str | None = None) -> list:
     """`previous` is the committed copy (git HEAD), or None for a new persona.
 
-    Personas are append-only (decision 2026-09-23-002): an Invocation is never changed in place.
-    A change to it needs a higher `version:` and a Changelog bullet for that version. A bump with
-    no Invocation change is allowed: Expertise and Insists on may be enhanced too, and a bump
-    that records nothing costs a line. The version never decreases.
+    Personas are append-only (decision 2026-09-23-002): the Invocation, which is the agent file's
+    body and so its prompt, is never changed in place. A change to it needs a higher `version:` and
+    a changelog item for that version. A bump with no change to the body is allowed: expertise and
+    insists_on may be enhanced too, and a bump that records nothing costs a line. The version never
+    decreases.
     """
     v: list[tuple[str, str]] = []
     keys, body = persona_frontmatter(text)
     if keys is None:
-        return [("frontmatter", "persona needs a --- frontmatter block with name:, slug:, description:, version:")]
+        return [("frontmatter", "an agent file opens with a --- frontmatter block that parses as a YAML mapping; "
+                                "Claude Code skips the file without a word otherwise")]
     for k in PERSONA_KEYS:
-        if not keys.get(k):
+        if keys.get(k) in (None, "", []):
             v.append(("frontmatter", f"missing `{k}:`"))
-    if keys.get("slug") != slug:
-        v.append(("slug", f"`slug: {slug}` must equal the filename stem, found {keys.get('slug')!r}"))
-    version = keys.get("version", "")
-    if version and not re.fullmatch(r"[1-9]\d*", version):
+    if keys.get("name") != slug:
+        v.append(("name", f"`name: {slug}` must equal the filename stem, found {keys.get('name')!r}; "
+                          "Claude Code knows an agent by its name, and hooks receive it as agent_type"))
+    version = keys.get("version")
+    if version is not None and not positive_int(version):
         v.append(("version", f"`version: {version}` must be a positive integer; the first release is 1"))
-        version = ""
-    _, secs = sections(body)
-    heads = [h for h, _ in secs]
-    if heads != PERSONA_SECTIONS:
-        v.append(("sections", f"H2 headings must be exactly {PERSONA_SECTIONS}, found {heads}"))
-    for h, b in secs:
-        if not norm(b):
-            v.append(("empty-section", f"section `{h}` is empty"))
-    if version:
-        logged = {m.group(1) for m in map(CHANGELOG_ENTRY.match, bullets(dict(secs).get("Changelog", ""))) if m}
-        if version not in logged:
-            v.append(("changelog", f"the Changelog has no bullet for version {version}; append "
-                                   f"`- {version} — <date> — <what changed>`"))
+        version = None
+    for k in PERSONA_LISTS:
+        items = keys.get(k)
+        if items not in (None, "", []) and not (isinstance(items, list) and all(isinstance(i, str) and i.strip() for i in items)):
+            v.append(("list", f"`{k}:` must be a YAML list of strings; quote an item holding `: `, "
+                              "which YAML reads as a mapping"))
+    if not norm(body):
+        v.append(("prompt", "the body is empty; it is the Invocation, the agent's prompt"))
+    if version and isinstance(keys.get("changelog"), list):   # a missing or malformed list is reported above
+        logged = {m.group(1) for m in (CHANGELOG_ENTRY.match(i) for i in keys["changelog"] if isinstance(i, str)) if m}
+        if str(version) not in logged:
+            v.append(("changelog", f"the changelog has no item for version {version}; append "
+                                   f"`{version} — <date> — <what changed>`"))
     if previous is not None and version:
         prev_keys, prev_body = persona_frontmatter(previous)
-        prev_version = (prev_keys or {}).get("version", "")
-        if re.fullmatch(r"[1-9]\d*", prev_version):
-            if int(version) < int(prev_version):
+        prev_version = (prev_keys or {}).get("version")
+        if positive_int(prev_version):
+            if version < prev_version:
                 v.append(("version-order", f"`version: {version}` is below the committed {prev_version}; "
                                            "a version never goes down"))
-            elif int(version) == int(prev_version) and norm(dict(sections(body)[1]).get("Invocation", "")) \
-                    != norm(dict(sections(prev_body)[1]).get("Invocation", "")):
-                v.append(("invocation-unbumped", f"the Invocation differs from the committed copy at version "
-                                                 f"{prev_version}; a persona is append-only — bump `version:` "
-                                                 "and add the Changelog bullet, never edit in place"))
+            elif version == prev_version and norm(body) != norm(prev_body):
+                v.append(("invocation-unbumped", f"the body (the Invocation) differs from the committed copy at "
+                                                 f"version {prev_version}; a persona is append-only — bump "
+                                                 "`version:` and add the changelog item, never edit in place"))
     return v
 
 
 def persona_invocation(text: str) -> str:
-    _, body = persona_frontmatter(text)
-    return dict(sections(body)[1]).get("Invocation", "")
+    return split_frontmatter(text)[1].strip()
 
 
 def persona_version(text: str) -> str:
     keys, _ = persona_frontmatter(text)
-    return (keys or {}).get("version", "")
+    version = (keys or {}).get("version")
+    return str(version) if positive_int(version) else ""
 
 
 def published_state(local: str, published: str | None) -> tuple[str, str] | None:
@@ -627,7 +662,7 @@ def kickoff_skeleton(n: int, slug: str, persona: Persona) -> str:
 
 ## 1. Persona
 
-{persona.invocation.strip()}
+{persona_line(slug)}
 
 ## 2. Cold start
 
@@ -833,7 +868,7 @@ def cmd_check() -> int:
 
 def cmd_personas() -> int:
     personas, v = load_personas()
-    where = PERSONAS.relative_to(ROOT) if PERSONAS.is_dir() else "no docs/personas/"
+    where = PERSONAS.relative_to(ROOT).as_posix() if PERSONAS.is_dir() else "no .claude/agents/"
     return report(f"Persona Registry Lint ({len(personas)} persona(s); {where})", v)
 
 
@@ -934,12 +969,16 @@ def _good_kickoff() -> str:
     return t.replace("- {{FILL: the executable checks that prove each task done}}", "- self-test exit 0")
 
 
-_GOOD_PERSONA = ("---\nname: Framework maintainer\nslug: framework-maintainer\ndescription: builds gates\nversion: 1\n---\n\n"
-                 "# Framework maintainer\n\n## Expertise\n\n- gates\n\n## Insists on\n\n- proof\n\n"
-                 f"## Invocation\n\n{_INVOCATION}\n\n## Changelog\n\n- 1 — 2026-09-21 — seeded\n")
+_GOOD_PERSONA = ("---\nname: framework-maintainer\ndescription: builds gates\nversion: 1\n"
+                 "expertise:\n  - gates\ninsists_on:\n  - proof\nchangelog:\n  - 1 — 2026-09-21 — seeded\n---\n\n"
+                 f"{_INVOCATION}\n")
 _BUMPED_PERSONA = (_GOOD_PERSONA.replace("version: 1", "version: 2")
                    .replace("enforce rules with scripts", "enforce rules with fixtures")
-                   .replace("- 1 — 2026-09-21 — seeded\n", "- 1 — 2026-09-21 — seeded\n- 2 — 2026-09-24 — fixtures\n"))
+                   .replace("  - 1 — 2026-09-21 — seeded\n", "  - 1 — 2026-09-21 — seeded\n  - 2 — 2026-09-24 — fixtures\n"))
+# The pre-005 shape: sections in the body, flat keys. It must fail as an agent file.
+_OLD_SHAPE = ("---\nname: Framework maintainer\nslug: framework-maintainer\ndescription: builds gates\nversion: 1\n---\n\n"
+              "# Framework maintainer\n\n## Expertise\n\n- gates\n\n## Insists on\n\n- proof\n\n"
+              f"## Invocation\n\n{_INVOCATION}\n\n## Changelog\n\n- 1 — 2026-09-21 — seeded\n")
 
 _TRACKER = ("# Story Tracker\n\n## Summary Statistics\n\n| Metric | Count |\n|---|---|\n"
             "| **Total Stories** | 2 |\n| **Not Started** | 1 |\n| **In Progress** | 0 |\n"
@@ -1022,9 +1061,20 @@ def run_self_test() -> int:
     expect("an unregistered persona fails",
            lint_kickoff(k.replace("**Persona:** framework-maintainer", "**Persona:** wizard"), 2, _PERSONAS, _STORIES),
            "persona")
-    expect("a persona copy that drifts from the registry fails",
-           lint_kickoff(k.replace("enforce rules with scripts", "enforce rules with prose"), 2, _PERSONAS, _STORIES),
-           "persona-copy")
+    line = persona_line("framework-maintainer")
+    check("the scaffold's section 1 names the agent file and is nothing but that line",
+          line in k and ".claude/agents/framework-maintainer.md" in line and _INVOCATION not in k)
+    legacy = k.replace(line, _INVOCATION)
+    expect("a kickoff written before decision 2026-10-22-005, copying the prompt verbatim, still passes",
+           lint_kickoff(legacy, 2, _PERSONAS, _STORIES))
+    expect("a copied prompt that drifts from the registry fails",
+           lint_kickoff(legacy.replace("enforce rules with scripts", "enforce rules with prose"), 2, _PERSONAS, _STORIES),
+           "persona-agent")
+    expect("a section 1 naming another agent's file fails",
+           lint_kickoff(k.replace(".claude/agents/framework-maintainer.md", ".claude/agents/wizard.md"), 2, _PERSONAS, _STORIES),
+           "persona-agent")
+    expect("a section 1 with text added to the line fails — the persona lives in the agent file",
+           lint_kickoff(k.replace(line, line + " Be brief."), 2, _PERSONAS, _STORIES), "persona-agent")
     expect("a task citing an unknown story fails",
            lint_kickoff(k.replace("TMPL-1.3 write", "TMPL-9.9 write"), 2, _PERSONAS, _STORIES), "task-story")
     expect("a task citing no story fails",
@@ -1038,19 +1088,37 @@ def run_self_test() -> int:
     expect("a kickoff that names no persona version fails",
            lint_kickoff(k.replace("**Persona version:** 1\n", ""), 2, _PERSONAS, _STORIES), "persona-version")
 
-    expect("a well-formed persona passes", lint_persona(_GOOD_PERSONA, "framework-maintainer"))
-    expect("a persona whose slug differs from its filename fails", lint_persona(_GOOD_PERSONA, "other"), "slug")
-    expect("a persona missing its Invocation fails (and, cut there, its Changelog with it)",
-           lint_persona(_GOOD_PERSONA.split("## Invocation")[0], "framework-maintainer"), "sections", "changelog")
-    check("the invocation block is extracted whole, without the Changelog after it",
-          norm(persona_invocation(_GOOD_PERSONA)) == norm(_INVOCATION))
+    expect("a well-formed agent file passes", lint_persona(_GOOD_PERSONA, "framework-maintainer"))
+    expect("an agent whose name differs from its filename fails", lint_persona(_GOOD_PERSONA, "other"), "name")
+    expect("an agent file with an empty body fails — the body is the prompt",
+           lint_persona(_GOOD_PERSONA.split("---\n\n")[0] + "---\n\n", "framework-maintainer"), "prompt")
+    expect("the pre-005 persona shape fails as an agent file",
+           lint_persona(_OLD_SHAPE, "framework-maintainer"), "name", "frontmatter")
+    expect("a file with no frontmatter fails", lint_persona(_INVOCATION + "\n", "framework-maintainer"), "frontmatter")
+    expect("a frontmatter that does not parse fails — Claude Code would skip the file silently",
+           lint_persona(_GOOD_PERSONA.replace("description: builds gates", "description: [unclosed"),
+                        "framework-maintainer"), "frontmatter")
+    expect("an unquoted list item holding `: ` is a mapping, not a string, and fails",
+           lint_persona(_GOOD_PERSONA.replace("  - gates\n", "  - gates: and hooks\n"), "framework-maintainer"), "list")
+    expect("a missing list fails", lint_persona(_GOOD_PERSONA.replace("insists_on:\n  - proof\n", ""),
+                                               "framework-maintainer"), "frontmatter")
+    check("the Invocation is the body, whole, without the frontmatter",
+          persona_invocation(_GOOD_PERSONA) == _INVOCATION)
     check("the version is read from the frontmatter", persona_version(_GOOD_PERSONA) == "1")
-    expect("a persona without version: fails",
+    expect("an agent file without version: fails",
            lint_persona(_GOOD_PERSONA.replace("version: 1\n", ""), "framework-maintainer"), "frontmatter")
     expect("a version that is not a positive integer fails",
            lint_persona(_GOOD_PERSONA.replace("version: 1", "version: 1.1"), "framework-maintainer"), "version")
-    expect("a version with no Changelog bullet fails",
+    expect("YAML's `true` is not a version, though Python counts a bool as an int",
+           lint_persona(_GOOD_PERSONA.replace("version: 1", "version: true"), "framework-maintainer"), "version")
+    expect("a version with no changelog item fails",
            lint_persona(_GOOD_PERSONA.replace("version: 1", "version: 2"), "framework-maintainer"), "changelog")
+    probe = ("import sys; sys.modules['yaml'] = None; sys.path.insert(0, sys.argv[1]); import session_closeout as c; "
+             "print(c.persona_invocation(sys.argv[2]) == sys.argv[3])")
+    out = subprocess.run([sys.executable, "-I", "-c", probe, str(Path(__file__).resolve().parent), _GOOD_PERSONA, _INVOCATION],
+                         capture_output=True, text=True, check=False)
+    check("the module loads and reads a prompt with no PyYAML — the session hook imports it under any python3",
+          out.returncode == 0 and out.stdout.strip() == "True", (out.stdout + out.stderr).strip()[-300:])
     expect("unchanged against the committed copy passes",
            lint_persona(_GOOD_PERSONA, "framework-maintainer", _GOOD_PERSONA))
     expect("an Invocation change with a bump and its bullet passes",
@@ -1063,6 +1131,8 @@ def run_self_test() -> int:
     expect("a bump with no Invocation change is allowed",
            lint_persona(_BUMPED_PERSONA.replace("enforce rules with fixtures", "enforce rules with scripts"),
                         "framework-maintainer", _GOOD_PERSONA))
+    expect("an expertise edit at the same version passes — the rule guards the prompt",
+           lint_persona(_GOOD_PERSONA.replace("  - gates\n", "  - gates and hooks\n"), "framework-maintainer", _GOOD_PERSONA))
     expect("a committed copy from before the version rule constrains nothing",
            lint_persona(_GOOD_PERSONA, "framework-maintainer", _GOOD_PERSONA.replace("version: 1\n", "")))
     check("closeout: a persona dev-resources lacks is unpublished",

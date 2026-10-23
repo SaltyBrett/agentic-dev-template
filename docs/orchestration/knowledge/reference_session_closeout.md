@@ -1,8 +1,8 @@
 ---
 name: Session closeout is a gate and its artifacts live one session
-description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas gated by shape not by list and append-only by version against the committed copy, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
-teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001]
-verified: 2026-09-24
+description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
+teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005]
+verified: 2026-10-22
 metadata:
   type: reference
 ---
@@ -29,8 +29,8 @@ constraints, so durable facts accumulated in files that no index listed and no f
 - **A session consumes one pair** (`HANDOFF_S<N>.md`, `KICKOFF_S<N>.md`) and **produces the next**.
   The closeout archives everything older, so the main folder holds at most two consecutive numbers.
 - **Structure has no home for durable content.** Exact headings, no extras. Decision IDs must be
-  indexed, wikilinks must resolve, tasks must cite tracker stories, and the persona block must equal
-  the registry's invocation. A fact that belongs elsewhere has nowhere to sit.
+  indexed, wikilinks must resolve, tasks must cite tracker stories, and the persona section is the
+  scaffold's one line naming the agent. A fact that belongs elsewhere has nowhere to sit.
 - **Reading follows.** `archive/` is never a mandatory read, so leaving a fact in a handoff loses it
   one session later. That is the enforcement the gate cannot do by reading prose.
 - **`--verify` at cold start** turns the closeout into a loop: the next session refuses to build
@@ -39,25 +39,46 @@ constraints, so durable facts accumulated in files that no index listed and no f
 ## Personas are gated by shape, not by list
 
 Predicting every persona a future project needs is impossible, so the gate never checks membership
-in a list. It checks that the slug a kickoff names resolves to a registered file with the required
-sections, and that the kickoff's copy matches. A persona is written when a task first needs it and
-registered in the same commit, exactly as a knowledge entry is. The registry grows from real sessions.
+in a list. It checks that the slug a kickoff names resolves to a registered agent file of the
+required shape, and that the kickoff's section 1 names it. A persona is written when a task first
+needs it and registered in the same commit, exactly as a knowledge entry is. The registry grows
+from real sessions.
+
+## Personas are agent files, and the session gets the prompt from the hook
+
+Since decision 2026-10-22-005 a persona is `.claude/agents/<slug>.md`. Claude Code makes the body
+the agent's prompt, so the body is the Invocation and nothing else; `version`, `expertise`,
+`insists_on` and `changelog` sit in the frontmatter, where Claude Code ignores keys it does not know.
+Three things follow from the sub-agents reference:
+
+- **The linter parses the frontmatter as YAML.** Claude Code skips an agent file whose frontmatter
+  does not parse, without a word, so a regex that read the flat keys would pass a file the session
+  never loads. The conversion found the YAML trap at once: four list items held `: ` and parsed as
+  mappings until quoted, so a list item must be a string.
+- **The import is lazy.** `session_start.py` imports this module for its parsers under whatever
+  `python3` the operator has; only the persona rules need PyYAML, and a fixture loads the module
+  with PyYAML blocked to keep it so.
+- **The kickoff names the agent; it does not copy it.** The `SessionStart` hook injects the prompt
+  unless the session already runs as the agent ([[reference_claude_code_hooks]]), because
+  `claude --agent` replaces Claude Code's built-in system prompt whole. A kickoff written before
+  the change, copying the prompt verbatim, is accepted: it says nothing false.
 
 ## Personas are append-only, against the committed copy
 
 A persona is reused across projects and, once `dev-resources` is its home (decision
 2026-09-23-002), across repositories, so a kickoff written against one text must not be silently
 answered by another. The gate reads each persona as committed at HEAD (`git show`) beside the
-working copy: an Invocation that differs at the same `version:` is refused, a version never goes
-down, and the Changelog must carry a bullet for the current version. The comparison is against
-HEAD because that is what every stage of the gate can see, in this repository and in a consumer
-that runs the published `persona-lint` hook; a bump that changes only Expertise or Insists on is
+working copy: a body that differs at the same `version:` is refused, a version never goes down,
+and the changelog must carry an item for the current version. The comparison is against HEAD
+because that is what every stage of the gate can see, in this repository and in a consumer that
+runs the published `persona-lint` hook; a bump that changes only `expertise` or `insists_on` is
 allowed, since the rule guards the text an agent is addressed with. The kickoff names the version
-it copied, and the linter checks it against the registry; the copy check already catches a
-drifted Invocation, so the field is for the reader, gated so it cannot be wrong.
+the registry held, and the linter checks it against the registry; with no copy in the kickoff, the
+field is its only record of which text the session was addressed with.
 
-A committed copy from before the rule, with no `version:`, constrains nothing: the migration
-commit that adds the key is then legal, and every later commit is compared.
+A committed copy from before the rule, with no `version:`, constrains nothing, and neither does a
+file new at its path: the migration commit that added the key was legal, and so was the move to
+`.claude/agents/`.
 
 ## Every wikilink in the tree resolves, not only a handoff's
 
@@ -123,7 +144,8 @@ exit codes together are what the handoff records.
 
 ## Rules
 
-- Never hand-type handoff or kickoff headings. `--scaffold --persona <slug>` writes them.
+- Never hand-type handoff or kickoff headings. `--scaffold --persona <slug>` writes them, and it
+  needs PyYAML in the interpreter that runs it, as the published `persona-lint` does.
 - The sprint-status entry comes first; the scaffold and the closeout both read the session number
   from it.
 - If the closeout cannot be completed, commit an emergency entry and say so. `--verify` failing next

@@ -1,15 +1,17 @@
 # Hooks another repository consumes from this one, pinned by `rev` (decision 2026-09-23-005):
 #
-#   - repo: git@github.com:SaltyBrett/agentic-dev-template.git
-#     rev: v5.1.0
+#   - repo: https://github.com/SaltyBrett/agentic-dev-template
+#     rev: v1.0.0
 #     hooks:
 #       - id: persona-lint
 #       - id: kb-frontmatter-scan
 #       - id: commit-attribution
 #
-# This repository is private, so the URL must be one git can authenticate from
-# ~/.cache/pre-commit, where pre-commit clones it: ssh with a key the agent holds, or the ssh
-# host alias a machine's identity setup names. A per-directory git config does not reach there.
+# The repository is public (decision 2026-09-25-001), so the plain https URL needs no credential,
+# from ~/.cache/pre-commit where pre-commit clones it and from a CI job alike.
+#
+# persona-lint judges .claude/agents/ from decision 2026-10-22-005; at v1.0.0 it judged
+# docs/personas/, which is why dev-resources pins the template at both revs until TMPL-2.4.
 #
 # pre-commit installs this repository with `pip install .` (pyproject.toml), so every `entry:` is a
 # console script, never a path: a remote hook runs from the CONSUMING repository's root, where
@@ -24,10 +26,10 @@
 # nothing. A consumer may set `always_run: true` once the content exists, as this template's own
 # config does.
 - id: persona-lint
-  name: Persona Registry Lint (required keys and sections; append-only by version against the committed copy)
+  name: Persona Registry Lint (agent files whose YAML frontmatter Claude Code can load; append-only by version against the committed copy)
   entry: session-closeout --personas
   language: python
-  files: ^docs/personas/.*\.md$
+  files: ^\.claude/agents/.*\.md$
   pass_filenames: false
   stages: [pre-commit]
 - id: kb-frontmatter-scan

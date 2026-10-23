@@ -102,6 +102,7 @@ repos:
         name: Session Closeout Self-Test (linters discriminate; rotation keeps two pairs)
         entry: python scripts/session_closeout.py --self-test
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML (decision 2026-10-22-005)
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
@@ -109,6 +110,7 @@ repos:
         name: Session State Gate (handoff pairs, personas, tracker counts, entry cap, brain cap)
         entry: python scripts/session_closeout.py --check
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML (decision 2026-10-22-005)
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
@@ -116,6 +118,7 @@ repos:
         name: Session Closeout (archive older pairs; verify the pair for the next session)
         entry: python scripts/session_closeout.py --closeout
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML (decision 2026-10-22-005)
         stages: [manual]          # run: pre-commit run session-closeout --hook-stage manual --all-files
                                   # (--all-files stops pre-commit stashing unstaged edits first)
         pass_filenames: false
@@ -124,6 +127,7 @@ repos:
         name: Session Verify (the previous session closed out; the tree is clean)
         entry: python scripts/session_closeout.py --verify
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML (decision 2026-10-22-005)
         stages: [manual]          # run: pre-commit run session-verify --hook-stage manual --all-files
                                   # (without the flag the stash hides an unstaged edit: a dirty tree passes)
         pass_filenames: false

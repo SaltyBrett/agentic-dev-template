@@ -200,7 +200,7 @@ What it does per path is decided by ownership, and the initializer's lists are t
 
 | Class | Paths | Behaviour |
 |---|---|---|
-| keep | `sprint/` (the decision log included), `.project-profile`, the content folders shipped empty, `docs/personas/` and any knowledge entry declaring `source: dev-resources` (those are `scripts/resources_sync.py`'s), the template's own packaging | never written; template changes there are named in one line |
+| keep | `sprint/` (the decision log included), `.project-profile`, the content folders shipped empty, `.claude/agents/` and any knowledge entry declaring `source: dev-resources` (those are `scripts/resources_sync.py`'s), the template's own packaging | never written; template changes there are named in one line |
 | merge | `docs/orchestration/knowledge/INDEX.md` by slug; `docs/governance/framework_decisions.md` by decision ID, rows and bodies | project rows never touched; a framework decision the file lacks is inserted, because the framework's entries `teaches:` it; an edited row or body is reported and left |
 | three-way | everything else, through `git merge-file` | an unedited copy takes the template's version; an edited copy takes the change where it does not overlap; an overlap is a conflict, left alone and named |
 

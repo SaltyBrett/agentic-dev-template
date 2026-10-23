@@ -71,7 +71,7 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 | `LICENSE` | MIT; the project's own from birth |
 | `sprint/` | Active project state (sprint-status, story-tracker, decision-log, handoffs, recovery) |
 | `docs/orchestration/knowledge/` | Knowledge base (single source of truth for accumulated learnings) |
-| `docs/personas/` | Persona registry; every kickoff prompt names one |
+| `.claude/agents/` | Persona registry, as Claude Code agent files; every kickoff prompt names one |
 | `docs/standards/` | Implementation standards that govern how artifacts are built |
 | `docs/governance/` | Document control, the gate-suite runbook, the framework's own decision log, compliance policies |
 | `docs/prd/` | Product requirements document(s) |

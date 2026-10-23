@@ -20,7 +20,7 @@
 | Concern | CURRENT Artifact | Superseded | Notes |
 |---------|-----------------|------------|-------|
 | Session Handoff Protocol | `docs/standards/session_handoff_standard_v2.0.md` | `session_handoff_standard_v1.0.md`; `sprint/recovery/templates/HANDOFF_TEMPLATE.md` (retired, 2026-09-21-001) | Governs all session transitions, recovery sessions included; enforced by `scripts/session_closeout.py` |
-| Persona Registry | `docs/personas/` | — | One file per persona; a kickoff copies the Invocation block |
+| Persona Registry | `.claude/agents/` | `docs/personas/` (2026-10-22-005) | One agent file per persona; a kickoff names it and the `SessionStart` hook injects its prompt |
 | Secrets Management | `docs/standards/secrets_management_standard_v1.0.md` | — | Key Vault + SPN authoritative |
 | Document Control | `docs/governance/doc_control_standard.md` | — | GitHub-governed changes |
 

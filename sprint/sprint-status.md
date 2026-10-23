@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-22
-**Updated By:** S2
+**Updated By:** S3
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,24 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S3 — 2026-10-22 — Personas as agent files; path-scoped rules
+
+**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
+`session-verify` (PASS); both hook types installed; `gh` on the keyring; Claude Code 2.1.308. Two
+choices put to the operator before any build, both answered with the recommendation: the session
+takes its persona from the start hook, `--agent` optional; `dev-resources` keeps both trees until
+TMPL-2.4 (decision 2026-10-22-005, amending 2026-10-22-001).
+
+### Done
+
+1. TMPL-1.3 in progress — see the tracker.
+
+### Blockers
+
+- None.
 
 ---
 

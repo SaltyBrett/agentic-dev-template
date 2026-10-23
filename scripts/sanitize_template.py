@@ -400,7 +400,7 @@ def run_self_test() -> int:
 
     paths = ["AGENTS.md", "CONSTITUTION.md", ".resources-version", "sprint/decision-log.md",
              "docs/governance/framework_decisions.md", "docs/orchestration/knowledge/INDEX.md",
-             "docs/personas/framework-maintainer.md", "sprint/recovery/README.md",
+             ".claude/agents/framework-maintainer.md", "sprint/recovery/README.md",
              "sprint/handoffs/HANDOFF_S13.md", "sprint/handoffs/KICKOFF_S13.md",
              "sprint/handoffs/archive/HANDOFF_S2.md", "sprint/archive/sprint-status_2026.md"]
     planned = plan(paths)

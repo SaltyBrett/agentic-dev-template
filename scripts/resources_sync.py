@@ -17,8 +17,10 @@ version gate), judges every owned path against that tree, writes what is behind,
 ahead or unpublished, merges the INDEX rows the fetched tree carries, and stamps
 .resources-version last — withheld on a conflict.
 
-Owned paths: every docs/personas/*.md, and every docs/orchestration/knowledge/*.md whose
-frontmatter declares `source: dev-resources`. Everything under that path in the fetched tree must
+Owned paths: every .claude/agents/*.md (the persona registry, agent files since decision
+2026-10-22-005), and every docs/orchestration/knowledge/*.md whose frontmatter declares
+`source: dev-resources`. dev-resources keeps its docs/personas/ for projects still on v1.0.0
+until TMPL-2.4; this script never reads it. Everything under that path in the fetched tree must
 carry the declaration; an entry without it is refused (`unmarked`), because the declaration is how
 the template updater knows to leave the file alone (template_update.resource_owned).
 
@@ -69,7 +71,7 @@ DEFAULT_REF = "main"
 
 REF_PREFIX = "refs/resources/"
 STAMP = ".resources-version"
-PERSONAS = "docs/personas/"
+PERSONAS = ".claude/agents/"
 KB = "docs/orchestration/knowledge/"
 INDEX = KB + "INDEX.md"
 VERSION_KEY = re.compile(r"^version:\s*([1-9]\d*)\s*$", re.M)
@@ -289,7 +291,7 @@ def main() -> int:
 # SELF-TEST — pure fixtures; every verdict has a case
 # ==============================================================================
 
-_P1 = b"---\nname: A\nslug: a\ndescription: d\nversion: 1\n---\n\n# A\n\n## Invocation\n\nv1\n"
+_P1 = b"---\nname: a\ndescription: d\nversion: 1\nexpertise:\n  - e\ninsists_on:\n  - i\nchangelog:\n  - 1 \xe2\x80\x94 x\n---\n\nv1\n"
 _P2 = _P1.replace(b"version: 1", b"version: 2").replace(b"v1\n", b"v2\n")
 _P1_EDITED = _P1.replace(b"v1\n", b"v1 edited\n")
 _R = b"---\nname: R\ndescription: r\nteaches: []\nverified: 2026-09-23\nsource: dev-resources\nmetadata:\n  type: reference\n---\n\ntext\n"
@@ -313,6 +315,11 @@ def run_self_test() -> int:
     check("the version is read from the frontmatter, and only a positive integer",
           version_of(_P2) == 2 and version_of(_R) is None and version_of(_P1.replace(b"version: 1", b"version: 0")) is None)
     check("a persona is owned on either side", owned(PERSONAS + "a.md", _P1, None) and owned(PERSONAS + "a.md", None, _P1))
+    import session_closeout  # the registry the closeout reads; lazy, so a sync never needs it otherwise
+    check("the sync owns the agent files the closeout reads as the registry, and never dev-resources' old "
+          "docs/personas/ (decision 2026-10-22-005)",
+          owned(".claude/agents/a.md", _P1, None) and not owned("docs/personas/a.md", _P1, _P1)
+          and PERSONAS.rstrip("/") == session_closeout.PERSONAS.relative_to(session_closeout.ROOT).as_posix())
     check("a knowledge entry is owned when marked locally or present in the fetched tree",
           owned(KB + "r.md", _R, None) and owned(KB + "r.md", None, _R) and not owned(KB + "k.md", _K, None))
     check("INDEX.md and non-markdown are never owned", not owned(INDEX, _R, _R) and not owned(PERSONAS + "x.png", b"", b""))

@@ -40,7 +40,7 @@ to it:
 | A decision and its rationale | `sprint/decision-log.md` (the handoff cites IDs) |
 | A durable learning, gotcha or rule | `docs/orchestration/knowledge/<slug>.md` + INDEX row (the handoff wikilinks it) |
 | What happened this session | the `## S<N>` entry in `sprint/sprint-status.md` |
-| Who the next agent should be | `docs/personas/<slug>.md` (the kickoff copies it) |
+| Who the next agent should be | `.claude/agents/<slug>.md` (the kickoff names it) |
 
 Three mechanisms hold the rule:
 
@@ -106,10 +106,10 @@ headings.
 
 **For session:** S<N>
 **Persona:** <slug>
-**Persona version:** <the version: of docs/personas/<slug>.md when the scaffold copied it>
+**Persona version:** <the version: of .claude/agents/<slug>.md when the scaffold wrote the pair>
 
 ## 1. Persona
-<the Invocation block of docs/personas/<slug>.md, copied verbatim>
+<one line naming .claude/agents/<slug>.md, written by the scaffold>
 
 ## 2. Cold start
 Run the cold start in `AGENTS.md`. Read `sprint/handoffs/HANDOFF_S<N>.md`, then the files it lists.
@@ -126,7 +126,8 @@ Run `pre-commit run session-verify --hook-stage manual --all-files` and do no bu
 ```
 
 Rules the linter applies: the persona slug is registered, `Persona version` equals the registry's
-`version:`, and section 1 equals its Invocation block (whitespace-normalized); section 2 names
+`version:`, and section 1 is the scaffold's line (whitespace-normalized; a verbatim copy of the
+agent's prompt, the rule before decision 2026-10-22-005, is accepted too); section 2 names
 `AGENTS.md` and `HANDOFF_S<N>.md`; every task bullet cites a story ID present in
 `sprint/story-tracker.md`; section 5 names the closeout command.
 
@@ -134,17 +135,23 @@ Rules the linter applies: the persona slug is registered, `Persona version` equa
 
 ## 6. Personas
 
-`docs/personas/<slug>.md` holds one persona: frontmatter `name`, `slug` (equal to the filename),
-`description`, `version` (a positive integer, 1 at first release); sections `## Expertise`,
-`## Insists on`, `## Invocation`, `## Changelog`. The Invocation block is the text an agent is
-addressed with; Expertise and Insists on are for the human choosing; the Changelog holds one
-bullet per version, `- <version> — <date> — <what changed>`.
+`.claude/agents/<slug>.md` holds one persona as a Claude Code agent file (decision
+2026-10-22-005). Its YAML frontmatter has `name` (the slug, equal to the filename stem),
+`description`, `version` (a positive integer, 1 at first release), and `expertise`, `insists_on`
+and `changelog` as lists of strings; an item holding `: ` is quoted. The body is the Invocation,
+the text an agent is addressed with, and nothing else, because Claude Code makes the body the
+agent's prompt. `expertise` and `insists_on` are for the human choosing; `changelog` holds one item
+per version, `<version> — <date> — <what changed>`.
+
+The session holds the persona through the `SessionStart` hook, which injects the prompt unless the
+session already runs as the agent. `claude --agent <slug>` is optional: it makes the prompt the
+system prompt, replacing Claude Code's own whole.
 
 **Personas are append-only** (decision 2026-09-23-002). An Invocation is never edited in place: an
-enhancement bumps `version:` and appends its Changelog bullet, and the gate refuses an Invocation
-that differs from the committed copy at the same version. The version never goes down. A bump
-that changes only Expertise or Insists on is allowed. A kickoff names the version it copied, so a
-reader knows which text the session was addressed with.
+enhancement bumps `version:` and appends its changelog item, and the gate refuses a body that
+differs from the committed copy at the same version. The version never goes down. A bump that
+changes only `expertise` or `insists_on` is allowed. A kickoff names the version the registry held
+when it was written, so a reader knows which text the session was addressed with.
 
 **Personas are shape-gated, not list-gated.** No list of future personas is predicted. When a
 session's task list needs expertise no registered persona has, the agent writing the kickoff writes
@@ -232,6 +239,7 @@ constitution and this standard disagree on handoff matters, this standard govern
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0 | 2026-10-22 | §3, §5 and §6: personas are agent files in `.claude/agents/`; the kickoff names the agent and the `SessionStart` hook injects its prompt (decision 2026-10-22-005, TMPL-1.3). |
 | 2.0 | 2026-10-22 | §5: the kickoff's verify command carries `--all-files`; without it a dirty tree passed (decision 2026-09-22-003, amended). |
 | 2.0 | 2026-10-22 | §8 and §11: the cold start is in `AGENTS.md` alone; this standard points there and is reached from it for the closeout (decision 2026-10-22-001, TMPL-1.1). |
 | 2.0 | 2026-09-23 | §7: the resources sync runs at closeout, before the scaffold; the closeout refuses an unpublished persona (decision 2026-09-23-007, TMPL-3.3). |

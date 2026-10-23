@@ -1,8 +1,8 @@
 ---
 name: The registry is a cache of dev-resources, synced at closeout and grown only by publishing
 description: 'Why the persona registry and resource knowledge entries are refreshed from `dev-resources` by a script in the updater''s idiom rather than merged by the template: verdicts decided by version, a same-version or unversioned difference is a conflict never picked silently, a resource entry is told from the template''s own by a frontmatter declaration the updater honours, the closeout refuses a persona the synced ref lacks, and the first sync seeded an empty registry through --publish. Read before editing a persona or a resource entry in any project.'
-teaches: [2026-09-23-002, 2026-09-23-007]
-verified: 2026-09-23
+teaches: [2026-09-23-002, 2026-09-23-007, 2026-10-22-005]
+verified: 2026-10-22
 metadata:
   type: reference
 ---
@@ -17,8 +17,9 @@ metadata:
 
 ## Why a cache and not a pointer
 
-The session gate proves a kickoff's persona block equals the registry file, and CI reads local
-files, so the registry must be in every project's tree. A submodule is not initialized by
+Claude Code loads agents from the project's own `.claude/agents/`, the start hook injects the
+kickoff's persona from there, the session gate proves the kickoff names a registered agent, and CI
+reads local files, so the registry must be in every project's tree. A submodule is not initialized by
 `gh repo create --template` and needs a checkout flag in CI; a subtree is a second merge channel
 over paths the updater already handles. So the project holds a copy, one script refreshes it, and
 `.resources-version` says which ref it matches: the repository's own single-source-of-truth law,
@@ -61,6 +62,17 @@ told the updater otherwise; it now keeps the file and the initializer clears it 
 unmarked file the updater keeps (any of the three copies marked means keep), so its first sync
 sees a fetched marked copy against a local unmarked one: a conflict by the rule above, resolved
 by `--take <path>` once. The probe recorded both.
+
+## The registry moved, and `dev-resources` holds both trees for a while
+
+Decision 2026-10-22-005 made the registry agent files in `.claude/agents/`, which is the path the
+sync owns from then on. Projects still on `v1.0.0` run their own copy of this script, which owns
+`docs/personas/`; had that folder left `dev-resources`, their next sync would have found every
+persona missing there and their closeout would have refused them all as unpublished, with a
+remedy (`--publish`) that writes the old folder back. So `dev-resources` keeps `docs/personas/`
+frozen beside `.claude/agents/`, each tree judged by the `persona-lint` of its own template rev,
+until TMPL-2.4 takes the projects to `v2.0.0`; TMPL-2.4 compares the trees, ports anything a
+`v1.0.0` project published meanwhile, and removes the old one.
 
 ## The first run
 

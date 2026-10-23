@@ -152,11 +152,12 @@ which entries the gate reaches)
 **Pairs with:** `session-closeout-check`, `session-closeout` and `session-verify`, all three of
 which share its linters.
 **Blocks:** a commit when a linter fails a fixture: an unfilled scaffold passing, an extra handoff
-section accepted, a persona copy that drifted from the registry accepted, a kickoff task citing no
-story passing, tracker statistics that do not reconcile passing, a Done story on an undone
-dependency passing, an example row in a live sprint passing, a fresh project's closeout
-producing no pair.
-**Why:** decision 2026-09-21-001; [[reference_session_closeout]].
+section accepted, a kickoff's section 1 that neither names the agent nor copies its prompt
+accepted, an agent file whose frontmatter does not parse or whose list item is a mapping accepted,
+the module needing PyYAML to read a prompt, a kickoff task citing no story passing, tracker
+statistics that do not reconcile passing, a Done story on an undone dependency passing, an example
+row in a live sprint passing, a fresh project's closeout producing no pair.
+**Why:** decisions 2026-09-21-001 and 2026-10-22-005; [[reference_session_closeout]].
 **Alone:** `pre-commit run session-closeout-selftest --all-files --verbose`
 
 ## `session-closeout-check`
@@ -166,10 +167,12 @@ producing no pair.
 **Blocks:** a stray file in `sprint/handoffs/`, an incomplete or non-consecutive pair, more than
 two session numbers outside `archive/`, a handoff or kickoff with the wrong headings, an unfilled
 token, an unresolved wikilink or unindexed decision ID, a kickoff naming an unregistered persona,
-drifting from its invocation or naming a persona version the registry is not at, a task citing a
-story absent from the tracker, a persona file of the wrong shape, a persona whose Invocation differs
-from the committed copy without a higher `version:`, a version that went down or has no Changelog
-bullet, tracker Summary Statistics that do not equal the counted rows, a story `In Progress` or
+a kickoff whose section 1 is neither the scaffold's line naming the agent nor a verbatim copy of
+its prompt, or naming a persona version the registry is not at, a task citing a story absent from
+the tracker, an agent file in `.claude/agents/` of the wrong shape (frontmatter that does not parse
+as YAML, which Claude Code would skip silently; a `name` that is not the filename stem; a list that
+is not strings), a persona whose body (the Invocation) differs from the committed copy without a
+higher `version:`, a version that went down or has no changelog item, tracker Summary Statistics that do not equal the counted rows, a story `In Progress` or
 `Done` whose listed dependency is not `Done` (`dependency-order`), in a project whose tracker holds
 a non-example epic an `[EXAMPLE]` row or heading or an unfilled `{{TOKEN}}` in the tracker,
 sprint-status or the decision log outside inline or fenced code (`live-placeholder`; the template,
@@ -177,8 +180,8 @@ with no `.project-profile`, is exempt), a sprint-status whose newest entry is no
 `## S<N> — date — title` or that holds more than ten, a `[[slug]]` in any text file git would
 commit that resolves to no knowledge entry and is not in the gate's allow set (the convention's
 own placeholders and the fixture slug), and an `AGENTS.md` over the Codex project-doc cap.
-**Why:** decisions 2026-09-21-001 (amended for the tree-wide wikilink rule), 2026-09-23-002 and
-2026-09-24-001 (the tracker's two rules); [[reference_session_closeout]].
+**Why:** decisions 2026-09-21-001 (amended for the tree-wide wikilink rule), 2026-09-23-002,
+2026-09-24-001 (the tracker's two rules) and 2026-10-22-005 (agent files); [[reference_session_closeout]].
 **Alone:** `pre-commit run session-closeout-check --all-files`
 
 ## `session-closeout`
@@ -225,9 +228,10 @@ notes, which keeps them out of pre-commit's stash and out of the scanners.
 **Pairs with:** no gate. `scripts/session_start.py` is the Claude Code `SessionStart` hook.
 **Blocks:** a commit when the start report can exceed Claude Code's 10,000-character context cap,
 cuts a high-priority section before a low one, runs a gate or a pull after compaction, runs the
-verify without `--all-files`, counts the user-level `~/.claude/CLAUDE.md` as a shadow, or takes
-the session number from another session's journal line.
-**Why:** decision 2026-10-22-001; [[reference_claude_code_hooks]].
+verify without `--all-files`, counts the user-level `~/.claude/CLAUDE.md` as a shadow, takes
+the session number from another session's journal line, or leaves the kickoff's persona out of a
+session not run as that agent (or repeats it in one that is).
+**Why:** decisions 2026-10-22-001 and 2026-10-22-005; [[reference_claude_code_hooks]].
 **Alone:** `pre-commit run session-start-selftest --all-files --verbose`
 
 ## `session-stop-selftest`
