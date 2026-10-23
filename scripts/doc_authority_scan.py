@@ -50,11 +50,15 @@ The frontmatter is the registry; there is no list to keep beside it.
   unrecorded   for each decision whose `**Affects:**` names an authority, the authority's version
                log holds a row citing the decision, or the tracker holds a story citing the
                decision and the path that is not Done. Those two outcomes, and nothing else
-  commit       a stored hash is a prefix of the first commit, following renames, whose copy of
-               the document holds that version. In a project, a row citing only framework
-               decisions was written in the template and is verified there: the project's
-               history, squashed at birth, holds no such commit
+  commit       a stored hash is a prefix of the first commit, following renames but never a
+               copy, whose copy of the document holds that version
   index        a decision index that cannot be located is never zero decisions
+
+In a project, what the template wrote is judged in the template: a row citing only framework
+decisions is not held to `unmarked` or `commit`, since the story it cites is in the template's
+tracker and the commit in the template's history, the project's squashed at birth; and a framework
+decision is not held to `no-affects` or `unrecorded`, since the story that queues it is the
+template's too. The project's own rows and decisions are judged in full (decision 2026-10-23-015).
 
 --stamp            fills each `pending` row whose first commit exists with that commit's hash
 --history <doc>    prints each row's stored commit beside the one git derives
@@ -390,14 +394,16 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
                     v.append(("stale", a.path, f"implements {did} ({why} {changed}) but was last verified {a.verified}"))
         for r in a.rows:
             where = f"{a.path}:{r.line}"
+            # The template's row in a project: its story and its commit are the template's.
+            foreign = project and all(d in framework_ids for d in r.decisions)
             for did in r.decisions:
                 if did not in decs:
                     v.append(("unknown-id", where, f"version {r.version} cites {did}, which is in neither decision index"))
-            if not marked(r, stories):
+            if not foreign and not marked(r, stories):
                 v.append(("unmarked", where, f"version {r.version} is neither `{FACT}` with its fact nor a story's change"))
             if r.commit == PENDING:
                 reach["pending"] += 1
-            elif project and all(d in framework_ids for d in r.decisions):
+            elif foreign:
                 reach["foreign"] += 1     # the template's row, verified in the template
             else:
                 first = history(a.path).get(r.version)
@@ -410,8 +416,8 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
     recorded = {(a.path, d) for a in auths for r in a.rows for d in r.decisions}
     reach.update(due=0, by_row=0, by_story=0)
     for did in sorted(decs):
-        if decs[did]["date"] < AFFECTS_FROM:
-            continue
+        if decs[did]["date"] < AFFECTS_FROM or (project and did in framework_ids):
+            continue          # older than the rule, or the template's, judged where its queue lives
         reach["due"] += 1
         body = bodies.get(did)
         value = affects(body) if body is not None else None
@@ -457,6 +463,18 @@ def log_commits(out: str, path: str) -> list[tuple[str, str]]:
     return commits
 
 
+def renames_only(commits: list[tuple[str, str]], exists: Callable[[str, str], bool]) -> list[tuple[str, str]]:
+    """The history cut at the first copy. `git log --follow` sets find-copies-harder, so a
+    document made by copying another (a PRD from its template) would inherit that one's rows: where
+    the path changes, the older path surviving in the commit that brought the newer one is a copy."""
+    kept = commits[:1]
+    for (newer, path), (older, was) in zip(commits, commits[1:]):
+        if was != path and exists(newer, was):
+            break
+        kept.append((older, was))
+    return kept
+
+
 def batch_blobs(out: bytes) -> list[str | None]:
     """Each object's text from `git cat-file --batch` output, in input order; None where missing."""
     found: list[str | None] = []
@@ -491,7 +509,8 @@ def first_commits(path: str) -> dict[str, str]:
     out = git("log", "--follow", "--format=%x00%H", "--name-only", "--", path)
     if out.returncode != 0:
         raise HistoryUnavailable(out.stderr.decode(errors="replace").strip())
-    commits = log_commits(out.stdout.decode("utf-8", errors="replace"), path)
+    commits = renames_only(log_commits(out.stdout.decode("utf-8", errors="replace"), path),
+                           lambda h, p: git("cat-file", "-e", f"{h}:{p}").returncode == 0)
     if not commits:
         return {}
     blobs = batch_blobs(git("cat-file", "--batch", data="".join(f"{h}:{p}\n" for h, p in commits).encode()).stdout)
@@ -747,6 +766,26 @@ def run_self_test() -> int:
     expect("in a project, a row citing only framework decisions is the template's", _run(project=True, hist={}))
     expect("in a project, a row citing the project's decision is verified",
            _run(doc(rows=_ROW2 + _ROW1.replace("2026-10-22-002", "ACME-2026-10-25-001")), project=True, hist={}), "commit")
+
+    # The template's rows and decisions in a project (decision 2026-10-23-015)
+    born = "# Story Tracker\n\n## Epic: INFRA-1" + _TRACK.split("## Epic: INFRA-1")[1]   # a project's: no TMPL story
+    own = "| 3 | 2026-10-26 | {} | Restructured again | pending |\n"
+    proj_names = _PROJ.replace("## Decision ACME-2026-10-25-001: The project's own\n\n**Affects:** none",
+                               "## Decision ACME-2026-10-25-001: The project's own\n\n**Affects:** `docs/a.md` §4")
+    expect("in a project, the template's row citing a story only the template's tracker holds passes",
+           _run(project=True, hist={}, tracker=born))
+    expect("in a project, a framework decision queued only by the template's story passes",
+           _run(doc(rows=_ROW1), project=True, hist={}, tracker=born))
+    expect("in a project, the project's own row is still held to its marker",
+           _run(doc(rows=own.format("ACME-2026-10-25-001") + _ROW2 + _ROW1), project=True, hist={}, tracker=born), "unmarked")
+    expect("in a project, a row citing a framework and a project decision is the project's",
+           _run(doc(rows=own.format("2026-10-23-010, ACME-2026-10-25-001") + _ROW2 + _ROW1), project=True, hist={},
+                tracker=born), "unmarked")
+    expect("in a project, the project's own decision naming an authority is still held to its record",
+           _run(proj=proj_names, project=True, hist={}, tracker=born), "unrecorded")
+    expect("in a project, the project's own decision with no Affects line still fails",
+           _run(proj=_PROJ.replace("**Affects:** none", "No line."), project=True, hist={}, tracker=born), "no-affects")
+    expect("in the template, the same decision queued by no open story is unrecorded", _run(doc(rows=_ROW1), tracker=born), "unrecorded")
     expect("an unreadable decision index fails, never reads as none", _run(fw=_FW.replace("## Decision Index", "## Decisions")), "index")
 
     # --stamp and the git readers
@@ -773,6 +812,11 @@ def stamp_checks(check: Callable[..., None]) -> None:
           and stamped.replace("def5678", "pending").replace("abc1234", "pending") == _doc(rows=_ROW2 + _ROW1.replace("abc1234", "pending")))
     log = "\x00aaa\n\ndocs/new.md\n\x00bbb\n\ndocs/old.md\n"
     check("the git log reader follows a rename", log_commits(log, "docs/new.md") == [("aaa", "docs/new.md"), ("bbb", "docs/old.md")])
+    moved = [("ccc", "docs/new.md"), ("aaa", "docs/new.md"), ("bbb", "docs/old.md"), ("ddd", "docs/old.md")]
+    check("a rename is followed past: the old path is gone from the commit that brought the new",
+          renames_only(moved, lambda h, p: False) == moved)
+    check("a copy is not: a document made from a template never inherits the template's rows",
+          renames_only(moved, lambda h, p: (h, p) == ("aaa", "docs/old.md")) == moved[:2])
     batch = b"1111 blob 5\nhello\nbbb:docs/old.md missing\n"
     check("the cat-file reader keeps each object in order and a missing one as None", batch_blobs(batch) == ["hello", None])
 

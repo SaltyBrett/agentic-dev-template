@@ -164,8 +164,11 @@ the last section or sits in fenced code read as the log, a malformed or out-of-o
 `fact:` with no fact or a citation of a story that does not cite the row's decision accepted, a
 decision from the cutoff without `**Affects:**` passed, a Done story or one in an `[EXAMPLE]` epic
 read as queueing a change, a hash that did not introduce its row passed, `--stamp` writing a row
-that is not this repository's. A fixture that raises fails; it never crashes the self-test.
-**Why:** decision 2026-10-22-002 and the build's decision 2026-10-23-010; [[reference_doc_authority]].
+that is not this repository's; in a project, the template's rows or decisions judged there, or the
+project's own passed unjudged; a copied document's history read as its own, or a rename's cut. A
+fixture that raises fails; it never crashes the self-test.
+**Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010 and 2026-10-23-015;
+[[reference_doc_authority]].
 **Alone:** `pre-commit run doc-authority-selftest --all-files --verbose`
 
 ## `doc-authority-scan`
@@ -177,11 +180,13 @@ frontmatter that does not parse to a scope, an `implements:` list and an unquote
 date; two documents claiming one scope; a `verified:` that predates a change to a decision the
 document implements; a missing or malformed `## Version log`; a row that is neither `fact:` with
 its fact nor the change of a story that cites its decision; a stored commit hash that is not the
-commit that introduced the row (in a project, rows citing only framework decisions are the
-template's and verified there). For every decision dated 2026-10-22 or later: a body without
+commit that introduced the row, following renames but never a copy. For every decision dated 2026-10-22 or later: a body without
 `**Affects:**`, and an authority it names whose version log cites it nowhere while no open story
-cites both. A decision index that cannot be read fails; a shallow clone exits 2.
-**Why:** decisions 2026-10-22-002 and 2026-10-23-010; [[reference_doc_authority]],
+cites both. In a project, what the template wrote is judged in the template: a row citing only
+framework decisions is held to neither its marker nor its hash, and a framework decision to
+neither its `**Affects:**` nor its record. A decision index that cannot be read fails; a shallow
+clone exits 2.
+**Why:** decisions 2026-10-22-002, 2026-10-23-010 and 2026-10-23-015; [[reference_doc_authority]],
 [[reference_kb_freshness]].
 **Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
 registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
@@ -471,4 +476,5 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | pending |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007, 2026-10-23-010 | Marked as the authority for the gate suite (TMPL-2.3); reflects the skill gate, the persona library, the adoption fixtures, the `.gitignore` union and the authority gate. The README catalog's change to `skill-scan` (2026-10-23-009) is queued in TMPL-5.5 | 515f1a5 |

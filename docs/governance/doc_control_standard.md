@@ -1,6 +1,6 @@
 ---
 authority: document control — how an authoritative document declares itself, records each change and is verified
-implements: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-09-22-001, 2026-09-24-001, 2026-09-25-001, 2026-09-25-003]
+implements: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-09-22-001, 2026-09-24-001, 2026-09-25-001, 2026-09-25-003]
 verified: 2026-10-23
 ---
 
@@ -26,8 +26,10 @@ the commit that leaves the document behind (decision 2026-10-22-002, [[reference
   ---
   ```
 
-- The template marks its standards (`docs/standards/`, this file) and the gate-suite runbook. A
-  project marks its PRD, its architecture and its runbooks.
+- The template marks its standards (`docs/standards/`, this file), the gate-suite runbook and the
+  document templates (`docs/templates/`), each template the authority for its document's shape. A
+  project marks its PRD, its architecture and its runbooks; a PRD or an architecture is made from
+  its template as a draft and becomes the authority for the project's scope when it is approved.
 - One scope, one authority. A document that takes over a scope takes the `authority:` line; the one
   it replaces drops the line and says where the scope went. Two documents claiming one scope fail
   the gate.
@@ -113,4 +115,5 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | pending |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | 515f1a5 |

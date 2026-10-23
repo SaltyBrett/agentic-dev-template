@@ -76,6 +76,7 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 | `.claude/skills/` | The procedures (closeout, team selection, planning session, document production, release, pristine cut), one `SKILL.md` each, readable by any agent |
 | `docs/standards/` | Implementation standards: the law the procedures obey |
 | `docs/governance/` | Document control, the gate-suite runbook, the framework's own decision log, compliance policies |
+| `docs/templates/` | The PRD and architecture templates, each the authority for its document's shape; a project makes its own documents from them |
 | `docs/prd/` | Product requirements document(s) |
 | `docs/architecture/` | Architecture specs, diagrams, ADRs |
 | `docs/executive/` | Executive summaries, stakeholder presentations |

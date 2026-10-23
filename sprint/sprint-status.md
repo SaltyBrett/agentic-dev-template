@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-23
-**Updated By:** S7
+**Updated By:** S8
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,36 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S8 — 2026-10-23 — Four personas, team presets and the Blender connection
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook.
+
+### Done
+
+1. TMPL-5.1 — `docs/templates/prd.md` and `docs/templates/architecture.md`, with
+   `docs/templates/README.md` for making and approving a document (decision 2026-10-23-014). The
+   Chair chose the location, each template an authority for its own scope, and both section lists;
+   a made document is a draft, claiming no authority, until its approval decision gives it its first
+   row. Proof on a scratch birth from this tree: drafts unregistered, exit 0; a copy that kept the
+   template's line refused as `scope`; approved and stamped with its approval commit, exit 0; a
+   swapped hash refused.
+2. TMPL-2.6 — two defects of the authority gate, found by that proof (decision 2026-10-23-015, the
+   Chair's choice of fix). A birth from the committed `HEAD` was refused at its first suite run:
+   seven violations, each a template row or decision whose story a project's tracker cannot hold,
+   since S7's marking came after its last scratch adoption. In a project the template's rows and
+   decisions are now judged in the template. And `git log --follow` follows copies, so a PRD made
+   from its template was stamped with the template's commit; the history now follows renames only.
+   Nine fixtures, nine broken variants caught; a scratch birth starts green.
+3. TMPL-5.6 — in progress: the four personas lint clean, the presets in team selection held by
+   `skill-scan`; the Blender server being vetted.
+
+### Blockers
+
+- None.
 
 ---
 

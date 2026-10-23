@@ -24,9 +24,11 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
+| 2026-10-23-014 | 2026-10-23 | The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers | APPROVED |
 | 2026-10-23-012 | 2026-10-23 | The library gains a backend engineer, a web developer, a Blender 3D artist and an image and video editor; team-selection offers named team presets, a gate refusing a preset that names no library persona; an opt-in Blender MCP connection offered with the Blender persona, off by default; built as TMPL-5.6 before the release | APPROVED |
 | 2026-10-23-011 | 2026-10-23 | The standards, the document-control standard and the gate runbook are the first authorities: each log starts at marking at the version the document states, citing every decision that names it or queueing it; the hand-kept changelog tables and `**Version:**` lines go; file names keep their version; the runbook gate skips the closing version log; the authority matrix retires in the template, a project's copy left to the project | APPROVED |
-| 2026-10-23-010 | 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
+| 2026-10-23-010 | 2026-10-23; amended 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
 | 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
 | 2026-10-23-008 | 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
 | 2026-10-23-007 | 2026-10-23 | The updater merges `.gitignore` by union, keeping both sides' lines where both changed the same place, since project and template both append at its end; every other three-way path still conflicts | APPROVED |
@@ -3104,7 +3106,9 @@ of the template's commits, so a template row's hash cannot be verified there.
   the full history for the version gate).
 - **The template's rows are verified in the template.** In a project, a row citing only framework
   decisions was written by the template; the gate does not verify its hash and `--stamp` leaves it.
-  A row citing a project decision is verified in the project.
+  A row citing a project decision is verified in the project. *Amended 2026-10-23 by decision
+  2026-10-23-015:* nor is such a row held to its marker there, nor a framework decision to its
+  `**Affects:**` line or its record.
 - **One scope, one authority.** Two documents claiming one scope, compared without case or spacing,
   fail: the escalation rule of `sprint/recovery/AUTHORITY_MATRIX.md` made mechanical. The matrix, a
   second registry kept by hand and already stale on personas, is retired in TMPL-2.3.
@@ -3267,3 +3271,133 @@ grouped by area, and the template configures no MCP server.
 To be built in TMPL-5.6: the four personas lint clean; the preset gate's fixtures, each proved
 against a broken variant, with a runbook section if it is a hook of its own; the connection
 documented with its pinned version, and refused nowhere it was not chosen.
+
+---
+
+## Decision 2026-10-23-014: The PRD and architecture templates as built
+
+**Date:** 2026-10-23
+**Made By:** Chair (S8): where the templates live, each an authority for its own scope, the PRD's
+and the architecture's sections; the draft that becomes the authority at approval and the quoted
+versions by the AI within decision 2026-10-23-008
+**Status:** APPROVED
+**Builds:** TMPL-5.1, the open items of decision 2026-10-23-008
+**Affects:** `docs/templates/prd.md` (new), `docs/templates/architecture.md` (new),
+`docs/templates/README.md` (new: making and approving a document), `docs/governance/doc_control_standard.md`
+(Authorities), `README.md` (the structure table), `sprint/story-tracker.md` (TMPL-5.1)
+
+### Context
+
+Decision 2026-10-23-008 left three things to the build: the templates' sections, their frontmatter
+in the `authority:` format, and where they live. `docs/prd/` and `docs/architecture/` are the
+project's, never written by the updater, so a template kept there would reach no project after its
+birth. And the gate refuses two documents claiming one scope (decision 2026-10-23-010): a template
+carrying a PRD's `authority:` line would collide with every PRD made from it.
+
+### Decision
+
+- **Where (Chair).** `docs/templates/prd.md` and `docs/templates/architecture.md`, a path the
+  template owns, so the updater's three-way merge carries a newer template to every project.
+  `docs/templates/README.md` holds how a document is made from one and approved, its one home until
+  `/project-launch` (TMPL-5.2) runs those steps.
+- **A template is the authority for its own scope (Chair)**: the sections every PRD, or every
+  architecture, carries, with `implements:` and a version log as a standard has. The document made
+  from it claims the project's scope, `product requirements — <project>` or
+  `architecture — <project>`. A copy that keeps the template's line fails the one-scope rule, so the
+  gate catches the forgotten step without a change to it.
+- **A made document is a draft until it is approved.** It starts with `status: draft`, `template:`
+  (the template's version) and, for the architecture, `prd:` (the PRD version it is built from), and
+  an empty version log; it claims no authority, since it has no decision to cite. At approval it
+  gains `authority:`, `implements: []`, `verified:` and `status: approved`, and its first row cites
+  the decision that approved it, as a `fact:`, since no story exists before planning. That is
+  decision 2026-10-23-008's approval on record as the gate reads it. Versions are quoted, since YAML
+  reads `1.10` as the number 1.1.
+- **The PRD's sections (Chair):** purpose; users and stakeholders; goals and success criteria
+  (`G-n`); deliverables; scope and non-goals; functional requirements (`FR-n`), which the tracker's
+  PRD Ref cites; non-functional requirements (`NFR-n`) with thresholds; constraints; assumptions and
+  dependencies; risks; open questions.
+- **The architecture's sections (Chair):** context; quality attributes, each NFR with how it is met
+  and verified; system context; components, each with the FRs it serves; data; interfaces;
+  technology choices, each with its decision; deployment and environments; security; observability
+  and operations; dependency layers, which the planning session turns into epics; risks and
+  trade-offs; open questions.
+- Part of `v2.0.0` (decision 2026-10-23-008).
+
+### Consequences
+
+- TMPL-5.2's PRD and architecture stages make their documents by the README's steps; TMPL-5.3's
+  approval gate can read `status:` and the authority, and the architecture's `prd:` against the
+  PRD's newest version.
+- In a project the templates' rows cite framework decisions only, so their hashes are verified in
+  the template (decision 2026-10-23-010).
+
+### Verification
+
+On the template the gate registers both templates beside the six authorities, exit 0. On a scratch
+birth from this tree, a PRD and an architecture made by the README's steps: the drafts committed
+and unregistered, exit 0; a copy keeping the template's line refused as `scope`; approved by two
+logged decisions, exit 0 with the rows `pending`; `--stamp` wrote each document's approval commit
+and the gate verified both; a stamped hash swapped refused as `commit`. The first run stamped the
+template's commit instead and the birth itself was refused: the two defects of decision
+2026-10-23-015, fixed before this proof was taken again.
+
+### Enforcement
+
+`doc-authority-scan`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-23-015: In a project, what the template wrote is judged in the template
+
+**Date:** 2026-10-23
+**Made By:** Chair (S8), on the AI's report of the defect and its proposed fix; the copy fix by the
+AI, bringing the code to decision 2026-10-23-010's "following renames"
+**Status:** APPROVED
+**Amends:** 2026-10-23-010 (the template's rows verified in the template)
+**Builds:** TMPL-2.6
+**Affects:** `scripts/doc_authority_scan.py` (`judge`, `renames_only`, the docstring, nine fixtures),
+`docs/governance/gate_suite_runbook.md` (`doc-authority-selftest` and `doc-authority-scan`),
+`docs/orchestration/knowledge/reference_doc_authority.md`, `sprint/story-tracker.md` (TMPL-2.6;
+TMPL-2.4 waits on it)
+
+### Context
+
+TMPL-5.1's proof made a scratch project from the working tree, and the initializer's closing suite
+run refused the birth. A birth from the committed `HEAD` alone did the same: `doc-authority-scan`
+failed seven times. Each of the six authorities' rows cites TMPL-2.3, and a project's tracker,
+regenerated at birth, holds no TMPL story, so every row was `unmarked`; decision 2026-10-23-009 is
+queued for the gate runbook by TMPL-5.5, likewise absent, so it was `unrecorded`. Decision
+2026-10-23-010 had already ruled that a template row's hash is verified in the template, because the
+project's history holds no template commit; the same holds of its story and of a framework
+decision's queue, and the build applied the rule to the hash alone. S7's scratch adoptions ran
+before TMPL-2.3 marked the first authorities, and no birth ran after, so nothing saw it. The
+template's own CI judges the template, where every rule held.
+
+### Decision
+
+- **In a project, a row citing only framework decisions is the template's** and is held to neither
+  `unmarked` nor `commit`; the template judged both before the release.
+- **In a project, a framework decision is held to neither `no-affects` nor `unrecorded`**: its
+  record and its queue are the template's.
+- **The project's own are judged in full**: a row citing a project decision, alone or beside a
+  framework one, and every project decision from the cutoff.
+- **A row's commit is found following renames, never a copy.** The same proof stamped a PRD's
+  approval row with the commit that introduced its template: `git log --follow` sets
+  find-copies-harder, so a document made by copying another inherits that one's history. Where the
+  path changes, the older path surviving in the commit that brought the newer one is a copy, and the
+  history stops there; decision 2026-10-23-010 said "following renames", and the code now does only
+  that.
+- Two `v2.0.0` defects found before the release, so both fixes ship in `v2.0.0`; TMPL-2.4 waits on
+  them.
+
+### Verification
+
+Seven fixtures, one per side of each project rule, the template's own case beside them, and two for
+the history, a rename followed and a copy cut; nine broken variants each failed at least one without
+a crash. A scratch birth from the working tree started green, the initializer's suite run passing; a
+PRD made from its template then stamped with its own approval commit, and a `git mv` of it still
+derived that commit.
+
+### Enforcement
+
+`doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].

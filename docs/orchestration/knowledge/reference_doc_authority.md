@@ -1,7 +1,7 @@
 ---
 name: Authoritative documents record every decision that changes them
-description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why a template row is verified only in the template, why one scope has one authority, how the first six authorities were marked, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011]
+description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
+teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -58,13 +58,28 @@ loses nothing: the value is always derivable, and a stored one is allowed only b
 verifies it. A shallow clone cannot derive it, so the gate exits 2 there instead of judging a
 truncated history.
 
-## Why the template's rows are verified only in the template
+"Following renames" means renames only. `git log --follow` also follows copies, because git sets
+find-copies-harder for it, so a PRD made from its template inherited the template's history and its
+approval row was stamped with the template's commit. Where the path changes, the gate now asks
+whether the older path survived the commit that brought the newer one; if it did, that was a copy,
+and the history stops there (decision 2026-10-23-015).
+
+## Why what the template wrote is judged only in the template
 
 `gh repo create --template` squashes history, and the updater copies files, not commits. A
 standard's row written in the template carries a template commit that a derived project's history
-does not contain. In a project, a row citing only framework decisions is therefore the template's,
-already verified before release; the gate skips its hash and `--stamp` never writes it. A row citing
-a project decision is the project's and is verified there.
+does not contain, and cites a template story that a project's tracker, regenerated at birth, does
+not hold; a framework decision is queued, when it is, by a template story too. In a project, a row
+citing only framework decisions is therefore the template's, already judged before release: the
+gate holds it to neither its marker nor its hash, and `--stamp` never writes it. A framework
+decision is held to neither its `**Affects:**` line nor its record. A row citing a project decision,
+and every project decision, is the project's and is judged there in full.
+
+The first build applied this to the hash alone, and every birth after the first authorities were
+marked was refused: seven violations, each a template story the project could not hold (decision
+2026-10-23-015). Nothing saw it, because the template's CI judges the template and the last scratch
+adoption ran before the marking. A gate that judges a project differently from the template is
+proved on a scratch birth whenever the template content it judges changes, not on the template alone.
 
 ## Why one scope has one authority
 
@@ -85,6 +100,15 @@ and the handoff standard's had eight rows all at 2.0, the hand-kept value the ga
 File names keep their version, because every tracker cites the standards by file name and the updater
 never writes a project's tracker. The runbook gate skips the closing `## Version log`, its one H2 that
 is not a hook.
+
+## Why a template is an authority of its own
+
+A PRD template carrying a PRD's `authority:` line would claim the scope of every PRD made from it,
+and the gate refuses two documents claiming one. So each template in `docs/templates/` is the
+authority for its document's shape, with a log of its own like a standard's, and the document made
+from it claims the project's scope (decision 2026-10-23-014). A copy that keeps the template's line
+fails `scope`, so the one-scope rule catches the forgotten step. A made document is a draft until it
+is approved, and claims no authority before then, since it has no decision to cite.
 
 ## Honest limit
 
