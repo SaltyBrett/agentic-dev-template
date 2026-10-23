@@ -16,8 +16,8 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 24 |
-| **Not Started** | 11 |
+| **Total Stories** | 25 |
+| **Not Started** | 12 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
 | **Completed** | 13 |
@@ -74,7 +74,7 @@ that decision 2026-09-23-003 names.
 | TMPL-2.1 | `scripts/doc_authority_scan.py`: `authority:` frontmatter and version logs, `Affects:` on decisions, the row-or-story rule, the fact marker, `--stamp` verified against git, `--history`; fixtures proved against broken variants; runbook section. Done at S7: a row is a `fact:` or a story's change, `**Affects:**` from decisions dated 2026-10-22, the template's rows verified in the template, one scope one authority (2026-10-23-010) | Done | — | doc_control_standard.md | 2026-10-22-002 |
 | TMPL-2.2 | The `technical-writer` agent published to `dev-resources` (a library persona, written in TMPL-1.9); the `doc-queue` gate run at cold start by the `SessionStart` hook; the per-document forked drain skill | Not Started | TMPL-2.1, TMPL-1.3, TMPL-1.9 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.3 | The document-control standard rewritten around the gate; the standards and the gate runbook marked as authorities with version logs; the "stays private" fossil fixed; `sprint/recovery/AUTHORITY_MATRIX.md` retired into the frontmatter registry (2026-10-23-010). Done at S7: six authorities, their logs citing every decision that names them, one queued in TMPL-5.5 (2026-10-23-011) | Done | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
-| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4, TMPL-5.6 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict. Done at S7: the dry run names it `union`; the three scratch adoptions of a scratch `v2.0.0` had no conflict and passed the suite | Done | — | doc_control_standard.md | 2026-10-23-007 |
 
 ---
@@ -106,6 +106,7 @@ that decision 2026-09-23-003 names.
 | TMPL-5.3 | The approval gate: in a project, a real epic needs an approved PRD and an approved architecture, or a logged skip of either; fixtures proved against broken variants; a runbook section if it is a hook of its own | Not Started | TMPL-5.1 | doc_control_standard.md | 2026-10-23-008 |
 | TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen | Not Started | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
 | TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | Not Started | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
+| TMPL-5.6 | Four library personas in the agent-file shape and linted (a backend engineer, a web developer, a Blender 3D artist, an image and video editor); team presets in team-selection (Application development, Website, Imaging, video and 3D), membership confirmed with the Chair, a gate refusing a preset that names no library persona, proved against broken variants; an opt-in Blender MCP connection offered with the Blender persona, the server vetted and pinned, off by default | Not Started | TMPL-1.9 | session_handoff_standard_v2.0.md, secrets_management_standard_v1.0.md | 2026-10-23-012 |
 
 ---
 

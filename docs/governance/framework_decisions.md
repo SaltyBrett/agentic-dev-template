@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-012 | 2026-10-23 | The library gains a backend engineer, a web developer, a Blender 3D artist and an image and video editor; team-selection offers named team presets, a gate refusing a preset that names no library persona; an opt-in Blender MCP connection offered with the Blender persona, off by default; built as TMPL-5.6 before the release | APPROVED |
 | 2026-10-23-011 | 2026-10-23 | The standards, the document-control standard and the gate runbook are the first authorities: each log starts at marking at the version the document states, citing every decision that names it or queueing it; the hand-kept changelog tables and `**Version:**` lines go; file names keep their version; the runbook gate skips the closing version log; the authority matrix retires in the template, a project's copy left to the project | APPROVED |
 | 2026-10-23-010 | 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
 | 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
@@ -3205,3 +3206,64 @@ decision 2026-10-23-009 naming the runbook with no row and no story. Both closed
 ### Enforcement
 
 `doc-authority-scan` and `gate-runbook`; [[reference_doc_authority]], [[reference_gate_runbook]].
+
+---
+
+## Decision 2026-10-23-012: Four more personas, team presets and an opt-in Blender connection
+
+**Date:** 2026-10-23
+**Made By:** Chair (S7): the gaps, the four personas, presets over one-by-one choice, an opt-in
+connection to Blender, and the build in S8; the shapes recommended by the AI and approved
+**Status:** APPROVED
+**Builds:** opens TMPL-5.6; extends decision 2026-10-23-004
+**Affects:** `personas/` (four new agent files), `.claude/skills/team-selection/SKILL.md` (the
+presets, and the connection offered with the Blender persona), the gate that holds the presets (its
+script settled in the build), a project's MCP configuration (its file settled in the build),
+`sprint/story-tracker.md` (TMPL-5.6; TMPL-2.4 waits on it)
+
+### Context
+
+Before the release the Chair named gaps in the library's team (decision 2026-10-23-004): an
+application development team with backend as well as frontend and UI/UX developers, website
+development, and imaging, video and 3D with a Blender expert and a way to connect to Blender. The
+library holds `software-engineer`, stack-agnostic, `frontend-engineer` and `ux-designer`, but no
+backend engineer; web applications, but no websites; `game-artist` and `generative-video-engineer`,
+but no Blender, imaging or post-production role. Team selection offers personas one at a time,
+grouped by area, and the template configures no MCP server.
+
+### Decision
+
+- **Four library personas**, in the agent-file shape with the shared habits and linted as the
+  library is: a **backend engineer** (APIs, services, databases, auth, background jobs, the data
+  contract with the frontend); a **web developer** (websites: a static-site generator or a CMS,
+  responsive layout, SEO, accessibility, performance budgets, hosting, forms and analytics); a
+  **Blender 3D artist** (modeling, materials, UVs, rigging, animation, lighting and rendering,
+  geometry nodes, Blender Python for repeatable scene work); an **image and video editor**
+  (retouching and compositing, color, editing, motion graphics, encoding and delivery). Slugs are
+  settled in the build.
+- **Team presets.** Team selection offers named teams as one choice, each a list of library
+  personas the Chair may then add to or drop from: proposed are Application development (product
+  manager, solution architect, UX designer, frontend and backend engineers, QA, DevOps, security),
+  Website (UX designer, web developer, a writer or editor, QA) and Imaging, video and 3D (Blender 3D
+  artist, image and video editor, generative video engineer). Membership is confirmed with the Chair
+  in the build. A gate refuses a preset naming a persona the library lacks, proved against broken
+  variants, so a rename cannot leave a preset pointing at nothing.
+- **An opt-in Blender connection.** The template documents an MCP connection to a running Blender, a
+  community server and its Blender add-on, offered by team selection only when the Blender persona
+  is activated and written to the project's configuration only on the Chair's yes. Off by default
+  and never enabled in the template itself, because such a server runs Python inside Blender: the
+  build vets the server, pins its version, and names what the operator installs and approves.
+- Part of `v2.0.0`; TMPL-2.4 waits on TMPL-5.6.
+
+### Consequences
+
+- The project launch's team stage (decision 2026-10-23-008) can offer a preset beside the three
+  personas it always activates.
+- A persona the library lacks is still drafted as the project's own; the presets only shorten the
+  common choices.
+
+### Verification and enforcement
+
+To be built in TMPL-5.6: the four personas lint clean; the preset gate's fixtures, each proved
+against a broken variant, with a runbook section if it is a hook of its own; the connection
+documented with its pinned version, and refused nowhere it was not chosen.

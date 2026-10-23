@@ -58,6 +58,10 @@ TMPL-2.5 and, by the Chair's choice over TMPL-5.1, TMPL-2.3 done.
    seventeen pairs recorded by a row, one queued, exit 0. Then the first real stamp: `--stamp`
    wrote 515f1a5, the commit that introduced the six rows, into each, and the gate verified all six
    against git.
+4. After the three stories, the Chair named gaps in the library's team before the release: decision
+   2026-10-23-012 adds a backend engineer, a web developer, a Blender 3D artist and an image and
+   video editor, named team presets in team selection held by a gate, and an opt-in Blender MCP
+   connection, off by default. Story TMPL-5.6 opened for S8; TMPL-2.4 waits on it.
 
 ### Blockers
 
