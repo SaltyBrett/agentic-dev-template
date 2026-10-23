@@ -16,8 +16,8 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 18 |
-| **Not Started** | 8 |
+| **Total Stories** | 24 |
+| **Not Started** | 14 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
 | **Completed** | 10 |
@@ -74,7 +74,8 @@ that decision 2026-09-23-003 names.
 | TMPL-2.1 | `scripts/doc_authority_scan.py`: `authority:` frontmatter and version logs, `Affects:` on decisions, the row-or-story rule, the fact marker, `--stamp` verified against git, `--history`; fixtures proved against broken variants; runbook section | Not Started | — | doc_control_standard.md | 2026-10-22-002 |
 | TMPL-2.2 | The `technical-writer` agent published to `dev-resources` (a library persona, written in TMPL-1.9); the `doc-queue` gate run at cold start by the `SessionStart` hook; the per-document forked drain skill | Not Started | TMPL-2.1, TMPL-1.3, TMPL-1.9 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.3 | The document-control standard rewritten around the gate; the standards and the gate runbook marked as authorities with version logs; the "stays private" fossil fixed | Not Started | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
-| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict | Not Started | — | doc_control_standard.md | 2026-10-23-007 |
 
 ---
 
@@ -93,6 +94,18 @@ that decision 2026-09-23-003 names.
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-4.1 | Design session with a specialized reviewer agent: the core limits as numbers, the per-stack tool-mapping rule, the one judgement page; proved against a known-good and a known-bad codebase before adoption; logged | Not Started | TMPL-2.4 | doc_control_standard.md | 2026-10-22-003 |
 | TMPL-4.2 | Build: the core gates as a stack profile in the suite, the `.claude/rules/` page, the reviewer and auditor briefs; proof on one project | Not Started | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
+
+---
+
+## Epic: TMPL-5 — The project launch (v2.0.0, decision 2026-10-23-008)
+
+| Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
+|----------|-------|--------|--------------|-------------------|---------|
+| TMPL-5.1 | The PRD and architecture templates: their sections, frontmatter in TMPL-2.1's `authority:` format, a version log, and the version of the document each was built from | Not Started | TMPL-2.1 | doc_control_standard.md | 2026-10-23-008 |
+| TMPL-5.2 | `/project-launch`: intake by three questions or a PRD summary with its gaps; team through team-selection; the PRD interview in the product manager's role, saved as it grows; architecture; planning; each stage's opening with pause, skip (logged), return and status; a revision as a new version that flags the stages built on it; the S1 entry's one next step; listed in `AGENTS.md` and held by `skill-scan` | Not Started | TMPL-5.1, TMPL-1.8 | sprint_management_standard_v1.0.md | 2026-10-23-008 |
+| TMPL-5.3 | The approval gate: in a project, a real epic needs an approved PRD and an approved architecture, or a logged skip of either; fixtures proved against broken variants; a runbook section if it is a hook of its own | Not Started | TMPL-5.1 | doc_control_standard.md | 2026-10-23-008 |
+| TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen | Not Started | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
+| TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name | Not Started | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
 
 ---
 

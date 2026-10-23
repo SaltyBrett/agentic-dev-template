@@ -24,6 +24,9 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
+| 2026-10-23-008 | 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
+| 2026-10-23-007 | 2026-10-23 | The updater merges `.gitignore` by union, keeping both sides' lines where both changed the same place, since project and template both append at its end; every other three-way path still conflicts | APPROVED |
 | 2026-10-23-006 | 2026-10-23 | What the substrate's live proof found: the closeout's scaffold leaves handoff sections 3 to 5 as tokens to fill, since a pre-filled `- None.` passed unwritten beside a logged decision, and S1's range starts at the repository's first commit | APPROVED |
 | 2026-10-23-005 | 2026-10-23 | Adoption from `v1.0.0`, judged by what the project holds: every `docs/personas/` file converted into the roster exactly or refused as a conflict, by a converter that reads nothing from the project's old scripts; the sync's stamp removed; a `source: dev-resources` entry merged like any other and, where no release writes it, stripped of the declaration | APPROVED |
 | 2026-10-23-004 | 2026-10-23 | The library's team: roles across the software lifecycle, data science with BI and reporting, document management, writing and quality control, and game development, each a persona in the agent-file shape with the shared habits; a code reviewer left to TMPL-4 | APPROVED |
@@ -2885,3 +2888,162 @@ is no decision ID either. The probe's observations are in [[reference_claude_cod
 `scripts/session_closeout.py` (`handoff_skeleton`, `lint_handoff`) in `session-closeout-selftest`,
 `session-closeout-check` and `session-closeout`; the closeout skill's step 2, held by `skill-scan`.
 Taught by [[reference_claude_code_substrate]] and [[reference_session_closeout]].
+
+---
+
+## Decision 2026-10-23-007: The updater merges `.gitignore` by union
+
+**Date:** 2026-10-23
+**Made By:** Chair (S6), approving the AI's recommendation
+**Status:** APPROVED
+**Builds:** the `.gitignore` consequence of 2026-10-23-005 (TMPL-2.5)
+**Affects:** `scripts/template_update.py` (`three_way`, the union path, the self-test),
+`TEMPLATE_GUIDE.md` Step 9, `docs/orchestration/knowledge/reference_template_update.md`
+
+### Context
+
+The scratch adoptions of all three projects conflicted on `.gitignore` and nowhere else among the
+files both sides edit: each project appended its own ignores at the end of the file, and `v2.0.0`
+appends the journal, the notes and `.claude/settings.local.json` at the same place. Resolved by
+hand, the answer was the same each time: keep both blocks.
+
+### Decision
+
+- **`.gitignore` is merged with `git merge-file --union`**: where both sides changed the same place,
+  both sides' lines are kept, the project's first. It is the reason the knowledge index and the
+  framework decisions already have keyed merges: both sides add at the same place, so a line merge
+  conflicts every time. Every other three-way path still conflicts.
+- The dry run names the path as a union merge, so the operator reads it in `git diff` before the
+  commit. The one order that matters in an ignore file is a `!` line after the pattern it reverses;
+  the template's lines are exact paths no project un-ignores.
+- **Rejected:** the template's ignores in nested `.gitignore` files. The journal and the notes live
+  under `sprint/`, which the updater never writes, so a `v1.0.0` project would never receive the
+  file; and it settles only this instance.
+- Part of `v2.0.0`, and in place before the release, since adoption runs the target's updater.
+
+### Verification and enforcement
+
+To be built in TMPL-2.5: fixtures for appends at the end kept on both sides, a same-line change on
+both sides kept twice, and another path still conflicting, each proved against a broken variant; a
+scratch adoption of the three projects with no `.gitignore` conflict.
+
+---
+
+## Decision 2026-10-23-008: A project launches through `/project-launch`
+
+**Date:** 2026-10-23
+**Made By:** Chair (S6): the skill, its stages and the chair's control of each stage; the
+refinements by the AI, approved by the Chair; the mechanics left to the build
+**Status:** APPROVED
+**Builds:** opens epic TMPL-5
+**Affects:** `.claude/skills/project-launch/` (new), templates for `docs/prd/` and
+`docs/architecture/`, `.claude/skills/team-selection/SKILL.md`, `.claude/skills/planning-session/SKILL.md`,
+`scripts/new_project.py` (the S1 entry's next steps), `scripts/session_closeout.py` (the approval
+gate), `AGENTS.md` (the skills table), `TEMPLATE_GUIDE.md`
+
+### Context
+
+The planning-session skill will not start without an approved PRD in `docs/prd/` and an approved
+architecture in `docs/architecture/`. Both folders ship empty, no template or step produces either,
+and a project's S1 entry lists team selection and then planning. Each project so far improvised its
+first sessions. The Chair proposed a launch skill: three questions to the Chair when there is no PRD,
+or a summary of the PRD when there is; then a product manager who interviews the Chair until it can
+write the PRD for approval; then the project's next stages.
+
+### Decision
+
+- **One command, `/project-launch`**, which the Chair runs at a project's first session and again
+  whenever a stage needs it. Not "kickoff": that word already names each session's prompt.
+- **Five stages, in order.**
+  - **Intake.** With no PRD in `docs/prd/`, the Chair answers three questions: the purpose of the
+    project; the skills and expertise it needs; what it should accomplish. With one, the skill
+    summarizes it against the same three questions, lists what the PRD template asks for and the PRD
+    lacks, and the Chair confirms or redirects.
+  - **Team.** The team-selection skill, with the second answer as its input, so the Chair is asked
+    once: it activates `product-manager`, `solution-architect` and `delivery-manager` beside the
+    specialists the work needs, and the Chair names the lead.
+  - **PRD.** The main session takes the product manager's prompt and interviews the Chair, opening
+    with: "Describe in as much detail as you can what your goals are for this project and what you
+    want produced at project completion." The main session, because a subagent can neither ask the
+    Chair a question nor see the conversation. The interview runs until each section of the PRD
+    template is filled or names an open question, the draft saved in `docs/prd/` as it grows; then
+    the Chair reviews and approves. With a PRD already there, the interview covers its gaps only.
+  - **Architecture.** The same pattern led by `solution-architect`, from the approved PRD, into
+    `docs/architecture/`.
+  - **Planning.** The planning-session skill, led by `delivery-manager`.
+- **The Chair steers every stage.** Each stage opens with what it will produce and the commands:
+  `/project-launch pause` saves the draft and stops, to resume where it stopped;
+  `/project-launch skip <stage>` passes over it, the Chair's reason logged as a decision;
+  `/project-launch <stage>` returns to a stage at any later time, to resume, review or revise it;
+  `/project-launch status` shows where each stage stands. A bare `/project-launch` resumes at the
+  first unfinished stage. Another agent runs the same words as instructions.
+- **Revising an approved document reopens it as a new version**, approved again, and flags each
+  later stage built on the old one: the architecture records the PRD version it was built from, and
+  the plan the architecture's. A revision never silently strands the work downstream (decision
+  2026-10-22-002's version logs).
+- **The state lives in the documents.** Each one's status and version, and a skip's decision, are
+  what `status` reads; there is no separate launch file to drift from them.
+- **Approval is on record**: the document's status becomes approved with a version-log row, and a
+  decision is logged. A gate makes it binding: in a project, a real epic needs an approved PRD and an
+  approved architecture, or a logged skip of either.
+- **A stage's end is a session boundary the Chair may take**: closing out there names the next
+  stage's persona, so each stage starts with fresh context.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-001); TMPL-2.4's release waits for it.
+
+### Open, to settle in the build
+
+- The PRD template's sections. Proposed: purpose; users and stakeholders; goals with measurable
+  success criteria; what is produced at completion; scope and non-goals; numbered requirements
+  (`FR-1` …), which the tracker's PRD Ref cites; constraints (profile, platform, data sensitivity,
+  timeline); assumptions; risks; open questions. The architecture template's likewise.
+- The documents' frontmatter, in the `authority:` format TMPL-2.1 builds.
+- Whether the skill is the Chair's alone (`disable-model-invocation`), since every stage needs the
+  Chair present.
+
+### Consequences
+
+- Epic TMPL-5 is opened; TMPL-2.4 depends on it.
+- A new project's S1 entry names `/project-launch` as its one next step. A project on an earlier
+  release receives the skill at adoption; one that has a PRD takes the intake's summary path.
+
+---
+
+## Decision 2026-10-23-009: The README is the operator's front page, and a gate keeps its catalog whole
+
+**Date:** 2026-10-23
+**Made By:** Chair (S6): a root README that walks the user step by step through launching and using
+the repository, then catalogs its features, skills and commands; the shape and the gate by the AI
+**Status:** APPROVED
+**Builds:** TMPL-5.5
+**Affects:** `README.md`, `TEMPLATE_GUIDE.md`, `scripts/skill_scan.py`, `docs/governance/gate_suite_runbook.md`
+
+### Context
+
+`README.md` says how to create a project in two commands and what each path holds. It does not say
+what to do next: open Claude Code, accept the trust dialog, launch the project, paste each kickoff,
+close out, take a release. Nor does it list the commands a user types. The skills are listed in
+`AGENTS.md` for agents, and the hooks in the gate runbook. `TEMPLATE_GUIDE.md` still opens with
+by-hand token replacement that the initializer has done since before `v1.0.0`.
+
+### Decision
+
+- **The README opens with a walkthrough**, in the order a user meets it: create the repository and
+  initialize it; install the hooks; open Claude Code in the clone and accept the trust dialog; run
+  `/project-launch`; then the session loop (paste the kickoff, work, `/closeout`, paste the next
+  kickoff); and taking a newer release. Each step says what to type and what the user should see.
+- **Then a catalog**: every slash command (each skill) with what it does and when to use it; the
+  operator's scripts (`new_project.py`, `template_update.py`) with their commands; the session hooks
+  and what each does for the user; the gates by link to the gate runbook, their one home, never
+  copied.
+- **One home per fact.** The walkthrough links to `TEMPLATE_GUIDE.md` for detail rather than repeat
+  it, and the guide's steps the initializer already performs are removed, so the two cannot disagree.
+- **A gate keeps the catalog whole**: `skill-scan` refuses a skill the README's catalog does not
+  name, as it already refuses one missing from `AGENTS.md`.
+- **The live proof of the launch follows the README as written** (TMPL-5.4), so the walkthrough is
+  tested by use, not by reading.
+- Ships in `v2.0.0`, after `/project-launch` exists, since the walkthrough centres on it.
+
+### Verification and enforcement
+
+To be built in TMPL-5.5: `skill-scan` fixtures for a skill missing from the README, proved against a
+broken variant; the walkthrough exercised in TMPL-5.4.

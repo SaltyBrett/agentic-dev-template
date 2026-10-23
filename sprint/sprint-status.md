@@ -43,12 +43,18 @@ TMPL-1.7 done; epic TMPL-1 complete.
    (decision 2026-10-23-006): handoff sections 3 to 5 are now tokens to fill, three reverted
    variants each caught; S1's range starts at the first commit. Knowledge entry
    [[reference_claude_code_substrate]].
+3. After the first closeout, with the operator: the `.gitignore` conflict settled as a union merge
+   (decision 2026-10-23-007, story TMPL-2.5), and the project launch designed from the operator's
+   proposal (decision 2026-10-23-008): `/project-launch` with intake, team, PRD, architecture and
+   planning stages, each steered by the Chair with pause, skip, return and status; epic TMPL-5
+   opened; and, at the operator's request, the root README as a walkthrough then a catalog of
+   commands, held to the skills by `skill-scan` (decision 2026-10-23-009, TMPL-5.5). The release,
+   TMPL-2.4, waits on all of it. The S7 pair was withdrawn and written again to carry them.
 
 ### Blockers
 
-- None. Open for the operator: whether the updater should union-merge `.gitignore`, which conflicts
-  in all three projects' adoptions (TMPL-2.4). Still unobserved: `disableWorkflows` in a live
-  session. The probe folder `tmpl-s6-probe` beside the template can be deleted.
+- None. Still unobserved: `disableWorkflows` in a live session. The probe folder `tmpl-s6-probe`
+  beside the template can be deleted.
 
 ---
 
