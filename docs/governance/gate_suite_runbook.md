@@ -201,9 +201,44 @@ judges the last commit's tracker and sprint-status.
 **Blocks:** starting a session whose predecessor did not close out: the pair for this session is
 missing or fails a rule, a stale pair sits outside `archive/`, or the tree is dirty. A fresh project
 at S1 with no incoming pair passes.
-**Why:** decision 2026-09-21-001; [[reference_session_closeout]].
-**Alone:** `pre-commit run session-verify --hook-stage manual` (it requires a clean tree, so there
-is nothing for pre-commit to stash)
+**Why:** decisions 2026-09-21-001 and 2026-09-22-003 (amended); [[reference_session_closeout]],
+[[reference_precommit_stash]].
+**Alone:** `pre-commit run session-verify --hook-stage manual --all-files`. The flag is
+load-bearing here too: without it pre-commit stashes an unstaged edit to a tracked file, the tree
+the gate reads is clean, and a dirty tree passes.
+
+## `session-journal-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** no gate. `scripts/session_journal.py` is a Claude Code `PostToolUse` and
+`PostToolUseFailure` hook (`.claude/settings.json`), context rather than enforcement.
+**Blocks:** a commit when the journal writer loses or tears a line under concurrent appends, writes
+its header twice, misreads a Bash exit code, or records a tool it should not; when the notes'
+three-section shape stops being checked; or when `.gitignore` no longer covers the journal and the
+notes, which keeps them out of pre-commit's stash and out of the scanners.
+**Why:** decisions 2026-10-22-001 and 2026-10-22-004; [[reference_claude_code_hooks]].
+**Alone:** `pre-commit run session-journal-selftest --all-files --verbose`
+
+## `session-start-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** no gate. `scripts/session_start.py` is the Claude Code `SessionStart` hook.
+**Blocks:** a commit when the start report can exceed Claude Code's 10,000-character context cap,
+cuts a high-priority section before a low one, runs a gate or a pull after compaction, runs the
+verify without `--all-files`, counts the user-level `~/.claude/CLAUDE.md` as a shadow, or takes
+the session number from another session's journal line.
+**Why:** decision 2026-10-22-001; [[reference_claude_code_hooks]].
+**Alone:** `pre-commit run session-start-selftest --all-files --verbose`
+
+## `session-stop-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** no gate. `scripts/session_stop.py` is the Claude Code `Stop` hook.
+**Blocks:** a commit when the stop check lets a turn end with a tracked sprint file uncommitted or
+the working notes older than the newest uncommitted file, blocks a turn twice, blocks in plan mode,
+or counts the notes themselves as the newest change.
+**Why:** decision 2026-10-22-001; [[reference_claude_code_hooks]].
+**Alone:** `pre-commit run session-stop-selftest --all-files --verbose`
 
 ## `new-project-selftest`
 

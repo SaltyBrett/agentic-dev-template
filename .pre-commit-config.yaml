@@ -124,7 +124,34 @@ repos:
         name: Session Verify (the previous session closed out; the tree is clean)
         entry: python scripts/session_closeout.py --verify
         language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
-        stages: [manual]          # run: pre-commit run session-verify --hook-stage manual
+        stages: [manual]          # run: pre-commit run session-verify --hook-stage manual --all-files
+                                  # (without the flag the stash hides an unstaged edit: a dirty tree passes)
+        pass_filenames: false
+        always_run: true
+      # The Claude Code session hooks (.claude/settings.json) are context and ergonomics, not
+      # enforcement, but each script is proved here before it is trusted: the journal keeps
+      # concurrent lines whole and its files ignored, the start report fits the context cap and
+      # never judges a mid-session tree, the stop check refuses an unbanked turn once and never
+      # wedges one (decision 2026-10-22-001).
+      - id: session-journal-selftest
+        name: Session Journal Self-Test (concurrent lines stay whole; journal and notes are ignored)
+        entry: python scripts/session_journal.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-start-selftest
+        name: Session Start Self-Test (fits the context cap; compaction runs no gate)
+        entry: python scripts/session_start.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-stop-selftest
+        name: Session Stop Self-Test (an unbanked turn is refused once, never wedged)
+        entry: python scripts/session_stop.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
         pass_filenames: false
         always_run: true
       # The project initializer rewrites files, so its guards are proved before it is trusted:

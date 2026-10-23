@@ -56,3 +56,8 @@ logs/
 # Logs
 *.log
 nul
+
+# Session journal and working notes: local banking against compaction, never committed. The
+# journal records raw commands (decision 2026-10-22-004); scripts/session_journal.py owns both.
+sprint/recovery/journal.md
+sprint/recovery/WORKING_NOTES.md

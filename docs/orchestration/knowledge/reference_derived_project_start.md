@@ -44,7 +44,7 @@ metadata:
    refused with `COMMIT ATTRIBUTION GATE: BLOCKED`, and `git log` still shows "Initial commit".
 5. **The first real commit and push.** The pre-commit stage runs every gate; the push's `gates`
    run is green. Observe it with `gh run list`, not by assumption.
-6. **`pre-commit run session-verify --hook-stage manual` passes at S1** with no incoming pair; the
+6. **`pre-commit run session-verify --hook-stage manual --all-files` passes at S1** with no incoming pair; the
    initializer's sprint-status entry is what the gate numbers the session from.
 7. **S1's closeout is the first real test of the tracker.** Every kickoff task must cite a story
    present in the tracker, and the tracker starts empty, so S1 opens the project's first epic

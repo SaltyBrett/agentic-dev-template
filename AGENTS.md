@@ -47,8 +47,10 @@ Durable rationale and enforcement: [[reference_agent_execution_identity]].
    `pre-commit run agent-execution-identity --all-files --verbose`. Invoke gates through `pre-commit`,
    never through a bare `python` — there is no such name on macOS ([[reference_precommit_interpreter]]).
 2. `git pull` (once the repo is under git).
-3. `pre-commit run session-verify --hook-stage manual` — proves the previous session closed out and
-   the tree is clean. If it fails, completing that closeout is this session's first task.
+3. `pre-commit run session-verify --hook-stage manual --all-files` — proves the previous session
+   closed out and the tree is clean; without `--all-files` pre-commit stashes unstaged edits and a
+   dirty tree passes ([[reference_precommit_stash]]). If it fails, completing that closeout is this
+   session's first task.
 4. Read this file.
 5. Read `docs/orchestration/knowledge/INDEX.md` — the index, then only task-relevant entries.
 6. Read `CONSTITUTION.md` — the compliance law.

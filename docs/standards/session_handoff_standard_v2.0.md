@@ -113,7 +113,7 @@ headings.
 
 ## 2. Cold start
 Run the cold start in `AGENTS.md`. Read `sprint/handoffs/HANDOFF_S<N>.md`, then the files it lists.
-Run `pre-commit run session-verify --hook-stage manual` and do no build work until it passes.
+Run `pre-commit run session-verify --hook-stage manual --all-files` and do no build work until it passes.
 
 ## 3. Tasks
 - STORY-ID — what to do, in dependency order
@@ -232,6 +232,7 @@ constitution and this standard disagree on handoff matters, this standard govern
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0 | 2026-10-22 | §5: the kickoff's verify command carries `--all-files`; without it a dirty tree passed (decision 2026-09-22-003, amended). |
 | 2.0 | 2026-10-22 | §8 and §11: the cold start is in `AGENTS.md` alone; this standard points there and is reached from it for the closeout (decision 2026-10-22-001, TMPL-1.1). |
 | 2.0 | 2026-09-23 | §7: the resources sync runs at closeout, before the scaffold; the closeout refuses an unpublished persona (decision 2026-09-23-007, TMPL-3.3). |
 | 2.0 | 2026-09-23 | §5 and §6: personas carry `version:` and a `## Changelog`; append-only, gated; the kickoff names the persona version (decision 2026-09-23-002, TMPL-3.2). |

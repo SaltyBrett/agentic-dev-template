@@ -17,8 +17,8 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 15 |
-| **Not Started** | 14 |
-| **In Progress** | 0 |
+| **Not Started** | 13 |
+| **In Progress** | 1 |
 | **Blocked** | 0 |
 | **Completed** | 1 |
 
@@ -55,7 +55,7 @@ that decision 2026-09-23-003 names.
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-1.1 | One cold start: the procedure in `AGENTS.md` alone, `CONSTITUTION.md` §2, the checklist and the handoff standard pointing to it; the comprehension questions removed; `AGENT_INTEROP.md` retired into `AGENTS.md`; `CLAUDE.md` kept as the import bridge until Claude Code ≥ 2.1.277 is installed, the condition written down. Condition met at S2: 2.1.308 installed, the native read observed, `CLAUDE.md` retired | Done | — | session_handoff_standard_v2.0.md | 2026-10-22-001 |
-| TMPL-1.2 | Hooks: `SessionStart` (startup and `compact`) running the gates and injecting results, kickoff and newest entry; `Stop` refusing an uncommitted or unbanked turn; `PostToolUse` journal and the working-notes file under `sprint/recovery/`; `disableWorkflows`; `ask` rules for the one-way doors; `PreCompact` tested as a backstop | Not Started | TMPL-1.1 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
+| TMPL-1.2 | Hooks: `SessionStart` (startup and `compact`) running the gates and injecting results, kickoff and newest entry; `Stop` refusing an uncommitted or unbanked turn; `PostToolUse` journal and the working-notes file under `sprint/recovery/`; `disableWorkflows`; `ask` rules for the one-way doors; `PreCompact` tested as a backstop | In Progress | TMPL-1.1 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
 | TMPL-1.3 | Personas to `.claude/agents/`: `persona-lint` and `resources_sync.py` repointed, the kickoff names the agent, `session_closeout.py` rules updated, the registry republished to `dev-resources` | Not Started | TMPL-1.1 | session_handoff_standard_v2.0.md | 2026-10-22-001 |
 | TMPL-1.4 | Procedures to forked skills: closeout, release cut, planning session, sanitize-and-cut, document production; the standards shrink to the law; a gate keeps each skill's commands in step with the config | Not Started | TMPL-1.2, TMPL-1.3 | sprint_management_standard_v1.0.md | 2026-10-22-001 |
 | TMPL-1.5 | Path-scoped rules under `.claude/rules/`; `CONSTITUTION.md` slimmed (§2 a pointer, §6.3 a pointer to the knowledge entry); the checklist reduced to what a script does not already prove | Not Started | TMPL-1.1 | doc_control_standard.md | 2026-10-22-001 |

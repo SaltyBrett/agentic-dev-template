@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-22-004 | 2026-10-22 | The session journal and the working notes are local and gitignored: the journal records raw commands that must not enter a public history, an ignored file is outside pre-commit's stash, and the Stop hook excludes both by path as well; the closeout gate clears them | APPROVED |
 | 2026-10-22-003 | 2026-10-22 | `v2.1.0`: an agentic development team of role subagents whose handoffs are gated artifacts, and a coding standard built as mechanical limits, a process layer and one page of judgement; each opens with a design session, the standard proved against real code before adoption; MINOR | APPROVED |
 | 2026-10-22-002 | 2026-10-22 | Authoritative documents stop going stale: `authority:` frontmatter and a version log on each source of truth, `Affects:` on every decision, a gate that accepts a version-log row or an open tracker story and nothing else, the commit stamped after the fact and verified, a technical-writer agent draining the queue at cold start; part of `v2.0.0` | APPROVED |
 | 2026-10-22-001 | 2026-10-22 | `v2.0.0`: the framework runs on Claude Code's native machinery where that removes overhead without removing a control: one cold start run by a SessionStart hook, a Stop hook for checkpoint discipline, a journal and working notes against compaction, personas as subagents, procedures as forked skills, path-scoped rules, the constitution and checklist slimmed, the interop contract retired; git hooks and CI stay the enforcement; MAJOR | APPROVED |
@@ -41,7 +42,7 @@
 | 2026-09-23-002 | 2026-09-23 | `dev-resources` is the durable home for personas and reference knowledge: projects hold a stamped snapshot synced at closeout, ownership is disjoint from the template's, personas are append-only and enhanced by version | APPROVED |
 | 2026-09-23-001 | 2026-09-23 | The gate suite is described by one runbook page that a gate keeps in step with the config; every hook declares its stage; released MAJOR | APPROVED |
 | 2026-09-22-004 | 2026-09-22; amended 2026-09-24 | A derived project takes a newer release through `template_update.py`: ownership by path as the initializer's inverse, keyed merges for the index and the framework decisions file (the project's decision log until 2026-09-23-003 was built), three-way for the rest | APPROVED |
-| 2026-09-22-003 | 2026-09-22 | The closeout command runs with `--all-files`, because pre-commit stashes unstaged edits and the gate then judges the wrong tree | APPROVED |
+| 2026-09-22-003 | 2026-09-22; amended 2026-10-22 | The closeout command runs with `--all-files`, because pre-commit stashes unstaged edits and the gate then judges the wrong tree; amended: the cold-start verify too, where the stash made a dirty tree pass | APPROVED |
 | 2026-09-22-002 | 2026-09-22 | The derived-project probe: the initializer regenerates the tracker; CI restores annotated tags; the version gate names a lightweight tag | APPROVED |
 | 2026-09-22-001 | 2026-09-22; amended 2026-09-22; amended 2026-09-23; amended 2026-09-25 | CI runs the gate suite on every push and pull request; a reporting backstop; branch protection not enabled, first for want of a plan, then (public, 2026-09-25-001) because checkpoints push straight to `main` | APPROVED |
 | 2026-09-21-001 | 2026-09-21; amended 2026-09-24 | Session closeout is a gate; handoff and kickoff prompt are one-session repo artifacts; personas are shape-gated; every wikilink in the tree resolves | APPROVED |
@@ -1012,9 +1013,26 @@ green, since the template tree passes its own suite. The initializer's dry run a
 
 ## Decision 2026-09-22-003: The closeout command runs with `--all-files`
 
-**Date:** 2026-09-22
+**Date:** 2026-09-22; amended 2026-10-22
 **Made By:** Chair + AI
 **Status:** APPROVED
+
+### Amendment 2026-10-22: the verify carries the flag too
+
+The bullet below that left `session-verify` unchanged reasoned that a gate requiring a clean tree
+leaves nothing to stash. That is circular: the stash runs before the gate, and an unstaged edit to
+a tracked file is exactly what it hides. Measured in S2 on a clone at the S1 closeout commit: clean,
+`pre-commit run session-verify --hook-stage manual` passed; with one unstaged edit to `README.md`
+the same command printed "Stashing unstaged files" and **passed**; with `--all-files` it failed on
+`dirty-tree`. Unlike the closeout case this is a hidden green, not a confusing red: the cold start's
+proof that the previous session committed its work passed while work sat uncommitted. A staged edit
+was caught either way, since `git status` still lists it under the stash.
+
+`VERIFY_COMMAND` in `scripts/session_closeout.py` is now
+`pre-commit run session-verify --hook-stage manual --all-files`; the kickoff scaffold writes it,
+and `AGENTS.md`, the handoff standard §5, the gate runbook and the hook comment name this form. The
+`SessionStart` hook built in TMPL-1.2 runs it the same way. A kickoff written before the amendment
+is not refused; the linter checks section 2 for `AGENTS.md` and the handoff, as before.
 
 ### Context
 
@@ -1044,6 +1062,7 @@ patch files pre-commit writes to its cache persist after restore, so their prese
   hand-over of the next kickoff, matching `session_handoff_standard_v2.0.md` §7 steps 6 and 7,
   which the previous text stopped short of.
 - `session-verify` is unchanged: it requires a clean tree, so there is nothing to stash.
+  (Wrong; see the amendment above.)
 - The initializer's S1 sprint-status entry says that its "Next" list stands in for the kickoff S1
   does not have, and that S1 must open an epic before the S2 kickoff can cite a story.
 
@@ -2165,3 +2184,54 @@ lists them. `doc_control_standard.md` and `sprint/recovery/README.md` name this 
 rule is stated as ungated. Taught by [[reference_session_closeout]] for the two controls and by
 [[reference_project_profiles]] for the fences; the sweep itself is recorded in the archive
 repository's sprint-status.
+
+---
+
+## Decision 2026-10-22-004: The session journal and the working notes are local, never committed
+
+**Date:** 2026-10-22
+**Made By:** AI (S2), within decision 2026-10-22-001; put to the operator at the S2 handover
+**Status:** APPROVED
+**Affects:** `.gitignore`, `scripts/session_journal.py`, `scripts/session_stop.py`, `scripts/session_start.py`, `scripts/session_closeout.py` (`--closeout`)
+
+### Context
+
+TMPL-1.2 builds the journal (`sprint/recovery/journal.md`, one line per Edit, Write or Bash event,
+written by a `PostToolUse` hook) and the working notes (`sprint/recovery/WORKING_NOTES.md`, which
+the `Stop` hook demands). Decision 2026-10-22-001 says both are cleared at closeout and that the
+journal writer must be safe beside the gate suite; it does not say whether they are committed.
+
+Tracked, the journal would carry every command an agent ran into the history of a public
+repository, where one command holding a token is a leak that rewriting history cannot fully undo,
+and a command naming a banned feature fails the scanner on the next commit. pre-commit stashes
+unstaged edits to tracked files around a hook run, so a journal line appended by a parallel tool
+call inside that window would land between the stash and its restore. And every tracked sprint
+file the agent touches each turn would trip the `Stop` hook's own rule against uncommitted sprint
+files.
+
+### Decision
+
+- Both files are gitignored. `session_journal.py` owns their paths and the notes' shape; the
+  `SessionStart` hook creates the notes when they are missing; the closeout gate (`--closeout`)
+  resets both when it passes.
+- The `Stop` hook leaves both out of "uncommitted work" by path as well as by `.gitignore`, so its
+  rule holds even if the ignore lines are lost; the journal self-test fails if they are.
+- What survives a lost clone or a move to another machine is the committed state, as before. The
+  journal and notes bank the interval against compaction and a dead session on the same clone,
+  which is the failure the decision names.
+
+### Consequences
+
+- The writer is safe beside the suite by construction: an ignored file is outside the stash, and
+  the scanners, gitleaks and the sanitize check read only what git would commit.
+- The notes are reasoning in flight, a cache under the prime directive; anything durable in them
+  still goes to the tracker, the decision log or a knowledge entry.
+- The initializer and the updater carry the two `.gitignore` lines with the file; TMPL-1.6 confirms
+  the ownership.
+
+### Enforcement
+
+`scripts/session_journal.py --self-test` (`session-journal-selftest`) checks that the repository's
+`.gitignore` covers both paths and that concurrent appends keep every line whole;
+`scripts/session_stop.py --self-test` that the notes never count as the newest change. Taught by
+[[reference_claude_code_hooks]].

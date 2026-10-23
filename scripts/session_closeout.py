@@ -38,7 +38,8 @@ WHAT IT CHECKS
     the self-test uses (TMPL-5.2); the handoff linter above proved it for handoffs alone
   * AGENTS.md is at most 32 KiB, the Codex project-doc cap
 --closeout  session end: archives every pair older than the session being closed, then verifies
-            that the pair for the next session exists and passes every check above; refuses a
+            that the pair for the next session exists and passes every check above, and on a pass
+            clears the session journal and working notes (session_journal.py); refuses a
             persona this project holds that dev-resources lacks at the synced ref, or holds at a
             lower version — the registry grows only through resources_sync.py --publish
             (decision 2026-09-23-007). A project that has never synced (no .resources-version)
@@ -58,7 +59,7 @@ the control for that: a fact left only in a handoff leaves the mandatory reads o
 
 Usage:  pre-commit run session-closeout-check --all-files
         pre-commit run session-closeout --hook-stage manual --all-files   (see CLOSEOUT_COMMAND)
-        pre-commit run session-verify --hook-stage manual
+        pre-commit run session-verify --hook-stage manual --all-files   (see VERIFY_COMMAND)
         python3 scripts/session_closeout.py --scaffold --persona <slug>
         python3 scripts/session_closeout.py --self-test
 Exit 0 = clean, 1 = violations (blocks the commit or the session), 2 = cannot run.
@@ -156,6 +157,10 @@ NONE_MARKERS = {"none", "none."}
 # rather than the ones just edited ([[reference_precommit_stash]]). The hook takes no filenames,
 # so the flag changes nothing but the stash.
 CLOSEOUT_COMMAND = "pre-commit run session-closeout --hook-stage manual --all-files"
+# The same flag for the cold start, for a sharper reason: under the stash an unstaged edit to a
+# tracked file vanishes, so the dirty-tree rule passes a tree that is dirty (decision
+# 2026-09-22-003, amended 2026-10-22).
+VERIFY_COMMAND = "pre-commit run session-verify --hook-stage manual --all-files"
 
 
 # ==============================================================================
@@ -627,7 +632,7 @@ def kickoff_skeleton(n: int, slug: str, persona: Persona) -> str:
 ## 2. Cold start
 
 Run the cold start in `AGENTS.md`. Read `sprint/handoffs/HANDOFF_S{n}.md`, then the files it lists.
-Run `pre-commit run session-verify --hook-stage manual` and do no build work until it passes.
+Run `{VERIFY_COMMAND}` and do no build work until it passes.
 
 ## 3. Tasks
 
@@ -849,6 +854,11 @@ def cmd_closeout() -> int:
     v.extend(unpublished_personas())
     rc = report(f"Session Closeout (closing S{current})" if current else "Session Closeout", v)
     if rc == 0:
+        # Imported here, not at the top: the published package (pyproject.toml) ships this module
+        # for `--personas` alone, without session_journal.
+        import session_journal
+        for rel in session_journal.clear(ROOT):
+            print(f"cleared   {rel}")
         print(f"\nCommit as `checkpoint: closeout S{current}`. The next session starts from "
               f"KICKOFF_S{current + 1}.md.")
     return rc

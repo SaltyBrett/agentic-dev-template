@@ -42,6 +42,16 @@ no live document; `session-verify --hook-stage manual` remains in the gate runbo
    `reference_macos_toolchain` §6 (true before and after 2.1.277; a resource entry, published at
    closeout).
 
+2. Found while building TMPL-1.2: the cold start's `session-verify` passed a dirty tree, because
+   pre-commit's stash hid an unstaged edit (measured at the S1 closeout commit). Decision
+   2026-09-22-003 amended; the command carries `--all-files` everywhere it is written.
+
+### In progress
+
+- TMPL-1.2 — the three session scripts, their self-tests and runbook sections, the settings, and
+  decision 2026-10-22-004 are committed; live proofs in a scratch clone, broken-variant proofs and
+  the `PreCompact` test remain.
+
 ### Blockers
 
 - None.
