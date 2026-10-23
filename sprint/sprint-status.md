@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-23
-**Updated By:** S6
+**Updated By:** S7
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -13,6 +13,32 @@
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
 
 ---
+
+## S7 — 2026-10-23 — The authority gate
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1 done.
+
+### Done
+
+1. TMPL-2.1 — `scripts/doc_authority_scan.py` and its two hooks after `kb-freshness-scan`, with
+   their runbook sections (decision 2026-10-23-010, [[reference_doc_authority]]). The Chair chose two
+   of the build's settlements: a version-log row is a `fact:` with its fact or cites a story whose row
+   cites its decision; `**Affects:**` is required from decisions dated 2026-10-22. Proof: fifty-three
+   fixtures pass; forty-five broken variants each failed a fixture without a crash. On the real tree:
+   no authority yet (TMPL-2.3 marks them), every decision from the cutoff carries `**Affects:**`,
+   exit 0. On a scratch clone with a marked copy of the document-control standard: `--stamp` waited
+   for the commit and then wrote it, `--history` derived both rows across a rename, a swapped hash was
+   refused, a shallow clone exited 2, and with no row citing decision 2026-10-22-002, which names the
+   document, the gate reported it unrecorded. My first run of that last step passed because the
+   probe's second row cited the same decision; corrected, it failed as it should. Also: `Story`
+   carries its tracker row, the decision-log rule and the example body name the `**Affects:**` line,
+   and TMPL-2.3 gains the retirement of `sprint/recovery/AUTHORITY_MATRIX.md`, a second registry kept
+   by hand and already stale on personas.
+
+### Blockers
+
+- None.
 
 ## S6 — 2026-10-23 — Adoption from v1.0.0
 

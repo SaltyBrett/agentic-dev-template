@@ -93,6 +93,26 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
+      # The freshness rule generalized from knowledge entries to every authoritative document, and
+      # the direction it could not see: a decision whose `**Affects:**` names a document is recorded
+      # in that document's version log or queued as an open story, and nothing else passes. Self-test
+      # first, since a reader that misses a section reads as nothing to record (decision 2026-10-22-002).
+      - id: doc-authority-selftest
+        name: Document Authority Self-Test (every rule fails its broken fixture; a crash is a failure)
+        entry: python scripts/doc_authority_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: doc-authority-scan
+        name: Document Authority Gate (a decision naming an authority is recorded in it or queued)
+        entry: python scripts/doc_authority_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # authority frontmatter is parsed, never matched
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
       # A session ends with a verified handoff pair, and the pair lives one session. The
       # end-of-session protocol was prose; this is the control. Self-test first, then the
       # per-commit state check. The two manual-stage hooks are invoked by the agent at session

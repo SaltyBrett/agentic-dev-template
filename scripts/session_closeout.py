@@ -566,11 +566,13 @@ def newest_session(text: str) -> int | None:
 
 
 class Story(NamedTuple):
-    """One row of a non-example epic: its ID, its Status cell, and the story IDs its Dependencies
-    cell lists (`—` lists none)."""
+    """One row of a non-example epic: its ID, its Status cell, the story IDs its Dependencies
+    cell lists (`—` lists none), and the row itself, which the authority gate reads for the
+    decision and the document a story cites (decision 2026-10-22-002)."""
     id: str
     status: str
     deps: tuple[str, ...]
+    row: str = ""
 
 
 def real_epics(text: str) -> list[str]:
@@ -594,7 +596,7 @@ def tracker_stories(text: str) -> list[Story]:
             if len(cells) < 3 or not STORY_ID.fullmatch(cells[0]):
                 continue
             deps = tuple(STORY_ID.findall(cells[3])) if len(cells) > 3 else ()
-            out.append(Story(cells[0], cells[2], deps))
+            out.append(Story(cells[0], cells[2], deps, line))
     return out
 
 

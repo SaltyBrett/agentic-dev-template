@@ -146,6 +146,39 @@ bumping the date.
 **Alone:** `pre-commit run kb-freshness-scan --all-files` (add `--list` by direct invocation to see
 which entries the gate reaches)
 
+## `doc-authority-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** `doc-authority-scan`, which it precedes.
+**Blocks:** a commit when a fixture of the authority gate fails: frontmatter that claims authority
+and does not parse read as no authority, a quoted `verified:` accepted, a version log that is not
+the last section or sits in fenced code read as the log, a malformed or out-of-order row accepted,
+`fact:` with no fact or a citation of a story that does not cite the row's decision accepted, a
+decision from the cutoff without `**Affects:**` passed, a Done story or one in an `[EXAMPLE]` epic
+read as queueing a change, a hash that did not introduce its row passed, `--stamp` writing a row
+that is not this repository's. A fixture that raises fails; it never crashes the self-test.
+**Why:** decision 2026-10-22-002 and the build's decision 2026-10-23-010; [[reference_doc_authority]].
+**Alone:** `pre-commit run doc-authority-selftest --all-files --verbose`
+
+## `doc-authority-scan`
+
+**Stage:** `pre-commit`
+**Pairs with:** `doc-authority-selftest`.
+**Blocks:** for every markdown file git would commit whose frontmatter carries `authority:`: a
+frontmatter that does not parse to a scope, an `implements:` list and an unquoted `verified:`
+date; two documents claiming one scope; a `verified:` that predates a change to a decision the
+document implements; a missing or malformed `## Version log`; a row that is neither `fact:` with
+its fact nor the change of a story that cites its decision; a stored commit hash that is not the
+commit that introduced the row (in a project, rows citing only framework decisions are the
+template's and verified there). For every decision dated 2026-10-22 or later: a body without
+`**Affects:**`, and an authority it names whose version log cites it nowhere while no open story
+cites both. A decision index that cannot be read fails; a shallow clone exits 2.
+**Why:** decisions 2026-10-22-002 and 2026-10-23-010; [[reference_doc_authority]],
+[[reference_kb_freshness]].
+**Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
+registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
+for the commit git derives for each row)
+
 ## `session-closeout-selftest`
 
 **Stage:** `pre-commit`

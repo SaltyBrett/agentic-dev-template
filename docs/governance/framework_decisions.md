@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-010 | 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
 | 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
 | 2026-10-23-008 | 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
 | 2026-10-23-007 | 2026-10-23 | The updater merges `.gitignore` by union, keeping both sides' lines where both changed the same place, since project and template both append at its end; every other three-way path still conflicts | APPROVED |
@@ -3047,3 +3048,87 @@ by-hand token replacement that the initializer has done since before `v1.0.0`.
 
 To be built in TMPL-5.5: `skill-scan` fixtures for a skill missing from the README, proved against a
 broken variant; the walkthrough exercised in TMPL-5.4.
+
+---
+
+## Decision 2026-10-23-010: The authority gate as built
+
+**Date:** 2026-10-23
+**Made By:** Chair (S7): how a row is told to be a fact, and which decisions must declare their
+impact; the rest by the AI within decision 2026-10-22-002, reported at the S7 handover
+**Status:** APPROVED
+**Builds:** TMPL-2.1, the gate of decision 2026-10-22-002
+**Affects:** `scripts/doc_authority_scan.py` (new), `scripts/session_closeout.py` (`Story` carries
+its row), `.pre-commit-config.yaml` (two hooks after `kb-freshness-scan`),
+`docs/governance/gate_suite_runbook.md` (their sections), `.claude/rules/decision-logs.md` (the
+`**Affects:**` line), `sprint/decision-log.md` (the example body), `sprint/story-tracker.md`
+(TMPL-2.3 retires the authority matrix)
+
+### Context
+
+Decision 2026-10-22-002 fixed the gate's shape: `authority:` frontmatter and a version log on each
+source of truth, `**Affects:**` on every decision, a version-log row or an open story and nothing
+else, the fact marker, the stamp verified against git. The build had to settle what each of those
+means to a script. The gate cannot see who wrote a row; "every decision from this one forward" needs
+a boundary a project can compute; and a derived project's history, squashed at birth, holds none
+of the template's commits, so a template row's hash cannot be verified there.
+
+### Decision
+
+- **The frontmatter is the registry.** Any markdown file git would commit whose frontmatter has a
+  top-level `authority:` is an authority, parsed with YAML: the scope a non-empty string,
+  `implements:` a list of decision IDs, `verified:` an unquoted ISO date. A block that claims
+  authority and does not parse fails; it is never skipped. `implements:` and `verified:` are judged
+  by the freshness rule `kb_freshness_scan.py` applies to a knowledge entry.
+- **The version log** is the document's last H2, `## Version log`, outside fenced code: columns
+  Version, Date, Decision, Summary, Commit; newest row first, versions strictly descending (`3`,
+  `2.1`), dates never rising; every row cites at least one indexed decision.
+- **A row is a fact or a story's change (Chair).** Its summary opens `fact:` and states the fact (a
+  code span or a number: a value, a name, a path, a count), or cites a tracker story whose row cites
+  the row's decision. The technical writer's drain (TMPL-2.2) and a story whose own work is the
+  document take the second form, so a structural change is evidence of the queue, not a claim.
+- **`**Affects:**` from decisions dated 2026-10-22 (Chair)**, the date of decision 2026-10-22-002,
+  read from the index's Date cell in either log, so any ID convention works. Older decisions read as
+  `none`. A document is named as a code span of its path; a named path that is no authority is not
+  judged.
+- **Recorded or queued, as built.** For a decision whose `**Affects:**` names an authority: a row
+  of that document's log cites the decision, or a story not Done cites the decision and contains the
+  path. A decision ID is cited only where it is not part of a longer ID.
+- **The stamp.** `pending` is allowed on any row. A stored hash must be a prefix, at least seven
+  characters, of the first commit (following renames) whose copy of the document holds that version;
+  matching by version rather than row text is what lets `--stamp` edit the row it stamps. `--stamp`
+  writes seven characters for each committed `pending` row; `--history <doc>` prints stored beside
+  derived. A shallow clone exits 2, since its history ends early (the CI checkout already fetches
+  the full history for the version gate).
+- **The template's rows are verified in the template.** In a project, a row citing only framework
+  decisions was written by the template; the gate does not verify its hash and `--stamp` leaves it.
+  A row citing a project decision is verified in the project.
+- **One scope, one authority.** Two documents claiming one scope, compared without case or spacing,
+  fail: the escalation rule of `sprint/recovery/AUTHORITY_MATRIX.md` made mechanical. The matrix, a
+  second registry kept by hand and already stale on personas, is retired in TMPL-2.3.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-002).
+
+### Consequences
+
+- Until TMPL-2.3 marks the standards and the gate runbook, the template's registry is empty: the gate
+  holds the decisions' `**Affects:**` lines and nothing else. Observed on the real tree at S7.
+- Marking a document makes every decision from the cutoff whose `**Affects:**` names it due at once:
+  the first rows cite them, or stories queue them. That is the real content decision 2026-10-22-002
+  asked the gate to be proved against.
+- A project decision dated from the cutoff needs the line at adoption. The three projects had none
+  on 2026-10-23.
+
+### Verification
+
+Fifty-three fixtures in the self-test, each rule with a passing and a failing case, a fixture that
+raises reported as a failure. Forty-five broken variants of the script, one per rule and reader, each
+failed at least one fixture without a crash. On a scratch clone of the template, a marked copy of the
+document-control standard: `--stamp` left an uncommitted row pending and then wrote the commit that
+introduced it; `--history` derived both rows across a rename; a hash swapped to the next row's was
+refused; a shallow clone exited 2; with no row citing decision 2026-10-22-002, whose `**Affects:**`
+names the document, the gate reported it unrecorded.
+
+### Enforcement
+
+`doc-authority-selftest` and `doc-authority-scan` in `.pre-commit-config.yaml`, after
+`kb-freshness-scan`; [[reference_doc_authority]].
