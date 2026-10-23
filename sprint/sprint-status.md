@@ -48,6 +48,10 @@ operator's alone (decision 2026-10-23-001). TMPL-1.4 and TMPL-1.6 done.
    `docs/personas/` adopts `v2.0.0` through `dev-resources`, never by conversion in the project.
    Self-tests 21, 36 and 20; 19 broken variants, each caught, one first written so it never
    applied and rewritten. Every real `.claude/` path and local file classifies as decided.
+3. After the closeout (ecef26d, its `gates` run green), the operator approved a persona library
+   in the template, inactive, with each project activating what it needs into `.claude/agents/` at
+   its first session (decision 2026-10-23-003). TMPL-1.8 opened ahead of TMPL-1.7, four questions
+   left open for its start, and the S5 pair re-pointed to it.
 
 ### Blockers
 

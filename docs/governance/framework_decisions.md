@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-003 | 2026-10-23 | Personas ship as a library in the template, inactive; a project activates the ones it needs into `.claude/agents/` at its first session, where a skill recommends from the library and drafts what it lacks; the library grows by template release; part of `v2.0.0`, built as TMPL-1.8 | APPROVED |
 | 2026-10-23-002 | 2026-10-23 | The Claude Code paths and the session's local files are owned by decision: the registry kept for the sync, the skills, rules and settings merged three-way, the journal, notes and local settings untouched and ignored by the repository itself; a project's `docs/personas/` reaches `.claude/agents/` through `dev-resources`, never by conversion in the project | APPROVED |
 | 2026-10-23-001 | 2026-10-23 | Procedures are skills, and a skill is repository markdown: one `SKILL.md` per procedure, listed by path in `AGENTS.md` for any agent; the closeout forked with the brief in its arguments, the release and the pristine cut the operator's alone; the standards keep the law; `skill-scan` keeps every hook, stage and command a skill names in step with the config | APPROVED |
 | 2026-10-22-006 | 2026-10-22 | Rules under `.claude/rules/` are path-scoped judgement only and gated: `paths:` that parse and match a tracked file, no sentence of `AGENTS.md` repeated; `CONSTITUTION.md` §6.3 becomes a knowledge entry for the why and two rules for the instructions, and the knowledge index sheds its frontmatter block to a rule | APPROVED |
@@ -2560,3 +2561,69 @@ the plain command reported it ignored.
 `scripts/new_project.py` (`LOCAL_STATE`, `--self-test`), `scripts/template_update.py` (`KEEP`,
 `--self-test`: the decided paths, the registry across five places, the initializer's agreement),
 `scripts/sanitize_template.py` (`LOCAL_STATE`, `--self-test`). Taught by [[reference_template_update]].
+
+---
+
+## Decision 2026-10-23-003: Personas ship as a library in the template, activated per project at its first session
+
+**Date:** 2026-10-23
+**Made By:** Chair (S4, after its closeout): the library in the template and activation at the first
+session, approved as proposed; the mechanics by the AI, to be settled in the build
+**Status:** APPROVED
+**Affects:** to be named by the build (TMPL-1.8): at least `.claude/agents/`, the library's folder,
+`.claude/skills/`, `scripts/session_closeout.py`, `scripts/resources_sync.py`,
+`scripts/new_project.py`, `scripts/template_update.py`, `scripts/sanitize_template.py`,
+`.pre-commit-hooks.yaml`, `AGENTS.md`, `docs/standards/session_handoff_standard_v2.0.md`
+
+### Context
+
+Since decision 2026-09-23-002 the personas have lived in `dev-resources`, a second repository, and
+reached each project through a sync that judges versions and grows only through `--publish`
+(decision 2026-09-23-007). Decision 2026-10-22-005 moved them into `.claude/agents/` and left
+`dev-resources` holding two trees until the three projects adopt `v2.0.0`. The operator wants the
+public template itself to ship a base library: a full team covering the software development
+lifecycle, data science, document management, writing including technical writing, and quality
+control across all three.
+
+Every file in `.claude/agents/` is a live subagent: its description is listed in every session's
+context, and Claude may delegate to it unprompted. A full team in that folder would cost context in
+every session of every project and make delegation unpredictable.
+
+### Decision
+
+- **The template ships a persona library**, outside `.claude/agents/` and inactive, versioned by
+  template releases. Adding a persona to it forces no project to act, so it is a MINOR change: the
+  library is how the template grows to cover new use cases without loading every project.
+- **`.claude/agents/` is a project's roster**: only the personas that project activated. The
+  session's persona, the kickoff's persona and a delegated subagent all come from the roster.
+- **At a project's first session a skill builds the roster:** it asks the operator which
+  specializations the project needs, scans the library, recommends personas, drafts new ones for
+  any gap, and copies the chosen ones into `.claude/agents/`. More can be activated later the same way.
+- **The gates follow:** the closeout keeps refusing a kickoff whose persona the roster lacks; a
+  roster persona taken from the library is held to a library version, and a newer library version
+  is reported. The append-only rule of decision 2026-09-23-006 holds in both places.
+- **Part of `v2.0.0`** (MAJOR, decision 2026-10-22-001), built as TMPL-1.8 before TMPL-1.7 proves
+  the substrate, since it changes the birth that proof observes.
+
+### Open, to settle with the operator at the start of TMPL-1.8
+
+- How much of the library ships in `v2.0.0`. Recommended: the mechanism and a starter set, the full
+  team designed in TMPL-3.1's design session and shipped as MINOR releases.
+- Whether `dev-resources` is retired, its few shared knowledge entries folded into the template,
+  or kept for knowledge alone.
+- Whether a persona a project drafts for itself can be proposed back to the library, and how.
+- How a `v1.0.0` project's `docs/personas/` reaches its roster when it adopts `v2.0.0`.
+
+### Supersession, marked on both sides when TMPL-1.8 builds it
+
+Decisions 2026-09-23-002 and 2026-09-23-007 (scope: personas), 2026-10-22-005 (scope:
+`dev-resources` holding the registry) and 2026-10-23-002 (scope: its first, fourth and fifth
+bullets, the registry as the sync's and the adoption through `dev-resources`). Until then they stand
+and describe the code as it is.
+
+### Consequences
+
+- TMPL-1.8 is opened; TMPL-1.7 depends on it.
+- TMPL-2.2's technical writer becomes a library persona; TMPL-2.4's port of `dev-resources`' frozen
+  tree is replaced by whatever the adoption question settles; TMPL-3.1's design session designs the
+  full team as library personas.
