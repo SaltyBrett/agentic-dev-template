@@ -55,7 +55,9 @@ TMPL-2.5 and, by the Chair's choice over TMPL-5.1, TMPL-2.3 done.
    copies, `v1.0.0`'s unedited, stay theirs. Seen on the real tree before the decision existed: the
    gate refused the rows citing it, unindexed, and decision 2026-10-23-009 naming the runbook with no
    row and no story; queued in TMPL-5.5's row, which now names the path. After: six authorities,
-   seventeen pairs recorded by a row, one queued, exit 0.
+   seventeen pairs recorded by a row, one queued, exit 0. Then the first real stamp: `--stamp`
+   wrote 515f1a5, the commit that introduced the six rows, into each, and the gate verified all six
+   against git.
 
 ### Blockers
 

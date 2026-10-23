@@ -267,4 +267,4 @@ Configure alerts for:
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002 | Marked as the authority for secrets management (TMPL-2.3); the changelog table it replaces held the initial version alone | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002 | Marked as the authority for secrets management (TMPL-2.3); the changelog table it replaces held the initial version alone | 515f1a5 |

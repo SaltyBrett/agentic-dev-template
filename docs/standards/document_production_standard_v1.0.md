@@ -269,4 +269,4 @@ With those in hand, this guide plus the official brand values should let the new
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001 | Marked as the authority for document production (TMPL-2.3); reflects the procedure moved to the document-production skill. The changelog table it replaces is in git | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001 | Marked as the authority for document production (TMPL-2.3); reflects the procedure moved to the document-production skill. The changelog table it replaces is in git | 515f1a5 |

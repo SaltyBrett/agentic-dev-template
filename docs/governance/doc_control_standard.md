@@ -113,4 +113,4 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | 515f1a5 |

@@ -187,4 +187,4 @@ comply with their Required Standards, tracker/decision-log updated, no open ques
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-010 | Marked as the authority for the sprint documents (TMPL-2.3); reflects the planning session as a skill. §2 and §12 point to the frontmatter registry instead of the retired authority matrix. The changelog table it replaces is in git | pending |
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-010 | Marked as the authority for the sprint documents (TMPL-2.3); reflects the planning session as a skill. §2 and §12 point to the frontmatter registry instead of the retired authority matrix. The changelog table it replaces is in git | 515f1a5 |
