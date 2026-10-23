@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-011 | 2026-10-23 | The standards, the document-control standard and the gate runbook are the first authorities: each log starts at marking at the version the document states, citing every decision that names it or queueing it; the hand-kept changelog tables and `**Version:**` lines go; file names keep their version; the runbook gate skips the closing version log; the authority matrix retires in the template, a project's copy left to the project | APPROVED |
 | 2026-10-23-010 | 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
 | 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
 | 2026-10-23-008 | 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
@@ -3132,3 +3133,75 @@ names the document, the gate reported it unrecorded.
 
 `doc-authority-selftest` and `doc-authority-scan` in `.pre-commit-config.yaml`, after
 `kb-freshness-scan`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-23-011: The first authorities
+
+**Date:** 2026-10-23
+**Made By:** AI (S7), within decisions 2026-10-22-002 and 2026-10-23-010, on the story the Chair
+chose; reported at the S7 handover
+**Status:** APPROVED
+**Builds:** TMPL-2.3
+**Affects:** `docs/governance/doc_control_standard.md` (rewritten around the gate),
+`docs/governance/gate_suite_runbook.md` (marked; the preamble's exception; the updater's section),
+`docs/standards/session_handoff_standard_v2.0.md`, `docs/standards/sprint_management_standard_v1.0.md`
+(§2 and §12), `docs/standards/secrets_management_standard_v1.0.md`,
+`docs/standards/document_production_standard_v1.0.md` (each marked, its changelog replaced),
+`scripts/gate_runbook_scan.py` (the closing version log), `sprint/recovery/AUTHORITY_MATRIX.md`
+(removed), `sprint/recovery/README.md`, `sprint/story-tracker.md` (TMPL-5.5 names the runbook),
+`docs/orchestration/knowledge/reference_gate_runbook.md`, `docs/orchestration/knowledge/reference_doc_authority.md`
+
+### Context
+
+Decision 2026-10-22-002 marks the standards and the gate runbook first, so the gate has real
+content to prove against. Each standard already carried a hand-kept `**Version:**` line and a
+changelog table, the stored value without a gate that the decision forbids: the session-handoff
+standard's table had eight rows since 2026-09-21, every one at version 2.0. Marking a document makes
+every decision from 2026-10-22 whose `**Affects:**` names it due at once.
+
+### Decision
+
+- **Six authorities**: the four standards in `docs/standards/`, the document-control standard and
+  the gate-suite runbook, each with a scope of its own and `implements:` the decisions it carries.
+- **Each log starts at marking**, at the version the document states (2.0, 1.0), 1.0 where it
+  stated none. The first row cites this decision, decision 2026-10-22-002 and every decision from
+  the cutoff whose `**Affects:**` names the document and is built, the document having been read
+  against each; its summary cites TMPL-2.3. A named change not yet made is queued instead: decision
+  2026-10-23-009's change to the runbook's `skill-scan` section, by TMPL-5.5's row naming the path.
+- **The changelog tables and `**Version:**` lines are removed**, not converted: their rows cite no
+  decision in a form the gate reads, their dates were placeholders or stale, and their history is in
+  git and in the decisions. The version is the log's newest row.
+- **File names keep their version** (`_v2.0`, `_v1.0`): every tracker, a project's included, cites
+  the standards by file name in Required Standards, and the updater never writes `sprint/`.
+- **The runbook's closing `## Version log` names no hook**: `gate_runbook_scan.py` skips that one
+  H2 when it is last; anywhere else it is a section naming no hook. The self-test holds the heading
+  equal to the authority gate's.
+- **The document-control standard is rewritten around the gate**: how a document becomes an
+  authority, how a change is recorded, and the protection on `main` as it is, the template public
+  with a ruleset and a project private by default; "this one stays private" was false from decision
+  2026-09-25-001.
+- **The authority matrix retires in the template**: the file is removed, and the recovery README and
+  the sprint-management standard point to the frontmatter registry. A project's copy is under
+  `sprint/`, which the updater never writes, so it stays the project's to delete; each of the three
+  projects holds `v1.0.0`'s copy unedited.
+- Part of `v2.0.0` (MAJOR, decision 2026-10-22-002).
+
+### Consequences
+
+- A decision that changes a standard or the runbook now needs a row or an open story in the same
+  commit; adding a hook does, since the runbook gains a section.
+- In a project the six logs' rows cite framework decisions alone, so they are the template's and
+  their hashes are verified here.
+- The rows are stamped by `--stamp` after the commit that writes them.
+
+### Verification
+
+Before the decision was written, the gate on the marked tree reached six authorities and eleven
+recorded pairs, and refused exactly two things: the rows citing this decision, then unindexed, and
+decision 2026-10-23-009 naming the runbook with no row and no story. Both closed as above.
+`gate_runbook_scan.py` gained two fixtures and a cross-check, each proved against a broken variant.
+
+### Enforcement
+
+`doc-authority-scan` and `gate-runbook`; [[reference_doc_authority]], [[reference_gate_runbook]].

@@ -1,6 +1,11 @@
+---
+authority: session handoffs — how a session ends and the next begins, the handoff and kickoff pair, personas, the closeout
+implements: [2026-09-21-001, 2026-09-23-006, 2026-10-22-001, 2026-10-22-005, 2026-10-23-001, 2026-10-23-003]
+verified: 2026-10-23
+---
+
 # Session Handoff Standard v2.0
 
-**Version:** 2.0
 **Purpose:** Zero-drift session continuity, enforced by `scripts/session_closeout.py`
 **Supersedes:** v1.0 (decision 2026-09-21-001)
 
@@ -223,16 +228,8 @@ governs.
 
 ---
 
-## 12. Changelog
+## Version log
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 2.0 | 2026-10-23 | §6 and §7: personas ship as a library in `personas/` and a project activates its roster into `.claude/agents/`; the `dev-resources` sync is gone from the closeout (decision 2026-10-23-003, TMPL-1.8). |
-| 2.0 | 2026-10-23 | §4, §5 and §7: the closeout procedure moved to `.claude/skills/closeout/SKILL.md` and the emergency close to `AGENTS.md`; §7 keeps what a closeout must leave (decision 2026-10-23-001, TMPL-1.4). |
-| 2.0 | 2026-10-22 | §3, §5 and §6: personas are agent files in `.claude/agents/`; the kickoff names the agent and the `SessionStart` hook injects its prompt (decision 2026-10-22-005, TMPL-1.3). |
-| 2.0 | 2026-10-22 | §5: the kickoff's verify command carries `--all-files`; without it a dirty tree passed (decision 2026-09-22-003, amended). |
-| 2.0 | 2026-10-22 | §8 and §11: the cold start is in `AGENTS.md` alone; this standard points there and is reached from it for the closeout (decision 2026-10-22-001, TMPL-1.1). |
-| 2.0 | 2026-09-23 | §7: the resources sync runs at closeout, before the scaffold; the closeout refuses an unpublished persona (decision 2026-09-23-007, TMPL-3.3). |
-| 2.0 | 2026-09-23 | §5 and §6: personas carry `version:` and a `## Changelog`; append-only, gated; the kickoff names the persona version (decision 2026-09-23-002, TMPL-3.2). |
-| 2.0 | 2026-09-21 | Closeout is a gate. Numbered sessions, handoff/kickoff pair with one-session lifetime and rotation, persona registry. Removed the percentage ladder, the "Handoff Prompt" conflation, `HANDOFF_SESSION[N]` naming, and the emergency handoff template. |
-| 1.0 | — | Initial version |
+| Version | Date | Decision | Summary | Commit |
+|---------|------|----------|---------|--------|
+| 2.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-22-001, 2026-10-22-005, 2026-10-23-001, 2026-10-23-003 | Marked as the authority for session handoffs (TMPL-2.3); reflects the cold start in `AGENTS.md`, personas as agent files, the closeout as a skill and the persona library. The changelog table it replaces, every row of it at 2.0 since 2026-09-21, is in git | pending |

@@ -1,6 +1,11 @@
+---
+authority: document production — the house style every Word, Excel, PDF and PowerPoint deliverable obeys
+implements: [2026-09-19-001, 2026-10-23-001]
+verified: 2026-10-23
+---
+
 # Document Production Standard v1.0
 
-**Version:** 1.0
 **Created:** {{DATE}}
 **Status:** Active. **AUTHORITATIVE** for all Word, Excel, PDF, and PowerPoint deliverables.
 **Brand assets:** `resources/branding/` (logos, color palette, typeface guide) — populate per project.
@@ -260,9 +265,8 @@ With those in hand, this guide plus the official brand values should let the new
 
 ---
 
-## 16. Changelog
+## Version log
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-10-23 | — | Header, production note and §1: the procedure moved to `.claude/skills/document-production/SKILL.md`; this standard keeps the values (decision 2026-10-23-001, TMPL-1.4). |
-| 1.0 | {{DATE}} | — | Initial version. Adopted the project document production style guide as the authoritative standard. |
+| Version | Date | Decision | Summary | Commit |
+|---------|------|----------|---------|--------|
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001 | Marked as the authority for document production (TMPL-2.3); reflects the procedure moved to the document-production skill. The changelog table it replaces is in git | pending |

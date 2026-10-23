@@ -1,3 +1,9 @@
+---
+authority: the gate suite — what each hook blocks, in run order, and how to run it alone
+implements: [2026-09-23-001, 2026-09-22-001, 2026-10-22-002]
+verified: 2026-10-23
+---
+
 # Gate-Suite Runbook
 
 One section per hook in `.pre-commit-config.yaml`, in the order pre-commit runs them. Each names
@@ -8,7 +14,9 @@ disagrees with the config fails the commit. What a section says a gate blocks, a
 the check cannot read; the decision and knowledge entry each section links hold the reasoning, and
 this page does not restate it.
 
-Every H2 below is a hook id. Prose that is not about one hook belongs here, above the first.
+Every H2 below is a hook id, but the last: `## Version log`, this page's record of its changes,
+which `doc-authority-scan` holds to the decisions that name the page (decision 2026-10-23-011).
+Prose that is not about one hook belongs here, above the first.
 
 **Running the suite.** `pre-commit run --all-files` runs every `pre-commit`-stage hook and nothing
 else. The two `manual`-stage hooks are run by the agent at the session boundaries; the `commit-msg`
@@ -346,8 +354,10 @@ reported clean, template markdown compared without the profile strip, a `.claude
 local file classified other than decided, the roster's or the library's path differing among the
 state gate, the initializer, the sanitizer and this map; a `v1.0.0` persona converted to anything
 but the agent file, or a file the shape cannot hold converted rather than refused; the roster
-overwritten, the sync's stamp kept, or a marked entry's body touched at adoption.
-**Why:** decisions 2026-09-22-004, 2026-09-23-003, 2026-10-23-002 and 2026-10-23-005; [[reference_template_update]].
+overwritten, the sync's stamp kept, or a marked entry's body touched at adoption; a `.gitignore`
+changed on both sides merged other than by union, the project's lines first, or any other path
+merged by union.
+**Why:** decisions 2026-09-22-004, 2026-09-23-003, 2026-10-23-002, 2026-10-23-005 and 2026-10-23-007; [[reference_template_update]].
 **Alone:** `pre-commit run template-update-selftest --all-files`
 
 ## `template-version-selftest`
@@ -456,3 +466,9 @@ manifest declares none, and a hook without one runs at every installed stage.
 **Why:** decision 2026-09-20-008. No knowledge entry; the decision holds the whole rationale.
 **Alone:** `pre-commit run gitleaks --all-files` (the first run in a fresh clone builds the
 gitleaks environment and needs the network once)
+
+## Version log
+
+| Version | Date | Decision | Summary | Commit |
+|---------|------|----------|---------|--------|
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007, 2026-10-23-010 | Marked as the authority for the gate suite (TMPL-2.3); reflects the skill gate, the persona library, the adoption fixtures, the `.gitignore` union and the authority gate. The README catalog's change to `skill-scan` (2026-10-23-009) is queued in TMPL-5.5 | pending |

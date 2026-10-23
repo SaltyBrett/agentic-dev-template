@@ -56,6 +56,10 @@ HOOK_STAGE = re.compile(r"--hook-stage[\s=]+([a-z][a-z-]*)")
 
 H2 = re.compile(r"^## (.+?)\s*$")
 FENCE = re.compile(r"^\s*(```|~~~)")
+# The page is an authority (decision 2026-10-23-011), so it closes with the authority gate's
+# `## Version log` (doc_authority_scan.LOG_HEADING, held equal by the self-test). That one H2,
+# last on the page, is the record of the page's changes and names no hook.
+VERSION_LOG = "Version log"
 STAGE = re.compile(r"^\*\*Stage:\*\*\s*`?([a-z][a-z-]*)`?", re.M)
 
 try:
@@ -80,7 +84,8 @@ FIXES = {
     "no-hook": (
         "The runbook has a section for a hook id that is not in .pre-commit-config.yaml.\n"
         "    Remove the section, or rename it to the hook's id exactly as `id:` spells it.\n"
-        "    Every H2 on that page is a hook id; prose that is not about one hook goes above the first H2."
+        "    Every H2 on that page is a hook id but the closing `## Version log`; prose that is not\n"
+        "    about one hook goes above the first H2."
     ),
     "order": (
         "Reorder the sections to match the order of the hooks in .pre-commit-config.yaml,\n"
@@ -159,6 +164,8 @@ def page_sections(text: str) -> list[tuple[str, str | None]]:
             out.append((m.group(1).strip().strip("`").strip(), []))
         elif out:
             out[-1][1].append(line)
+    if out and out[-1][0] == VERSION_LOG:
+        out.pop()   # the closing version log; anywhere else it is a section naming no hook
     result = []
     for sid, body in out:
         sm = STAGE.search("\n".join(body))
@@ -399,6 +406,12 @@ def run_self_test() -> int:
     expect("a hook that declares no stages fails, even with a matching section",
            violations(config_hooks(_CONFIG.replace("        stages: [commit-msg]\n", "")), page), "no-stages", "stage")
     expect("a bare-word H2 is read as the id it names", violations(hooks, page_sections(_PAGE.replace("## `alpha`", "## alpha"))))
+    log = "\n## Version log\n\n| Version | Date | Decision | Summary | Commit |\n|---|---|---|---|---|\n"
+    expect("the closing version log is the page's record, not a hook's section", violations(hooks, page_sections(_PAGE + log)))
+    expect("a version log anywhere but last names no hook",
+           violations(hooks, page_sections(_PAGE.replace("## `closeout`", log.strip() + "\n\n## `closeout`"))), "no-hook")
+    import doc_authority_scan  # the authority gate, whose section this is; imported here alone
+    check_("the version log heading is the authority gate's", VERSION_LOG == doc_authority_scan.LOG_HEADING)
     for label, text in (("unparsable YAML", "repos: [\n"), ("no repos list", "hooks: []\n"),
                         ("zero hooks", "repos:\n  - repo: local\n    hooks: []\n")):
         try:

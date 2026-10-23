@@ -1,6 +1,11 @@
+---
+authority: sprint documents — how the story tracker, sprint-status and the decision log are built and kept
+implements: [2026-09-23-003, 2026-09-24-001, 2026-10-23-001]
+verified: 2026-10-23
+---
+
 # Sprint Management Standard v1.0
 
-**Version:** 1.0
 **Created:** {{DATE}}
 **Status:** Active
 **Purpose:** Govern how agents BUILD the sprint documents from a planning session and MAINTAIN them
@@ -35,8 +40,7 @@ across them.
 
 **Relationship rule:** the tracker is authoritative for *status*; sprint-status is a rolling *view* of
 it plus session narrative; decision-log holds *why*, never task status. If they disagree, the tracker
-wins for status and the decision-log wins for rationale. (Consistent with
-`sprint/recovery/AUTHORITY_MATRIX.md`.)
+wins for status and the decision-log wins for rationale.
 
 **The template's own decisions are not sprint state.** They live in
 `docs/governance/framework_decisions.md`, carried by the updater and read by the gates as one set
@@ -175,15 +179,12 @@ comply with their Required Standards, tracker/decision-log updated, no open ques
 - `AGENTS.md` — canonical brain: cold start, standard-selection rule, checkpoint discipline, index-first rule
 - `CONSTITUTION.md` — the compliance law
 - `docs/standards/session_handoff_standard_v2.0.md` — handoffs, Story Completion Criteria (Definition of Done)
-- `sprint/recovery/AUTHORITY_MATRIX.md` — source-of-truth mappings
+- `docs/governance/doc_control_standard.md` — how an authoritative document declares its scope and records each change
 
 ---
 
-## 13. Changelog
+## Version log
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-10-23 | — | §1, §5, §6 and §8: the Planning Session Protocol moved to `.claude/skills/planning-session/SKILL.md`; §5 keeps the pointer and what it builds to (decision 2026-10-23-001, TMPL-1.4) |
-| 1.0 | 2026-10-22 | — | §1, §4, §5.2, §6, §8, §12: citations of `CONSTITUTION.md` §2 and the retired interop contract point to `AGENTS.md`, their one home (decision 2026-10-22-001, TMPL-1.1) |
-| 1.0 | 2026-09-24 | — | §7 and §11: the dependency rule and the live-placeholder rule are gated by the state gate (decision 2026-09-24-001, TMPL-5.5) |
-| 1.0 | {{DATE}} | — | Initial version |
+| Version | Date | Decision | Summary | Commit |
+|---------|------|----------|---------|--------|
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-010 | Marked as the authority for the sprint documents (TMPL-2.3); reflects the planning session as a skill. §2 and §12 point to the frontmatter registry instead of the retired authority matrix. The changelog table it replaces is in git | pending |

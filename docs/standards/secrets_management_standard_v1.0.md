@@ -1,6 +1,11 @@
+---
+authority: secrets management — how credentials are stored, reached by scripts and agents, and rotated
+implements: []
+verified: 2026-10-23
+---
+
 # Secrets Management Standard v1.0
 
-**Version:** 1.0
 **Created:** {{DATE}}
 **Status:** Active
 
@@ -258,8 +263,8 @@ Configure alerts for:
 
 ---
 
-## 12. Changelog
+## Version log
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | {{DATE}} | — | Initial version |
+| Version | Date | Decision | Summary | Commit |
+|---------|------|----------|---------|--------|
+| 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002 | Marked as the authority for secrets management (TMPL-2.3); the changelog table it replaces held the initial version alone | pending |

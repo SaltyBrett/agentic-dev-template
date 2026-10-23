@@ -1,7 +1,7 @@
 ---
 name: Authoritative documents record every decision that changes them
-description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why a template row is verified only in the template, why one scope has one authority, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-010]
+description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why a template row is verified only in the template, why one scope has one authority, how the first six authorities were marked, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
+teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -71,7 +71,20 @@ a project decision is the project's and is verified there.
 `sprint/recovery/AUTHORITY_MATRIX.md` kept the map of current artifacts by hand, with a rule to stop
 when two claim one concern. It had already gone stale on the persona registry. With the frontmatter
 as the registry, the rule is a check: two authorities whose scopes match ignoring case and spacing
-fail. The matrix retires in TMPL-2.3.
+fail. The matrix retired from the template in TMPL-2.3; a project's copy is under `sprint/`, which
+the updater never writes, so it stays the project's to delete.
+
+## The first authorities
+
+TMPL-2.3 marked the four standards, the document-control standard and the gate runbook (decision
+2026-10-23-011). Each log starts at the version the document stated and cites every decision from the
+cutoff that names it, after the document was read against each; the one change not yet made, the
+README catalog's to the runbook, is queued in its story's row. The old changelog tables were removed
+rather than converted: their rows cited no decision the gate reads and their dates were placeholders,
+and the handoff standard's had eight rows all at 2.0, the hand-kept value the gate exists to replace.
+File names keep their version, because every tracker cites the standards by file name and the updater
+never writes a project's tracker. The runbook gate skips the closing `## Version log`, its one H2 that
+is not a hook.
 
 ## Honest limit
 

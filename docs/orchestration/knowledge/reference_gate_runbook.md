@@ -1,8 +1,8 @@
 ---
 name: The gate-suite runbook is verified against the hook config, not maintained beside it
 description: 'A page describing the pre-commit suite is what the next reader consults instead of the config, and the hand-written table it replaced was keyed by script, silent on stages and already one hook behind. `scripts/gate_runbook_scan.py` reads the hook ids from `.pre-commit-config.yaml` with a YAML parser and the H2s from `docs/governance/gate_suite_runbook.md`, and fails on a missing or extra section, wrong order, a stage line that disagrees, or a hook with no `stages:`. Why the page lives in governance and not in runbooks, why the bump is MAJOR, and what the check cannot see. Read before adding a hook.'
-teaches: [2026-09-23-001, 2026-09-22-001]
-verified: 2026-09-23
+teaches: [2026-09-23-001, 2026-09-22-001, 2026-10-23-011]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -31,6 +31,11 @@ the config, reads the H2s outside fenced code, and compares both ways. A section
 line must equal the hook's declared `stages:`, because that is the value a reader passes to
 `--hook-stage`, and a wrong one runs nothing. A hook with no `stages:` fails: decision
 2026-09-20-001 required the declaration in prose, and this is where it became mechanical.
+
+One H2 is not a hook: since the page became an authority (decision 2026-10-23-011) it closes with
+`## Version log`, the record of its changes that `doc-authority-scan` holds to the decisions naming
+the page. The check skips that heading when it is last and reads it anywhere else as a section
+naming no hook, and its self-test holds the heading equal to the authority gate's.
 
 It cannot read what a section says a gate blocks or why. Those lines link the decision and the
 knowledge entry, and the decision wins when they disagree. The check keeps the page's shape

@@ -14,11 +14,11 @@
 
 ---
 
-## S7 — 2026-10-23 — The authority gate and the `.gitignore` union
+## S7 — 2026-10-23 — The authority gate, the `.gitignore` union and the first authorities
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1 and
-TMPL-2.5 done.
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1,
+TMPL-2.5 and, by the Chair's choice over TMPL-5.1, TMPL-2.3 done.
 
 ### Done
 
@@ -45,6 +45,17 @@ TMPL-2.5 done.
    conflict, each `--apply` exit 0 with the whole suite green, the authority gate among it; each
    project's ignores kept whole and the template's block after them. [[reference_template_update]]
    and `TEMPLATE_GUIDE.md` Step 9 say so.
+3. TMPL-2.3 — six authorities: the four standards, the document-control standard and the gate
+   runbook (decision 2026-10-23-011). Each was read against every decision from the cutoff that
+   names it; each log starts at the version it stated and cites them; the hand-kept changelog tables
+   and `**Version:**` lines are gone, the handoff standard's eight rows all at 2.0. The
+   document-control standard is rewritten around the gate and no longer says the template stays
+   private. `gate_runbook_scan.py` skips the runbook's closing version log, three broken variants
+   caught. `sprint/recovery/AUTHORITY_MATRIX.md` is removed from the template; the three projects'
+   copies, `v1.0.0`'s unedited, stay theirs. Seen on the real tree before the decision existed: the
+   gate refused the rows citing it, unindexed, and decision 2026-10-23-009 naming the runbook with no
+   row and no story; queued in TMPL-5.5's row, which now names the path. After: six authorities,
+   seventeen pairs recorded by a row, one queued, exit 0.
 
 ### Blockers
 
