@@ -2385,5 +2385,15 @@ these. And a rule is Claude's alone: Codex reads `AGENTS.md` and what it points 
 
 ### Enforcement
 
-`scripts/session_closeout.py` (`RULES`, `lint_rule`, `glob_regex`, `expand_braces`, `sentences`)
-in `session-closeout-check`. Taught by [[reference_kb_freshness]] for the moved section.
+`scripts/session_closeout.py` (`RULES`, `lint_rule`, `glob_regex`, `expand_braces`, `sentences`,
+`restatements`) in `session-closeout-check`. Taught by [[reference_claude_code_rules]]; the moved
+section by [[reference_kb_freshness]].
+
+### Verification
+
+Fixtures in the closeout self-test for every refusal and the glob translation; fifteen broken
+variants, each failing one. Live, in a scratch clone: an unscoped and a dead rule each failed the
+check by name; a canary rule scoped to one knowledge entry was absent from a session that used no
+tool and from one that read `README.md`, and present in one that read the entry. The first version
+compared whole sentences and let a rule copying a clause of `AGENTS.md` pass; the check now finds a
+sentence inside the other text either way, and the plant fails it.

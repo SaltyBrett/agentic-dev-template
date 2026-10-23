@@ -431,15 +431,24 @@ def glob_regex(pattern: str) -> re.Pattern:
     return re.compile("".join(out) + r"\Z")
 
 
+def words(text: str) -> str:
+    """Lower-cased words, punctuation and markdown dropped, one space apart."""
+    return " ".join(re.sub(r"[^a-z0-9 ]+", " ", text.lower()).split())
+
+
 def sentences(text: str) -> set[str]:
-    """Normalized sentences of MIN_SENTENCE_WORDS or more: split at sentence ends, list items,
-    headings and blank lines, then lower-cased with punctuation and markdown dropped."""
-    out = set()
-    for chunk in re.split(r"(?<=[.!?])\s+|\n\s*\n|\n\s*(?:[-*>]|\d+\.|#+)\s", "\n" + text):
-        words = re.sub(r"[^a-z0-9 ]+", " ", chunk.lower()).split()
-        if len(words) >= MIN_SENTENCE_WORDS:
-            out.add(" ".join(words))
-    return out
+    """Normalized sentences of MIN_SENTENCE_WORDS or more, split at sentence ends, list items,
+    headings and blank lines."""
+    chunks = re.split(r"(?<=[.!?])\s+|\n\s*\n|\n\s*(?:[-*>]|\d+\.|#+)\s", "\n" + text)
+    return {w for w in map(words, chunks) if len(w.split()) >= MIN_SENTENCE_WORDS}
+
+
+def restatements(text: str, brain: str) -> set[str]:
+    """Sentences of one found whole inside the other, either way: a rule sentence that is a clause
+    of AGENTS.md (observed in the live probe: equality alone let a copied clause through), or a
+    sentence of AGENTS.md carried inside a longer rule sentence."""
+    t, b = f" {words(text)} ", f" {words(brain)} "
+    return {s for s in sentences(text) if f" {s} " in b} | {s for s in sentences(brain) if f" {s} " in t}
 
 
 def lint_rule(text: str, files: list[str], brain: str) -> list:
@@ -464,7 +473,7 @@ def lint_rule(text: str, files: list[str], brain: str) -> list:
         regs = [glob_regex(x) for p in paths for x in expand_braces(p)]
         if not any(r.match(f) for f in files for r in regs):
             v.append(("rule-dead", f"no file git would commit matches {paths}, so the rule never loads"))
-    for s in sorted(sentences(body if fm is not None else text) & sentences(brain)):
+    for s in sorted(restatements(body if fm is not None else text, brain)):
         v.append(("rule-restates", f"repeats a sentence of AGENTS.md: `{s[:90]}`; a fact has one home"))
     return v
 
@@ -1232,8 +1241,16 @@ def run_self_test() -> int:
     expect("rules: a sentence of AGENTS.md repeated in a rule fails",
            lint_rule(rule + "- Verify before done: give yourself an executable check and iterate until it passes.\n", files, brain),
            "rule-restates")
+    expect("rules: a clause of an AGENTS.md sentence copied into a rule fails (the live probe's miss)",
+           lint_rule(rule + "- Verify before done: give yourself an executable check.\n", files, brain), "rule-restates")
+    expect("rules: an AGENTS.md sentence carried inside a longer rule sentence fails",
+           lint_rule(rule + "- In short, plan, then build: settle a plan with the user before a change, always.\n",
+                     files, brain), "rule-restates")
     expect("rules: a short sentence both share is vocabulary, not a restatement",
            lint_rule(rule + "- Never guess.\n", files, brain))
+    expect("rules: list items are sentences even with no punctuation on either side",
+           lint_rule(rule + "- one two three\n- eta theta iota kappa lambda mu\n", files,
+                     brain + "- alpha beta gamma delta epsilon zeta\n- eta theta iota kappa lambda mu\n"), "rule-restates")
     expect("rules: an unpunctuated list item repeated is found — list items are sentences",
            lint_rule(rule.replace("in the index.", "in the index") + "- Plan, then build: settle a plan with the user "
                      "before a change\n", files, brain), "rule-restates")
