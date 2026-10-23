@@ -2,7 +2,7 @@
 name: pre-commit local hooks declare language python, never a bare `python` entry
 description: 'A local hook written as `entry: python scripts/x.py` under `language: system` cannot launch on macOS, which ships no bare `python` on PATH — the compliance gate then blocks every commit with an error that reads like a broken script. `language: python` makes pre-commit provision its own interpreter and is the portable fix; documented manual invocations go through `pre-commit run <hook-id>` for the same reason. Read before adding or editing any hook in `.pre-commit-config.yaml`, or before documenting how to run a gate by hand.'
 teaches: [2026-09-20-002]
-verified: 2026-09-25
+verified: 2026-10-22
 metadata:
   type: reference
 ---
@@ -112,10 +112,9 @@ pass untouched.
 Two things about that rule are worth knowing before you add another:
 
 1. **It lives in `CONTENT_RULES`, not `BANNED_PATTERNS`, and that is load-bearing.**
-   `BANNED_PATTERNS` is filtered by `EXCLUDE_FILES`, which holds `AGENTS.md`,
-   `AGENT_COLDSTART_CHECKLIST.md`, `CONSTITUTION.md` and `TEMPLATE_GUIDE.md` — governance docs that
-   legitimately *name* banned Fabric features. Those are exactly the files where the bare-`python`
-   defect landed. A rule added to `BANNED_PATTERNS` would have been inert in the files it most needed
+   `BANNED_PATTERNS` is filtered by `EXCLUDE_FILES`, which exempts governance docs that legitimately
+   *name* banned Fabric features, `AGENTS.md` among them — exactly where the bare-`python` defect
+   landed. A rule added to `BANNED_PATTERNS` would have been inert in the files it most needed
    to cover, and would have looked like it was working. `CONTENT_RULES` bypasses `EXCLUDE_FILES`
    and carries a per-rule `allow` set instead, so an exemption is one rule in one file rather than a
    whole file falling out of the scan.

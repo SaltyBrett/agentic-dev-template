@@ -1,9 +1,11 @@
 # {{PROJECT_NAME}} — Agent Brain (canonical)
 
-> **Canonical instructions for ANY AI agent.** Codex reads this file natively; Claude Code loads it via
-> `CLAUDE.md`'s `@AGENTS.md` import. There is no other brain — do not add agent instructions elsewhere.
-> Governed by `AGENT_INTEROP.md`. **Keep this lean** (Codex caps project docs ~32 KiB; bloat lowers
-> adherence). Nouns and non-inferable constraints live here; procedures live in `docs/standards/`.
+> **Canonical instructions for ANY AI agent.** Claude Code (v2.1.277 or later) and Codex both read this
+> file natively. There is no other brain — do not add agent instructions elsewhere, and never add a
+> `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` here or in a parent directory: Claude Code reads
+> any one of them *instead of* this file ([[reference_claude_code_agents_md]]). **Keep this lean**
+> (Codex caps project docs ~32 KiB; bloat lowers adherence). Nouns and non-inferable constraints live
+> here; procedures live in `docs/standards/`.
 
 **Project:** {{PROJECT_NAME}} · **Platform:** {{PLATFORM_DESCRIPTION}} · **Scope:** {{PROJECT_SCOPE}}
 
@@ -51,8 +53,12 @@ Durable rationale and enforcement: [[reference_agent_execution_identity]].
 5. Read `docs/orchestration/knowledge/INDEX.md` — the index, then only task-relevant entries.
 6. Read `CONSTITUTION.md` — the compliance law.
 7. Read `sprint/sprint-status.md`, `sprint/decision-log.md` (index), `sprint/story-tracker.md` (index),
-   and this session's pair `sprint/handoffs/HANDOFF_S<N>.md` + `KICKOFF_S<N>.md` (never `archive/`).
-8. Run `docs/orchestration/AGENT_COLDSTART_CHECKLIST.md` and answer its questions **from the repo**.
+   and this session's pair `sprint/handoffs/HANDOFF_S<N>.md` + `KICKOFF_S<N>.md`, N being one more
+   than the newest `## S<N>` entry in sprint-status (never `archive/`).
+8. Read every standard in the current story's **Required Standards** column — all of them. The column
+   is authoritative; do not judge which are relevant.
+9. Confirm the by-hand preconditions in `docs/orchestration/AGENT_COLDSTART_CHECKLIST.md`, the ones no
+   script here proves.
 
 References do NOT auto-load — you must explicitly Read each file.
 
@@ -62,6 +68,8 @@ References do NOT auto-load — you must explicitly Read each file.
 
 - **Design:** simplest correct, most direct solution; prove the direct approach fails before any
   workaround (detail: `CONSTITUTION.md §4A`).
+- **Plan, then build:** settle a plan with the user before a non-trivial change, always for security-,
+  compliance- or billing-sensitive paths. Send broad searches to a subagent to keep this context clean.
 - **Verify before done:** give yourself an executable check — a test, `dbt build`, a row-count/null-rate
   query, the banned-feature scan — and iterate until it passes *before* calling a task done. If it fails
   ~3× running, stop and reassess rather than pile on workarounds. (This is the highest-leverage habit.)
@@ -101,6 +109,10 @@ References do NOT auto-load — you must explicitly Read each file.
 
 - Story IDs: `{PREFIX}-{Epic}.{Story}`. Commits: `checkpoint: …`. Wikilinks: `[[slug]]` →
   `docs/orchestration/knowledge/<slug>.md`.
+- **Index-first logs:** read the decision log, the story tracker and sprint-status as index plus
+  task-relevant entries, never whole; keep them markdown, with no accreting changelog paragraphs.
+- **Enforcement is git hooks and CI**, which fire identically under any agent on any machine. A tool's
+  own hooks and settings (`.claude/settings.json`) give context and ergonomics, never the only control.
 - GitHub runs the gate suite on every push (`.github/workflows/gates.yml`). A red run is acted on
   in the same session; it blocks only where branch protection exists ([[reference_ci_backstop]]).
 - **AUTHORITATIVE REFERENCE** pattern: when a doc marks a file `> **AUTHORITATIVE REFERENCE:** path`,
@@ -116,7 +128,7 @@ References do NOT auto-load — you must explicitly Read each file.
 | File | Holds |
 |------|-------|
 | `CONSTITUTION.md` | Compliance law: banned features, mandatory patterns, GCC, security model, automation scope |
-| `AGENT_INTEROP.md` | The tool-interoperability standard (SSOT law, sync model, cold-start gate) |
+| `.claude/settings.json` | Claude Code permissions, checked in so the team shares one allow-list; context, not enforcement |
 | `.codex/config.toml` | User-reviewed `untrusted` approval defaults; no forced sandbox mode |
 | `scripts/` + `.pre-commit-config.yaml` | Portable mechanical gates; execution identity runs first |
 | `docs/governance/gate_suite_runbook.md` | One section per hook, in run order: stage, what it blocks, why, how to run it alone. `scripts/gate_runbook_scan.py` keeps it in step with the config |

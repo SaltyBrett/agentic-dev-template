@@ -86,9 +86,9 @@ def active_banned_patterns() -> dict:
 # These run against every scanned file INCLUDING the ones in EXCLUDE_FILES.
 # That exclusion list exempts governance docs that legitimately *name* banned
 # Fabric features. It must not exempt them from these rules, because AGENTS.md
-# and AGENT_COLDSTART_CHECKLIST.md are on it and are precisely where the
-# bare-`python` defect last landed. A rule added to BANNED_PATTERNS instead
-# would have been inert in the two files it most needed to cover.
+# is on it and is precisely where the bare-`python` defect last landed, with the
+# cold-start checklist (on the list until its GCC question went). A rule added to
+# BANNED_PATTERNS instead would have been inert in the files it most needed to cover.
 #
 # Formerly PORTABILITY_RULES. Renamed when the provenance rule below joined it:
 # "no employer identifier" is not a portability concern, and filing it under a
@@ -221,7 +221,6 @@ EXCLUDE_FILES = {
     "project_profile.py",
     "CONSTITUTION.md",
     "AGENTS.md",
-    "AGENT_COLDSTART_CHECKLIST.md",
     "doc_control_standard.md",
     "TEMPLATE_GUIDE.md",
 }

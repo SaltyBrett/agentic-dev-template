@@ -192,9 +192,7 @@ to complete the closeout of S<N> before building.
 
 ## 8. Cold start
 
-The kickoff's section 2 is the whole procedure. `pre-commit run session-verify --hook-stage manual`
-proves the previous session closed out (its produced pair exists and passes every check) and the
-tree is clean. If it fails, the first task of the session is to complete the previous closeout.
+The cold start is in `AGENTS.md`, its one home; the kickoff's section 2 points there.
 
 ---
 
@@ -225,8 +223,8 @@ sprint's first stories.
 
 ## 11. Relationship to the constitution
 
-This standard is the detailed procedure for `CONSTITUTION.md` §2.2 (Session End) and §2.4
-(context management). Where the two disagree on handoff matters, this standard governs.
+`AGENTS.md` points here for the closeout, and `CONSTITUTION.md` §2 points to `AGENTS.md`. Where the
+constitution and this standard disagree on handoff matters, this standard governs.
 
 ---
 
@@ -234,6 +232,7 @@ This standard is the detailed procedure for `CONSTITUTION.md` §2.2 (Session End
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.0 | 2026-10-22 | §8 and §11: the cold start is in `AGENTS.md` alone; this standard points there and is reached from it for the closeout (decision 2026-10-22-001, TMPL-1.1). |
 | 2.0 | 2026-09-23 | §7: the resources sync runs at closeout, before the scaffold; the closeout refuses an unpublished persona (decision 2026-09-23-007, TMPL-3.3). |
 | 2.0 | 2026-09-23 | §5 and §6: personas carry `version:` and a `## Changelog`; append-only, gated; the kickoff names the persona version (decision 2026-09-23-002, TMPL-3.2). |
 | 2.0 | 2026-09-21 | Closeout is a gate. Numbered sessions, handoff/kickoff pair with one-session lifetime and rotation, persona registry. Removed the percentage ladder, the "Handoff Prompt" conflation, `HANDOFF_SESSION[N]` naming, and the emergency handoff template. |

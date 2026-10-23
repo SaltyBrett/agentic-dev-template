@@ -66,9 +66,7 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 
 | Path | Description |
 |------|-------------|
-| `AGENTS.md` | Canonical agent brain — Codex-native; Claude loads it via `CLAUDE.md`'s `@AGENTS.md` import |
-| `CLAUDE.md` | Claude Code bridge (`@AGENTS.md` + Claude-only accelerators) |
-| `AGENT_INTEROP.md` | Tool-interoperability contract (single-source-of-truth law) |
+| `AGENTS.md` | Canonical agent brain and cold start; Claude Code and Codex read it natively |
 | `CONSTITUTION.md` | AI agent governance rules and session protocols |
 | `LICENSE` | MIT; the project's own from birth |
 | `sprint/` | Active project state (sprint-status, story-tracker, decision-log, handoffs, recovery) |
@@ -89,19 +87,10 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 
 ## How an agent works a session
 
-This repository is **tool-agnostic**: Claude Code, Codex, or any future agent works it interchangeably.
-`AGENTS.md` (repo root) is the one canonical brain — Codex reads it natively, and `CLAUDE.md` loads it
-via an `@AGENTS.md` import. AI agents follow a structured protocol:
-
-1. Read `AGENTS.md` (canonical brain) + `AGENT_INTEROP.md` at session start
-2. Read `docs/orchestration/knowledge/INDEX.md` (index first, then task-relevant entries)
-3. Read `CONSTITUTION.md`, `sprint/sprint-status.md`, `sprint/story-tracker.md` for current state
-4. Run `docs/orchestration/AGENT_COLDSTART_CHECKLIST.md` before any build work
-5. Flush durable learnings to `docs/orchestration/knowledge/` and update state files at session end
-6. Close out with `session_closeout.py`: a handoff and a kickoff prompt for the next session, verified
-   by a gate, living one session, then archived
-
-See `AGENTS.md` for the complete cold-start sequence.
+`AGENTS.md` (repo root) is the one canonical brain; Claude Code (v2.1.277 or later) and Codex both
+read it natively. A session opens with its cold start, which proves the previous session closed out
+before any build work, and ends with a gated closeout that writes the next session's handoff and
+kickoff prompt, each living one session. Both procedures are reached from `AGENTS.md` alone.
 
 ## Running the gates
 
@@ -115,11 +104,10 @@ pre-commit run banned-feature-scan --all-files
 # The commit-msg-stage gate is NOT covered by --all-files; test it explicitly
 printf 'checkpoint: x\n\nClean body.\n' > /tmp/msg
 pre-commit run --hook-stage commit-msg --commit-msg-filename /tmp/msg --all-files
-
-# Session boundaries: manual-stage hooks the agent runs at cold start and at session end
-pre-commit run session-verify --hook-stage manual
-pre-commit run session-closeout --hook-stage manual --all-files
 ```
+
+The manual-stage session gates run inside the cold start and the closeout; every hook's own command
+is in the [gate runbook](docs/governance/gate_suite_runbook.md).
 
 Three of the gates (the persona linter, the frontmatter gate and the attribution gate) are also
 published as a pre-commit hook repository in `.pre-commit-hooks.yaml`, so another repository pins

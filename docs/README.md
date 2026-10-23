@@ -4,5 +4,5 @@ Project documentation, organized by purpose. What each directory here holds is i
 repository structure table in the root [README](../README.md#repository-structure), the one home
 for that table.
 
-**Reading order for AI sessions:** See `AGENTS.md` (repo root) cold-start sequence — Codex reads it
-natively; `CLAUDE.md` loads it via an `@AGENTS.md` import.
+**Reading order for AI sessions:** the cold start in `AGENTS.md` (repo root), which Claude Code and
+Codex both read natively.

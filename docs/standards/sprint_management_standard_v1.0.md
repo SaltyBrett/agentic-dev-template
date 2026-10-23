@@ -17,7 +17,7 @@ This standard is the authoritative guide for the `sprint/` state documents. It c
 
 It applies to any agent (Claude Code, Codex, future tools) that creates or updates
 `sprint/story-tracker.md`, `sprint/sprint-status.md`, or `sprint/decision-log.md`. It **extends**
-`CONSTITUTION.md §2` (session protocols) and `session_handoff_standard_v2.0.md` (handoffs); where those
+the session protocols in `AGENTS.md` and `session_handoff_standard_v2.0.md` (handoffs); where those
 speak to sprint docs, this standard is the detailed procedure.
 
 ---
@@ -70,7 +70,7 @@ A well-formed story is **INVEST-aligned** and, per `CONSTITUTION.md §9`, **huma
 | **Session-sized** | A story should be completable within one session's productive budget. If it can't, split it — never plan a story that *must* span sessions. |
 | **Independent as possible** | Minimize cross-story coupling; express real ordering via **Dependencies**, not hidden assumptions. |
 | **Traceable** | Every story links to its origin in the PRD via **PRD Ref**. |
-| **Standards-bound** | Every story lists its **Required Standards** — the explicit, authoritative set an agent must read before building it (`CONSTITUTION.md §2.1` Standard Selection Rule). Do not leave this blank; use `—` only when genuinely none apply. |
+| **Standards-bound** | Every story lists its **Required Standards** — the explicit, authoritative set an agent must read before building it (the `AGENTS.md` cold start). Do not leave this blank; use `—` only when genuinely none apply. |
 
 **Required columns for every story row:** `Story ID | Title | Status | Dependencies | Required Standards | PRD Ref`.
 
@@ -95,7 +95,7 @@ It is the sprint-creation counterpart to the cold-start gate.
 5. **Populate `sprint/story-tracker.md`:** fill Summary Statistics, Dependency Order, and one table per epic. **Remove the `[EXAMPLE]` epic.**
 6. **Initialize `sprint/sprint-status.md`:** set Current Phase, Current Focus, session number; write the first session update. Replace all `{{PLACEHOLDER}}` values.
 7. **Seed `sprint/decision-log.md`:** log the planning decisions (layering, scope boundaries, framework/tech choices) with rationale and IDs. **Remove the `[EXAMPLE]` entry** once a real one exists.
-8. **Confirm with the user** before any build work begins (`CONSTITUTION.md §2.1` step 7).
+8. **Confirm with the user** before any build work begins (`CONSTITUTION.md §1`).
 
 ### 5.3 Output checklist (planning is complete when all true)
 - [ ] Every PRD requirement maps to at least one story; no story lacks a PRD Ref.
@@ -113,7 +113,7 @@ It is the sprint-creation counterpart to the cold-start gate.
 - The shipped `sprint/*` files contain `[EXAMPLE]` rows and `{{PLACEHOLDER}}` tokens purely as shape
   guides. The Planning Session Protocol replaces them — do not leave examples/placeholders in a live sprint.
 - Keep all three files **markdown** (never JSON) and free of accreting changelog paragraphs, per the
-  index-first governance rule (`AGENT_INTEROP.md §4`).
+  index-first rule (`AGENTS.md` Conventions).
 
 ---
 
@@ -146,7 +146,7 @@ record that as a decision.
 
 ## 8. Maintenance Cadence
 
-Aligns with the Checkpoint Protocol (`CONSTITUTION.md §2.4`) and the handoff triggers.
+Aligns with checkpoint discipline and the handoff triggers (`AGENTS.md` How I work).
 
 | When | Update |
 |------|--------|
@@ -195,11 +195,10 @@ comply with their Required Standards, tracker/decision-log updated, no open ques
 
 ## 12. Related Documents
 
-- `CONSTITUTION.md` — session protocols, checkpoint protocol, standard-selection rule
+- `AGENTS.md` — canonical brain: cold start, standard-selection rule, checkpoint discipline, index-first rule
+- `CONSTITUTION.md` — the compliance law
 - `docs/standards/session_handoff_standard_v2.0.md` — handoffs, Story Completion Criteria (Definition of Done)
-- `AGENTS.md` — canonical brain / cold-start sequence
 - `sprint/recovery/AUTHORITY_MATRIX.md` — source-of-truth mappings
-- `AGENT_INTEROP.md` — index-first governance rule
 
 ---
 
@@ -207,5 +206,6 @@ comply with their Required Standards, tracker/decision-log updated, no open ques
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.0 | 2026-10-22 | — | §1, §4, §5.2, §6, §8, §12: citations of `CONSTITUTION.md` §2 and the retired interop contract point to `AGENTS.md`, their one home (decision 2026-10-22-001, TMPL-1.1) |
 | 1.0 | 2026-09-24 | — | §7 and §11: the dependency rule and the live-placeholder rule are gated by the state gate (decision 2026-09-24-001, TMPL-5.5) |
 | 1.0 | {{DATE}} | — | Initial version |

@@ -6,8 +6,8 @@ This guide walks you through customizing this template for a new agentic develop
 
 ## Step 1: Replace Placeholders in the Canonical Brain
 
-Open `AGENTS.md` (the canonical agent brain; `CLAUDE.md` is a thin `@AGENTS.md` bridge that needs no
-per-project edits) and replace all `{{PLACEHOLDER}}` values:
+Open `AGENTS.md` (the canonical agent brain, which Claude Code and Codex both read natively) and
+replace all `{{PLACEHOLDER}}` values:
 
 | Placeholder | Description | Example |
 |-------------|-------------|---------|
@@ -219,26 +219,4 @@ What each path holds is the repository structure table in
 
 ## AI Agent Workflow Summary
 
-```
-Session Start
-  └─> Read AGENTS.md (canonical brain; Claude loads it via CLAUDE.md @import)
-  └─> Read AGENT_INTEROP.md + docs/orchestration/knowledge/INDEX.md
-  └─> Read CONSTITUTION.md
-  └─> Read sprint/sprint-status.md
-  └─> Read sprint/story-tracker.md
-  └─> Read story-specific standards
-  └─> Run docs/orchestration/AGENT_COLDSTART_CHECKLIST.md
-  └─> Confirm understanding with user
-
-During Session
-  └─> Re-read standards before generating artifacts
-  └─> Validate outputs against standard checklists
-  └─> Update state files after each work unit (checkpoint)
-
-Session End (work-unit boundary, or the user signals context is high)
-  └─> Checkpoint sprint-status (`## S<N>` entry), story-tracker, decision-log
-  └─> Flush durable learnings to docs/orchestration/knowledge/
-  └─> session_closeout.py --scaffold --persona <slug>; fill HANDOFF_S<N+1> + KICKOFF_S<N+1>
-  └─> pre-commit run session-closeout --hook-stage manual --all-files
-  └─> Commit `checkpoint: closeout S<N>`; hand the kickoff over as the next prompt
-```
+The cold start, checkpoint discipline and the closeout are in `AGENTS.md`, their one home.

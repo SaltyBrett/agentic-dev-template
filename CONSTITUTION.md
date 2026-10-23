@@ -28,61 +28,11 @@ You are an **AI orchestrator** for the {{PROJECT_NAME}} project. Your responsibi
 
 ### 2.1 Session Start Protocol
 
-Every session MUST begin with:
-
-```
-1. READ this file (CONSTITUTION.md)
-   - Understand rules and constraints
-   - Note any recent updates
-
-2. READ docs/standards/session_handoff_standard_v2.0.md
-   - Understand the closeout procedure and the one-session lifetime of a handoff
-   - This standard governs ALL session transitions
-   - **DO NOT SKIP - referenced in constitution is NOT sufficient**
-
-3. READ sprint/sprint-status.md
-   - Understand current sprint state
-   - Identify what's in progress, blocked, ready
-
-4. READ sprint/story-tracker.md (relevant sections)
-   - Understand current story status
-   - Check dependencies for next work
-
-5. IDENTIFY the story/stories for this session
-   - What story ID(s) will be worked on?
-   - Locate story in story-tracker.md
-
-6. READ standards listed in "Required Standards" column for the story
-   - story-tracker.md has explicit standards per story
-   - DO NOT interpret "relevant" - use the explicit list
-   - If story has multiple standards, READ ALL of them
-
-7. CONFIRM understanding with user before proceeding
-```
-
-**CRITICAL:** AI agents do NOT automatically follow document references. Seeing a reference to a file does NOT mean the agent has read it. The agent MUST explicitly use the Read tool for each required document.
-
-**Standard Selection Rule:** Do NOT interpret which standards are "relevant". The story-tracker.md "Required Standards" column is the **authoritative source** for which standards apply to each story. Read ALL standards listed for the current story.
+The cold start is in `AGENTS.md`, its one home.
 
 ### 2.2 Session End Protocol
 
-Every session ends with the closeout procedure in `docs/standards/session_handoff_standard_v2.0.md`
-§7, verified by `scripts/session_closeout.py`:
-
-```
-1. CHECKPOINT  story-tracker, decision-log, sprint-status (`## S<N> — date — title` entry)
-2. FLUSH       durable learnings to docs/orchestration/knowledge/ (+ INDEX row); log decisions
-3. SYNC        python3 scripts/resources_sync.py --apply; publish what it reports unpublished
-4. SCAFFOLD    python3 scripts/session_closeout.py --scaffold --persona <slug>; fill both files
-5. VERIFY      pre-commit run session-closeout --hook-stage manual --all-files
-               (archives older pairs; --all-files so pre-commit judges your edits, not a stash;
-               refuses a persona dev-resources lacks at the synced ref)
-6. COMMIT      checkpoint: closeout S<N>; push; confirm the `gates` run is green
-7. HAND OVER   the KICKOFF_S<N+1>.md contents are the next session's prompt
-```
-
-Nothing needed beyond the next session may exist only in the handoff, the kickoff, chat, or
-scratch. The next session's `session-verify` fails if this protocol was not completed.
+The closeout is in `AGENTS.md` (How I work), which points to its procedure.
 
 ### 2.3 Mid-Session Protocols
 
@@ -110,45 +60,8 @@ scratch. The next session's `session-verify` fails if this protocol was not comp
 
 ### 2.4 Token/Context Window Management Protocol
 
-**CRITICAL:** Sessions can run out of tokens before work is complete. These safeguards ensure state files are always updated.
-
-**See:** `docs/standards/session_handoff_standard_v2.0.md` for complete handoff templates and procedures.
-
-**Handoff triggers (user-signaled, not self-measured):**
-
-You cannot reliably measure your own context usage, so do not police a percentage ladder. Instead:
-
-- Generate a handoff at a **natural work-unit boundary** (story/task complete), or **when the user
-  signals** context is running high ("Context is at X%").
-- On that signal: finish only the current work unit, generate the handoff following
-  `session_handoff_standard_v2.0.md`, and commit a checkpoint before starting anything new.
-- Modern harnesses auto-compact and re-read this repo's root files, so a long session does not lose
-  state — but durable learnings must still be flushed to `docs/orchestration/knowledge/` and state
-  files committed, because tool memory is a cache, not a source.
-
-**Checkpoint Protocol (Incremental Saves):**
-
-Do NOT wait until session end to update state files. After completing EACH story or significant work unit:
-
-```
-1. Immediately update story-tracker.md (mark completed/in-progress)
-2. Append to decision-log.md (if decisions were made)
-3. Update sprint-status.md (current focus, any blockers)
-4. Commit with message: "checkpoint: [brief description]"
-```
-
-This ensures state is never more than one work unit behind, even if session ends unexpectedly.
-
-**Emergency Session Close (user signals context is critical):**
-
-```
-1. STOP all other work immediately
-2. Write a MINIMAL sprint-status.md entry headed `## S<N> — <date> — emergency checkpoint`:
-   what was completed, what was in progress and its exact state, any blockers
-3. Commit with message: "emergency-checkpoint: S<N>"
-4. Inform the user that the closeout was not completed. The next session's
-   `session-verify` will fail, and completing the closeout of S<N> is its first task.
-```
+Checkpoint discipline and the handoff triggers are in `AGENTS.md` (How I work); the emergency close is
+in `docs/standards/session_handoff_standard_v2.0.md` §7.
 
 ---
 
@@ -423,9 +336,7 @@ All artifacts must be:
 
 | File | Purpose |
 |------|---------|
-| `AGENTS.md` | Canonical agent brain — instructions, project context, cold-start (Codex-native; Claude via `CLAUDE.md` import) |
-| `CLAUDE.md` | Claude Code bridge → `@AGENTS.md` + Claude-only accelerators |
-| `AGENT_INTEROP.md` | Tool-interoperability contract (single source of truth law) |
+| `AGENTS.md` | Canonical agent brain — instructions, project context, cold start; Claude Code and Codex read it natively |
 | `.codex/config.toml` | Codex approval defaults; no forced sandbox mode |
 | `scripts/agent_execution_identity_guard.py` | Execution-identity and approval-policy gate |
 | `.pre-commit-config.yaml` | Portable pre-commit suite; identity guard runs first |

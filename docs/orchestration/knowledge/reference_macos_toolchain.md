@@ -2,7 +2,7 @@
 name: macOS toolchain constraints for this framework
 description: 'Silent portability and environment defects that surface when this framework is cloned on macOS: the per-clone pre-commit hook with a baked-in interpreter path, Windows-originated git config, case-insensitive APFS versus case-sensitive git, Microsoft fonts absent, and the per-app consent gate on Downloads/Desktop/Documents that presents as a hung command. Read before the first clone on any new machine.'
 teaches: []
-verified: 2026-09-23
+verified: 2026-10-22
 source: dev-resources
 metadata:
   type: reference
@@ -97,13 +97,14 @@ nothing for VS Code.
 Keep project work out of those three folders where you can. A repo cloned under `~/code` is subject to
 none of this.
 
-## 6. Symlinks are not a substitute for the CLAUDE.md import
+## 6. Never symlink CLAUDE.md to AGENTS.md
 
-Do not replace `CLAUDE.md` with a symlink to `AGENTS.md`. Two reasons: Claude Code's Edit and Write
-tools refuse to write through a symlink, and Git checks committed symlinks out as plain text files
-on Windows without `core.symlinks`, leaving collaborators with a one-line CLAUDE.md in place of the
-governance bridge. The `@AGENTS.md` import in `CLAUDE.md` is the portable pattern and is already in
-place. Keep it.
+Claude Code's Edit and Write tools refuse to write through a symlink, and Git checks committed
+symlinks out as plain text files on Windows without `core.symlinks`, leaving collaborators with a
+one-line `CLAUDE.md` in place of the instructions. Before Claude Code v2.1.277, give it `AGENTS.md`
+through an `@AGENTS.md` import in `CLAUDE.md`. From v2.1.277 it reads `AGENTS.md` natively, and a
+`CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` in the working directory or any parent is
+read *instead*, so a repository relying on the native read has no `CLAUDE.md` anywhere on its path.
 
 ## 7. The shell is zsh, and sed and awk are BSD
 

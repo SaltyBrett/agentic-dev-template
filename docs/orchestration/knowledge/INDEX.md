@@ -1,9 +1,8 @@
 # Knowledge Base — Index
 
 **This is the single source of truth for accumulated knowledge and feedback.** It is tool-neutral: every
-agent (Claude Code, Codex, future tools) reads and writes here, never into a tool's private memory. See
-`AGENT_INTEROP.md` for the interoperability contract and `AGENTS.md` for the cold-start sequence that
-points here.
+agent (Claude Code, Codex, future tools) reads and writes here, never into a tool's private memory.
+`AGENTS.md` holds the law and the cold-start sequence that points here.
 
 > **★ Every entry declares its decision provenance (CONSTITUTION §6.3).** YAML frontmatter carries
 > `teaches: [<decision-id>, …]` (decisions the entry *explains*) and `verified: <date>` (when it was last
@@ -60,6 +59,7 @@ points here.
 
 | Slug | Summary | Type |
 |------|---------|------|
+| [reference_claude_code_agents_md](reference_claude_code_agents_md.md) | Claude Code reads `AGENTS.md` natively from v2.1.277, but any `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` on the path is read instead, silently; observed on 2.1.308 with a canary, both halves. Why the template retired its bridge, the hazard that creates, and why a `SessionStart` hook never injects `AGENTS.md`. | reference |
 | [reference_pristine_cut](reference_pristine_cut.md) | The cut as executed: read the sanitize check and judge every item against what the reset clears; rename on GitHub first; run the sanitizer while the clone's origin still names the template; copy tracked files only; switch the old clone's origin to the archive name before the new repository takes the old one, because the redirect lasts only until the name is reused; prove the commit-msg gate with zero commits behind it; `v1.0.0` is the sanitized tree alone and the cut's record is carried in after it. | reference |
 | [reference_template_sanitizer](reference_template_sanitizer.md) | `sanitize_template.py` is the initializer's machinery without the fill, run only in the template: `--apply` regenerates the two sprint documents and clears the pairs and both archives, keeping every token, both profile blocks and the sync stamp; `--check`, a manual hook, names every item of build state while the sweep of session numbers, probe references and hashes from knowledge entries and decision bodies stays by hand. Why the script excludes itself from the name check, and how citations name the archive repository. | reference |
 | [reference_framework_decisions](reference_framework_decisions.md) | The template's decisions live in `docs/governance/framework_decisions.md`, IDs unchanged, and a project's in `sprint/decision-log.md`, which ships with the example alone. The freshness and session gates read both indexes as one set, a missing index still raises naming the log, the framework row wins a duplicate ID, and the updater merges the framework file and never writes the log. Where each kind of session logs, and why a project prefixes its IDs. | reference |
