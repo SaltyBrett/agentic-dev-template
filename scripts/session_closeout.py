@@ -79,7 +79,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kb_freshness_scan  # noqa: E402 — the decision-index parser, not its main()
@@ -563,6 +563,16 @@ def newest_session(text: str) -> int | None:
     heads = status_headings(text)
     m = STATUS_ENTRY.match(f"## {heads[0]}") if heads else None
     return int(m.group(1)) if m else None
+
+
+def current_session(text: str, has_kickoff: Callable[[int], bool]) -> int | None:
+    """The session at work, from sprint-status and the pairs: the newest entry, plus one when the
+    next session's kickoff exists, as at a cold start before the session writes its own entry. The
+    start hook and the doc-queue gate read this one rule."""
+    newest = newest_session(text)
+    if newest is None:
+        return None
+    return newest + 1 if has_kickoff(newest + 1) else newest
 
 
 class Story(NamedTuple):
@@ -1319,6 +1329,9 @@ def run_self_test() -> int:
     expect("verify: only the produced pair passes", verify_state(3, {4}))
     expect("verify: no produced pair fails", verify_state(3, {3}), "not-closed")
     expect("verify: a fresh project passes", verify_state(1, set()))
+    check("current session: the newest entry, plus one while the next kickoff exists, none when unreadable",
+          current_session(_STATUS, lambda n: n == 4) == 4 and current_session(_STATUS, lambda n: False) == 3
+          and current_session("# Sprint Status\n\n## Notes\n", lambda n: True) is None)
     expect("closeout: a fresh project must still produce S2", verify_state(1, set(), closing=True), "not-closed")
     expect("verify: an empty folder past S1 fails", verify_state(2, set()), "no-pair")
     expect("verify: an unheaded sprint-status fails", verify_state(None, {2}), "status")

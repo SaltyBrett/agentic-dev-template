@@ -13,8 +13,9 @@ WHAT IT DOES
 A Claude Code SessionStart hook (`.claude/settings.json`, matchers startup, clear and compact). Its
 plain-text stdout is added to Claude's context. SessionStart cannot block, so it always exits 0.
 
-startup, clear  runs the identity gate, `git pull --ff-only` and session-verify, the gates through
-                pre-commit exactly as `AGENTS.md` runs them; reports whether both hook types are
+startup, clear  runs the identity gate, `git pull --ff-only`, session-verify and doc-queue, the gates
+                through pre-commit exactly as `AGENTS.md` runs them, doc-queue's verdict with each
+                story queued for the technical writer (decision 2026-10-23-016); reports whether both hook types are
                 installed and whether a CLAUDE.md on the path hides `AGENTS.md`; writes the
                 journal's start line; prints the results, the persona, the session's kickoff, the
                 newest sprint-status entry, and any notes or journal an unfinished session left.
@@ -69,6 +70,11 @@ IDENTITY_COMMAND = ["pre-commit", "run", "agent-execution-identity", "--all-file
 # pull; a fast-forward needs neither a rebase nor a clean tree (observed in S2).
 PULL_COMMAND = ["git", "pull", "--ff-only", "--no-rebase"]
 VERIFY_COMMAND = shlex.split(closeout.VERIFY_COMMAND)
+# --verbose: pre-commit hides a passing hook's output, and the queue it lists is the report.
+QUEUE_COMMAND = ["pre-commit", "run", "doc-queue", "--hook-stage", "manual", "--all-files", "--verbose"]
+QUEUE_LINES = 8
+# A queued story, or a violation under its lowercase rule; pre-commit's own `[ERROR]` is neither.
+QUEUE_ITEM = re.compile(r"^(queued |\[[a-z-]+\] )")
 # Each of these, in the working directory or any parent, makes Claude Code read it instead of
 # AGENTS.md; the user-level ~/.claude/CLAUDE.md does not count (reference_claude_code_agents_md).
 SHADOWS = ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md")
@@ -170,10 +176,10 @@ def session_number(root: Path, sid: str, journal_text: str, from_journal: bool) 
         if found is not None:
             return found
     status = root / "sprint" / "sprint-status.md"
-    newest = closeout.newest_session(status.read_text(encoding="utf-8")) if status.is_file() else None
-    if newest is None:
+    if not status.is_file():
         return None
-    return newest + 1 if (root / "sprint" / "handoffs" / f"KICKOFF_S{newest + 1}.md").is_file() else newest
+    return closeout.current_session(status.read_text(encoding="utf-8"),
+                                    lambda n: (root / "sprint" / "handoffs" / f"KICKOFF_S{n}.md").is_file())
 
 
 def read(path: Path) -> str | None:
@@ -266,6 +272,21 @@ def roster_lines(root: Path) -> list[str]:
     return lines
 
 
+def queue_lines(rc: int | None, out: str) -> list[str]:
+    """The doc-queue verdict (decision 2026-10-23-016): the gate's summary, each queued story with
+    the drain that clears it, and on a failure each violation and what it means."""
+    said = [ln.strip() for ln in out.splitlines() if ln.strip().startswith("doc_queue: S") or QUEUE_ITEM.match(ln.strip())]
+    summary = next((ln.split(": ", 1)[1] for ln in said if ln.startswith("doc_queue: S")), last_line(out))
+    items = [f"  {ln}" for ln in said if QUEUE_ITEM.match(ln)][:QUEUE_LINES]
+    if rc == 0:
+        return [f"- doc-queue: PASS (exit 0). {summary}.", *items]
+    if rc is None or not said:   # pre-commit or the hook is missing: the gate itself never spoke
+        return [f"- doc-queue: {'did not run' if rc is None else f'FAILED (exit {rc})'}. {last_line(out)}"]
+    return [f"- doc-queue: FAILED (exit {rc}). {summary}.", *items,
+            "  A story in the technical writer's queue is overdue or malformed: drain its document with the "
+            "doc-drain skill, or correct the row as the gate's output says, before build work."]
+
+
 def gate_lines(root: Path, runner: Runner, n: int | None, home: Path) -> str:
     lines = []
     rc, out = runner(IDENTITY_COMMAND, root)
@@ -284,6 +305,7 @@ def gate_lines(root: Path, runner: Runner, n: int | None, home: Path) -> str:
         why = "; ".join(detail[:8]) or last_line(out)
         lines.append(f"- session-verify: FAILED (exit {rc}). {why}")
         lines.append("  `AGENTS.md` makes completing the previous session's closeout this session's first task.")
+    lines.extend(queue_lines(*runner(QUEUE_COMMAND, root)))
     lines.extend(roster_lines(root))
     missing = missing_hook_types(root)
     if missing is None:
@@ -379,6 +401,9 @@ _KICKOFF = ("# Kickoff — S3\n\n**For session:** S3\n**Persona:** framework-mai
 _PROMPT = "You are a senior platform engineer. Your canary is QUINCE."
 _AGENT = ("---\nname: framework-maintainer\ndescription: builds gates\nversion: 1\nexpertise:\n  - gates\n"
           f"insists_on:\n  - proof\nchangelog:\n  - 1 — 2026-10-22 — seeded\n---\n\n{_PROMPT}\n")
+_QUEUE_OUT = ("Doc Queue....Passed\n- hook id: doc-queue\n- duration: 0.1s\n\n"
+              "doc_queue: S3; 1 story(ies) queued for the technical writer\n"
+              "  queued TMPL-9.3 (Queued: S2, due by S3): `docs/a.md`; drain with `/doc-drain docs/a.md`\n")
 _STATUS = ("# Sprint Status\n\n---\n\n## S2 — 2026-10-22 — Second\n\n**Status:** two.\n\n### Done\n\n1. X\n\n---\n\n"
            "## S1 — 2026-10-21 — First\n\n**Status:** one.\n\n---\n")
 
@@ -423,6 +448,23 @@ def run_self_test() -> int:
     check_("even a header past the cap is cut under it", len(huge) <= BUDGET, str(len(huge)))
     check_("the verify runs with --all-files, so the stash cannot hide a dirty tree",
            "--all-files" in VERIFY_COMMAND and VERIFY_COMMAND[:3] == ["pre-commit", "run", "session-verify"])
+
+    ok = queue_lines(0, "Doc Queue....Passed\n- hook id: doc-queue\n\ndoc_queue: S9; nothing queued for the technical writer\n")
+    check_("an empty queue is one line saying so", ok == ["- doc-queue: PASS (exit 0). S9; nothing queued for the technical writer."],
+           str(ok))
+    late = queue_lines(1, _QUEUE_OUT.replace("Passed", "Failed") + "doc_queue: BLOCKED — 1 violation(s)\n"
+                       "  [overdue] TMPL-9.3: queued in S2 for docs/a.md, due by S3; this is S4\n\nHow to fix:\n  overdue: Drain it.\n")
+    check_("an overdue queue reports each violation and what it means, never the fix text as an item",
+           late[0].startswith("- doc-queue: FAILED (exit 1).") and any(ln.startswith("  [overdue] TMPL-9.3: queued in S2") for ln in late)
+           and "doc-drain skill" in late[-1] and not any("Drain it." in ln for ln in late), str(late))
+    gone = queue_lines(1, "[ERROR] No hook with id `doc-queue` in stage `manual`\n")
+    check_("a config without the hook is reported as pre-commit said it, not as an overdue queue",
+           gone == ["- doc-queue: FAILED (exit 1). [ERROR] No hook with id `doc-queue` in stage `manual`"], str(gone))
+    tagged = queue_lines(1, _QUEUE_OUT.replace("Passed", "Failed") + "[WARNING] unstaged files\n[overdue] TMPL-9.3: late\n")
+    check_("pre-commit's own [TAG] lines are never read as queue items", not any("WARNING" in ln for ln in tagged)
+           and any("[overdue] TMPL-9.3" in ln for ln in tagged), str(tagged))
+    check_("a queue that could not run says so", queue_lines(None, "`pre-commit` is not on PATH")
+           == ["- doc-queue: did not run. `pre-commit` is not on PATH"])
 
     entry = newest_entry(_STATUS) or ""
     check_("the newest entry is the first `## S<N>` section, without the trailing rule",
@@ -506,6 +548,8 @@ def run_self_test() -> int:
                 return 0, "AGENT EXECUTION IDENTITY GATE: PASS (probe [uid])\n"
             if cmd[:3] == ["pre-commit", "run", "session-verify"]:
                 return 1, "Session Verify....Failed\n    Rule:   dirty-tree\n    Detail: 1 uncommitted path(s)\n"
+            if cmd[:3] == ["pre-commit", "run", "doc-queue"]:
+                return 0, _QUEUE_OUT
             if cmd[:2] == ["git", "status"]:
                 return 0, " M README.md\n"
             return 0, "Already up to date.\n"
@@ -514,12 +558,17 @@ def run_self_test() -> int:
         import os
         os.environ["CLAUDE_PROJECT_DIR"] = str(root2)
         out = report(ev, fake, home)
-        check_("startup runs the identity gate, the pull and the verify, in that order",
+        check_("startup runs the identity gate, the pull, the verify and the doc queue, in that order",
                [c[:3] for c in calls] == [["pre-commit", "run", "agent-execution-identity"], ["git", "pull", "--ff-only"],
-                                          ["pre-commit", "run", "session-verify"]] and "--no-rebase" in calls[1], str(calls))
+                                          ["pre-commit", "run", "session-verify"], ["pre-commit", "run", "doc-queue"]]
+               and "--no-rebase" in calls[1] and calls[3][3:] == ["--hook-stage", "manual", "--all-files", "--verbose"],
+               str(calls))
         check_("startup reports each gate and a failed verify's rule, and says what the failure means",
                "Identity gate: PASS" in out and "session-verify: FAILED (exit 1). Rule:   dirty-tree" in out
                and "first task" in out, out[:600])
+        check_("startup reports the doc queue's verdict and each queued story with its drain",
+               "- doc-queue: PASS (exit 0). S3; 1 story(ies) queued for the technical writer." in out
+               and "  queued TMPL-9.3 (Queued: S2, due by S3)" in out and "/doc-drain docs/a.md" in out, out[:900])
         check_("startup prints the persona's prompt, the session's kickoff verbatim and the newest entry",
                _PROMPT in out and "Kickoff for S3" in out and _KICKOFF.strip() in out and "## S2 — 2026-10-22 — Second" in out)
         calls.clear()

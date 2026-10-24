@@ -113,6 +113,17 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
+      # The writer's queue: a story marked `Queued: S<N>` is drained by S<N+1>. Run at cold start by
+      # the SessionStart hook, never on a commit, since its verdict depends on the session at work
+      # and a drain is the next session's job (decision 2026-10-23-016).
+      - id: doc-queue
+        name: Doc Queue (a change queued for the technical writer is drained within one session)
+        entry: python scripts/doc_authority_scan.py --queue
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # authority frontmatter is parsed, never matched
+        stages: [manual]          # run: pre-commit run doc-queue --hook-stage manual --all-files --verbose
+        pass_filenames: false
+        always_run: true
       # A session ends with a verified handoff pair, and the pair lives one session. The
       # end-of-session protocol was prose; this is the control. Self-test first, then the
       # per-commit state check. The two manual-stage hooks are invoked by the agent at session

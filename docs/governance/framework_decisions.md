@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
 | 2026-10-23-018 | 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
 | 2026-10-23-017 | 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
 | 2026-10-23-016 | 2026-10-23 | The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit | APPROVED |
@@ -3624,3 +3625,63 @@ both probe steps run, not skipped.
 ### Enforcement
 
 `birth-probe-selftest`; the `birth` job in `.github/workflows/gates.yml`; [[reference_ci_backstop]].
+
+---
+
+## Decision 2026-10-23-019: The doc-queue as built
+
+**Date:** 2026-10-23
+**Made By:** AI (S9), within decisions 2026-10-22-002 and 2026-10-23-016
+**Status:** APPROVED
+**Builds:** TMPL-2.2
+**Affects:** `scripts/doc_authority_scan.py` (`--queue`, `judge_queue`, its fixtures),
+`scripts/session_closeout.py` (`current_session`), `scripts/session_start.py` (runs the gate,
+reports its verdict), `.pre-commit-config.yaml` (the manual `doc-queue` hook),
+`docs/governance/gate_suite_runbook.md` (`doc-authority-selftest`, `doc-queue`, the preamble),
+`docs/governance/doc_control_standard.md` (Recording a change), `.claude/skills/doc-drain/SKILL.md`
+(new), `.claude/skills/closeout/SKILL.md` (reports the queue), `AGENTS.md` (the cold start, the
+skills table), `docs/orchestration/knowledge/reference_doc_authority.md` (the queue),
+`sprint/story-tracker.md` (TMPL-2.2)
+
+### Context
+
+Decision 2026-10-23-016 fixed the queue, the drain's agent and that the drain leaves its change for
+review, and left the gate's script and the note's reading to the build.
+
+### Decision
+
+- **The gate is a mode of the authority gate**, `doc_authority_scan.py --queue`, since it reads the
+  same registry, decision index and tracker parse; its fixtures run in `doc-authority-selftest`. A
+  manual hook, `doc-queue`: its verdict depends on the session at work, which a commit does not
+  change.
+- **A note is read bare.** `Queued: S<N>` outside a code span on a row not Done is a note; quoted in
+  a code span it is the convention, as in TMPL-2.2's own row. One note per row, naming one session.
+- **A queued story names exactly one authority in a code span, and cites an indexed decision**: one
+  drain is one document and sets its stories Done, and its version-log row cites the stories'
+  decisions. Either missing, or a session to come, fails.
+- **The session at work is one rule**, `session_closeout.current_session`: the newest sprint-status
+  entry, plus one while the next kickoff exists. The start hook and the gate both read it.
+- **The start hook runs it after `session-verify`**, `--verbose` so a passing run's list reaches the
+  report: the verdict, each queued story with the drain that clears it, and on a failure each
+  violation with what it means. pre-commit's own `[ERROR]` lines are never read as items. The
+  closeout skill runs it too and names each queued story in the handoff, never waiting on it.
+- **The drain is `doc-drain`**, forked as `general-purpose`, `background: false` so the session has
+  its result before it reviews. Its first step takes `personas/technical-writer.md`'s prompt; it
+  refuses a dirty tree, so the review sees its change alone; it makes every queued change to the
+  document in one pass, writes one version-log row naming each story, sets them Done with the
+  counts, runs the gates, and stages, commits and stamps nothing. With no argument it lists the
+  queue and stops, since which document is drained is the session's choice.
+- `AGENTS.md`'s cold start runs the gate by hand for an agent with no start hook.
+
+### Verification
+
+Eighteen queue fixtures in `doc-authority-selftest`, a current-session fixture in
+`session-closeout-selftest`, and six reporting fixtures in `session-start-selftest`; sixteen broken
+variants each fail at least one without a crash. A reporting fixture caught a real defect on its
+first run: pre-commit's `[ERROR]` line was read as a queue violation. On the template the gate
+reads S9 with nothing queued, since TMPL-2.2's row quotes the note.
+
+### Enforcement
+
+`doc-authority-selftest` and the manual `doc-queue`, run by the `SessionStart` hook;
+`skill-scan` over `doc-drain`; [[reference_doc_authority]].

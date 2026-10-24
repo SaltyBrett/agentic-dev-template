@@ -39,6 +39,9 @@ next one: its tasks by story ID, their success criteria, the mandatory reads, op
   and `sprint/decision-log.md` (`git diff <base> HEAD -- <both files>`). The scaffold leaves
   sections 3 to 5 of the handoff as `{{FILL}}` tokens, so each is a judgement written, never a default.
 - `sprint/handoffs/HANDOFF_S<N>.md` and `KICKOFF_S<N>.md`, the pair this session consumed.
+- The technical writer's queue: `pre-commit run doc-queue --hook-stage manual --all-files --verbose`
+  lists each queued story with its document, and handoff section 5 names each one. The closeout
+  drains nothing and waits on nothing: the command's exit code is reported and never stops it.
 
 ## 3. Scaffold and fill the pair
 

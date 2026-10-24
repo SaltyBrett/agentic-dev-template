@@ -19,7 +19,7 @@ which `doc-authority-scan` holds to the decisions that name the page (decision 2
 Prose that is not about one hook belongs here, above the first.
 
 **Running the suite.** `pre-commit run --all-files` runs every `pre-commit`-stage hook and nothing
-else. The two `manual`-stage hooks are run by the agent at the session boundaries; the `commit-msg`
+else. The `manual`-stage hooks are run by hand, most at the session boundaries; the `commit-msg`
 hook needs a message file. Both forms are given in their sections. Installing the hooks, once per
 clone, is `TEMPLATE_GUIDE.md` Step 6; the same suite runs on GitHub on every push
 ([[reference_ci_backstop]]). Invoke a gate through `pre-commit`, never a bare interpreter
@@ -165,10 +165,14 @@ the last section or sits in fenced code read as the log, a malformed or out-of-o
 decision from the cutoff without `**Affects:**` passed, a Done story or one in an `[EXAMPLE]` epic
 read as queueing a change, a hash that did not introduce its row passed, `--stamp` writing a row
 that is not this repository's; in a project, the template's rows or decisions judged there, or the
-project's own passed unjudged; a copied document's history read as its own, or a rename's cut. A
-fixture that raises fails; it never crashes the self-test.
-**Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010 and 2026-10-23-015;
-[[reference_doc_authority]].
+project's own passed unjudged; a copied document's history read as its own, or a rename's cut. For
+`doc-queue`: a story queued in the previous session failed or one queued earlier passed, a Done
+story judged, a note quoted in a code span read as a note, a note naming no session, two notes or
+a session to come passed, a queued story naming no authority or two, or citing no decision, passed,
+no session known or an unreadable index read as nothing queued. A fixture that raises fails; it
+never crashes the self-test.
+**Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010, 2026-10-23-015 and
+2026-10-23-019; [[reference_doc_authority]].
 **Alone:** `pre-commit run doc-authority-selftest --all-files --verbose`
 
 ## `doc-authority-scan`
@@ -191,6 +195,24 @@ clone exits 2.
 **Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
 registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
 for the commit git derives for each row)
+
+## `doc-queue`
+
+**Stage:** `manual`
+**Pairs with:** `doc-authority-selftest`, whose queue fixtures it reads by. Run at cold start by the
+`SessionStart` hook, which reports its verdict and each queued story, and by the closeout skill,
+which reports it and never waits on it; never on a commit, since its verdict depends on the session
+at work.
+**Blocks:** nothing on a commit. Run, it exits 1 for a story not Done whose row carries a bare
+`Queued: S<N>` note, the technical writer's queue, when the session at work is later than S<N+1>,
+or the note names a session to come, or names none or appears twice, or the story names other than
+exactly one authority in a code span or cites no indexed decision; and when no session can be read
+from sprint-status or a decision index cannot be read. A note quoted in a code span is the
+convention, not a note. The session at work is the newest sprint-status entry, plus one while the
+next kickoff exists. A passing run lists each queued story with the drain that clears it, the
+doc-drain skill run on its document.
+**Why:** decisions 2026-10-22-002, 2026-10-23-016 and 2026-10-23-019; [[reference_doc_authority]].
+**Alone:** `pre-commit run doc-queue --hook-stage manual --all-files --verbose`
 
 ## `session-closeout-selftest`
 
@@ -502,6 +524,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | pending |
 | 1.3 | 2026-10-23 | 2026-10-23-018, 2026-10-23-017 | `birth-probe-selftest` added after `new-project-selftest`: the probe's rules over a stub initializer, the probe itself run on GitHub once per profile (TMPL-2.7) | 19537c4 |
 | 1.2 | 2026-10-23 | 2026-10-23-013 | `skill-scan-selftest` and `skill-scan` hold the team presets and the connections of the team-selection skill, and `.mcp.json` (TMPL-5.6) | 8180f9e |
 | 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | e155edf |

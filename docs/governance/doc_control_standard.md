@@ -1,6 +1,6 @@
 ---
 authority: document control — how an authoritative document declares itself, records each change and is verified
-implements: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-09-22-001, 2026-09-24-001, 2026-09-25-001, 2026-09-25-003]
+implements: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-016, 2026-09-22-001, 2026-09-24-001, 2026-09-25-001, 2026-09-25-003]
 verified: 2026-10-23
 ---
 
@@ -47,6 +47,11 @@ the commit that leaves the document behind (decision 2026-10-22-002, [[reference
    backticks, or a count. A structural change is planned work: queue it as a tracker story citing
    the decision and the path, and the row written when the story does the work cites the story. The
    gate accepts the row or the open story, and nothing else.
+   A change left for the technical writer is marked on its story's row with a bare `Queued: S<N>`,
+   N the session that queued it, and the story names that one document. The `doc-queue` gate, run
+   at every cold start, lists the queue and fails a story still open after S<N+1>; the doc-drain
+   skill makes every queued change to one document in one pass, in the writer's role, and leaves it
+   for the session to review. A story that makes its own change carries no note.
 3. The row's Commit reads `pending`. Once the row is committed,
    `python3 scripts/doc_authority_scan.py --stamp` writes the commit that introduced it, and the
    gate verifies every stored hash against git. Never type a hash.
@@ -115,5 +120,6 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.2 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | Recording a change names the `Queued: S<N>` note, the `doc-queue` gate at cold start and the doc-drain skill (TMPL-2.2) | pending |
 | 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | 515f1a5 |

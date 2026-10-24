@@ -19,7 +19,8 @@
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
 exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
 ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
-TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 done.
+TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 done; TMPL-2.2
+in progress.
 
 ### Done
 
@@ -28,6 +29,11 @@ TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 do
    Thirteen fixtures, ten broken variants caught. At `38c549d` the probe exits 1 under both
    profiles at `doc-authority-scan` alone; at `19537c4` it exits 0 under both, and run 40050465938
    is green on `gates` and both `birth` jobs.
+2. TMPL-2.2 built (decision 2026-10-23-019): the `doc-queue` gate as `doc_authority_scan.py --queue`,
+   run at cold start by `scripts/session_start.py` and reported by the closeout skill; the
+   `doc-drain` skill; the runbook's `doc-queue` section, the document-control standard's Recording a
+   change, `AGENTS.md`'s cold start and skills table, [[reference_doc_authority]]. Sixteen broken
+   variants caught.
 
 ### Blockers
 

@@ -50,7 +50,9 @@ Durable rationale and enforcement: [[reference_agent_execution_identity]].
 3. `pre-commit run session-verify --hook-stage manual --all-files` — proves the previous session
    closed out and the tree is clean; without `--all-files` pre-commit stashes unstaged edits and a
    dirty tree passes ([[reference_precommit_stash]]). If it fails, completing that closeout is this
-   session's first task.
+   session's first task. Then `pre-commit run doc-queue --hook-stage manual --all-files --verbose`
+   lists the stories queued for the technical writer: one queued in S<N> is drained with the
+   doc-drain skill by S<N+1>, and fails the gate after.
 4. Read this file.
 5. Read `docs/orchestration/knowledge/INDEX.md` — the index, then only task-relevant entries.
 6. Read `CONSTITUTION.md` — the compliance law.
@@ -169,6 +171,7 @@ second home that drifts (decision 2026-10-23-001).
 | Skill | When |
 |-------|------|
 | `.claude/skills/closeout/SKILL.md` | Session end. Forked: it sees the tree and its arguments, not this conversation |
+| `.claude/skills/doc-drain/SKILL.md` | A story queued for the technical writer (`Queued: S<N>`), one document per run, when the cold start lists it. Forked in the writer's role; leaves its change for review |
 | `.claude/skills/team-selection/SKILL.md` | A project's first session, and whenever the work needs a persona the roster lacks |
 | `.claude/skills/planning-session/SKILL.md` | Building or re-planning the sprint from an approved PRD and architecture |
 | `.claude/skills/document-production/SKILL.md` | Before any Word, Excel, PDF or PowerPoint deliverable |

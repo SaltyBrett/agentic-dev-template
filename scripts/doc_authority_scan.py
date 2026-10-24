@@ -63,6 +63,17 @@ template's too. The project's own rows and decisions are judged in full (decisio
 --stamp            fills each `pending` row whose first commit exists with that commit's hash
 --history <doc>    prints each row's stored commit beside the one git derives
 --list             the registry and the gate's reach
+--queue            the `doc-queue` gate, a manual hook the SessionStart hook runs at cold start
+                   (decision 2026-10-23-016). The technical writer's queue is every story not Done
+                   whose row carries a `Queued: S<N>` note, written bare by the session N that queued
+                   a change for the writer; in a code span it is the convention quoted, not a note.
+                   The session at work is session_closeout's rule over sprint-status and the pairs.
+  queue-note       the note names one session, as `Queued: S9`, once
+  queue-shape      a queued story names exactly one authority in a code span, the document the
+                   drain rewrites, and cites an indexed decision, which the drain's row cites
+  queue-future     the note names no session after the one at work
+  overdue          the story is drained by S<N+1>: at a later session it fails
+  session          the newest sprint-status entry is readable, so a session is known
 
 WHAT IT DELIBERATELY DOES NOT DO
 --------------------------------
@@ -70,9 +81,11 @@ It cannot read prose. A row citing a decision says the document was brought up t
 it was brought up to date correctly, and a path named outside a code span in `**Affects:**` is not
 read. Nor can it see who wrote a row: a story citation is the evidence that a change went through
 the queue, and `fact:` is the author's declaration that the change is a fact. How long a story may
-wait in the queue is the `doc-queue` gate's (TMPL-2.2).
+wait in the queue is `--queue`'s, which drains nothing: the doc-drain skill does, one document per
+run, and leaves its change for the main session to review.
 
 Usage:  pre-commit run doc-authority-scan --all-files        # portable; pre-commit provides pyyaml
+        pre-commit run doc-queue --hook-stage manual --all-files --verbose
         python3 scripts/doc_authority_scan.py [--list]
         python3 scripts/doc_authority_scan.py --stamp
         python3 scripts/doc_authority_scan.py --history <doc>
@@ -163,7 +176,22 @@ FIXES = {
     "commit": "Set the row's Commit to `pending` and run `python3 scripts/doc_authority_scan.py\n"
               "    --stamp` once the row is committed; `--history <doc>` prints the derived commit.",
     "index": "Restore the `## Decision Index` heading and its table in the log named.",
+    "queue-note": "Write the note bare on the story's row, once, naming the session that queued it:\n"
+                  "    `Queued: S9`. Quoted in a code span it is the convention, not a note.",
+    "queue-shape": "A queued story names the one authority it changes, its path in a code span, and the\n"
+                   "    decision it records. Split a story that changes two documents; one drain is one document.",
+    "queue-future": "Name the session that queued the change, this one or earlier.",
+    "overdue": "Drain the document with the doc-drain skill (`/doc-drain <path>`): every queued change to\n"
+               "    it in one pass, its version-log row, the stories Done. A change no longer wanted is\n"
+               "    descoped by a decision, never left waiting.",
+    "session": "Head the newest sprint-status entry `## S<N> — YYYY-MM-DD — <title>`.",
 }
+
+# The writer's queue (decision 2026-10-23-016): a bare note on an open story's row.
+QUEUE_NOTE = "Queued:"
+QUEUED = re.compile(r"Queued:\s*S(\d+)\b")
+INLINE_CODE = session_closeout.INLINE_CODE
+DRAIN = "/doc-drain"
 
 
 class Row(NamedTuple):
@@ -182,6 +210,13 @@ class Authority(NamedTuple):
     implements: tuple[str, ...]
     verified: str      # ISO, or "" when the frontmatter's date did not parse
     rows: tuple[Row, ...]
+
+
+class Queued(NamedTuple):
+    """One story in the writer's queue: queued in `session`, for `document`."""
+    story: str
+    session: int
+    document: str
 
 
 class HistoryUnavailable(Exception):
@@ -434,6 +469,46 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
     return v, reach
 
 
+def judge_queue(docs: dict[str, str], logs: dict[str, str], tracker: str,
+                current: int | None) -> tuple[list, list[Queued]]:
+    """The doc-queue rules over in-memory text and the session at work. Returns (violations as
+    (rule, where, message), the queue). A Done story is drained and an [EXAMPLE] one is no story."""
+    if current is None:
+        return [("session", "sprint/sprint-status.md", "the newest entry is not headed `## S<N> — YYYY-MM-DD — <title>`, "
+                 "so no session is known")], []
+    try:
+        ids = set(kb_freshness_scan.parse_logs(logs))
+    except kb_freshness_scan.DecisionIndexNotFound as e:
+        return [("index", "", str(e))], []
+    authorities = {path for path, text in docs.items() if read_authority(path, text)[0]}
+    v: list[tuple[str, str, str]] = []
+    queue: list[Queued] = []
+    for s in session_closeout.tracker_stories(tracker):
+        bare = INLINE_CODE.sub("", s.row)
+        if s.status == "Done" or QUEUE_NOTE not in bare:
+            continue
+        notes = QUEUED.findall(bare)
+        if len(notes) != 1 or bare.count(QUEUE_NOTE) != 1:
+            v.append(("queue-note", s.id, f"the row carries `{QUEUE_NOTE}` {bare.count(QUEUE_NOTE)} time(s), "
+                                          f"{len(notes)} naming a session"))
+            continue
+        n = int(notes[0])
+        named = sorted({p.strip() for p in CODE_SPAN.findall(s.row)} & authorities)
+        if len(named) != 1:
+            v.append(("queue-shape", s.id, f"names {len(named)} authorities ({', '.join(named) or 'none'}); "
+                                           "a queued story names the one document the drain rewrites"))
+        if not any(cites(s.row, d) for d in ids):
+            v.append(("queue-shape", s.id, "cites no indexed decision, which the drain's version-log row must cite"))
+        if n > current:
+            v.append(("queue-future", s.id, f"`Queued: S{n}` names a session after this one, S{current}"))
+        elif current > n + 1:
+            v.append(("overdue", s.id, f"queued in S{n} for {', '.join(named) or 'no document'}, due by S{n + 1}; "
+                                       f"this is S{current}"))
+        if len(named) == 1:
+            queue.append(Queued(s.id, n, named[0]))
+    return v, queue
+
+
 def stamps_for(a: Authority, first: dict[str, str], foreign: Callable[[Row], bool]) -> dict[int, str]:
     """{line: short hash} for each pending row whose first commit exists and which is this repository's."""
     return {r.line: first[r.version][:STAMP_LEN] for r in a.rows
@@ -601,6 +676,29 @@ def cmd_stamp() -> int:
         print(f"doc_authority_scan: cannot derive a commit: {e}", file=sys.stderr)
         return 2
     return 0
+
+
+def cmd_queue() -> int:
+    docs, logs, tracker, _ = gather()
+    status = session_closeout.STATUS
+    current = session_closeout.current_session(status.read_text(encoding="utf-8") if status.is_file() else "",
+                                               lambda n: (session_closeout.HANDOFFS / f"KICKOFF_S{n}.md").is_file())
+    v, queue = judge_queue(docs, logs, tracker, current)
+    if current is not None:
+        print(f"doc_queue: S{current}; " + (f"{len(queue)} story(ies) queued for the technical writer"
+                                             if queue else "nothing queued for the technical writer"))
+    for q in queue:
+        print(f"  queued {q.story} (Queued: S{q.session}, due by S{q.session + 1}): `{q.document}`; "
+              f"drain with `{DRAIN} {q.document}`")
+    if not v:
+        return 0
+    print(f"doc_queue: BLOCKED — {len(v)} violation(s)")
+    for rule, where, msg in v:
+        print(f"  [{rule}] {where}: {msg}")
+    print("\nHow to fix:")
+    for rule in dict.fromkeys(r for r, _, _ in v):
+        print(f"  {rule}: {FIXES[rule]}")
+    return 1
 
 
 def cmd_history(path: str) -> int:
@@ -788,6 +886,44 @@ def run_self_test() -> int:
     expect("in the template, the same decision queued by no open story is unrecorded", _run(doc(rows=_ROW1), tracker=born), "unrecorded")
     expect("an unreadable decision index fails, never reads as none", _run(fw=_FW.replace("## Decision Index", "## Decisions")), "index")
 
+    # The writer's queue (decision 2026-10-23-016)
+    def queue(row: str, current: int | None = 9, docs: dict | None = None, epic: str = "TMPL-9 — Documents",
+              fw: str = _FW) -> tuple[list, list]:
+        tracker = (f"# Story Tracker\n\n## Epic: {epic}\n\n| Story ID | Title | Status | Dependencies | Required Standards "
+                   f"| PRD Ref |\n|---|---|---|---|---|---|\n{row}\n")
+        try:
+            return judge_queue({"docs/a.md": _doc()} if docs is None else docs,
+                               {"sprint/decision-log.md": _PROJ, FRAMEWORK_LOG: fw}, tracker, current)
+        except Exception as e:  # a crash is a failed fixture, never a crashed self-test
+            return [("crash", "", f"{type(e).__name__}: {e}")], []
+
+    queued = "| TMPL-9.3 | Rewrite `docs/a.md` §3, Queued: S8 | Not Started | — | — | 2026-10-23-010 |"
+    found, q = queue(queued)
+    expect("a story queued in the session before this one is due, and passes", found)
+    check("the queue names the story, its session and its document", q == [Queued("TMPL-9.3", 8, "docs/a.md")], str(q))
+    expect("a story queued in this session passes", queue(queued.replace("S8", "S9"))[0])
+    expect("a story older than one session fails", queue(queued.replace("S8", "S7"))[0], "overdue")
+    expect("a Blocked story is still open, and fails when overdue",
+           queue(queued.replace("S8", "S7").replace("Not Started", "Blocked"))[0], "overdue")
+    found, q = queue(queued.replace("S8", "S2").replace("Not Started", "Done"))
+    expect("a Done story is drained, whatever its note says", found)
+    check("a drained story leaves the queue", q == [], str(q))
+    expect("a note naming a session after this one fails", queue(queued.replace("S8", "S12"))[0], "queue-future")
+    expect("a note naming no session fails", queue(queued.replace("Queued: S8", "Queued: soon"))[0], "queue-note")
+    expect("two notes on one row fail", queue(queued.replace("Queued: S8", "Queued: S8, Queued: S9"))[0], "queue-note")
+    found, q = queue(queued.replace("Queued: S8", "the `Queued: S2` convention"))
+    expect("a note quoted in a code span is the convention, not a note", found)
+    check("a quoted note queues nothing", q == [], str(q))
+    expect("a queued story naming no authority fails", queue(queued.replace("`docs/a.md`", "`docs/b.md`"))[0], "queue-shape")
+    two = {"docs/a.md": _doc(), "docs/c.md": _doc(fm=_FM.replace("the a scope", "the c scope"))}
+    expect("a queued story naming two authorities fails",
+           queue(queued.replace("`docs/a.md`", "`docs/a.md` and `docs/c.md`"), docs=two)[0], "queue-shape")
+    expect("a queued story citing no indexed decision fails", queue(queued.replace("2026-10-23-010", "—"))[0], "queue-shape")
+    expect("a story in an [EXAMPLE] epic is not judged",
+           queue(queued.replace("TMPL-9.3", "INFRA-1.4").replace("S8", "S1"), epic="INFRA-1 — Setup [EXAMPLE]")[0])
+    expect("with no session known the gate fails, never passes on nothing", queue(queued, current=None)[0], "session")
+    expect("an unreadable decision index fails the queue too", queue(queued, fw=_FW.replace("## Decision Index", "## Decisions"))[0], "index")
+
     # --stamp and the git readers
     try:
         stamp_checks(check)
@@ -826,6 +962,8 @@ def main(argv: list[str]) -> int:
         return run_self_test()
     if "--stamp" in argv:
         return cmd_stamp()
+    if "--queue" in argv:
+        return cmd_queue()
     if "--history" in argv:
         i = argv.index("--history")
         if i + 1 >= len(argv):

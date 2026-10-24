@@ -1,7 +1,7 @@
 ---
 name: Authoritative documents record every decision that changes them
-description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015]
+description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
+teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -110,6 +110,29 @@ from it claims the project's scope (decision 2026-10-23-014). A copy that keeps 
 fails `scope`, so the one-scope rule catches the forgotten step. A made document is a draft until it
 is approved, and claims no authority before then, since it has no decision to cite.
 
+## Why the writer's queue is a note, drained at cold start
+
+The authority gate counts any open story citing a decision and a path as queueing the change, and
+some of those stories make the change themselves (TMPL-5.5 rewrites the runbook section of a gate
+it builds). No writer could drain those, so the writer's queue is only the stories marked for it,
+with a bare `Queued: S<N>` on the row, N the session that queued it (decision 2026-10-23-016). The
+`doc-queue` gate reads the note outside code spans, because the story that built the gate quotes the
+convention in its own row, and a quoted note must never queue the gate's own story.
+
+The drain is bounded rather than left to judgement: a story queued in S<N> may wait through S<N+1>,
+and the gate fails from S<N+2>. It runs at cold start, from the start hook, because a closeout is
+where compaction strikes and is never open-ended; the closeout only reports the queue. A queued
+story names exactly one authority, because one drain is one document: the writer makes every queued
+change to it in one pass, which is the anti-patchwork control decision 2026-10-22-002 asked for,
+and sets each story Done. The session at work is read by one rule shared with the start hook, the
+newest sprint-status entry plus one while the next kickoff exists, so the two never disagree about
+which session a note is late for (decision 2026-10-23-019).
+
+The drain, the doc-drain skill, forks as `general-purpose` and takes the library writer's prompt as
+its first step, since a forked skill's `agent:` resolves only to a built-in or a roster agent and
+the writer is a library persona. It leaves its change uncommitted: the main session reviews a
+rewrite it did not write before it enters history.
+
 ## Honest limit
 
 The gate cannot read prose. A row citing a decision says the document was updated, not that it was
@@ -126,3 +149,6 @@ still has to check the content.
 - Leave the newest row `pending`; run `python3 scripts/doc_authority_scan.py --stamp` once it is
   committed. Never type a hash by hand.
 - See the registry with `python3 scripts/doc_authority_scan.py --list`.
+- Queue a change for the technical writer with a bare `Queued: S<N>` on a story that names the one
+  document and the decision; drain it with the doc-drain skill by the next session, and review its
+  diff before committing.
