@@ -27,6 +27,9 @@ The documents decide: a decision approving a document that no longer exists appr
 | 4. `architecture` | `solution-architect` | `docs/architecture/architecture.md` is approved the same way, its `prd:` the PRD's newest version-log version |
 | 5. `planning` | `delivery-manager` | `sprint/story-tracker.md` holds an epic not marked `[EXAMPLE]` |
 
+- **Another name:** a project that adopted `v2.0.0` with its documents approved as they stood kept
+  their names; the one document in `docs/prd/` or `docs/architecture/` is read as the file above,
+  and a PRD standing approved reads intake as done (decision 2026-10-24-003).
 - **Skipped:** a decision in `sprint/decision-log.md` whose Status in the Decision Index is
   APPROVED, as `doc-authority-scan` reads it, carries `**Skips:**` naming the stage. A stage both
   skipped and done reads as done.

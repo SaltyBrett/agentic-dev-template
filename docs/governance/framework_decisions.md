@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-003 | 2026-10-24 | At adoption of `v2.0.0`, a project with real epics approves the PRD and architecture it has been built from as they stand, in the adoption commit: authority frontmatter, a version log opening at the version each states, a project approval decision; with no architecture, the Chair's skip; settles TMPL-2.4's open question | APPROVED |
 | 2026-10-24-002 | 2026-10-24 | `session-closeout` refuses to close a session whose entry is still headed `emergency checkpoint` or holds the initializer's `### Next`, a record saying the session is still open; the closeout and launch skills, `AGENTS.md`'s emergency close, the README's step 7 and the initializer's S1 text say so; found by the live launch's first closeout, typed as `/closeout` and run as the fork | APPROVED |
 | 2026-10-24-001 | 2026-10-24 | `doc-authority-scan` refuses an authority's path written outside a code span in `**Affects:**`, which it never reads there, and `docs/templates/README.md` step 5 says the path goes in a code span; found by the live launch, whose PRD approval named the PRD bare and passed unchecked | APPROVED |
 | 2026-10-23-024 | 2026-10-23; amended 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
@@ -4120,3 +4121,55 @@ neither; with the rule left out of `--closeout`, the emergency heading passed it
 
 `session-closeout-selftest` and `session-closeout`; the closeout skill's step 1.2, held by
 `skill-scan`; [[reference_session_closeout]].
+
+---
+
+## Decision 2026-10-24-003: At adoption, a project's documents are approved as they stand
+
+**Date:** 2026-10-24
+**Made By:** Chair (S11): approval as-is, chosen over a skip of both and a full launch review; the
+form by the AI, proved on scratch adoptions
+**Status:** APPROVED
+**Builds:** TMPL-2.4's open question
+**Affects:** `TEMPLATE_GUIDE.md` (Taking a newer template release: adopting `v2.0.0` with real
+epics), `.claude/skills/project-launch/SKILL.md` (Where each stage stands: another name),
+`sprint/story-tracker.md` (TMPL-2.4)
+
+### Context
+
+The three projects hold real epics and documents their owner approved before `v2.0.0`'s form
+existed: Supplier_Research_Dev a PRD at Rev E and no architecture, Comfy a PRD at 1.4 and an
+architecture at 1.0, PocketGames a PRD at 1.4 and an architecture at 1.0, none with `authority:`,
+`status:` or a version log. The approval gate (decision 2026-10-23-020) refuses every commit of
+such a project, the adoption's own included, and the updater writes neither folder. No decision
+covered bringing an existing project's documents in.
+
+### Decision
+
+- **Approve as they stand, in the adoption commit (Chair).** Each document the project has been
+  built from claims the project's scope (`product requirements — <project>`, `architecture —
+  <project>`) with `implements: []`, `verified:` and `status: approved`; ends with a version log
+  whose one row opens at the version it states, 1.0 where it states none in numbers, a `fact:`
+  citing the approval; and the project's log holds the approval decision, its `**Affects:**`
+  naming each path in a code span. The content is unchanged.
+- **The architecture's `prd:` is the PRD's version**, quoted: approving both as they stand is the
+  Chair's confirmation that the architecture stands against the PRD as it now is, though it was
+  written against an earlier one.
+- **No architecture is the Chair's skip**, logged with its reason, as at a launch.
+- **The files keep their names**, which their trackers and decisions cite; the launch skill reads
+  the folder's one document as the file it names.
+- The updater is unchanged; `TEMPLATE_GUIDE.md` names the step, and the suite's refusal is what
+  prompts it.
+
+### Verification
+
+On a scratch `v2.0.0` cut from `dee7385`, a clone of each project taken to it by the release's own
+updater: every path applied with no conflict, every persona converted, and the suite's one failing
+hook `doc-authority-scan`, its only violations the two `approval` lines. The as-is approval, written
+by a script, then passed the whole suite; committed and stamped, the suite passed again, and
+`session-verify` passed in two of the three, the third (Comfy) failing exactly as its unadopted
+clone does, its S4 never closed out.
+
+### Enforcement
+
+`doc-authority-scan`'s approval rule, unchanged; [[reference_doc_authority]].

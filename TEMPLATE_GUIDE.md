@@ -141,6 +141,19 @@ Template markdown is stripped to your profile before it is compared or written, 
 conflict withholds the stamp: edit the file and re-run with `--keep <path>`, or take the template's
 copy with `--take <path>`. Why it is shaped this way: [[reference_template_update]].
 
+**Adopting `v2.0.0` with real epics.** The approval gate (`doc-authority-scan`) refuses the
+adoption's suite run until the PRD in `docs/prd/` and the architecture in `docs/architecture/`
+stand approved in `v2.0.0`'s form; the updater writes neither, since both folders are the
+project's. Approve the documents the project has been built from as they stand, in the same
+commit (decision 2026-10-24-003): each gets the frontmatter of `docs/templates/README.md` step 6
+with the project's own scope, the architecture's `prd:` the PRD's version, quoted; a closing
+`## Version log` whose one row opens at the version the document states (1.0 where it states none
+in numbers) and cites the approval; and the approval decision in `sprint/decision-log.md`, its
+`**Affects:**` naming each path as a code span. With no architecture, log the Chair's skip instead
+(`docs/templates/README.md`, Skipping a document). The content is unchanged and the file keeps its
+name. Run the suite, commit, then `python3 scripts/doc_authority_scan.py --stamp` and commit the
+stamp.
+
 ---
 
 ## Directory Purpose Reference

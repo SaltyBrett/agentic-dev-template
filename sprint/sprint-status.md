@@ -44,6 +44,11 @@ fix, both before TMPL-2.4, and both built.
    `AGENTS.md`, the README's step 7 and the initializer's S1 text say so. Nine fixtures, seven
    broken variants each caught; on a scratch clone of the real tree refused by `--closeout` alone.
 4. S1's entry moved to `sprint/archive/sprint-status_2026.md`, the eleventh over the cap.
+5. TMPL-2.4 started: its open question settled by the Chair (decision 2026-10-24-003), each
+   project's PRD and architecture approved as they stand in its adoption commit, the step named in
+   `TEMPLATE_GUIDE.md`. Proved on a scratch `v2.0.0` cut from `dee7385`: each project's clone adopted
+   by the release's updater with no conflict, refused only by the two `approval` lines, then green
+   with the as-is approval, before and after the stamp.
 
 ### Blockers
 
