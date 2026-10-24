@@ -268,5 +268,5 @@ With those in hand, this guide plus the official brand values should let the new
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.1 | 2026-10-24 | 2026-10-24-022, 2026-10-24-014 | Section 9's writing rules moved to `docs/standards/writing_standard_v1.0.md`, section 9 a pointer to it; the vendor spelling rule moved into section 10 (TMPL-6.2) | pending |
+| 1.1 | 2026-10-24 | 2026-10-24-022, 2026-10-24-014 | Section 9's writing rules moved to `docs/standards/writing_standard_v1.0.md`, section 9 a pointer to it; the vendor spelling rule moved into section 10 (TMPL-6.2) | 0e8d44e |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001 | Marked as the authority for document production (TMPL-2.3); reflects the procedure moved to the document-production skill. The changelog table it replaces is in git | 515f1a5 |
