@@ -322,4 +322,4 @@ The brand's locked terms and the vendor spelling rule are project data, in secti
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-24 | 2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025 | Written as the authority for writing (TMPL-6.2): the voices and audiences, the profile, the four mechanical rules and the phrase tables, the allow list, refusal and judgement, and produced documents | pending |
+| 1.0 | 2026-10-24 | 2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025 | Written as the authority for writing (TMPL-6.2): the voices and audiences, the profile, the four mechanical rules and the phrase tables, the allow list, refusal and judgement, and produced documents | d1c6ef9 |
