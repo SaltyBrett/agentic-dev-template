@@ -19,11 +19,14 @@ Makes a scratch project from a committed revision of this repository, the way a 
   1. the revision's tree, written out by `git archive`, so neither the working tree nor an
      uncommitted change reaches it;
   2. a fresh repository holding that tree as one "Initial commit", which is what GitHub's template
-     flow gives a new project;
+     flow gives a new project, and the suite run on it as GitHub runs it there, before anyone has
+     run the initializer; once per probe, since no profile applies yet;
   3. that revision's own `scripts/new_project.py --apply`, with a profile.
 
-The verdict is the initializer's: it ends by running the suite and refuses a birth that is not
-green. With no `--profile`, each profile is born in turn. Git and the initializer run with every
+The verdict is both runs': the Initial commit's suite, and the initializer's, which ends by running
+the suite and refuses a birth that is not green. With no `--profile`, each profile is born in turn.
+The first run was added when GitHub's own run on a new project's Initial commit was found red while
+every birth after the initializer was green (decision 2026-10-23-023). Git and the initializer run with every
 `GIT_*` variable and `CLAUDE_PROJECT_DIR` removed: inside a commit hook git exports the index it is
 committing, and a scratch `git add` would write to it, and a gate reading `CLAUDE_PROJECT_DIR`
 would judge this repository instead of the birth. The scratch directory is removed when the run
@@ -67,6 +70,7 @@ PROJECT_ARGS = ["--name", "Birth Probe", "--platform", "a scratch birth", "--sco
 # global hooks path would run.
 IDENTITY = ["-c", "user.name=birth-probe", "-c", "user.email=birth-probe@example.invalid", "-c", "commit.gpgsign=false"]
 DROP_ENV = ("CLAUDE_PROJECT_DIR",)
+SUITE = ["pre-commit", "run", "--all-files"]   # what GitHub's workflow runs on the Initial commit
 
 Runner = Callable[[list[str], Path, dict], int]
 
@@ -127,6 +131,7 @@ def probe(source: Path, rev: str, profiles: list[str], run: Runner = run_initial
     """Born once per profile from the revision; 0 when every birth is green, 1 otherwise."""
     commit, title = resolve(source, rev)
     refused = []
+    first_run: int | None = None
     for profile in profiles:
         with tempfile.TemporaryDirectory(prefix="birth-probe-") as tmp:
             tree = Path(tmp) / "project"
@@ -135,6 +140,12 @@ def probe(source: Path, rev: str, profiles: list[str], run: Runner = run_initial
             if (tree / PROFILE_FILE).exists():
                 raise CannotRun(f"{title} holds `{PROFILE_FILE}`: it is a project, and only the template gives birth")
             initial_commit(tree)
+            if first_run is None:
+                print(f"\n=== Birth probe: {title}, GitHub's run on the Initial commit ===", flush=True)
+                first_run = run(SUITE, tree, birth_env())
+                print(f"=== {'GREEN' if first_run == 0 else f'REFUSED (suite exit {first_run})'}: the Initial commit ===", flush=True)
+                if first_run != 0:
+                    refused.append("the Initial commit")
             print(f"\n=== Birth probe: {title}, profile `{profile}` ===", flush=True)
             # Unbuffered, so the initializer's own lines keep their place beside the suite's in a log.
             rc = run([sys.executable, INITIALIZER, *PROJECT_ARGS, "--profile", profile, "--apply"], tree,
@@ -143,7 +154,7 @@ def probe(source: Path, rev: str, profiles: list[str], run: Runner = run_initial
         if rc != 0:
             refused.append(profile)
     if refused:
-        print(f"\nBirth probe: BLOCKED — a project born from {title} is refused under {', '.join(refused)}.\n"
+        print(f"\nBirth probe: BLOCKED — a project born from {title} is refused at {', '.join(refused)}.\n"
               "    The initializer's suite output above names each failing gate. Fix the template so a\n"
               "    birth starts green; a gate that judges a project differently is proved on a birth.")
         return 1
@@ -194,11 +205,24 @@ def run_self_test() -> int:
             if detail:
                 print(f"        {detail}")
 
+    suite = {"rc": 0}
+    calls: list[tuple] = []
+
+    def runner(cmd: list[str], tree: Path, env: dict) -> int:
+        if cmd == SUITE:   # GitHub's run on the Initial commit, judged here by its exit code alone
+            count = git(tree, "rev-list", "--count", "HEAD").stdout.decode().strip()
+            calls.append(("suite", (tree / PROFILE_FILE).exists(), count,
+                          sorted(k for k in env if k.startswith("GIT_") or k in DROP_ENV)))
+            return suite["rc"]
+        calls.append(("initializer",))
+        return run_initializer(cmd, tree, env)
+
     def quiet(*args: object) -> tuple[int | str, list[dict]]:
         out.unlink(missing_ok=True)
+        calls.clear()
         try:
             with contextlib.redirect_stdout(io.StringIO()):
-                rc: int | str = probe(*args)  # type: ignore[arg-type]
+                rc: int | str = probe(*args, run=runner)  # type: ignore[arg-type]
         except CannotRun as e:
             rc = f"cannot run: {e}"
         except Exception as e:  # a crash is a failed fixture, never a crashed self-test
@@ -256,6 +280,19 @@ def run_self_test() -> int:
             rc, seen = quiet(src, green, list(project_profile.PROFILES))
             check("with no profile named, each is born in turn",
                   rc == 0 and [s["argv"][-2] for s in seen] == list(project_profile.PROFILES), f"rc={rc} {seen}")
+            check("GitHub's run on the Initial commit comes first, once, on the bare copy: one commit, no profile",
+                  [c[0] for c in calls] == ["suite", "initializer", "initializer"] and calls[0][1:3] == (False, "1"),
+                  str(calls))
+            os.environ.update(GIT_INDEX_FILE=str(src / ".git" / "index"))
+            quiet(src, green, one)
+            os.environ.pop("GIT_INDEX_FILE", None)
+            check("the Initial commit's run sees no variable naming the source",
+                  bool(calls) and calls[0][0] == "suite" and calls[0][3] == [], str(calls))
+            suite["rc"] = 1
+            rc, seen = quiet(src, green, one)
+            suite["rc"] = 0
+            check("a red run on the Initial commit refuses the birth, the initializer green or not",
+                  rc == 1 and bool(seen), f"rc={rc} {seen}")
             check("the command line's default is every profile, and a named one alone",
                   profiles_of(parse([])) == list(project_profile.PROFILES)
                   and profiles_of(parse(["--profile", "gcc"])) == ["gcc"], str(profiles_of(parse([]))))

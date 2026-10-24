@@ -20,7 +20,7 @@
 `scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
 `doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
 `framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
-private repository made by the walkthrough. TMPL-5.5 in progress.
+private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 in progress.
 
 ### Done
 
@@ -29,6 +29,11 @@ private repository made by the walkthrough. TMPL-5.5 in progress.
    `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing
    a skill the README's `## Catalog` does not name. Eight fixtures, seven broken variants caught;
    on the real tree a README missing `/doc-drain` refused, restored passing.
+2. TMPL-2.8 opened and built (decision 2026-10-23-023, the Chair's choice of fix): the walkthrough run
+   for real on the private `SaltyBrett/launch-probe-s10` found GitHub's run on its Initial commit
+   red, `doc-authority-scan` judging the uninitialized copy as the template. A copy is now told by
+   its history and judged as a project; the birth probe also runs the suite on the Initial commit.
+   At `30677d3` the probe reproduces GitHub's red run exactly.
 
 ### Blockers
 

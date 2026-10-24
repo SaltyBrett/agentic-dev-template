@@ -1,7 +1,7 @@
 ---
 name: Authoritative documents record every decision that changes them
 description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, why a real epic needs an approved PRD and architecture or a `**Skips:**` decision, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-008, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019, 2026-10-23-020]
+teaches: [2026-10-22-002, 2026-10-23-008, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019, 2026-10-23-020, 2026-10-23-023]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -80,6 +80,15 @@ marked was refused: seven violations, each a template story the project could no
 2026-10-23-015). Nothing saw it, because the template's CI judges the template and the last scratch
 adoption ran before the marking. A gate that judges a project differently from the template is
 proved on a scratch birth whenever the template content it judges changes, not on the template alone.
+
+A birth has a moment before the initializer, too. GitHub's "Use this template" makes one commit, the
+template's tree with no `.project-profile`, and runs `gates` on it at once. The gate judged that copy
+as the template and verified every stamped row against a history GitHub had squashed to the one
+commit: nineteen `commit` violations on every new project's first run from the S7 closeout until
+TMPL-2.8, found only when the README's walkthrough was run for real. A repository with no profile
+whose history holds none of the commits the template's rows were stamped with is now a copy, judged
+as a project is; the template always holds them, so a mistyped hash there is still refused
+(decision 2026-10-23-023).
 
 ## Why one scope has one authority
 

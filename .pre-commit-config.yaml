@@ -200,8 +200,9 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
-      # The birth probe makes a scratch project from a committed revision through the initializer,
-      # whose suite run is the verdict; CI runs it once per profile (decision 2026-10-23-017). A
+      # The birth probe makes a scratch project from a committed revision, judges GitHub's run on its
+      # Initial commit, then the initializer's; CI runs it once per profile (decisions 2026-10-23-017
+      # and 2026-10-23-023). A
       # birth takes minutes, so only the probe's own rules run on a commit, over a stub initializer.
       - id: birth-probe-selftest
         name: Birth Probe Self-Test (the committed tree is born, the verdict is the initializer's, nothing leaks)

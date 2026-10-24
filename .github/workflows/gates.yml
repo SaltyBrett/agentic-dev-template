@@ -63,8 +63,9 @@ jobs:
 
   # GitHub's "Use this template" copies the default branch as it stands, and several gates judge a
   # project differently from the template, so every push must also make a healthy project: a
-  # scratch birth from this commit through the initializer, whose suite run is the verdict, once
-  # per profile (decision 2026-10-23-017, [[reference_ci_backstop]]). Skipped in a project.
+  # scratch birth from this commit, the suite run on its Initial commit as GitHub runs it, then the
+  # initializer's own run, once per profile (decisions 2026-10-23-017 and 2026-10-23-023,
+  # [[reference_ci_backstop]]). Skipped in a project.
   birth:
     runs-on: ubuntu-latest
     strategy:

@@ -169,7 +169,10 @@ project's own passed unjudged; a copied document's history read as its own, or a
 `doc-queue`: a story queued in the previous session failed or one queued earlier passed, a Done
 story judged, a note quoted in a code span read as a note, a note naming no session, two notes or
 a session to come passed, a queued story naming no authority or two, or citing no decision, passed,
-no session known or an unreadable index read as nothing queued. For the approval gate: a real
+no session known or an unreadable index read as nothing queued. A copy of the template before its
+initializer, its history holding none of the stamped commits, judged as the template, or the
+template, holding one, judged as a copy; a copy's own rows passed unjudged; `--stamp` writing a
+template row in a copy. For the approval gate: a real
 epic passed with no approved PRD or architecture; a first draft, a document with no authority, no
 row, another status or outside its folder counted as approved, or a revision reopened with its
 authority and rows not standing at its last version; two in one folder passed; an approved
@@ -195,14 +198,16 @@ commit that introduced the row, following renames but never a copy. For every de
 `**Affects:**`, and an authority it names whose version log cites it nowhere while no open story
 cites both. In a project, what the template wrote is judged in the template: a row citing only
 framework decisions is held to neither its marker nor its hash, and a framework decision to
-neither its `**Affects:**` nor its record. In a project whose tracker holds a real epic, the
+neither its `**Affects:**` nor its record. So is a copy of the template before its initializer,
+GitHub's "Initial commit": no profile, and none of the commits the template's rows were stamped with
+in its history. In a project whose tracker holds a real epic, the
 approval gate: no PRD in `docs/prd/` or architecture in `docs/architecture/` standing approved (one
 document each with the `authority:` line and a row, `status: approved` or `status: draft` while
 reopened for revision, when its newest row stands) where no APPROVED decision of the project's log
 carries `**Skips:** prd` or `**Skips:** architecture`; an architecture with `status: approved` whose
 `prd:` is not the PRD's newest version; a `**Skips:**` naming no stage of `/project-launch`. A decision index that
 cannot be read fails; a shallow clone exits 2.
-**Why:** decisions 2026-10-22-002, 2026-10-23-010 and 2026-10-23-015; the approval gate, 2026-10-23-008,
+**Why:** decisions 2026-10-22-002, 2026-10-23-010, 2026-10-23-015 and 2026-10-23-023; the approval gate, 2026-10-23-008,
 2026-10-23-014 and 2026-10-23-020; [[reference_doc_authority]], [[reference_kb_freshness]].
 **Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
 registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
@@ -354,16 +359,18 @@ step is not `/project-launch`.
 
 **Stage:** `pre-commit`
 **Pairs with:** no gate on a commit. The probe, `scripts/birth_probe.py`, makes a scratch project
-from a committed revision through that revision's initializer, whose suite run is the verdict; a
-birth takes minutes, so GitHub runs it in the `birth` job of `.github/workflows/gates.yml`, once per
+from a committed revision, runs the suite on its bare Initial commit as GitHub does, then that
+revision's initializer, whose suite run is the second verdict; a birth takes minutes, so GitHub runs it in the `birth` job of `.github/workflows/gates.yml`, once per
 profile, skipped in a project, and an operator runs it by hand.
 **Blocks:** a commit when a probe rule fails a fixture over a stub initializer: a refused birth
 reported green, a birth from the working tree or holding an untracked file instead of the committed
 tree, a scratch that is not a fresh repository with one commit, the initializer run without
 `--apply` or the profile asked for, the source's index written or a `GIT_*` variable or
 `CLAUDE_PROJECT_DIR` reaching the birth, the scratch left behind, a profile skipped when none is
-named, a project's revision born instead of refused, an unknown revision judged.
-**Why:** decision 2026-10-23-017; [[reference_ci_backstop]].
+named, a project's revision born instead of refused, an unknown revision judged; the Initial
+commit's run skipped, run after the initializer or once per profile, its verdict ignored, or a
+variable naming the source reaching it.
+**Why:** decisions 2026-10-23-017 and 2026-10-23-023; [[reference_ci_backstop]].
 **Alone:** `pre-commit run birth-probe-selftest --all-files --verbose`; the probe itself,
 `python3 scripts/birth_probe.py [--rev <revision>] [--profile commercial|gcc]`
 
@@ -541,7 +548,8 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | pending |
+| 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | pending |
+| 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | 30677d3 |
 | 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | 6e94683 |
 | 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | b612e51 |
 | 1.5 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan` hold the approval gate: in a project with a real epic, an approved PRD and architecture or a logged `**Skips:**` (TMPL-5.3) | d7ad4d7 |

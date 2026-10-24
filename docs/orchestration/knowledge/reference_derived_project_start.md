@@ -1,8 +1,8 @@
 ---
 name: What day one of a derived project looks like
 description: 'Observed on the first real repository created from the template with gh repo create --template. GitHub runs the gate suite on its own Initial commit before you have run anything; the clone remote is git@github.com and needs your ssh host alias if you separate identities; the initializer regenerates both sprint-status and the tracker, and the tracker starts at zero stories; session-verify passes at S1 with no pair; the attribution gate is live before the first commit.'
-teaches: [2026-09-22-002]
-verified: 2026-09-25
+teaches: [2026-09-22-002, 2026-10-23-023]
+verified: 2026-10-23
 metadata:
   type: reference
 ---
@@ -19,13 +19,20 @@ metadata:
 1. **`gh repo create <name> --template SaltyBrett/agentic-dev-template --private --clone`** makes
    a repository with one commit, "Initial commit", carrying the template's `main` HEAD. GitHub
    pushes that commit itself, so the `gates` workflow runs before you have done anything. It is
-   green, because the template tree passes its own suite. Expect it; it is not your run. The
+   green when the template is healthy. Expect it; it is not your run. From the S7 closeout until
+   TMPL-2.8 it was red: with no profile yet, `doc-authority-scan` judged the copy as the template and
+   verified the template's stamped rows against a history GitHub had squashed to this one commit.
+   A copy is now told by that history, and the birth probe judges this run too (decision
+   2026-10-23-023). The
    command works only while the repository carries GitHub's template flag, which a fresh `git init`
    and push do not set: after the pristine cut the new repository read `isTemplate: false` until
    `gh repo edit <owner>/<name> --template` set it. Check the flag before blaming the command.
 2. **The clone's remote is `git@github.com:<owner>/<name>.git`.** A machine that separates
    identities by ssh host alias (`Host github.com-personal`) has no `Host github.com` block, so
-   the first push would use no personal key. Set the remote to the alias before anything else:
+   the first push would use no personal key, unless the machine's git config rewrites the host
+   (`url."git@github.com-personal:".insteadOf git@github.com:`), as the operator's did when S10
+   created a project and the clone's remote already read the alias. Otherwise set the remote to the
+   alias before anything else:
 
        git remote set-url origin git@github.com-personal:<owner>/<name>.git
 

@@ -68,6 +68,8 @@ decisions is not held to `unmarked` or `commit`, since the story it cites is in 
 tracker and the commit in the template's history, the project's squashed at birth; and a framework
 decision is not held to `no-affects` or `unrecorded`, since the story that queues it is the
 template's too. The project's own rows and decisions are judged in full (decision 2026-10-23-015).
+So is a copy of the template before its initializer, GitHub's "Initial commit": no profile yet, and
+none of the commits the template's rows were stamped with in its history (decision 2026-10-23-023).
 
 --stamp            fills each `pending` row whose first commit exists with that commit's hash
 --history <doc>    prints each row's stored commit beside the one git derives
@@ -419,10 +421,24 @@ def marked(row: Row, stories: dict[str, session_closeout.Story]) -> bool:
     return False
 
 
+def template_copy(docs: dict[str, str], logs: dict[str, str], project: bool, resolves: Callable[[str], bool]) -> bool:
+    """A copy of the template not yet initialized, as GitHub's "Initial commit" is: no profile, and
+    none of the commits the template's rows were stamped with in its history, which the copy squashed
+    away. The template always holds them, so a mistyped hash there is still judged (decision
+    2026-10-23-023)."""
+    if project or FRAMEWORK_LOG not in logs:
+        return False
+    framework_ids = set(kb_freshness_scan.index_decisions(logs[FRAMEWORK_LOG]))
+    stamped = [r.commit for path, text in docs.items() if (a := read_authority(path, text)[0])
+               for r in a.rows if r.commit != PENDING and all(d in framework_ids for d in r.decisions)]
+    return bool(stamped) and not any(resolves(h) for h in stamped)
+
+
 def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: bool,
-          history: Callable[[str], dict[str, str]]) -> tuple[list, dict]:
+          history: Callable[[str], dict[str, str]], resolves: Callable[[str], bool] = lambda h: True) -> tuple[list, dict]:
     """Every rule of the gate over in-memory text: {path: document}, {log label: log}, the
-    tracker, whether this is a project, and history(path) -> {version: full commit hash}.
+    tracker, whether this is a project, history(path) -> {version: full commit hash}, and
+    resolves(hash), whether a commit is in this repository's history.
     Returns (violations as (rule, where, message), the reach for --list)."""
     try:
         decs = kb_freshness_scan.parse_logs(logs)
@@ -433,6 +449,9 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
     for text in logs.values():            # in LOGS order, so the framework file wins a duplicate
         bodies.update(decision_bodies(text))
     stories = {s.id: s for s in session_closeout.tracker_stories(tracker)}
+    # In a project, or a copy of the template before its initializer, what the template wrote is
+    # judged in the template (decisions 2026-10-23-015 and 2026-10-23-023).
+    elsewhere = project or template_copy(docs, logs, project, resolves)
 
     v: list[tuple[str, str, str]] = []
     auths: list[Authority] = []
@@ -462,7 +481,7 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
         for r in a.rows:
             where = f"{a.path}:{r.line}"
             # The template's row in a project: its story and its commit are the template's.
-            foreign = project and all(d in framework_ids for d in r.decisions)
+            foreign = elsewhere and all(d in framework_ids for d in r.decisions)
             for did in r.decisions:
                 if did not in decs:
                     v.append(("unknown-id", where, f"version {r.version} cites {did}, which is in neither decision index"))
@@ -483,7 +502,7 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
     recorded = {(a.path, d) for a in auths for r in a.rows for d in r.decisions}
     reach.update(due=0, by_row=0, by_story=0)
     for did in sorted(decs):
-        if decs[did]["date"] < AFFECTS_FROM or (project and did in framework_ids):
+        if decs[did]["date"] < AFFECTS_FROM or (elsewhere and did in framework_ids):
             continue          # older than the rule, or the template's, judged where its queue lives
         reach["due"] += 1
         body = bodies.get(did)
@@ -566,9 +585,9 @@ def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, pro
 
 
 def check_tree(docs: dict[str, str], logs: dict[str, str], tracker: str, project: bool,
-               history: Callable[[str], dict[str, str]]) -> tuple[list, dict]:
+               history: Callable[[str], dict[str, str]], resolves: Callable[[str], bool] = lambda h: True) -> tuple[list, dict]:
     """Every rule a commit is held to: the authority gate, then the approval gate."""
-    v, reach = judge(docs, logs, tracker, project, history)
+    v, reach = judge(docs, logs, tracker, project, history, resolves)
     return v + [x for x in judge_approval(docs, logs, tracker, project) if x not in v], reach
 
 
@@ -675,6 +694,15 @@ def git(*args: str, data: bytes | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(["git", *args], cwd=ROOT, input=data, capture_output=True, check=False)
 
 
+def resolves(commit: str) -> bool:
+    """Whether the hash names a commit in this repository. A shallow clone cannot say, so it raises
+    rather than read a truncated history as a copy of the template."""
+    shallow = git("rev-parse", "--is-shallow-repository")
+    if shallow.returncode != 0 or shallow.stdout.strip() == b"true":
+        raise HistoryUnavailable("this clone is shallow; run `git fetch --unshallow`")
+    return git("cat-file", "-e", f"{commit}^{{commit}}").returncode == 0
+
+
 def first_commits(path: str) -> dict[str, str]:
     """{version: full hash of the first commit whose copy of the document holds it}, following
     renames. A document never committed has none. Raises HistoryUnavailable on a shallow clone,
@@ -720,9 +748,9 @@ def cached(fn: Callable[[str], dict[str, str]]) -> Callable[[str], dict[str, str
     return lambda path: memo[path] if path in memo else memo.setdefault(path, fn(path))
 
 
-def foreign_rule(logs: dict[str, str], project: bool) -> Callable[[Row], bool]:
+def foreign_rule(logs: dict[str, str], elsewhere: bool) -> Callable[[Row], bool]:
     framework_ids = set(kb_freshness_scan.index_decisions(logs[FRAMEWORK_LOG])) if FRAMEWORK_LOG in logs else set()
-    return lambda r: project and all(d in framework_ids for d in r.decisions)
+    return lambda r: elsewhere and all(d in framework_ids for d in r.decisions)
 
 
 # ==============================================================================
@@ -732,7 +760,7 @@ def foreign_rule(logs: dict[str, str], project: bool) -> Callable[[Row], bool]:
 def cmd_check(listing: bool) -> int:
     docs, logs, tracker, project = gather()
     try:
-        v, reach = check_tree(docs, logs, tracker, project, cached(first_commits))
+        v, reach = check_tree(docs, logs, tracker, project, cached(first_commits), resolves)
     except HistoryUnavailable as e:
         print(f"doc_authority_scan: cannot verify a stored commit: {e}", file=sys.stderr)
         return 2
@@ -757,16 +785,23 @@ def cmd_check(listing: bool) -> int:
     return 1
 
 
+def plan_stamps(docs: dict[str, str], logs: dict[str, str], project: bool, history: Callable[[str], dict[str, str]],
+                resolves: Callable[[str], bool]) -> list[tuple[str, str, Authority, dict[int, str], Callable[[Row], bool]]]:
+    """(path, text, authority, {line: hash}, the foreign rule) for each authority with a pending row.
+    In a project or a copy of the template, the template's rows are never stamped here."""
+    foreign = foreign_rule(logs, project or template_copy(docs, logs, project, resolves))
+    plan = []
+    for path, text in sorted(docs.items()):
+        a, _ = read_authority(path, text)
+        if a and any(r.commit == PENDING for r in a.rows):
+            plan.append((path, text, a, stamps_for(a, history(path), foreign), foreign))
+    return plan
+
+
 def cmd_stamp() -> int:
     docs, logs, _, project = gather()
-    foreign = foreign_rule(logs, project)
-    history = cached(first_commits)
     try:
-        for path, text in sorted(docs.items()):
-            a, _ = read_authority(path, text)
-            if not a or not any(r.commit == PENDING for r in a.rows):
-                continue
-            stamps = stamps_for(a, history(path), foreign)
+        for path, text, a, stamps, foreign in plan_stamps(docs, logs, project, cached(first_commits), resolves):
             if stamps:
                 (ROOT / path).write_text(stamp_text(text, stamps), encoding="utf-8")
             for r in a.rows:
@@ -867,12 +902,12 @@ def _doc(fm: str = _FM, rows: str = _ROW2 + _ROW1, header: str = _HEADER, tail: 
 
 
 def _run(docs: dict | None = None, fw: str = _FW, proj: str = _PROJ, tracker: str = _TRACK,
-         project: bool = False, hist: dict | None = None) -> list:
+         project: bool = False, hist: dict | None = None, resolves: Callable[[str], bool] = lambda h: True) -> list:
     docs = {"docs/a.md": _doc(), "docs/kb.md": "---\nname: an entry\n---\n\nNo log.\n"} if docs is None else docs
     hist = _HIST if hist is None else hist
     logs = {"sprint/decision-log.md": proj, FRAMEWORK_LOG: fw}
     try:
-        return judge(docs, logs, tracker, project, lambda p: hist.get(p, {}))[0]
+        return judge(docs, logs, tracker, project, lambda p: hist.get(p, {}), resolves)[0]
     except Exception as e:  # a crash is a failed fixture, never a crashed self-test
         return [("crash", "", f"{type(e).__name__}: {e}")]
 
@@ -988,6 +1023,32 @@ def run_self_test() -> int:
            _run(proj=_PROJ.replace("**Affects:** none", "No line."), project=True, hist={}, tracker=born), "no-affects")
     expect("in the template, the same decision queued by no open story is unrecorded", _run(doc(rows=_ROW1), tracker=born), "unrecorded")
     expect("an unreadable decision index fails, never reads as none", _run(fw=_FW.replace("## Decision Index", "## Decisions")), "index")
+
+    # A copy of the template before its initializer, GitHub's "Initial commit" (decision 2026-10-23-023)
+    gone = lambda h: False   # noqa: E731 — the copy's history holds none of the template's commits
+    squashed = {"docs/a.md": {"1": "5f1148f" + "0" * 33}}
+    expect("a copy before its initializer, its history holding none of the stamped commits, judges the template's rows in the template",
+           _run(hist=squashed, resolves=gone))
+    expect("the template, holding them, still refuses a stored hash that did not introduce its row",
+           _run(hist={"docs/a.md": {"1": "fff" + "0" * 37}}), "commit")
+    pair = {"docs/a.md": _doc(), "docs/c.md": _doc(fm=_FM.replace("the a scope", "the c scope"), rows=_ROW2 + _ROW1.replace("abc1234", "deadbee"))}
+    expect("one stamped commit present makes it the template, so a mistyped hash beside it is still caught",
+           _run(pair, hist={"docs/a.md": _HIST["docs/a.md"], "docs/c.md": _HIST["docs/a.md"]}, resolves=lambda h: h == "abc1234"), "commit")
+    expect("a copy's framework decision is held to no record, as in a project",
+           _run(doc(rows=_ROW1), tracker=born, hist=squashed, resolves=gone))
+    expect("a copy's own row citing a project decision is still judged",
+           _run(doc(rows=own.format("ACME-2026-10-25-001") + _ROW2 + _ROW1), hist=squashed, resolves=gone), "unmarked")
+    logs0 = {"sprint/decision-log.md": _PROJ, FRAMEWORK_LOG: _FW}
+    check("a copy is told by its history: not the template, which holds the commits, nor a project, which has its profile",
+          template_copy({"docs/a.md": _doc()}, logs0, False, gone)
+          and not template_copy({"docs/a.md": _doc()}, logs0, False, lambda h: True)
+          and not template_copy({"docs/a.md": _doc()}, logs0, True, gone)
+          and not template_copy({"docs/a.md": _doc(rows=_ROW2)}, logs0, False, gone))
+    first = lambda p: {"1": "abc1234" + "0" * 33, "2": "def5678" + "0" * 33}   # noqa: E731
+    in_copy = plan_stamps({"docs/a.md": _doc()}, logs0, False, first, gone)
+    in_template = plan_stamps({"docs/a.md": _doc()}, logs0, False, first, lambda h: True)
+    check("--stamp leaves the template's rows in a copy, and stamps them in the template",
+          [s for *_, s, _ in in_copy] == [{}] and list(in_template[0][3].values()) == ["def5678"], f"{in_copy} {in_template}")
 
     # The writer's queue (decision 2026-10-23-016)
     def queue(row: str, current: int | None = 9, docs: dict | None = None, epic: str = "TMPL-9 — Documents",

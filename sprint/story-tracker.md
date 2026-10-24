@@ -16,9 +16,9 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 27 |
+| **Total Stories** | 28 |
 | **Not Started** | 6 |
-| **In Progress** | 1 |
+| **In Progress** | 2 |
 | **Blocked** | 0 |
 | **Completed** | 20 |
 
@@ -74,10 +74,11 @@ that decision 2026-09-23-003 names.
 | TMPL-2.1 | `scripts/doc_authority_scan.py`: `authority:` frontmatter and version logs, `Affects:` on decisions, the row-or-story rule, the fact marker, `--stamp` verified against git, `--history`; fixtures proved against broken variants; runbook section. Done at S7: a row is a `fact:` or a story's change, `**Affects:**` from decisions dated 2026-10-22, the template's rows verified in the template, one scope one authority (2026-10-23-010) | Done | — | doc_control_standard.md | 2026-10-22-002 |
 | TMPL-2.2 | The `doc-queue` gate run at cold start by the `SessionStart` hook, over the stories marked `Queued: S<N>`, with its section in `docs/governance/gate_suite_runbook.md`; the per-document forked drain skill, as `general-purpose` in the role of the library's `technical-writer` (written in TMPL-1.9; `dev-resources` retired by 2026-10-23-003), leaving its change for review (2026-10-23-016) | Done | TMPL-2.1, TMPL-1.3, TMPL-1.9 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.3 | The document-control standard rewritten around the gate; the standards and the gate runbook marked as authorities with version logs; the "stays private" fossil fixed; `sprint/recovery/AUTHORITY_MATRIX.md` retired into the frontmatter registry (2026-10-23-010). Done at S7: six authorities, their logs citing every decision that names them, one queued in TMPL-5.5 (2026-10-23-011) | Done | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
-| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003), and each told that its `sprint/recovery/AUTHORITY_MATRIX.md`, `v1.0.0`'s unedited, is now its own to delete (2026-10-23-011); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4, TMPL-5.6, TMPL-2.6, TMPL-2.7 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
+| TMPL-2.4 | Proof on a scratch project; `v2.0.0` released with TMPL-1.7; the three derived projects taken to it through `template_update.py`, each suite green, each project's `docs/personas/` converted by the updater into its roster and every converted persona checked (2026-10-23-003), and each told that its `sprint/recovery/AUTHORITY_MATRIX.md`, `v1.0.0`'s unedited, is now its own to delete (2026-10-23-011); then `dev-resources` archived, no project syncing from it any longer | Not Started | TMPL-2.2, TMPL-2.3, TMPL-1.7, TMPL-2.5, TMPL-5.4, TMPL-5.6, TMPL-2.6, TMPL-2.7, TMPL-2.8 | session_handoff_standard_v2.0.md | 2026-10-22-002 |
 | TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict. Done at S7: the dry run names it `union`; the three scratch adoptions of a scratch `v2.0.0` had no conflict and passed the suite | Done | — | doc_control_standard.md | 2026-10-23-007 |
 | TMPL-2.6 | The authority gate in a project: `scripts/doc_authority_scan.py` judges the template's rows and decisions in the template, since their stories and commits are the template's, and finds a row's commit following renames but never a copy; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_doc_authority]] say so. Found at S8 by TMPL-5.1's birth probe, which a birth from `HEAD` failed. Done at S8: a scratch birth starts green and a PRD made from its template stamps its own commit (2026-10-23-015) | Done | TMPL-2.1, TMPL-2.3 | doc_control_standard.md | 2026-10-23-015 |
 | TMPL-2.7 | CI makes a scratch project on every push: `scripts/birth_probe.py` births a committed revision through the initializer, its verdict the initializer's own suite run; `.github/workflows/gates.yml` runs it once per profile, in the template only; proved red at `38c549d` and green at its own commit; [[reference_ci_backstop]] says why | Done | TMPL-2.6 | doc_control_standard.md | 2026-10-23-017 |
+| TMPL-2.8 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows in the template as a project does, its history holding none of their stamped commits; `scripts/birth_probe.py` also runs the suite on the Initial commit, as GitHub does; red at `30677d3`, green at its own commit (2026-10-23-023) | In Progress | TMPL-2.6, TMPL-2.7 | doc_control_standard.md | 2026-10-23-023 |
 
 ---
 

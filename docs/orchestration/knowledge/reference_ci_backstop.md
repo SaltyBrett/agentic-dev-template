@@ -1,7 +1,7 @@
 ---
 name: CI is the reporting backstop for per-clone hooks
 description: 'Git hooks are per-clone and nothing in the repository can tell whether a clone installed them. The GitHub workflow runs the same suite on every push and pull request, plus the commit-msg gate over each carried commit. It reports; the local hooks block. Why no status check is required even now that the repository is public, what the red probe proved, and why CI also births a scratch project from every commit, once per profile.'
-teaches: [2026-09-22-001, 2026-09-25-001, 2026-09-25-003, 2026-10-23-017, 2026-10-23-018]
+teaches: [2026-09-22-001, 2026-09-25-001, 2026-09-25-003, 2026-10-23-017, 2026-10-23-018, 2026-10-23-023]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -74,6 +74,13 @@ does not try to birth itself. The probe runs git and the initializer with no `GI
 `CLAUDE_PROJECT_DIR`, because inside a commit hook git exports the index it is committing and a
 scratch `git add` would write into it (decision 2026-10-23-018). Proved against the real defect: at
 `38c549d` it fails under both profiles at `doc-authority-scan` alone.
+
+The probe judges two runs. GitHub runs `gates` on a new project's "Initial commit", the
+template's tree before anyone has run the initializer, and that run was red on every project from
+the S7 closeout until TMPL-2.8 while every birth the probe judged after the initializer was green:
+the copy, having no profile, was judged as the template. The probe now runs the suite on the bare
+Initial commit first, once per run, and a red run there refuses the birth (decision
+2026-10-23-023). At `30677d3` it reproduces GitHub's red run exactly.
 
 It judges a birth, not an adoption. A project taken to a newer release through `template_update.py`
 is heavier and is proved by hand at the release.

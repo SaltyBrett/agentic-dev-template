@@ -24,14 +24,15 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-023 | 2026-10-23 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows and decisions in the template as a project does, its history holding none of their stamped commits; the birth probe also runs the suite on the Initial commit, as GitHub does; amends 2026-10-23-015, 2026-10-23-017 and 2026-10-23-018 | APPROVED |
 | 2026-10-23-022 | 2026-10-23 | The README front page as built: a nine-step walkthrough from `gh repo create` to taking a release, each step what to type and what to see; a catalog of the commands by skill path, the operator scripts, the session hooks and the gates by link; `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing a skill the `## Catalog` section does not name, in the template and in a project | APPROVED |
 | 2026-10-23-021 | 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
 | 2026-10-23-020 | 2026-10-23; amended 2026-10-23 | The approval gate as built: in a project with a real epic, one PRD in `docs/prd/` and one architecture in `docs/architecture/` standing approved, a reopened revision standing at its last approved version (amended, the Chair's choice), an approved architecture's `prd:` the PRD's newest version; or an APPROVED project decision headed `**Skips:**` naming the stage (the Chair's form); a rule of `doc-authority-scan`, on every commit | APPROVED |
 | 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
-| 2026-10-23-018 | 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
-| 2026-10-23-017 | 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
+| 2026-10-23-018 | 2026-10-23; amended 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
+| 2026-10-23-017 | 2026-10-23; amended 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
 | 2026-10-23-016 | 2026-10-23 | The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit | APPROVED |
-| 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
+| 2026-10-23-015 | 2026-10-23; amended 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
 | 2026-10-23-014 | 2026-10-23 | The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers | APPROVED |
 | 2026-10-23-013 | 2026-10-23 | TMPL-5.6 as built: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; the three presets as proposed, Website with `business-writer`; presets and connections one YAML block in team selection, held by `skill-scan`; the connection the Blender Lab server pinned to v1.0.3's commit, the community server rejected | APPROVED |
 | 2026-10-23-012 | 2026-10-23 | The library gains a backend engineer, a web developer, a Blender 3D artist and an image and video editor; team-selection offers named team presets, a gate refusing a preset that names no library persona; an opt-in Blender MCP connection offered with the Blender persona, off by default; built as TMPL-5.6 before the release | APPROVED |
@@ -3431,6 +3432,10 @@ template's commit instead and the birth itself was refused: the two defects of d
 
 ## Decision 2026-10-23-015: In a project, what the template wrote is judged in the template
 
+**Amended 2026-10-23 (TMPL-2.8, decision 2026-10-23-023):** so is a copy of the template before its
+initializer, GitHub's "Initial commit": it has no profile yet, and its history, squashed by GitHub,
+holds none of the commits the template's rows were stamped with.
+
 **Date:** 2026-10-23
 **Made By:** Chair (S8), on the AI's report of the defect and its proposed fix; the copy fix by the
 AI, bringing the code to decision 2026-10-23-010's "following renames"
@@ -3533,6 +3538,10 @@ section passing `gate-runbook`; the drain skill passing `skill-scan` and listed 
 
 ## Decision 2026-10-23-017: CI makes a scratch project on every push
 
+**Amended 2026-10-23 (TMPL-2.8, decision 2026-10-23-023):** the probe's verdict is two runs, not
+one: the suite on the Initial commit, as GitHub runs it before anyone has run the initializer, and
+the initializer's own. The first was found red on a real project while every birth was green.
+
 **Date:** 2026-10-23
 **Made By:** Chair (after the S8 closeout), on the AI's recommendation; the shape by the AI
 **Status:** APPROVED
@@ -3577,6 +3586,10 @@ the CI step's run observed green with `gh run watch --exit-status`.
 ---
 
 ## Decision 2026-10-23-018: The birth probe as built
+
+**Amended 2026-10-23 (TMPL-2.8, decision 2026-10-23-023):** before the initializer the probe runs the
+suite on the bare Initial commit, once per run since no profile applies yet, with the same
+environment; a red run there refuses the birth.
 
 **Date:** 2026-10-23
 **Made By:** AI (S9), within decision 2026-10-23-017; the Chair placed TMPL-2.7 before TMPL-2.2
@@ -3882,3 +3895,56 @@ Eight catalog fixtures in `skill-scan-selftest`.
 ### Enforcement
 
 `skill-scan-selftest` and `skill-scan`; [[reference_claude_code_skills]].
+
+---
+
+## Decision 2026-10-23-023: A copy of the template is judged as a project, and the probe judges GitHub's first run
+
+**Date:** 2026-10-23
+**Made By:** Chair (S10), on the AI's report of the defect and its proposed fix
+**Status:** APPROVED
+**Amends:** 2026-10-23-015 (a copy judged as a project), 2026-10-23-017 (the probe's verdict),
+2026-10-23-018 (the probe's Initial-commit run)
+**Builds:** TMPL-2.8
+**Affects:** `scripts/doc_authority_scan.py` (`template_copy`, `resolves`, `plan_stamps`, `judge`, the
+fixtures), `scripts/birth_probe.py` (the Initial commit's run, its fixtures),
+`docs/governance/gate_suite_runbook.md` (`doc-authority-selftest`, `doc-authority-scan`,
+`birth-probe-selftest`), `docs/orchestration/knowledge/reference_doc_authority.md`,
+`docs/orchestration/knowledge/reference_ci_backstop.md`,
+`docs/orchestration/knowledge/reference_derived_project_start.md`, `sprint/story-tracker.md`
+(TMPL-2.8; TMPL-2.4 waits on it)
+
+### Context
+
+TMPL-5.5's walkthrough, run for real on a private repository made from `30677d3`, found GitHub's own
+`gates` run on the new project's "Initial commit" red: `doc-authority-scan` refused nineteen rows as
+`commit`. That commit is the template's tree with no `.project-profile`, so the gate judged it as the
+template, and verified each stamped row's hash against a history GitHub had squashed to the one
+commit. Every project made since S7 marked the first authorities opened with that red run, while
+the README said it was green. The birth probe did not see it: it judged a birth only after the
+initializer, whose profile makes the template's rows foreign, and never the run GitHub makes first.
+
+### Decision
+
+- **A copy is told by its history (Chair).** With no profile, a repository holding none of the
+  commits the template's rows were stamped with is a copy of the template, and what the template
+  wrote is judged in the template there, as in a project: its rows are held to neither marker nor
+  hash, its decisions to neither `**Affects:**` nor record, and `--stamp` never writes them. The
+  template always holds those commits, so one mistyped hash beside the rest is still refused; with
+  nothing stamped there is nothing to tell by, and the repository is judged as the template. A
+  shallow clone cannot say, and the gate exits 2 there as before.
+- **The probe judges the run GitHub makes first (Chair).** It runs the suite on the bare Initial
+  commit before the initializer, once per run since no profile applies yet, in the same clean
+  environment; a red run refuses the birth whatever the initializer says.
+- Both fixes ship in `v2.0.0`; TMPL-2.4 waits on TMPL-2.8.
+
+### Verification
+
+Seven copy fixtures in `doc-authority-selftest`, seven broken variants each caught; four
+Initial-commit fixtures in `birth-probe-selftest`, four more broken variants caught beside the ten
+before.
+
+### Enforcement
+
+`doc-authority-selftest` and `doc-authority-scan`; `birth-probe-selftest` and the CI `birth` job;
+[[reference_doc_authority]], [[reference_ci_backstop]].
