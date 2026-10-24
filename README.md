@@ -93,8 +93,8 @@ the draft and stops, `/project-launch skip <stage>` passes over a stage with you
 decision, and `/project-launch <stage>` returns to one, to resume, review or revise it. A bare
 `/project-launch` resumes where the launch stopped. The state is the documents themselves, so a
 stage left in one conversation is picked up in the next. Until planning writes the first epic, a new
-conversation is still S1, and there is nothing to close out: end the conversation to take a break
-between stages ([reference_project_launch](docs/orchestration/knowledge/reference_project_launch.md)).
+conversation is still S1, and there is nothing to close out: type `/clear`, or end the
+conversation, to take a break between stages ([reference_project_launch](docs/orchestration/knowledge/reference_project_launch.md)).
 
 ### 7. Close out the session
 

@@ -61,8 +61,8 @@ The documents decide: a decision approving a document that no longer exists appr
 ## Opening a stage
 
 Tell the Chair what the stage produces, who leads it and the commands above, then begin. A stage's
-end is a session boundary the Chair may take. Before planning, the Chair takes it by ending the
-conversation, never by a closeout: a kickoff's tasks cite stories, and planning writes the first.
+end is a session boundary the Chair may take. Before planning, the Chair takes it with `/clear` or a
+new conversation, never by a closeout or an emergency checkpoint: a kickoff's tasks cite stories, and planning writes the first.
 The next conversation is still S1, its cold start passing with no handoff yet, and
 `/project-launch` resumes from the documents with the next stage's lead. From planning on, the
 closeout skill, given the next lead as the persona, takes the boundary.

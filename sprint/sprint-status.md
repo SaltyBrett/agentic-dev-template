@@ -43,6 +43,12 @@ Chair at the keyboard in `SaltyBrett/launch-probe-s10`.
    stage. It found that no closeout is possible before planning, so a boundary before planning is a
    new conversation, still S1 (decision 2026-10-23-024, the Chair's choice, amending 2026-10-23-008
    and 2026-10-23-021).
+5. TMPL-5.4's second run: a new conversation was S1 and resumed at the PRD; the draft's gaps logged
+   in §11 and committed; a closeout before planning refused without a write. The emergency close's
+   claim that the next `session-verify` fails, false before a project's first closeout, corrected in
+   `AGENTS.md` and the handoff standard; `/clear` named as the boundary (2026-10-23-024, amended).
+   Both runs recorded in [[reference_launch_live_run]]. Still unobserved: an approval, a skip with
+   its reason, planning, a revision and the first closeout.
 
 ### Blockers
 

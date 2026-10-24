@@ -24,7 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
-| 2026-10-23-024 | 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
+| 2026-10-23-024 | 2026-10-23; amended 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
 | 2026-10-23-023 | 2026-10-23 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows and decisions in the template as a project does, its history holding none of their stamped commits; the birth probe also runs the suite on the Initial commit, as GitHub does; amends 2026-10-23-015, 2026-10-23-017 and 2026-10-23-018 | APPROVED |
 | 2026-10-23-022 | 2026-10-23 | The README front page as built: a nine-step walkthrough from `gh repo create` to taking a release, each step what to type and what to see; a catalog of the commands by skill path, the operator scripts, the session hooks and the gates by link; `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing a skill the `## Catalog` section does not name, in the template and in a project | APPROVED |
 | 2026-10-23-021 | 2026-10-23; amended 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
@@ -3972,6 +3972,12 @@ commit and under both profiles, and run 40058466647 is green on `gates` and both
 
 ## Decision 2026-10-23-024: Before planning, a launch boundary is a new conversation
 
+**Amended 2026-10-23 (TMPL-5.4's second run):** the emergency close says the same. `AGENTS.md` and
+the handoff standard §7 said the next session's `session-verify` fails after one; before a project's
+first closeout it passes, there being no pair, and the next conversation is still S1. The second
+run's old session wrote an S1 emergency checkpoint on that claim, then found it false. The boundary
+is taken with `/clear` or a new conversation.
+
 **Date:** 2026-10-23
 **Made By:** Chair (S10), on the AI's report from the live run
 **Status:** APPROVED
@@ -3979,7 +3985,8 @@ commit and under both profiles, and run 40058466647 is green on `gates` and both
 **Builds:** TMPL-5.4's finding
 **Affects:** `.claude/skills/project-launch/SKILL.md` (Opening a stage, `pause`), `README.md`
 (walkthrough steps 6 and 7), `docs/orchestration/knowledge/reference_project_launch.md` (why the
-first closeout comes after planning)
+first closeout comes after planning); amended: `AGENTS.md` (the emergency close),
+`docs/standards/session_handoff_standard_v2.0.md` (§7)
 
 ### Context
 
