@@ -28,5 +28,5 @@ reviewer reads every change against it ([[reference_coding_standard_calibration]
 - Build only what the story asks for, and delete code nothing calls.
 - Never game a limit. Hiding logic in a closure, splitting into part one and part two, or adding a
   mode flag passes the measurer and fails the reviewer; split by responsibility instead.
-- An exception exists only as an entry in `code-exceptions.yaml`, with its category and reason, for
-  the reviewer to approve.
+- A limit you cannot meet is a finding for `docs/code_review_log.md`, with the Chair's response;
+  never a hidden one. The standard advises and documents, and the Chair decides what proceeds.

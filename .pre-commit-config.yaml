@@ -297,6 +297,35 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
+      # The coding standard (docs/standards/coding_standard_v1.0.md): the code a change adds or edits,
+      # in a project that adopted it with code-profile.yaml. It advises and documents and never forces
+      # a code change: a finding pauses the commit only until docs/code_review_log.md holds it with the
+      # Chair's response (decision 2026-10-24-011). Its tools are pinned here, in the hook's own
+      # environment; jscpd runs through npx, pinned in the script.
+      - id: code-standard-selftest
+        name: Coding Standard Self-Test (every rule fails its broken fixture; the gate meets its own limits)
+        entry: python scripts/code_standard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the profile is YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: code-standard
+        name: Coding Standard Gate (the staged change's code measured; each finding in the review log)
+        entry: python scripts/code_standard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml, ruff==0.6.9, mypy==1.11.2, pip-audit==2.7.3]
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: code-standard-range
+        name: Coding Standard Gate over a range (CI; CODE_STANDARD_RANGE=BASE..HEAD)
+        entry: python scripts/code_standard.py --range-from-env
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml, ruff==0.6.9, mypy==1.11.2, pip-audit==2.7.3]
+        stages: [manual]          # run: CODE_STANDARD_RANGE=<base>..<head> pre-commit run code-standard-range --hook-stage manual --all-files
+        pass_filenames: false
+        always_run: true
       # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
       - id: commit-attribution
         name: Commit Attribution Gate (no AI attribution in commit messages)

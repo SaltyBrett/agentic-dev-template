@@ -24,11 +24,12 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-011 | 2026-10-24 | The coding standard advises and documents and never forces a code change: a finding pauses a commit or a story only until `docs/code_review_log.md`, append-only, holds it with the Chair's response; the Chair's acknowledgement is the exception, the exceptions file gone; the gate core and its Python profile as built; amends 2026-10-24-006, 2026-10-24-007 and 2026-10-24-009 | APPROVED |
 | 2026-10-24-010 | 2026-10-24 | TMPL-4.2 split, larger than one session: 4.2 the standard, the judgement page and the code reviewer; 4.3 the gate's core and the Python profile, proved on Comfy; 4.4 the Rust profile, proved on PocketGames, the Rust toolchain decided there; 4.5 the TypeScript profile, proved on fixture code; TMPL-3.2 waits on 4.3 | APPROVED |
-| 2026-10-24-009 | 2026-10-24 | The coding standard's judgement page (`.claude/rules/code-quality.md`, path-scoped to code, opening with `CONSTITUTION.md` §4A) and its two briefs: the code reviewer, a new library persona, never the implementer; the security audit, `security-engineer`'s brief for the security stage | APPROVED |
+| 2026-10-24-009 | 2026-10-24; amended 2026-10-24 | The coding standard's judgement page (`.claude/rules/code-quality.md`, path-scoped to code, opening with `CONSTITUTION.md` §4A) and its two briefs: the code reviewer, a new library persona, never the implementer; the security audit, `security-engineer`'s brief for the security stage | APPROVED |
 | 2026-10-24-008 | 2026-10-24 | The coding standard's measurement is proved, per language: each stack's profile names one pinned tool per slot, configured to the core numbers and never looser, and a tool counts only once it passes its language's measurement fixture and a recall check on every run; `lizard` 1.17.10 fails Rust and TypeScript | APPROVED |
-| 2026-10-24-007 | 2026-10-24 | The coding standard's core limits, proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas: per added or edited function, complexity 15, 60 code lines, 5 parameters; no new clones; 80% of new lines covered; tests at complexity 10 and 100 lines; file length a reviewer signal at 500; exceptions recorded, never growing | APPROVED |
-| 2026-10-24-006 | 2026-10-24 | The team's role map: five story types (software, data, document, game, media) whose brief picks the stages and roles; every library persona given its artifact and its judging gate; the verifier and reviewer never the builder; `devops-engineer` ships; the code reviewer's slot left to TMPL-4.1 | APPROVED |
+| 2026-10-24-007 | 2026-10-24; amended 2026-10-24 | The coding standard's core limits, proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas: per added or edited function, complexity 15, 60 code lines, 5 parameters; no new clones; 80% of new lines covered; tests at complexity 10 and 100 lines; file length a reviewer signal at 500; exceptions recorded, never growing | APPROVED |
+| 2026-10-24-006 | 2026-10-24; amended 2026-10-24 | The team's role map: five story types (software, data, document, game, media) whose brief picks the stages and roles; every library persona given its artifact and its judging gate; the verifier and reviewer never the builder; `devops-engineer` ships; the code reviewer's slot left to TMPL-4.1 | APPROVED |
 | 2026-10-24-005 | 2026-10-24 | The review triggers: decision 2026-10-22-003's seven plus a deploy or release, a gate or CI change, data loss and a license change; detected from the diff where the change shows it and declared by a role otherwise; a story closes only with every hit trigger approved by the operator in its folder | APPROVED |
 | 2026-10-24-004 | 2026-10-24 | The team's orchestration: a `/story <ID>` skill in the main session runs one story end to end, each role a subagent from the roster handing off through committed artifacts in `docs/stories/<ID>/`, a gate judging each before the next role starts; it stops only at a review trigger or a gate failing three times running; the law in a new team standard | APPROVED |
 | 2026-10-24-003 | 2026-10-24 | At adoption of `v2.0.0`, a project with real epics approves the PRD and architecture it has been built from as they stand, in the adoption commit: authority frontmatter, a version log opening at the version each states, a project approval decision; with no architecture, the Chair's skip; settles TMPL-2.4's open question | APPROVED |
@@ -4279,6 +4280,10 @@ against broken variants.
 
 ## Decision 2026-10-24-006: The team's role map, by story type
 
+**Amended 2026-10-24 (S15, the Chair, decision 2026-10-24-011):** a review or security finding is
+fixed or answered by the Chair in `docs/code_review_log.md`; it pauses the story only until the
+Chair responds, never until the code changes.
+
 **Date:** 2026-10-24
 **Made By:** Chair (S12, the TMPL-3.1 design session): every library role covered by story type,
 `devops-engineer` shipping, the map approved as drafted by the AI
@@ -4329,6 +4334,13 @@ it adds.
 ---
 
 ## Decision 2026-10-24-007: The coding standard's core limits, proved against known-good and known-bad code
+
+**Amended 2026-10-24 (S15, the Chair, decision 2026-10-24-011):** the limits and their evidence
+stand; what follows a finding changed. A changed function over a limit, a clone or a coverage
+shortfall is a finding the code review log records with the Chair's response, never a refusal that
+forces a code change, and the exceptions file merges into the log: the Chair's acknowledgement is
+the exception, its category an optional note. An answered finding pauses nothing again unless it
+gets worse.
 
 **Date:** 2026-10-24
 **Made By:** Chair (S13, the TMPL-4.1 design session): the reference codebases, every limit below and
@@ -4463,6 +4475,11 @@ against broken variants; [[reference_coding_standard_calibration]].
 
 ## Decision 2026-10-24-009: The coding standard's judgement page and its reviewer and auditor briefs
 
+**Amended 2026-10-24 (S15, the Chair, decision 2026-10-24-011):** the code reviewer and the security
+auditor record every finding in `docs/code_review_log.md` with the change made in response; a
+blocking finding, or an open high or critical one, pauses the story until the Chair responds there,
+never until the code changes. The page's last line and the persona (version 2) say so.
+
 **Date:** 2026-10-24
 **Made By:** Chair (S13): the auditor a brief for `security-engineer`, the reviewer a new persona,
 the page and both briefs as drafted by the AI from the reviewer agent's draft
@@ -4537,3 +4554,83 @@ forbids. The Rust toolchain is not installed on the operator's machine.
 ### Enforcement
 
 `session-closeout-check`'s dependency order over the tracker.
+
+---
+
+## Decision 2026-10-24-011: The coding standard advises and documents, and its gate as built
+
+**Date:** 2026-10-24
+**Made By:** Chair (S15): that the standard advises and documents and never blocks a code change, the
+Chair always able to acknowledge and proceed; an audit log of findings, changes and the Chair's
+responses; a finding pausing until logged; one log per project; the exceptions file merged into it;
+the reviewer and the auditor under the same rule; the template not opted in; coverage by the
+project's own tests; findings on changed lines only; the audit on a manifest change and in CI. The
+gate's mechanics by the AI
+**Status:** APPROVED
+**Amends:** 2026-10-24-006 (review and security findings), 2026-10-24-007 (refusal and the
+exceptions file), 2026-10-24-009 (the reviewer's and the auditor's blocking)
+**Builds:** TMPL-4.3
+**Affects:** `docs/standards/coding_standard_v1.0.md` (Purpose, §1, §3, §4 replaced by the code review
+log, §5, §7), `docs/governance/gate_suite_runbook.md` (`code-standard-selftest`, `code-standard`,
+`code-standard-range`), `scripts/code_standard.py` (new), `.pre-commit-config.yaml` (three hooks),
+`.github/workflows/gates.yml` (the range step), `personas/code-reviewer.md` (version 2),
+`.claude/rules/code-quality.md` (its last line), `docs/orchestration/knowledge/reference_code_review_log.md`
+(new), `docs/orchestration/knowledge/reference_coding_standard_calibration.md`, `sprint/story-tracker.md`
+(TMPL-4.3)
+
+### Context
+
+As TMPL-4.3 was built to decision 2026-10-24-007, which refused a change over a limit unless an
+exceptions file recorded it, the Chair set the rule: the standard advises and documents at a
+minimum and is never a blocker; the Chair can always acknowledge and proceed without forcing code
+updates; and an audit log of code review records the findings, the changes and the Chair's response.
+
+### Decision
+
+- **Advise and document, never force (Chair).** Every finding is shown and recorded; none requires a
+  code change.
+- **A finding pauses until logged (Chair).** The commit, or the story, waits until
+  `docs/code_review_log.md` holds a row for it with the Chair's response, "acknowledged, proceed"
+  being enough. A row answers its place and rule at its value and below; a finding that gets worse
+  is asked again. A hook cannot safely write into the commit it judges, so the gate prints the rows
+  to append and the same commit carries them.
+- **One log per project (Chair):** a table, Date, Change, Where, Finding, Source, Change made, Chair's
+  response, appended to and never edited. A base row changed or removed is the one thing no response
+  clears.
+- **The acknowledgement is the exception (Chair):** no exceptions file; a category is a note in the
+  response. A suppressing comment on a changed line is a finding of its own.
+- **The reviewer and the auditor under the same rule (Chair):** their findings in the same log, a
+  story pausing only until the Chair responds.
+- **The plan (Chair):** a project opts in with `code-profile.yaml` (profile, code and test paths,
+  generated paths, its coverage command and report, its manifests and license policy); the template
+  does not opt in, its scripts having 25 functions over the limits; coverage is measured by the
+  project's own tests in its own environment; ruff, mypy `--strict` and ruff format findings count on
+  changed lines only; the audit runs when a manifest changes and over every pushed range.
+- **As built (AI):** `scripts/code_standard.py`, hooks `code-standard-selftest`, `code-standard` (the
+  staged change) and `code-standard-range` (manual, `CODE_STANDARD_RANGE`, run by CI over the push's
+  range). The Python measurer reads Python's own `ast`, counting the calibration measurer's decision
+  points plus `case`, which it missed; recall compares its functions with the tokenizer's `def`
+  count. Tools pinned in the hook's environment (ruff 0.6.9, mypy 1.11.2, pip-audit 2.7.3) and jscpd
+  4.0.5 through npx; a tool that cannot run is an `unmeasured` finding, never a pass. Ruff runs
+  without its own limit rules (C901, PLR0913), decision 2026-10-24-008's candidate configuration
+  changed, since the measurer holds §2 and the proof showed ruff asking the same finding twice. The self-test
+  holds the gate's numbers equal to the standard's §2 and the gate's own functions within the
+  production limits.
+
+### Verification
+
+Fifty-nine fixtures in `code-standard-selftest`; twenty-five broken variants of the script, one per
+rule and reader, each caught by a failing fixture. On a scratch copy of Comfy with this gate, its
+config and a profile, through `pre-commit run code-standard` on the staged change: a function at
+complexity 17 paused the commit; the same with a log row answered by the Chair passed, no code
+changed; made worse, to 19, paused again; a copy of an existing function paused it as `clone 9`; a
+`noqa: C901` comment paused it as `suppression`; a compliant typed, formatted and tested change
+passed; a compliant change that edited a base row of the log was refused; untyped, unformatted and
+untested lines paused it as `format`, `types` and `coverage`. The first run also showed ruff's C901
+reporting the measurer's finding a second time, so ruff's limit rules are off. Over a committed
+range through `code-standard-range`, as CI runs it: a compliant range passed, noting the audit had
+no manifest to judge; a six-parameter function paused it.
+
+### Enforcement
+
+`code-standard-selftest`, `code-standard` and `code-standard-range`; [[reference_code_review_log]].

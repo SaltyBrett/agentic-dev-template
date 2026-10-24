@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 33 |
-| **Not Started** | 4 |
+| **Not Started** | 3 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 29 |
+| **Completed** | 30 |
 
 ---
 
@@ -98,7 +98,7 @@ that decision 2026-09-23-003 names.
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-4.1 | Design session with a specialized reviewer agent: the core limits as numbers, the per-stack tool-mapping rule, the one judgement page; proved against a known-good and a known-bad codebase before adoption; logged. Done at S13 with the Chair and a reviewer agent: the limits proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas (2026-10-24-007), proved measurement and the mapping rule (2026-10-24-008), the judgement page and the reviewer and auditor briefs (2026-10-24-009); [[reference_coding_standard_calibration]] | Done | TMPL-2.4 | doc_control_standard.md | 2026-10-22-003 |
 | TMPL-4.2 | The coding standard's law and judgement layer, from decisions 2026-10-24-007, 2026-10-24-008 and 2026-10-24-009: `docs/standards/coding_standard_v1.0.md` as an authority (the core limits, their scope, the exceptions file `code-exceptions.yaml`, proved measurement, the stack profiles' mapping rule), `.claude/rules/code-quality.md`, `personas/code-reviewer.md`; split at S14 (2026-10-24-010) | Done | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
-| TMPL-4.3 | The gate's language-neutral core and the Python profile: the changed functions found from the diff, the limits of `docs/standards/coding_standard_v1.0.md` §2, the recall check, the exceptions file, the clone check with jscpd, coverage of new lines; the Python profile's pinned tools, its measurer on Python's `ast`, each proved by its fixture; fixtures proved against broken variants; the runbook sections; proved on a scratch copy of Comfy (2026-10-24-008, 2026-10-24-010) | Not Started | TMPL-4.2 | coding_standard_v1.0.md, doc_control_standard.md | 2026-10-24-007 |
+| TMPL-4.3 | The gate's language-neutral core and the Python profile: the changed functions found from the diff, the limits of `docs/standards/coding_standard_v1.0.md` §2, the recall check, the code review log `docs/code_review_log.md` in place of the exceptions file, the clone check with jscpd, coverage of new lines; the Python profile's pinned tools, its measurer on Python's `ast`, each proved by its fixture; fixtures proved against broken variants; the runbook sections; proved on a scratch copy of Comfy (2026-10-24-008, 2026-10-24-010, 2026-10-24-011). Done at S15: `scripts/code_standard.py` and its three hooks, the range step in CI; 59 fixtures, 25 broken variants caught; on the scratch Comfy each finding paused until the Chair's row and an answered one proceeded with no code changed; [[reference_code_review_log]] | Done | TMPL-4.2 | coding_standard_v1.0.md, doc_control_standard.md | 2026-10-24-007 |
 | TMPL-4.4 | The Rust profile: one pinned tool per slot, its measurer proved by the Rust fixture and the recall check; proved on a scratch copy of PocketGames; whether the Rust toolchain is installed on the operator's machine or proved in CI only, the Chair's at the story's start (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
 | TMPL-4.5 | The TypeScript profile: one pinned tool per slot, its measurer proved by the TypeScript fixture and the recall check; proved on fixture code, no project holding TypeScript yet (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
 

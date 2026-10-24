@@ -4,6 +4,43 @@ Entries moved from `sprint/sprint-status.md` once it held more than ten, oldest 
 
 ---
 
+## S5 — 2026-10-23 — The persona library
+
+**Status:** Started in the same Claude session as S4, after its closeout, at the operator's
+request; the persona is unchanged (`framework-maintainer`). Cold start by hand: pull exit 0,
+`session-verify` exit 0 at 5cccd1e, the handoff's reads read. Decision 2026-10-23-003's four
+questions went to the operator first: the full team ships in `v2.0.0`, `dev-resources` retires, a
+project's own personas stay in it, and the updater converts a `v1.0.0` project's `docs/personas/`
+(the decision amended). TMPL-1.8 split into TMPL-1.8, TMPL-1.9 and TMPL-1.10; TMPL-1.8 and TMPL-1.9 done.
+
+### Done
+
+1. Decision 2026-10-23-003 amended with the answers; the tracker re-planned (TMPL-1.9, TMPL-1.10
+   added; TMPL-1.7, TMPL-2.2, TMPL-2.4 and TMPL-3.1 follow).
+2. TMPL-1.8 — the five personas moved to the library `personas/`, the template's
+   roster keeping `framework-maintainer`; the closeout gate lints the library and holds each roster
+   copy to it (fork and drift fail, a newer library version is noted); the team-selection skill;
+   the initializer clears the roster at birth, the sanitizer keeps it, the updater keeps it and
+   merges the library. The sync went with it, since it would write every persona into a roster:
+   `resources_sync.py`, its hook, its closeout rule and the stamp removed, the shared knowledge
+   entry made the template's own. Supersessions marked on both sides; the five entries the
+   freshness gate then held were corrected against their decisions. Proof: twenty broken variants,
+   each caught (three first written wrong and rewritten); plants of a drifted and a forked roster
+   copy each failed the gate and a real commit; a library bumped past the roster passed silently,
+   because pre-commit hides a passing hook's output, so the start hook now names it. A scratch
+   birth: `new_project.py --apply` exit 0, the roster emptied, the library whole, `session-verify`
+   exit 0 at S1, and a `claude -p` session listing only the built-in agents.
+3. TMPL-1.9 — the library's team designed with the operator, who added business intelligence and
+   reporting roles and the missing game development roles (decision 2026-10-23-004); thirty new
+   personas written into `personas/` from one generator, every one passing the persona lint, and a
+   plant of an unquoted `: ` item refused as `list`.
+
+### Blockers
+
+- None.
+
+---
+
 ## S4 — 2026-10-23 — Procedures as skills; ownership of the new paths
 
 **Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and

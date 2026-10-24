@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S14
+**Updated By:** S15
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,43 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S15 — 2026-10-24 — The coding standard's gate: advise, document, the Chair decides
+
+**Status:** Run in the S11 conversation at the Chair's request, the Chair remote, every question
+answered in chat; the cold start run through `scripts/session_start.py` as `/clear` would run it:
+identity gate, pull, `session-verify` ("this is S15") and `doc-queue` each exit 0, the journal's
+`start S15` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-4.3 done.
+
+### Done
+
+1. TMPL-4.3's plan settled with the Chair: a project opts in with `code-profile.yaml`; the template
+   does not opt in; coverage by the project's own tests; linter and type findings on changed lines
+   only; the audit on a manifest change and over every pushed range.
+2. Mid-build the Chair set the rule (decision 2026-10-24-011, amending 2026-10-24-006, -007 and
+   -009): the standard advises and documents and never forces a code change. A finding pauses a
+   commit or a story only until `docs/code_review_log.md`, append-only, holds it with the Chair's
+   response; an answered finding pauses nothing again unless it gets worse; the Chair's
+   acknowledgement is the exception, the exceptions file gone; the code reviewer and the security
+   auditor under the same rule. `docs/standards/coding_standard_v1.0.md` 1.1 (§4 the code review
+   log), `personas/code-reviewer.md` version 2, `.claude/rules/code-quality.md`,
+   [[reference_code_review_log]] new, [[reference_coding_standard_calibration]] corrected.
+3. TMPL-4.3 done: `scripts/code_standard.py`, its Python measurer on Python's `ast` (counting `case`,
+   which lizard missed) with the tokenizer's recall check; hooks `code-standard-selftest`,
+   `code-standard` and `code-standard-range`; the CI range step shared with the commit-message
+   check; three runbook sections. 59 fixtures, the gate's numbers held to the standard's §2 and its
+   own functions to the limits; 25 broken variants each caught. On a scratch copy of Comfy: an
+   over-limit function paused the commit and the Chair's row let it proceed with no code changed; a
+   worse value, a clone, a suppression and untyped, unformatted, untested lines paused it; a
+   compliant change passed; an edited log row was refused; the range hook passed a compliant range
+   and paused a six-parameter function. The proof's first run found ruff's C901 duplicating the
+   measurer, so ruff's limit rules are off. S5's entry moved to the archive.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -382,43 +419,6 @@ TMPL-1.7 done; epic TMPL-1 complete.
 
 - None. Still unobserved: `disableWorkflows` in a live session. The probe folder `tmpl-s6-probe`
   beside the template can be deleted.
-
----
-
-## S5 — 2026-10-23 — The persona library
-
-**Status:** Started in the same Claude session as S4, after its closeout, at the operator's
-request; the persona is unchanged (`framework-maintainer`). Cold start by hand: pull exit 0,
-`session-verify` exit 0 at 5cccd1e, the handoff's reads read. Decision 2026-10-23-003's four
-questions went to the operator first: the full team ships in `v2.0.0`, `dev-resources` retires, a
-project's own personas stay in it, and the updater converts a `v1.0.0` project's `docs/personas/`
-(the decision amended). TMPL-1.8 split into TMPL-1.8, TMPL-1.9 and TMPL-1.10; TMPL-1.8 and TMPL-1.9 done.
-
-### Done
-
-1. Decision 2026-10-23-003 amended with the answers; the tracker re-planned (TMPL-1.9, TMPL-1.10
-   added; TMPL-1.7, TMPL-2.2, TMPL-2.4 and TMPL-3.1 follow).
-2. TMPL-1.8 — the five personas moved to the library `personas/`, the template's
-   roster keeping `framework-maintainer`; the closeout gate lints the library and holds each roster
-   copy to it (fork and drift fail, a newer library version is noted); the team-selection skill;
-   the initializer clears the roster at birth, the sanitizer keeps it, the updater keeps it and
-   merges the library. The sync went with it, since it would write every persona into a roster:
-   `resources_sync.py`, its hook, its closeout rule and the stamp removed, the shared knowledge
-   entry made the template's own. Supersessions marked on both sides; the five entries the
-   freshness gate then held were corrected against their decisions. Proof: twenty broken variants,
-   each caught (three first written wrong and rewritten); plants of a drifted and a forked roster
-   copy each failed the gate and a real commit; a library bumped past the roster passed silently,
-   because pre-commit hides a passing hook's output, so the start hook now names it. A scratch
-   birth: `new_project.py --apply` exit 0, the roster emptied, the library whole, `session-verify`
-   exit 0 at S1, and a `claude -p` session listing only the built-in agents.
-3. TMPL-1.9 — the library's team designed with the operator, who added business intelligence and
-   reporting roles and the missing game development roles (decision 2026-10-23-004); thirty new
-   personas written into `personas/` from one generator, every one passing the persona lint, and a
-   plant of an unquoted `: ` item refused as `list`.
-
-### Blockers
-
-- None.
 
 ---
 

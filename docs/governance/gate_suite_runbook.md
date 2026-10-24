@@ -518,6 +518,53 @@ the skill gives it. Prose is not read. Exits 2, never 0, without PyYAML.
 [[reference_claude_code_skills]], [[reference_blender_mcp]].
 **Alone:** `pre-commit run skill-scan --all-files`
 
+## `code-standard-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** `code-standard` and `code-standard-range`, which share its rules.
+**Blocks:** a commit when a fixture of the coding standard's gate fails: a `case`, an `and`, a
+comprehension's `if` or a nested function's decisions miscounted; a docstring or a nested
+function's lines counted as the parent's code; a parameter kind dropped; a measurer that misses a
+function, or a file Python cannot parse, passing recall; an unchanged function judged, or a helper
+in a test file held to the test limits; a worse finding, or a row with no response from the Chair,
+read as logged; an edited audit log, or one with other columns, accepted; a stray generated marker
+passed; a deletion touching nothing; a clone, an uncovered line or a linter finding outside the
+change counted; a tool failure raised instead of recorded as `unmeasured`; the audit run on a commit
+that touches no manifest; a profile not built here read as Python. And when a number the gate holds
+differs from the standard's §2, or one of the gate's own functions is over the production limits.
+A fixture that raises fails; it never crashes the self-test.
+**Why:** decisions 2026-10-24-007, 2026-10-24-008 and 2026-10-24-011; [[reference_coding_standard_calibration]],
+[[reference_code_review_log]].
+**Alone:** `pre-commit run code-standard-selftest --all-files --verbose`
+
+## `code-standard`
+
+**Stage:** `pre-commit`
+**Pairs with:** `code-standard-selftest`.
+**Blocks:** in a project with `code-profile.yaml`, a commit whose staged change holds a finding
+`docs/code_review_log.md` does not yet answer: a changed function over complexity 15, 60 code lines
+or 5 parameters (a test function over 10 or 100); a file the measurer could not read in full; a
+suppressing comment or a stray generated-code marker on a changed line; a clone of existing code
+among the added lines; a changed function's new lines under 80% covered by the project's own tests;
+a ruff format, ruff or mypy `--strict` finding on a changed line; a vulnerability or a license
+outside the policy when a manifest changes; a tool that could not run. A finding is answered by a
+log row naming its place and rule, a value at least its own and the Chair's response: no code
+change is ever required. And always a log whose base rows were edited or removed. Reports, never
+pauses on, a file grown past 500 lines and the review-trigger paths touched. Without the profile
+it says the standard is not adopted and passes.
+**Why:** decisions 2026-10-24-007, 2026-10-24-008 and 2026-10-24-011; [[reference_code_review_log]].
+**Alone:** `pre-commit run code-standard --all-files` (it judges the staged change whatever files are named)
+
+## `code-standard-range`
+
+**Stage:** `manual`
+**Pairs with:** `code-standard-selftest`. Run by CI over the commits a push or pull request carries.
+**Blocks:** what `code-standard` blocks, over the range `CODE_STANDARD_RANGE` names instead of the
+staged change, and the dependency and license audit every time, so a vulnerability published since
+the last manifest change still surfaces.
+**Why:** decisions 2026-10-24-011 and 2026-10-24-005; [[reference_code_review_log]], [[reference_ci_backstop]].
+**Alone:** `CODE_STANDARD_RANGE=<base>..<head> pre-commit run code-standard-range --hook-stage manual --all-files`
+
 ## `commit-attribution`
 
 **Stage:** `commit-msg`
@@ -553,6 +600,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | pending |
 | 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |
 | 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | 5a7ab47 |
 | 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |

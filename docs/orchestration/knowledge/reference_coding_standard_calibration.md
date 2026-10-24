@@ -53,7 +53,8 @@ this prints a warning.
 The reviewer agent found it by measuring before reading and noticing files that reported zero
 functions; the session reproduced two cases before relying on them. Hence decision 2026-10-24-008:
 a measurer counts only after it passes its language's fixture, and on every run its function count
-must equal the file's definitions, or the gate fails.
+must equal the file's definitions, or the file is a `recall` finding, never a pass. A finding
+advises and is recorded; it never forces a code change (decision 2026-10-24-011).
 
 ## Rules
 
@@ -63,4 +64,5 @@ must equal the file's definitions, or the gate fails.
   where a limit catches nothing.
 - Never trust a measurer's silence: prove it on its language's hard cases, and check its function
   count against the file on every run.
-- Treat a tool's suppression comment as an exception only when a recorded entry backs it.
+- Treat a tool's suppression comment as a finding of its own, never as a silent exception; a
+  finding is answered in the code review log ([[reference_code_review_log]]).
