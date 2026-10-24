@@ -58,3 +58,22 @@ A revision reopens the document as a new version: `status: draft` until it is ap
 row at the new version citing the decision that approved it. The architecture records the PRD
 version it was built from, so a new PRD version shows which architecture was built on the old one
 (decision 2026-10-23-008).
+
+## Skipping a document
+
+Once the tracker holds a real epic, `doc-authority-scan` refuses the commit unless each of the two
+is approved or its skip is logged (decision 2026-10-23-020). A skip is the Chair's: log it in
+`sprint/decision-log.md` with the stage in the header block and the reason in the body.
+
+```markdown
+## Decision ACME-2026-11-02-001: Skip the architecture
+
+**Date:** 2026-11-02
+**Made By:** Chair
+**Status:** APPROVED
+**Skips:** architecture
+**Affects:** none
+```
+
+`**Skips:** prd, architecture` passes over both. An architecture approved after its PRD was skipped
+is built from no PRD version, and its `prd:` is not read.

@@ -169,10 +169,15 @@ project's own passed unjudged; a copied document's history read as its own, or a
 `doc-queue`: a story queued in the previous session failed or one queued earlier passed, a Done
 story judged, a note quoted in a code span read as a note, a note naming no session, two notes or
 a session to come passed, a queued story naming no authority or two, or citing no decision, passed,
-no session known or an unreadable index read as nothing queued. A fixture that raises fails; it
-never crashes the self-test.
-**Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010, 2026-10-23-015 and
-2026-10-23-019; [[reference_doc_authority]].
+no session known or an unreadable index read as nothing queued. For the approval gate: a real
+epic passed with no approved PRD or architecture, a draft, a reopened draft, a document with no
+authority or outside its folder counted as approved, two approved in one folder passed, an
+architecture built from an older PRD version or with an unquoted `prd:` passed, a skip that is not
+APPROVED or sits in the framework's log counted, a skip naming another stage passed, the template or
+a project before its first real epic judged, and the rule left out of the commit's check. A fixture
+that raises fails; it never crashes the self-test.
+**Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010, 2026-10-23-015,
+2026-10-23-019 and 2026-10-23-020; [[reference_doc_authority]].
 **Alone:** `pre-commit run doc-authority-selftest --all-files --verbose`
 
 ## `doc-authority-scan`
@@ -188,10 +193,14 @@ commit that introduced the row, following renames but never a copy. For every de
 `**Affects:**`, and an authority it names whose version log cites it nowhere while no open story
 cites both. In a project, what the template wrote is judged in the template: a row citing only
 framework decisions is held to neither its marker nor its hash, and a framework decision to
-neither its `**Affects:**` nor its record. A decision index that cannot be read fails; a shallow
-clone exits 2.
-**Why:** decisions 2026-10-22-002, 2026-10-23-010 and 2026-10-23-015; [[reference_doc_authority]],
-[[reference_kb_freshness]].
+neither its `**Affects:**` nor its record. In a project whose tracker holds a real epic, the
+approval gate: no approved PRD in `docs/prd/` or architecture in `docs/architecture/` (one document
+each, `status: approved` with the `authority:` line) where no APPROVED decision of the project's
+log carries `**Skips:** prd` or `**Skips:** architecture`; an approved architecture whose `prd:` is
+not the approved PRD's newest version; a `**Skips:**` naming another stage. A decision index that
+cannot be read fails; a shallow clone exits 2.
+**Why:** decisions 2026-10-22-002, 2026-10-23-010 and 2026-10-23-015; the approval gate, 2026-10-23-008,
+2026-10-23-014 and 2026-10-23-020; [[reference_doc_authority]], [[reference_kb_freshness]].
 **Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
 registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
 for the commit git derives for each row)
@@ -524,6 +533,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.5 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan` hold the approval gate: in a project with a real epic, an approved PRD and architecture or a logged `**Skips:**` (TMPL-5.3) | pending |
 | 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | 0dcccd2 |
 | 1.3 | 2026-10-23 | 2026-10-23-018, 2026-10-23-017 | `birth-probe-selftest` added after `new-project-selftest`: the probe's rules over a stub initializer, the probe itself run on GitHub once per profile (TMPL-2.7) | 19537c4 |
 | 1.2 | 2026-10-23 | 2026-10-23-013 | `skill-scan-selftest` and `skill-scan` hold the team presets and the connections of the team-selection skill, and `.mcp.json` (TMPL-5.6) | 8180f9e |

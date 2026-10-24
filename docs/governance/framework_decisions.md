@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-020 | 2026-10-23 | The approval gate as built: in a project with a real epic, one approved PRD in `docs/prd/` and one approved architecture in `docs/architecture/`, its `prd:` the PRD's newest version, or an APPROVED project decision headed `**Skips:** prd` or `architecture` (the Chair's form); a rule of `doc-authority-scan`, on every commit | APPROVED |
 | 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
 | 2026-10-23-018 | 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
 | 2026-10-23-017 | 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
@@ -3694,3 +3695,58 @@ version rule says what MAJOR measures, and the re-read before `verified:` is owe
 
 `doc-authority-selftest` and the manual `doc-queue`, run by the `SessionStart` hook;
 `skill-scan` over `doc-drain`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-23-020: The approval gate as built
+
+**Date:** 2026-10-23
+**Made By:** Chair (S9): how a skip is logged; the gate's home and its reading by the AI, within
+decisions 2026-10-23-008 and 2026-10-23-014
+**Status:** APPROVED
+**Builds:** TMPL-5.3
+**Affects:** `scripts/doc_authority_scan.py` (`judge_approval`, `check_tree`, `header_field`, the
+fixtures), `docs/governance/gate_suite_runbook.md` (`doc-authority-selftest`, `doc-authority-scan`),
+`docs/governance/doc_control_standard.md` (Authorities), `docs/templates/README.md` (skipping a
+document), `.claude/skills/planning-session/SKILL.md` (Preconditions),
+`docs/orchestration/knowledge/reference_doc_authority.md` (why a real epic needs approved
+documents), `sprint/story-tracker.md` (TMPL-5.3)
+
+### Context
+
+Decision 2026-10-23-008 made approval binding: in a project, a real epic needs an approved PRD and
+an approved architecture, or a logged skip of either. Decision 2026-10-23-014 defined approved: the
+document in `docs/prd/` or `docs/architecture/` with `status: approved` and the `authority:` line,
+the architecture's `prd:` the version of the PRD it is built from. How a skip is logged, and where
+the gate lives, were left to the build; 2026-10-23-008's Affects line guessed
+`scripts/session_closeout.py`.
+
+### Decision
+
+- **A skip is a decision headed `**Skips:**` (Chair).** An APPROVED decision of the project's own
+  log, `sprint/decision-log.md`, whose header block carries `**Skips:** prd`, `**Skips:**
+  architecture` or both, comma-separated, its reason in the body. The log is already where
+  2026-10-23-008 records a skip, and a header line is read as `**Affects:**` is. A skip in the
+  framework's log, or a decision not APPROVED, counts for nothing; a `**Skips:**` naming another
+  stage fails.
+- **The gate is a rule of `doc-authority-scan`**, not of the session state gate: it reads the
+  authority frontmatter, the version logs and the decisions' header lines, all of which that gate
+  already parses. It runs on every commit through `check_tree`, the one function the command and a
+  fixture both call.
+- **It applies in a project whose tracker holds a real epic**: the template is never judged, and a
+  project is not judged before its planning session writes the first epic, which is the commit the
+  gate exists to refuse.
+- **Approved is read strictly.** One document per folder with `status: approved`; one that claims
+  no authority, sits outside the folder, or is a draft reopened for revision with its authority
+  kept, is no approval. Two approved documents in one folder fail. The architecture's `prd:` is the
+  approved PRD's newest version-log version, compared as the quoted string; an unquoted `prd: 1.1`
+  is a number and fails. With the PRD skipped, `prd:` is not read.
+
+### Verification
+
+Twenty-one fixtures, two of them over `check_tree`; fifteen broken variants each fail at least one
+without a crash, the variant that left the rule out of the command among them.
+
+### Enforcement
+
+`doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].

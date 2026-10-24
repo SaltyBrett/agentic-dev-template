@@ -1,7 +1,7 @@
 ---
 name: Authoritative documents record every decision that changes them
-description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019]
+description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, why a real epic needs an approved PRD and architecture or a `**Skips:**` decision, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
+teaches: [2026-10-22-002, 2026-10-23-008, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019, 2026-10-23-020]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -140,6 +140,22 @@ rewrite, the persona's commit rule against the skill's, MAJOR undefined against 
 `verified:` on an unchanged date), all fixed before release. A procedure read by an agent that
 cannot ask is proved by such an agent, not by its author.
 
+## Why a real epic needs approved documents, and what a skip is
+
+The planning skill would not start without an approved PRD and architecture, and a precondition in
+a skill is prose. Decision 2026-10-23-008 made it binding: in a project, the commit that writes the
+first real epic is refused unless each document is approved or the Chair's skip of it is logged.
+Approved is what decision 2026-10-23-014 made the README's last step: `status: approved` with the
+`authority:` line, one document per folder, and the architecture's `prd:` the PRD's newest version,
+so an architecture built on a superseded PRD is stale by construction. The rule lives in
+`doc-authority-scan` because it reads what that gate already parses: frontmatter, version logs and
+decision headers (decision 2026-10-23-020).
+
+A skip is a decision because decision 2026-10-23-008 already logged it as one; the Chair chose a
+header line, `**Skips:** prd` or `architecture`, so the gate reads it as it reads `**Affects:**`, and
+the reason lives in the body where every other rationale does. Only the project's own log counts,
+since a skip is a project's choice and the framework's decisions are not.
+
 ## Honest limit
 
 The gate cannot read prose. A row citing a decision says the document was updated, not that it was
@@ -156,6 +172,8 @@ still has to check the content.
 - Leave the newest row `pending`; run `python3 scripts/doc_authority_scan.py --stamp` once it is
   committed. Never type a hash by hand.
 - See the registry with `python3 scripts/doc_authority_scan.py --list`.
+- Before a project's first real epic, approve the PRD and the architecture by `docs/templates/README.md`,
+  or log the Chair's skip as an APPROVED decision headed `**Skips:** prd` or `**Skips:** architecture`.
 - Queue a change for the technical writer with a bare `Queued: S<N>` on a story that names the one
   document and the decision; drain it with the doc-drain skill by the next session, and review its
   diff before committing.

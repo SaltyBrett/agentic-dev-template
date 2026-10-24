@@ -14,8 +14,11 @@ whole before step 1.
 
 Do not start until all hold; say which one fails and stop.
 
-- The PRD is finalized and approved, in `docs/prd/`.
-- The architecture is finalized and approved, in `docs/architecture/`.
+- The PRD is approved in `docs/prd/` by `docs/templates/README.md`, or the Chair's skip of it is
+  logged, an APPROVED decision headed `**Skips:** prd`.
+- The architecture is approved in `docs/architecture/`, built from the PRD's newest version, or its
+  skip is logged as `**Skips:** architecture`. `doc-authority-scan` refuses the first real epic
+  otherwise.
 - You have read both in full this session. References do not load themselves.
 - You have read `CONSTITUTION.md` and the sprint standard this session.
 
