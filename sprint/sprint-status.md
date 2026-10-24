@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S16
+**Updated By:** S17
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,26 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S17 — 2026-10-24 — The `/story` skill and its live proof
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
+S17") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
+by the hook. TMPL-3.3 in progress.
+
+### Done
+
+1. TMPL-3.3's plan settled with the Chair: the skill in the main session, roles never committing or
+   asking, the main session gating and committing each artifact and asking the Chair at each trigger
+   and finding; the proof on a scratch copy of Comfy, run from this conversation with each role a
+   general-purpose subagent carrying its persona, the story the per-stage timings in `watch_run.py`'s
+   finished-run summary, the release pushed to a private scratch repository.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -348,61 +368,6 @@ TMPL-2.2 designed with the Chair and left to S9 by the Chair's choice.
    and its design settled with the Chair for S9 to build (decision 2026-10-23-016): the queue is the
    stories marked `Queued: S<N>`, so TMPL-5.5's own runbook change is not the writer's; the drain
    forks as `general-purpose` in the library writer's role and leaves its change for review.
-
-### Blockers
-
-- None.
-
----
-
-## S7 — 2026-10-23 — The authority gate, the `.gitignore` union and the first authorities
-
-**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-2.1,
-TMPL-2.5 and, by the Chair's choice over TMPL-5.1, TMPL-2.3 done.
-
-### Done
-
-1. TMPL-2.1 — `scripts/doc_authority_scan.py` and its two hooks after `kb-freshness-scan`, with
-   their runbook sections (decision 2026-10-23-010, [[reference_doc_authority]]). The Chair chose two
-   of the build's settlements: a version-log row is a `fact:` with its fact or cites a story whose row
-   cites its decision; `**Affects:**` is required from decisions dated 2026-10-22. Proof: fifty-three
-   fixtures pass; forty-five broken variants each failed a fixture without a crash. On the real tree:
-   no authority yet (TMPL-2.3 marks them), every decision from the cutoff carries `**Affects:**`,
-   exit 0. On a scratch clone with a marked copy of the document-control standard: `--stamp` waited
-   for the commit and then wrote it, `--history` derived both rows across a rename, a swapped hash was
-   refused, a shallow clone exited 2, and with no row citing decision 2026-10-22-002, which names the
-   document, the gate reported it unrecorded. My first run of that last step passed because the
-   probe's second row cited the same decision; corrected, it failed as it should. Also: `Story`
-   carries its tracker row, the decision-log rule and the example body name the `**Affects:**` line,
-   and TMPL-2.3 gains the retirement of `sprint/recovery/AUTHORITY_MATRIX.md`, a second registry kept
-   by hand and already stale on personas.
-2. TMPL-2.5 — `scripts/template_update.py` merges `.gitignore` with `git merge-file --union` where
-   both sides changed one place, the project's lines first, and the dry run names the path `union`;
-   every other path still conflicts (decision 2026-10-23-007). Proof: five new fixtures, seven
-   broken variants each caught. A scratch `v2.0.0` built from this session's tree, and clones of
-   Supplier_Research_Dev, Comfy and PocketGames (`--no-hardlinks`; the originals unchanged, still on
-   `v1.0.0`) taken to it by Step 9 as written: each dry run named `.gitignore` `union` with no
-   conflict, each `--apply` exit 0 with the whole suite green, the authority gate among it; each
-   project's ignores kept whole and the template's block after them. [[reference_template_update]]
-   and `TEMPLATE_GUIDE.md` Step 9 say so.
-3. TMPL-2.3 — six authorities: the four standards, the document-control standard and the gate
-   runbook (decision 2026-10-23-011). Each was read against every decision from the cutoff that
-   names it; each log starts at the version it stated and cites them; the hand-kept changelog tables
-   and `**Version:**` lines are gone, the handoff standard's eight rows all at 2.0. The
-   document-control standard is rewritten around the gate and no longer says the template stays
-   private. `gate_runbook_scan.py` skips the runbook's closing version log, three broken variants
-   caught. `sprint/recovery/AUTHORITY_MATRIX.md` is removed from the template; the three projects'
-   copies, `v1.0.0`'s unedited, stay theirs. Seen on the real tree before the decision existed: the
-   gate refused the rows citing it, unindexed, and decision 2026-10-23-009 naming the runbook with no
-   row and no story; queued in TMPL-5.5's row, which now names the path. After: six authorities,
-   seventeen pairs recorded by a row, one queued, exit 0. Then the first real stamp: `--stamp`
-   wrote 515f1a5, the commit that introduced the six rows, into each, and the gate verified all six
-   against git.
-4. After the three stories, the Chair named gaps in the library's team before the release: decision
-   2026-10-23-012 adds a backend engineer, a web developer, a Blender 3D artist and an image and
-   video editor, named team presets in team selection held by a gate, and an opt-in Blender MCP
-   connection, off by default. Story TMPL-5.6 opened for S8; TMPL-2.4 waits on it.
 
 ### Blockers
 
