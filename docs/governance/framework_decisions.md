@@ -2,7 +2,7 @@
 
 **Purpose:** The decisions that shaped this template — why every gate, script and rule is the way it is
 **Source:** `agentic-dev-template`; carried to a project by `scripts/template_update.py`, merged by decision ID
-**Last Updated:** 2026-10-23
+**Last Updated:** 2026-10-24
 
 > **READ SELECTIVELY (index-first).** Do NOT read this file whole. Read the **Decision Index**, then only
 > the entries a task, a handoff or a knowledge entry's `teaches:` points at. Markdown only (never JSON).
@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-001 | 2026-10-24 | `doc-authority-scan` refuses an authority's path written outside a code span in `**Affects:**`, which it never reads there, and `docs/templates/README.md` step 5 says the path goes in a code span; found by the live launch, whose PRD approval named the PRD bare and passed unchecked | APPROVED |
 | 2026-10-23-024 | 2026-10-23; amended 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
 | 2026-10-23-023 | 2026-10-23 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows and decisions in the template as a project does, its history holding none of their stamped commits; the birth probe also runs the suite on the Initial commit, as GitHub does; amends 2026-10-23-015, 2026-10-23-017 and 2026-10-23-018 | APPROVED |
 | 2026-10-23-022 | 2026-10-23 | The README front page as built: a nine-step walkthrough from `gh repo create` to taking a release, each step what to type and what to see; a catalog of the commands by skill path, the operator scripts, the session hooks and the gates by link; `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing a skill the `## Catalog` section does not name, in the template and in a project | APPROVED |
@@ -4014,3 +4015,51 @@ stopped: exit 0, "This is S1". The resumed live run opens a new conversation the
 ### Enforcement
 
 The kickoff linter's `task-story` rule, unchanged, is why; [[reference_project_launch]].
+
+---
+
+## Decision 2026-10-24-001: An authority's path written bare in `**Affects:**` is refused
+
+**Date:** 2026-10-24
+**Made By:** Chair (S11), on the AI's report from the live launch: a refusal in the gate and the
+README's wording; the rule's reading by the AI
+**Status:** APPROVED
+**Builds:** TMPL-2.9
+**Affects:** `scripts/doc_authority_scan.py` (`judge`, the `bare-path` rule, its fix, its fixtures, the
+docstring's rules and honest limit), `docs/templates/README.md` (Approving it, step 5),
+`docs/governance/gate_suite_runbook.md` (`doc-authority-selftest`, `doc-authority-scan`),
+`docs/orchestration/knowledge/reference_doc_authority.md` (the honest limit, a rule),
+`sprint/story-tracker.md` (TMPL-2.9)
+
+### Context
+
+TMPL-5.4's third run approved the probe's PRD with the decision `LP-2026-10-24-001`, its
+`**Affects:**` naming `docs/prd/prd.md` without backticks. The gate reads an `**Affects:**` path
+only from a code span, so it held the PRD to no record and passed; the PRD happened to cite the
+decision, but nothing had checked it. `docs/templates/README.md` step 5, the instruction the launch
+follows, said only "naming the document's path". The gate's docstring and [[reference_doc_authority]]
+named the limit; nothing told the author.
+
+### Decision
+
+- **The gate refuses the bare form (Chair).** A decision held to `**Affects:**`, dated from the
+  cutoff and not the template's in a project, fails as `bare-path` when its value names an
+  authority's path outside a code span and in none, since that document then goes unjudged. A path
+  also named in a code span is read, and passes; a path no authority holds may be written bare; a
+  longer path ending in an authority's is not that path.
+- **The README says it (Chair).** Step 5 names the path as a code span, with the example, and says
+  the gate refuses it bare.
+- A document named in words, "the PRD", is still not read: the gate cannot read prose.
+- Ships in `v2.0.0` before TMPL-2.4. A new refusal, so MAJOR on its own
+  ([[reference_template_versioning]]); a derived project's decisions are judged by it at adoption.
+
+### Verification
+
+Seven fixtures in `doc-authority-selftest`; five broken variants each caught by the fixture written
+for it: the rule left out, a path also in a code span counted bare (twice, broad and narrow), no
+boundary before the path, and decisions before the cutoff judged. The real tree passes: no decision
+from the cutoff names an authority bare.
+
+### Enforcement
+
+`doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].

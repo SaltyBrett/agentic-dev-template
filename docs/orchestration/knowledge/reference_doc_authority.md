@@ -1,8 +1,8 @@
 ---
 name: Authoritative documents record every decision that changes them
-description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, why a real epic needs an approved PRD and architecture or a `**Skips:**` decision, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
-teaches: [2026-10-22-002, 2026-10-23-008, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019, 2026-10-23-020, 2026-10-23-023]
-verified: 2026-10-23
+description: 'Why a source-of-truth document carries `authority:` frontmatter and a version log, why every decision from 2026-10-22 declares `**Affects:**`, and what `scripts/doc_authority_scan.py` accepts: a row citing the decision or an open story citing the decision and the path, nothing else. Why a row is a `fact:` with its fact or a story''s change, why the cutoff is a date, why a hash is matched by version to the first commit holding it, why in a project what the template wrote (its rows, its decisions) is judged only in the template, why one scope has one authority, why a document template is an authority of its own, how the first six authorities were marked, why the technical writer''s queue is a bare `Queued: S<N>` note drained by the next session at cold start, one document per drain, why a real epic needs an approved PRD and architecture or a `**Skips:**` decision, why an `**Affects:**` path written bare is refused, and the gate''s honest limit. Read before marking a document as an authority or writing a decision''s Affects line.'
+teaches: [2026-10-22-002, 2026-10-23-008, 2026-10-23-010, 2026-10-23-011, 2026-10-23-014, 2026-10-23-015, 2026-10-23-016, 2026-10-23-019, 2026-10-23-020, 2026-10-23-023, 2026-10-24-001]
+verified: 2026-10-24
 metadata:
   type: reference
 ---
@@ -90,6 +90,17 @@ whose history holds none of the commits the template's rows were stamped with is
 as a project is; the template always holds them, so a mistyped hash there is still refused
 (decision 2026-10-23-023).
 
+## Why a path written bare is refused
+
+Decision 2026-10-23-010 made a code span the way an `**Affects:**` line names a document, and the
+gate read paths there only. A path written bare was not read at all, so its decision passed with the
+document unjudged. The live launch did exactly that: the probe's first PRD approval named
+`docs/prd/prd.md` without backticks, the README's approval step never said to use them, and the
+limit was written only where the author of a decision would not look, the gate's docstring and this
+entry. A limit the author cannot see is a silent miss, so the gate now refuses an authority's path
+written outside a code span and in none (decision 2026-10-24-001). A path no authority holds may
+still be bare, since it is not judged either way.
+
 ## Why one scope has one authority
 
 `sprint/recovery/AUTHORITY_MATRIX.md` kept the map of current artifacts by hand, with a rule to stop
@@ -176,14 +187,15 @@ amended).
 ## Honest limit
 
 The gate cannot read prose. A row citing a decision says the document was updated, not that it was
-updated correctly; a path named outside a code span in `**Affects:**` is not read; a `fact:` row is
+updated correctly; a document named in words in `**Affects:**`, not by its path, is not read; a `fact:` row is
 judged by form. Like the freshness gate, it turns a silent miss into a blocking one, and the reader
 still has to check the content.
 
 ## Rules
 
 - Write `**Affects:**` in the header block of every decision: each document it changes as a code span
-  of its path, with the sections and the nature of the change, or `none`.
+  of its path, with the sections and the nature of the change, or `none`. An authority's path
+  written bare is refused.
 - When a decision changes an authority, add a row in the same commit (`fact:` with the fact, or the
   story that did the work) or open a story that cites the decision and the path.
 - Leave the newest row `pending`; run `python3 scripts/doc_authority_scan.py --stamp` once it is

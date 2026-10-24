@@ -162,7 +162,8 @@ which entries the gate reaches)
 and does not parse read as no authority, a quoted `verified:` accepted, a version log that is not
 the last section or sits in fenced code read as the log, a malformed or out-of-order row accepted,
 `fact:` with no fact or a citation of a story that does not cite the row's decision accepted, a
-decision from the cutoff without `**Affects:**` passed, a Done story or one in an `[EXAMPLE]` epic
+decision from the cutoff without `**Affects:**` passed, an authority's path written bare there
+passed, or one also in a code span, a longer path or a decision before the cutoff refused, a Done story or one in an `[EXAMPLE]` epic
 read as queueing a change, a hash that did not introduce its row passed, `--stamp` writing a row
 that is not this repository's; in a project, the template's rows or decisions judged there, or the
 project's own passed unjudged; a copied document's history read as its own, or a rename's cut. For
@@ -182,7 +183,7 @@ ungated stage counted as an approval, or one naming no launch stage passed; the 
 project before its first real epic judged; the rule left out of the commit's check. A fixture
 that raises fails; it never crashes the self-test.
 **Why:** decision 2026-10-22-002 and the build's decisions 2026-10-23-010, 2026-10-23-015,
-2026-10-23-019 and 2026-10-23-020; [[reference_doc_authority]].
+2026-10-23-019, 2026-10-23-020 and 2026-10-24-001; [[reference_doc_authority]].
 **Alone:** `pre-commit run doc-authority-selftest --all-files --verbose`
 
 ## `doc-authority-scan`
@@ -195,8 +196,8 @@ date; two documents claiming one scope; a `verified:` that predates a change to 
 document implements; a missing or malformed `## Version log`; a row that is neither `fact:` with
 its fact nor the change of a story that cites its decision; a stored commit hash that is not the
 commit that introduced the row, following renames but never a copy. For every decision dated 2026-10-22 or later: a body without
-`**Affects:**`, and an authority it names whose version log cites it nowhere while no open story
-cites both. In a project, what the template wrote is judged in the template: a row citing only
+`**Affects:**`; an authority it names whose version log cites it nowhere while no open story
+cites both; an authority's path it writes outside a code span only, which would go unread. In a project, what the template wrote is judged in the template: a row citing only
 framework decisions is held to neither its marker nor its hash, and a framework decision to
 neither its `**Affects:**` nor its record. So is a copy of the template before its initializer,
 GitHub's "Initial commit": no profile, and none of the commits the template's rows were stamped with
@@ -207,7 +208,7 @@ reopened for revision, when its newest row stands) where no APPROVED decision of
 carries `**Skips:** prd` or `**Skips:** architecture`; an architecture with `status: approved` whose
 `prd:` is not the PRD's newest version; a `**Skips:**` naming no stage of `/project-launch`. A decision index that
 cannot be read fails; a shallow clone exits 2.
-**Why:** decisions 2026-10-22-002, 2026-10-23-010, 2026-10-23-015 and 2026-10-23-023; the approval gate, 2026-10-23-008,
+**Why:** decisions 2026-10-22-002, 2026-10-23-010, 2026-10-23-015, 2026-10-23-023 and 2026-10-24-001; the approval gate, 2026-10-23-008,
 2026-10-23-014 and 2026-10-23-020; [[reference_doc_authority]], [[reference_kb_freshness]].
 **Alone:** `pre-commit run doc-authority-scan --all-files` (by direct invocation: `--list` for the
 registry and the gate's reach, `--stamp` to fill each committed `pending` row, `--history <doc>`
@@ -548,6 +549,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | pending |
 | 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |
 | 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | 30677d3 |
 | 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | 6e94683 |

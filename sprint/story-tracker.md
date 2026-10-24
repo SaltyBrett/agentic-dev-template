@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 30 |
-| **Not Started** | 7 |
+| **Not Started** | 6 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 23 |
+| **Completed** | 24 |
 
 ---
 
@@ -79,7 +79,7 @@ that decision 2026-09-23-003 names.
 | TMPL-2.6 | The authority gate in a project: `scripts/doc_authority_scan.py` judges the template's rows and decisions in the template, since their stories and commits are the template's, and finds a row's commit following renames but never a copy; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_doc_authority]] say so. Found at S8 by TMPL-5.1's birth probe, which a birth from `HEAD` failed. Done at S8: a scratch birth starts green and a PRD made from its template stamps its own commit (2026-10-23-015) | Done | TMPL-2.1, TMPL-2.3 | doc_control_standard.md | 2026-10-23-015 |
 | TMPL-2.7 | CI makes a scratch project on every push: `scripts/birth_probe.py` births a committed revision through the initializer, its verdict the initializer's own suite run; `.github/workflows/gates.yml` runs it once per profile, in the template only; proved red at `38c549d` and green at its own commit; [[reference_ci_backstop]] says why | Done | TMPL-2.6 | doc_control_standard.md | 2026-10-23-017 |
 | TMPL-2.8 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows in the template as a project does, its history holding none of their stamped commits; `scripts/birth_probe.py` also runs the suite on the Initial commit, as GitHub does; red at `30677d3`, green at its own commit (2026-10-23-023) | Done | TMPL-2.6, TMPL-2.7 | doc_control_standard.md | 2026-10-23-023 |
-| TMPL-2.9 | `doc-authority-scan` refuses an `**Affects:**` value naming an authoritative document's path outside a code span, which it otherwise does not read, and prints the fix; `docs/templates/README.md` step 5 says the path goes in a code span; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_doc_authority]] say so. Found at S11 by TMPL-5.4: the probe's PRD approval named the PRD bare and passed unchecked; the Chair's choice of fix | Not Started | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
+| TMPL-2.9 | `doc-authority-scan` refuses an `**Affects:**` value naming an authoritative document's path outside a code span, which it otherwise does not read, and prints the fix; `docs/templates/README.md` step 5 says the path goes in a code span; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_doc_authority]] say so. Found at S11 by TMPL-5.4: the probe's PRD approval named the PRD bare and passed unchecked; the Chair's choice of fix. Done at S11: the `bare-path` rule, seven fixtures, five broken variants caught, the real tree passing (2026-10-24-001) | Done | TMPL-2.1 | doc_control_standard.md | 2026-10-22-002 |
 
 ---
 

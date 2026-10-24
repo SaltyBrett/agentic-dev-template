@@ -32,9 +32,11 @@ fix, both before TMPL-2.4.
    `status` reading planning stale; the first closeout `c0a6db7` passing `session-closeout`, pushed,
    run 40063609570 green on `gates` and both `birth` jobs; the probe's `session-verify` after it
    exit 0, "This is S2". Recorded in [[reference_launch_live_run]]; TMPL-5.4 Done.
-2. TMPL-2.9 opened: `doc-authority-scan` does not read an `**Affects:**` path outside a code span,
-   and `docs/templates/README.md` step 5 does not say to use one, so the probe's PRD approval passed
-   unchecked. The Chair chose a refusal in the gate and the README's wording.
+2. TMPL-2.9 opened and built (decision 2026-10-24-001, the Chair's choice of fix):
+   `doc-authority-scan` read an `**Affects:**` path only in a code span, and
+   `docs/templates/README.md` step 5 did not say to use one, so the probe's PRD approval passed
+   unchecked. Now the `bare-path` rule refuses an authority's path written bare, and step 5 says
+   so; seven fixtures, five broken variants each caught, the real tree passing.
 3. TMPL-5.7 opened: the probe's first closeout, typed as `/closeout` and run as the fork, closed S1
    on an entry still headed `emergency checkpoint`, saying its closeout was not completed, its
    `### Next` stale. The Chair chose a refusal in the closeout gate. TMPL-2.4 waits on both.

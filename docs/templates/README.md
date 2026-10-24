@@ -33,7 +33,9 @@ to every project; the documents made from it are the project's, in `docs/prd/` a
 
 ## Approving it
 
-5. Log the approval in `sprint/decision-log.md`, its `**Affects:**` naming the document's path.
+5. Log the approval in `sprint/decision-log.md`, its `**Affects:**` naming the document's path as a
+   code span, as `` **Affects:** `docs/prd/prd.md` ``: `doc-authority-scan` reads a path only there, and
+   refuses one written bare (decision 2026-10-24-001).
 6. Make the document the authority for its scope and set its status:
 
    ```yaml

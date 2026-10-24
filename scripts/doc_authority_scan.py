@@ -50,7 +50,9 @@ The frontmatter is the registry; there is no list to keep beside it.
   unrecorded   for each decision whose `**Affects:**` names an authority, the authority's version
                log holds a row citing the decision, or the tracker holds a story citing the
                decision and the path that is not Done. Those two outcomes, and nothing else
-  commit       a stored hash is a prefix of the first commit, following renames but never a
+  bare-path    no such decision names an authority's path outside a code span only, where the rule
+               above never reads it and the document goes unjudged (decision 2026-10-24-001)
+  commit      a stored hash is a prefix of the first commit, following renames but never a
                copy, whose copy of the document holds that version
   index        a decision index that cannot be located is never zero decisions
 
@@ -89,8 +91,8 @@ none of the commits the template's rows were stamped with in its history (decisi
 WHAT IT DELIBERATELY DOES NOT DO
 --------------------------------
 It cannot read prose. A row citing a decision says the document was brought up to date, not that
-it was brought up to date correctly, and a path named outside a code span in `**Affects:**` is not
-read. Nor can it see who wrote a row: a story citation is the evidence that a change went through
+it was brought up to date correctly, and an `**Affects:**` line naming a document in words, "the
+PRD", rather than by its path is not read. Nor can it see who wrote a row: a story citation is the evidence that a change went through
 the queue, and `fact:` is the author's declaration that the change is a fact. How long a story may
 wait in the queue is `--queue`'s, which drains nothing: the doc-drain skill does, one document per
 run, and leaves its change for the main session to review.
@@ -184,6 +186,8 @@ FIXES = {
                   "    code span of its path, with the sections and the nature of the change, or `none`.",
     "unrecorded": "Record the change in the document, a version-log row citing the decision; or queue\n"
                   "    it, a tracker story that is not Done whose row cites the decision and the path.",
+    "bare-path": "Write the path as a code span, `docs/prd/prd.md` in backticks: the gate reads an\n"
+                 "    `**Affects:**` path only there, and holds the document to its record once it does.",
     "commit": "Set the row's Commit to `pending` and run `python3 scripts/doc_authority_scan.py\n"
               "    --stamp` once the row is committed; `--history <doc>` prints the derived commit.",
     "index": "Restore the `## Decision Index` heading and its table in the log named.",
@@ -510,7 +514,12 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
         if not value:
             v.append(("no-affects", did, "the decision has no body" if body is None else "the body has no `**Affects:**` value"))
             continue
-        for p in sorted({s.strip() for s in CODE_SPAN.findall(value)} & paths):
+        named = {s.strip() for s in CODE_SPAN.findall(value)}
+        bare = CODE_SPAN.sub(" ", value)
+        for p in sorted(paths - named):     # written bare and nowhere in a code span: never read below
+            if re.search(rf"(?<![\w/.-]){re.escape(p)}(?![\w/-])", bare):
+                v.append(("bare-path", f"{did} -> {p}", "the `**Affects:**` line names the authority outside a code span, so it is never judged"))
+        for p in sorted(named & paths):
             if (p, did) in recorded:
                 reach["by_row"] += 1
             elif any(s.status != "Done" and cites(s.row, did) and p in s.row for s in stories.values()):
@@ -995,6 +1004,21 @@ def run_self_test() -> int:
            _run(doc(rows=_ROW1), tracker=_TRACK.replace("Something else", "Edit `docs/a.md`")), "unrecorded")
     check("a decision ID inside a prefixed project ID is not cited", not cites("| ACME-2026-10-25-001 |", "2026-10-25-001")
           and cites("| 2026-10-25-001 |", "2026-10-25-001"))
+
+    # A path written bare (decision 2026-10-24-001)
+    bare_fw = _FW.replace("`docs/a.md` §3, rewritten", "docs/a.md §3, rewritten")
+    expect("an authority's path written bare in Affects fails, though its row would pass", _run(fw=bare_fw), "bare-path")
+    expect("a project approval naming its document bare fails, where in a code span it is unrecorded",
+           _run(proj=_PROJ.replace("**Affects:** none", "**Affects:** docs/a.md, approved")), "bare-path")
+    expect("the same approval in a code span is read, and held to its record",
+           _run(proj=_PROJ.replace("**Affects:** none", "**Affects:** `docs/a.md`, approved")), "unrecorded")
+    expect("a bare mention beside a code span of the same path is read, and passes",
+           _run(fw=_FW.replace("`docs/a.md` §3, rewritten", "`docs/a.md` §3, rewritten, docs/a.md keeping its log")))
+    expect("a path no authority holds may be written bare", _run(fw=_FW.replace("`docs/b.md` §2", "docs/b.md §2")))
+    expect("a longer path ending in an authority's path is not that path",
+           _run(fw=_FW.replace("`docs/a.md` §3, rewritten", "old/docs/a.md §3, rewritten")))
+    expect("a decision older than the cutoff is not held to it",
+           _run(fw=_FW.replace("It changed `docs/a.md` and carries no Affects line.", "**Affects:** docs/a.md")))
 
     # Commits
     expect("a stored hash that is not the commit that introduced the row fails", _run(hist={"docs/a.md": {"1": "fff" + "0" * 37}}), "commit")
