@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-23
-**Updated By:** S9
+**Updated By:** S10
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,28 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S10 — 2026-10-23 — The README front page and the live launch
+
+**Status:** Continued in the S9 conversation at the Chair's request; the cold start run through
+`scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
+`doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
+`framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
+private repository made by the walkthrough. TMPL-5.5 in progress.
+
+### Done
+
+1. TMPL-5.5 built (decision 2026-10-23-022): `README.md` as the operator's front page, a nine-step
+   walkthrough and a catalog of commands, operator scripts, session hooks and gates;
+   `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing
+   a skill the README's `## Catalog` does not name. Eight fixtures, seven broken variants caught;
+   on the real tree a README missing `/doc-drain` refused, restored passing.
+
+### Blockers
+
+- None.
 
 ---
 

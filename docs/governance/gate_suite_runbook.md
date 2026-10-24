@@ -21,7 +21,7 @@ Prose that is not about one hook belongs here, above the first.
 **Running the suite.** `pre-commit run --all-files` runs every `pre-commit`-stage hook and nothing
 else. The `manual`-stage hooks are run by hand, most at the session boundaries; the `commit-msg`
 hook needs a message file. Both forms are given in their sections. Installing the hooks, once per
-clone, is `TEMPLATE_GUIDE.md` Step 6; the same suite runs on GitHub on every push
+clone, is step 3 of the walkthrough in `README.md`; the same suite runs on GitHub on every push
 ([[reference_ci_backstop]]). Invoke a gate through `pre-commit`, never a bare interpreter
 ([[reference_precommit_interpreter]]).
 
@@ -473,13 +473,15 @@ other needs `--hook-stage <stage>`), or a workflow that is missing or unreadable
 **Blocks:** a commit when the skill checker fails a fixture: a command read from prose, a
 frontmatter that does not parse or an unknown key passing, a hook id the config lacks or a stage it
 does not declare passing, a `pre-commit run` without `--all-files` passing, a flag its script never
-names passing, a hook's entry run bare passing, a skill missing from `AGENTS.md` passing, an
-unreadable config read as an empty suite; a preset naming a persona the library lacks, an
+names passing, a hook's entry run bare passing, a skill missing from `AGENTS.md` passing, a skill
+missing from the README's catalog or named only outside its section passing, a catalog path with no
+skill passing, a README with no catalog read as an empty one, an unreadable config read as an empty
+suite; a preset naming a persona the library lacks, an
 unparsable or second presets block, a connection pinned to a tag, a branch or nothing, or a
 connection in the template's `.mcp.json` or in a project without its persona passing. A fixture
 that raises is a failure.
-**Why:** decisions 2026-10-23-001 and 2026-10-23-013; [[reference_claude_code_skills]],
-[[reference_blender_mcp]].
+**Why:** decisions 2026-10-23-001, 2026-10-23-013, 2026-10-23-009 and 2026-10-23-022;
+[[reference_claude_code_skills]], [[reference_blender_mcp]].
 **Alone:** `pre-commit run skill-scan-selftest --all-files --verbose`
 
 ## `skill-scan`
@@ -492,14 +494,16 @@ directory, no description or one past the listing cap, `context` other than `for
 `background` without it, an `agent` that names no agent, a flag that is not a boolean, no body, a
 directory with no `SKILL.md`); a command in its code that names a hook the config lacks, a stage
 the hook does not declare, a `pre-commit run` without `--all-files`, a script or flag that does not
-exist, or a hook's entry run bare; and a skill `AGENTS.md` does not name by path, or a path it names
-with no skill. In the team-selection skill, its one fenced `yaml` block: a preset that is not a
+exist, or a hook's entry run bare; a skill `AGENTS.md` does not name by path, or a path it names
+with no skill; and a skill the `## Catalog` section of `README.md` does not name by path, a path it
+names with no skill, or a README with no such section. Only that section is read, so a path the
+walkthrough mentions catalogues nothing. In the team-selection skill, its one fenced `yaml` block: a preset that is not a
 list of personas `personas/` holds, each named once; a connection that names no library persona or
 is pinned to no exact release (a version, or a git source at a full commit). And `.mcp.json`
 holding a connection in the template, in a project whose roster lacks its persona, or other than
 the skill gives it. Prose is not read. Exits 2, never 0, without PyYAML.
-**Why:** decisions 2026-10-23-001 and 2026-10-23-013; [[reference_claude_code_skills]],
-[[reference_blender_mcp]].
+**Why:** decisions 2026-10-23-001, 2026-10-23-013, 2026-10-23-009 and 2026-10-23-022;
+[[reference_claude_code_skills]], [[reference_blender_mcp]].
 **Alone:** `pre-commit run skill-scan --all-files`
 
 ## `commit-attribution`
@@ -537,6 +541,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | pending |
 | 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | 6e94683 |
 | 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | b612e51 |
 | 1.5 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan` hold the approval gate: in a project with a real epic, an approved PRD and architecture or a logged `**Skips:**` (TMPL-5.3) | d7ad4d7 |

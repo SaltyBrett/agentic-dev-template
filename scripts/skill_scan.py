@@ -2,7 +2,8 @@
 """
 skill_scan.py — every skill under `.claude/skills/` loads the way its frontmatter says, names only
 hooks, stages, commands and personas that exist, and is listed in `AGENTS.md` for an agent that is
-not Claude; a connection the team-selection skill offers is written only where it was chosen.
+not Claude and in the README's catalog for the operator; a connection the team-selection skill
+offers is written only where it was chosen.
 
 THE FAILURE THIS CLOSES
 -----------------------
@@ -33,6 +34,10 @@ WHAT IT CHECKS
   script       a `scripts/<name>.py` that does not exist, or a `--flag` its source never names
   bare-gate    a script invoked with exactly a hook's entry: run it through `pre-commit run <id>`
   unlisted     a skill `AGENTS.md` does not name by path, or a path it names with no skill
+  uncatalogued a skill the `## Catalog` section of `README.md` does not name by path, a path it
+               names with no skill, or a README with no such section, never read as an empty
+               catalog (decision 2026-10-23-009). Only that section is read: a path the
+               walkthrough mentions catalogues nothing
   config       the config cannot be read as a suite — never read as zero hooks
   preset       the team-selection skill holds no single fenced `yaml` block with `presets:`, or
                one that does not parse, or a preset that is not a list of personas `personas/`
@@ -88,6 +93,8 @@ SKILLS = ".claude/skills/"
 AGENTS_DIR = ".claude/agents/"
 CONFIG = ROOT / ".pre-commit-config.yaml"
 BRAIN = ROOT / "AGENTS.md"
+README = ROOT / "README.md"
+CATALOG = "Catalog"                      # the README's H2 that names every skill for the operator
 LIBRARY_DIR = "personas/"                # the persona library a preset names from
 TEAM_SKILL = "team-selection"            # the skill holding the presets and connections
 MCP_CONFIG = ".mcp.json"                 # Claude Code's project-scoped MCP servers
@@ -172,6 +179,10 @@ FIXES = {
         "AGENTS.md names every skill by its path, `.claude/skills/<name>/SKILL.md`, so an agent that\n"
         "    is not Claude can find it (decision 2026-10-23-001); and names no path without a skill."
     ),
+    "uncatalogued": (
+        "README.md's `## Catalog` section names every skill by its path, `.claude/skills/<name>/SKILL.md`,\n"
+        "    with the command it gives the operator (decision 2026-10-23-009), and names no path without a skill."
+    ),
     "config": (
         ".pre-commit-config.yaml must parse as YAML and hold at least one hook under repos[].hooks[].\n"
         "    An unreadable config is never treated as an empty suite."
@@ -204,6 +215,25 @@ def hook_entries(text: str) -> dict[str, str]:
             if isinstance(hook, dict) and hook.get("id") and isinstance(hook.get("entry"), str):
                 out[str(hook["id"])] = hook["entry"]
     return out
+
+
+def catalog(readme: str) -> str | None:
+    """The body of the README's `## Catalog` section, to the next H2, fences honoured; None when the
+    README has no such section."""
+    body: list[str] | None = None
+    fenced = False
+    for line in readme.splitlines():
+        if FENCE.match(line):
+            fenced = not fenced
+        elif not fenced and line.startswith("## "):
+            if body is not None:
+                break
+            if line[3:].strip() == CATALOG:
+                body = []
+                continue
+        if body is not None:
+            body.append(line)
+    return None if body is None else "\n".join(body)
 
 
 def frontmatter(text: str) -> tuple[dict | None, str, str | None]:
@@ -461,11 +491,12 @@ def team_violations(files: dict[str, str], library: set[str], roster: set[str], 
 
 def scan(files: dict[str, str], config_text: str, brain: str, agents: set[str],
          scripts: dict[str, str], library: set[str] | None = None, mcp: str | None = None,
-         project: bool = False) -> tuple[int, list[tuple[str, str]]]:
+         project: bool = False, readme: str = "") -> tuple[int, list[tuple[str, str]]]:
     """(skills found, violations). `files` maps every path under .claude/skills/ git would commit
     to its text; `agents` holds the agent names in .claude/agents/, the roster; `scripts` maps each
     file in scripts/ to its source; `library` holds the persona slugs in personas/; `mcp` is the
-    text of .mcp.json, None when there is none; `project` is true outside the template."""
+    text of .mcp.json, None when there is none; `project` is true outside the template; `readme` is
+    the text of README.md, empty when there is none."""
     try:
         stages = {h: s or [] for h, s in config_hooks(config_text)}
         entries = hook_entries(config_text)
@@ -487,6 +518,14 @@ def scan(files: dict[str, str], config_text: str, brain: str, agents: set[str],
     skills = {n for n, t in dirs.items() if t is not None}
     v.extend(("unlisted", f"AGENTS.md does not name {SKILLS}{n}/SKILL.md") for n in sorted(skills - listed))
     v.extend(("unlisted", f"AGENTS.md names {SKILLS}{n}/SKILL.md, which does not exist") for n in sorted(listed - skills))
+    section = catalog(readme)
+    if section is None:
+        v.append(("uncatalogued", f"README.md has no `## {CATALOG}` section, so no skill is catalogued"))
+    else:
+        named = set(LISTED.findall(section))
+        v.extend(("uncatalogued", f"README.md's catalog does not name {SKILLS}{n}/SKILL.md") for n in sorted(skills - named))
+        v.extend(("uncatalogued", f"README.md's catalog names {SKILLS}{n}/SKILL.md, which does not exist")
+                 for n in sorted(named - skills))
     v.extend(team_violations(files, library or set(), agents, mcp, project))
     return len(skills), v
 
@@ -510,11 +549,12 @@ def check() -> int:
         library = {Path(p).stem for p in would_commit(LIBRARY_DIR) if p.endswith(".md")}
         scripts = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "scripts").glob("*.py")}
         brain = BRAIN.read_text(encoding="utf-8") if BRAIN.is_file() else ""
+        readme = README.read_text(encoding="utf-8") if README.is_file() else ""
         mcp = (ROOT / MCP_CONFIG).read_text(encoding="utf-8") if would_commit(MCP_CONFIG) else None
     except (OSError, subprocess.CalledProcessError) as e:
         print(f"skill_scan: cannot read the tree: {e}", file=sys.stderr)
         return 2
-    count, found = scan(files, config_text, brain, agents, scripts, library, mcp, PROFILE.is_file())
+    count, found = scan(files, config_text, brain, agents, scripts, library, mcp, PROFILE.is_file(), readme)
 
     print("\nSkill Scan Results")
     print("=" * 60)
@@ -525,7 +565,7 @@ def check() -> int:
         for rule, detail in found:
             print(f"  Rule:    {rule}\n  Detail:  {detail}\n  Fix:     {FIXES[rule]}\n")
         return 1
-    print("\nPASSED: every skill parses, names real hooks, stages, scripts and personas, and AGENTS.md lists it")
+    print("\nPASSED: every skill parses, names real hooks, stages, scripts and personas, and AGENTS.md and the README list it")
     return 0
 
 
@@ -598,6 +638,22 @@ _BRAIN = """# Brain
 | `.claude/skills/release/SKILL.md` | release |
 """
 
+_README = """# Template
+
+## Walkthrough
+
+Run `/closeout`, whose file is `.claude/skills/ghost/SKILL.md` in prose only.
+
+## Catalog
+
+| `/closeout` | `.claude/skills/closeout/SKILL.md` | session end |
+| `/release` | `.claude/skills/release/SKILL.md` | release |
+
+## Structure
+
+`.claude/skills/` holds the skills.
+"""
+
 _PRESETS = """presets:
   Application development: [product-manager, backend-engineer]
   Imaging, video and 3D: [blender-artist, image-video-editor]
@@ -642,14 +698,19 @@ def run_self_test() -> int:
 
     def run(fork: str = _FORK, inline: str = _INLINE, brain: str = _BRAIN, config: str = _CONFIG,
             extra: dict | None = None, agents: set | None = None, team: str | None = None,
-            library: set = _LIBRARY, mcp: str | None = None, project: bool = False) -> list:
+            library: set = _LIBRARY, mcp: str | None = None, project: bool = False, readme: str = _README) -> list:
         files = {f"{SKILLS}closeout/SKILL.md": fork, f"{SKILLS}release/SKILL.md": inline, **(extra or {})}
+        for path in extra or {}:   # a fixture's extra skill is listed in both, so only its own rule is judged
+            if path.endswith("/SKILL.md"):
+                brain += f"`{path}`\n"
+                readme = readme.replace("\n## Structure", f"| `{path}` | extra |\n\n## Structure")
         if team is not None:
             files[f"{SKILLS}{TEAM_SKILL}/SKILL.md"] = team
             brain += f"| `{SKILLS}{TEAM_SKILL}/SKILL.md` | team |\n"
+            readme = readme.replace("\n## Structure", f"| `/team-selection` | `{SKILLS}{TEAM_SKILL}/SKILL.md` | team |\n\n## Structure")
         try:
             return scan(files, config, brain, agents if agents is not None else {"framework-maintainer"},
-                        _SCRIPTS, library, mcp, project)[1]
+                        _SCRIPTS, library, mcp, project, readme)[1]
         except Exception as e:  # a fixture that raises is a failure, never a crash of the self-test
             return [("raised", f"{type(e).__name__}: {e}")]
 
@@ -729,6 +790,23 @@ def run_self_test() -> int:
     # AGENTS.md
     expect("a skill AGENTS.md does not name fails", run(brain=_BRAIN.replace("| `.claude/skills/release/SKILL.md` | release |\n", "")), "unlisted")
     expect("a path AGENTS.md names with no skill fails", run(brain=_BRAIN + "`.claude/skills/ghost/SKILL.md`\n"), "unlisted")
+    # the README's catalog (decision 2026-10-23-009)
+    expect("a skill the README's catalog does not name fails",
+           run(readme=_README.replace("| `/release` | `.claude/skills/release/SKILL.md` | release |\n", "")), "uncatalogued")
+    expect("a skill named only outside the catalog section fails",
+           run(readme=_README.replace("| `/release` | `.claude/skills/release/SKILL.md` | release |\n", "")
+               .replace("holds the skills.", "holds the skills, `.claude/skills/release/SKILL.md` among them.")), "uncatalogued")
+    expect("a path the catalog names with no skill fails",
+           run(readme=_README.replace("| release |\n", "| release |\n| `.claude/skills/ghost/SKILL.md` | none |\n")), "uncatalogued")
+    expect("a path outside the catalog section names nothing, even one with no skill", run())
+    expect("a README with no catalog section fails, never read as an empty catalog",
+           run(readme=_README.replace("## Catalog", "## Commands")), "uncatalogued")
+    expect("no README at all fails", run(readme=""), "uncatalogued")
+    expect("a catalog heading inside a fence is not the section",
+           run(readme=_README.replace("## Catalog\n", "```\n## Catalog\n```\n").replace("## Walkthrough", "## Catalog-ish")),
+           "uncatalogued")
+    expect("the catalog ends at the next H2, its H3 subsections read within it",
+           run(readme=_README.replace("| `/release`", "### Operator commands\n\n| `/release`")))
     # config
     for label, text in (("unparsable YAML", "repos: [\n"), ("zero hooks", "repos:\n  - repo: local\n    hooks: []\n")):
         expect(f"a config with {label} is refused, never read as an empty suite", run(config=text), "config")

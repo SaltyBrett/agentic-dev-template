@@ -1,87 +1,63 @@
-# Template Guide: Setting Up a New Project
+# Template Guide: What the Initializer Leaves to You
 
-This guide walks you through customizing this template for a new agentic development project.
-
----
-
-## Step 1: Replace Placeholders in the Canonical Brain
-
-Open `AGENTS.md` (the canonical agent brain, which Claude Code and Codex both read natively) and
-replace all `{{PLACEHOLDER}}` values:
-
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{PROJECT_NAME}}` | Your project name | "Contoso Analytics Platform" |
-| `{{PLATFORM_DESCRIPTION}}` | Platform and tech stack | "Microsoft Fabric on Azure Commercial" |
-| `{{PROJECT_SCOPE}}` | One-line scope description | "Enterprise BI replacing legacy Cognos" |
-
-Also customize:
-- **Banned Features** — Under the `gcc` profile the GCC-incompatible features are pre-populated as hard rules; under `commercial` none are. Add any project-specific banned features below the comment marker.
-- **Mandatory Patterns** — Adjust patterns to match your project's technology constraints.
-- **Quick Reference: What to Read When** — Add project-specific entries as you create new standards.
+The path from a new repository to a running project is the [README's walkthrough](README.md#walkthrough).
+This guide holds the detail it links to: what `scripts/new_project.py` does and refuses, the
+customizations no script makes for you, why the gates are installed the way they are, and how a
+release is taken.
 
 ---
 
-## Step 2: Replace Placeholders in Constitution
+## The initializer
 
-Open `CONSTITUTION.md` and replace:
+`scripts/new_project.py` dry-runs by default and prints exactly what it would change; `--apply`
+writes, then runs the full gate suite to prove the new project starts green. It fills the project's
+tokens in `AGENTS.md`, `CONSTITUTION.md` and the decision log's header, regenerates
+`sprint/sprint-status.md` and `sprint/story-tracker.md`, clears the template's handoffs and its own
+persona roster, strips every document to the chosen profile, and writes `.project-profile` and
+`.template-version`.
 
-| Placeholder | Description |
-|-------------|-------------|
-| `{{PROJECT_NAME}}` | Your project name |
-| `{{DATE}}` | Today's date |
+It refuses to run when `origin` is the template repository itself, because that would clear the
+template's own sprint state.
 
-Also customize:
-- **Section 3: Banned Features** — Add project-specific banned features
-- **Section 4: Mandatory Patterns** — Add project-specific patterns
-- **Section 5: Portability** — Name the target environments; under `gcc` the Government-cloud requirements are pre-populated
+It also refuses when the project's repository is **public** and `--public` was not given. The template is public; a project made from it is private by default (decision 2026-09-25-001), and neither GitHub's "Use this template" flow nor `gh repo create` can be told a default, so the first command every project runs checks. The refusal prints the `gh repo edit … --visibility private` command. When the visibility cannot be read (no `gh`, or a remote that is not GitHub) the run says so and continues.
 
----
+`sprint/sprint-status.md` and `sprint/story-tracker.md` are regenerated, not filled: both hold the template's own state (session updates, the `TMPL` epics), which a new project must not inherit. The S1 entry's one next step is `/project-launch`. The first derived project ([[reference_derived_project_start]]) records what else to expect on day one, including the `gates` run GitHub triggers on the "Initial commit" before you have run anything.
 
-## Step 3: Replace Placeholders in Standards
+**What it will not touch, and why.** `docs/governance/framework_decisions.md` and `docs/orchestration/knowledge/` are preserved, and `sprint/decision-log.md` gets its header filled and nothing else. Clearing the decisions is the intuitive move and it breaks the first commit: every knowledge entry declares `teaches: [<decision-id>]`, and the freshness gate fails when an ID is in neither decision index. The framework decisions are the provenance for why each gate exists; your log starts with the `[EXAMPLE]` entry alone ([[reference_framework_decisions]]). A self-test fixture pins this.
 
-### secrets_management_standard_v1.0.md
-
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{KEYVAULT_NAME}}` | Your Azure Key Vault name | "myproject-shared-kv" |
-| `{{PREFIX}}` | Secret naming prefix | "myproject" |
-| `{{SPN_NAME}}` | Service Principal display name | "myproject-automation-spn" |
-| `{{APP_ID}}` | SPN Application ID | (from Azure portal) |
-| `{{DATE}}` | Creation date | "2025-03-30" |
-
-### session_handoff_standard_v2.0.md
-
-No placeholders — this standard is project-agnostic and travels verbatim.
+Still by hand, because they are judgement calls:
+- `LICENSE` — the template's MIT license arrives with the project and is the project's from then on: keep it, or replace it with your own; a template release never rewrites it (decision 2026-09-25-002)
+- This file (`TEMPLATE_GUIDE.md`) — remove, or keep it as a reference
+- `[EXAMPLE]` rows in `sprint/decision-log.md` and `sprint/story-tracker.md`: the planning session removes them with the first real epic, and the state gate refuses them after
+- The deferred tokens the initializer reports, when the project first needs them (next section)
 
 ---
 
-## Step 4: Replace Placeholders in State Files
+## Customizing the law
 
-Open each file in `sprint/` and replace `{{PLACEHOLDER}}` values:
+No script decides these for a project.
 
-| File | Key Placeholders |
-|------|-----------------|
-| `sprint/decision-log.md` | `{{DATE}}` — Remove the `[EXAMPLE]` entry when you add your first real decision (the state gate refuses it once a real epic exists). The template's own decisions are in `docs/governance/framework_decisions.md`, not here |
-| `sprint/sprint-status.md` | `{{PHASE_NAME}}`, `{{CURRENT_FOCUS}}`, `{{DATE}}`, `{{N}}` (session number) |
-| `sprint/story-tracker.md` | Regenerated by the initializer: the template's own `TMPL` epics do not travel; the `[EXAMPLE]` epic stays until your real epics replace it |
+- **Banned features and mandatory patterns.** Under the `gcc` profile `CONSTITUTION.md` §3 and §4
+  carry the GCC-incompatible features and the mandatory patterns as hard rules; under `commercial`
+  none are imposed. Add the project's own below each section's comment marker, and name the target
+  environments in §5.
+- **The banned-feature scanner.** Open `scripts/banned_feature_scan.py` and review the pattern
+  dicts. `GCC_BANNED_PATTERNS` applies only under the `gcc` profile; `ALWAYS_BANNED_PATTERNS`
+  applies everywhere. Add any project-specific patterns below the comment marker. The same file
+  holds a second dict, `CONTENT_RULES`, for rules that must also cover the governance docs listed in
+  `EXCLUDE_FILES` — that list exempts files which legitimately *name* banned features, and it would
+  silently neuter a rule aimed at the docs themselves. Content rules bypass it and carry a per-rule
+  `allow` set plus a `fix` string shown with each violation. Put "this spelling is not portable"
+  rules here; put "this feature is forbidden" rules in `BANNED_PATTERNS`. See decision 2026-09-20-002.
+- **The deferred tokens.** The initializer leaves the brand values and the Azure names unfilled and
+  lists them: `docs/standards/secrets_management_standard_v1.0.md` holds `{{KEYVAULT_NAME}}`,
+  `{{SPN_NAME}}` and `{{APP_ID}}`, and `docs/standards/document_production_standard_v1.0.md` and
+  `resources/README.md` the brand values. Fill them when the project first needs a vault or a
+  document.
 
 ---
 
-## Step 5: Customize the Banned Feature Scanner
-
-Open `scripts/banned_feature_scan.py` and review the pattern dicts. `GCC_BANNED_PATTERNS` applies only under the `gcc` profile; `ALWAYS_BANNED_PATTERNS` applies everywhere. Add any project-specific patterns below the comment marker.
-
-The same file holds a second dict, `CONTENT_RULES`, for rules that must also cover the governance
-docs listed in `EXCLUDE_FILES` — that list exempts files which legitimately *name* banned features,
-and it would silently neuter a rule aimed at the docs themselves. Content rules bypass it and
-carry a per-rule `allow` set plus a `fix` string shown with each violation. Put "this spelling is not
-portable" rules here; put "this feature is forbidden" rules in `BANNED_PATTERNS`. See decision
-2026-09-20-002.
-
----
-
-## Step 6: Install the Pre-Commit Gate
+## Installing the gates
 
 A `.pre-commit-config.yaml` is **already provided** in the repo root. It wires the tool-neutral scans as
 git pre-commit hooks that fire under any agent (Claude, Codex) or a manual commit — this is the 100%
@@ -112,68 +88,28 @@ measure of how long the convention went unenforced. Set `verified:` from each fi
 date, never today**; stamping today marks every entry "verified" when nobody verified it, and defeats
 the gate on day one.
 
-Install it once per clone:
-
-```bash
-python3 -m pip install pre-commit    # macOS has no bare `pip`, as it has no bare `python`
-pre-commit install --hook-type pre-commit --hook-type commit-msg
-```
-
-**Both `--hook-type` flags are required.** Plain `pre-commit install` writes only
-`.git/hooks/pre-commit`. The commit-msg-stage gate (`commit_attribution_scan.py`) would then sit in
-config and never fire — the worst failure mode a gate has, because the config reads as protected.
-
-Verify it runs:
-
-```bash
-pre-commit run --all-files
-```
-
-That covers the pre-commit stage only. The runbook gives the commands for the commit-msg and
-manual stages, which it does not reach.
+**Both `--hook-type` flags are required** when you install (walkthrough step 3). Plain
+`pre-commit install` writes only `.git/hooks/pre-commit`. The commit-msg-stage gate
+(`commit_attribution_scan.py`) would then sit in config and never fire — the worst failure mode a
+gate has, because the config reads as protected. `pre-commit run --all-files` covers the pre-commit
+stage only; the runbook gives the commands for the commit-msg and manual stages, which it does not
+reach.
 
 ---
 
-## Step 7: Define Your Stories
+## Launching the project
 
 **Governed by `docs/standards/sprint_management_standard_v1.0.md`.** For a real project, don't hand-fill
-the tracker ad hoc: run **`/project-launch`** (`.claude/skills/project-launch/SKILL.md`), whose stages
-take you from intake through the team, the PRD and the architecture to the **planning-session skill**,
-which produces the epics, stories, dependencies, Required Standards and PRD refs in a repeatable
-structure. `doc-authority-scan` refuses the first real epic until the PRD and the architecture are
-approved or their skips logged.
+the tracker ad hoc: run **`/project-launch`** (`.claude/skills/project-launch/SKILL.md`; walkthrough
+step 6), whose stages take you from intake through the team, the PRD and the architecture to the
+**planning-session skill**, which produces the epics, stories, dependencies, Required Standards and
+PRD refs in a repeatable structure. `doc-authority-scan` refuses the first real epic until the PRD
+and the architecture are approved or their skips logged; making and approving each document is
+`docs/templates/README.md`.
 
 ---
 
-## Step 8: Run the initializer
-
-Steps 1 through 4 are what `scripts/new_project.py` does. Run it instead of doing them by hand:
-
-```bash
-python3 scripts/new_project.py --name "Contoso Analytics" \
-    --platform "Microsoft Fabric on Azure Commercial" \
-    --scope "Enterprise BI replacing legacy Cognos" --prefix CONT --profile commercial
-```
-
-It dry-runs by default and prints exactly what it would change. Add `--apply` to write, after which it runs the full gate suite to prove the new project starts green.
-
-It refuses to run when `origin` is the template repository itself, because that would clear the template's own sprint state.
-
-It also refuses when the project's repository is **public** and `--public` was not given. The template is public; a project made from it is private by default (decision 2026-09-25-001), and neither GitHub's "Use this template" flow nor `gh repo create` can be told a default, so the first command every project runs checks. The refusal prints the `gh repo edit … --visibility private` command. When the visibility cannot be read (no `gh`, or a remote that is not GitHub) the run says so and continues.
-
-`sprint/sprint-status.md` and `sprint/story-tracker.md` are regenerated, not filled: both hold the template's own state (session updates, the `TMPL` epics), which a new project must not inherit. The first derived project ([[reference_derived_project_start]]) records what else to expect on day one, including the `gates` run GitHub triggers on the "Initial commit" before you have run anything.
-
-**What it will not touch, and why.** `docs/governance/framework_decisions.md` and `docs/orchestration/knowledge/` are preserved, and `sprint/decision-log.md` gets its header filled and nothing else. Clearing the decisions is the intuitive move and it breaks the first commit: every knowledge entry declares `teaches: [<decision-id>]`, and the freshness gate fails when an ID is in neither decision index. The framework decisions are the provenance for why each gate exists; your log starts with the `[EXAMPLE]` entry alone ([[reference_framework_decisions]]). A self-test fixture pins this.
-
-Still by hand, because they are judgement calls:
-- `LICENSE` — the template's MIT license arrives with the project and is the project's from then on: keep it, or replace it with your own; a template release never rewrites it (decision 2026-09-25-002)
-- This file (`TEMPLATE_GUIDE.md`) — remove, or keep it as a reference
-- `[EXAMPLE]` rows in `sprint/decision-log.md` and `sprint/story-tracker.md` (the parser skips them either way)
-- The deferred brand and Azure tokens the initializer reports, when the project first needs them
-
----
-
-## Step 9: Take a newer template release
+## Taking a newer template release
 
 `gh repo create --template` squashes history, so a derived project has no git relationship to the
 template. `scripts/template_update.py` supplies one: it fetches the release you are on and the one

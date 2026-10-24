@@ -1,7 +1,7 @@
 ---
 name: A skill is repository markdown, a forked skill starts blind, and its frontmatter fails silently
-description: 'How .claude/skills/ works, read against the skills reference on 2026-10-23: a skill with context: fork runs as general-purpose unless agent: says otherwise, sees none of the conversation, loads AGENTS.md and git status but not the persona the start hook injected, and runs in the background with fewer tools unless background: false; disable-model-invocation hides the description and blocks Claude''s own call; an unparsable frontmatter loads the skill with no fields and an unknown key is ignored, both silently. Why the closeout takes its brief as arguments, why AGENTS.md lists every skill, and what the skill gate checks. Read before adding or editing a skill.'
-teaches: [2026-10-23-001, 2026-10-23-013]
+description: 'How .claude/skills/ works, read against the skills reference on 2026-10-23: a skill with context: fork runs as general-purpose unless agent: says otherwise, sees none of the conversation, loads AGENTS.md and git status but not the persona the start hook injected, and runs in the background with fewer tools unless background: false; disable-model-invocation hides the description and blocks Claude''s own call; an unparsable frontmatter loads the skill with no fields and an unknown key is ignored, both silently. Why the closeout takes its brief as arguments, why AGENTS.md and the README''s catalog list every skill, and what the skill gate checks. Read before adding or editing a skill.'
+teaches: [2026-10-23-001, 2026-10-23-013, 2026-10-23-009, 2026-10-23-022]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -60,12 +60,16 @@ is durable first (its entry, decisions, knowledge, tracker), and passes the rest
 session's worth, as the skill's arguments (decision 2026-10-23-001, the operator's choice). The fork
 refuses an uncommitted tree rather than guess what the session meant to bank.
 
-## Why `AGENTS.md` lists every skill
+## Why `AGENTS.md` and the README list every skill
 
 Claude Code finds a skill by its folder; Codex and a local model find nothing there by themselves.
 The table in `AGENTS.md` names each `SKILL.md` by path, and the gate refuses a skill missing from it
 and a path with no skill, so a procedure cannot be invisible to an agent that is not Claude. The
-frontmatter is Claude Code's settings; another agent follows the body.
+frontmatter is Claude Code's settings; another agent follows the body. The operator needs the same
+list for the commands they type, so the README's `## Catalog` section names each skill by the same
+path beside its command, and the gate holds it to the skills as it holds `AGENTS.md` (decisions
+2026-10-23-009 and 2026-10-23-022). It reads that section only: a path the walkthrough mentions
+catalogues nothing, and a README with no catalog fails rather than reading as an empty one.
 
 ## What the gate checks, and what it cannot
 

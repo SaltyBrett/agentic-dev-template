@@ -107,7 +107,7 @@ FIXES = {
     ),
     "no-page": (
         "Create docs/governance/gate_suite_runbook.md with one `## `<hook-id>`` section per hook,\n"
-        "    in run order. TEMPLATE_GUIDE.md Step 6 links to it."
+        "    in run order. README.md and TEMPLATE_GUIDE.md link to it."
     ),
     "no-ci-step": (
         "Add a step to .github/workflows/gates.yml that runs `pre-commit run --hook-stage <stage> ...`\n"

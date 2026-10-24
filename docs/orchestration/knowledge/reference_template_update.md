@@ -10,7 +10,7 @@ metadata:
 # How a derived project takes a newer template release
 
 > Durable learning. Wikilink: `[[reference_template_update]]`.
-> Script: `scripts/template_update.py`. Procedure: `TEMPLATE_GUIDE.md` Step 9. Birth, which this
+> Script: `scripts/template_update.py`. Procedure: `TEMPLATE_GUIDE.md` (Taking a newer template release). Birth, which this
 > is the inverse of: [[reference_derived_project_start]] and `scripts/new_project.py`.
 
 ## Why an updater and not a remote
@@ -40,7 +40,7 @@ project born before the license existed receives none by update.
 ## Why three-way for everything, not overwrite for template-owned files
 
 The natural design has two mechanisms: overwrite template-owned paths, merge shared ones. It
-was rejected because "template-owned" files are legitimately edited: `TEMPLATE_GUIDE.md` Step 5
+was rejected because "template-owned" files are legitimately edited: `TEMPLATE_GUIDE.md` (Customizing the law)
 tells a project to add patterns to `banned_feature_scan.py`, and the standards carry tokens the
 project fills. `git merge-file` covers both cases with one mechanism, and for an unedited copy it
 reduces to overwrite. Only two files need something else, because both sides append rows at the

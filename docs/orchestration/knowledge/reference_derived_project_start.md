@@ -10,7 +10,7 @@ metadata:
 # What day one of a derived project looks like
 
 > Durable learning. Wikilink: `[[reference_derived_project_start]]`.
-> Procedure: `TEMPLATE_GUIDE.md` Step 8 and `scripts/new_project.py`. The probe was a private
+> Procedure: the walkthrough in `README.md`, `TEMPLATE_GUIDE.md` (The initializer) and `scripts/new_project.py`. The probe was a private
 > repository on the `commercial` profile, created from `v4.1.0` of the archive repository,
 > `SaltyBrett/agentic-dev-template-archive`.
 

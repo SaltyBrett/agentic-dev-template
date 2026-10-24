@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-022 | 2026-10-23 | The README front page as built: a nine-step walkthrough from `gh repo create` to taking a release, each step what to type and what to see; a catalog of the commands by skill path, the operator scripts, the session hooks and the gates by link; `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing a skill the `## Catalog` section does not name, in the template and in a project | APPROVED |
 | 2026-10-23-021 | 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
 | 2026-10-23-020 | 2026-10-23; amended 2026-10-23 | The approval gate as built: in a project with a real epic, one PRD in `docs/prd/` and one architecture in `docs/architecture/` standing approved, a reopened revision standing at its last approved version (amended, the Chair's choice), an approved architecture's `prd:` the PRD's newest version; or an APPROVED project decision headed `**Skips:**` naming the stage (the Chair's form); a rule of `doc-authority-scan`, on every commit | APPROVED |
 | 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
@@ -3831,3 +3832,53 @@ with the Chair at the keyboard is TMPL-5.4's.
 
 `skill-scan`; `new-project-selftest`; `doc-authority-scan` for the approvals the stages produce;
 [[reference_project_launch]].
+
+---
+
+## Decision 2026-10-23-022: The README front page as built
+
+**Date:** 2026-10-23
+**Made By:** AI (S10), within decision 2026-10-23-009
+**Status:** APPROVED
+**Builds:** TMPL-5.5
+**Affects:** `README.md` (the walkthrough and the catalog), `TEMPLATE_GUIDE.md` (cut to named
+sections), `scripts/skill_scan.py` (`uncatalogued`, `catalog`, its fixtures),
+`docs/governance/gate_suite_runbook.md` (`skill-scan-selftest`, `skill-scan`, the preamble),
+`scripts/gate_runbook_scan.py` (a fix text), `docs/orchestration/knowledge/reference_claude_code_skills.md`
+(the catalog), `docs/orchestration/knowledge/reference_derived_project_start.md` and
+`docs/orchestration/knowledge/reference_template_update.md` (pointers to the guide),
+`sprint/story-tracker.md` (TMPL-5.5)
+
+### Context
+
+Decision 2026-10-23-009 fixed the README's order and contents and the gate's purpose; how the
+catalog names a skill, what the gate reads, and what the guide keeps were left to the build.
+
+### Decision
+
+- **Nine walkthrough steps**: create the repository; initialize it; install the hooks; commit the
+  birth; open Claude Code and trust the folder; `/project-launch`; close out; the session loop; take
+  a release. Committing the birth is a step of its own, since the initializer's changes are
+  otherwise left in the tree. Each step gives the command and what the user sees, and links to the
+  guide for detail rather than repeat it.
+- **The catalog names each skill by its path** beside the command it gives the operator, as
+  `AGENTS.md` does, so one reader serves both gates. It also lists the operator scripts, the session
+  hooks and the gates, the gates by link to the runbook and never copied.
+- **The gate reads the `## Catalog` section only**, to its next H2, fences honoured: a path the
+  walkthrough mentions catalogues nothing. A README with no such section fails, never read as an
+  empty catalog. It holds in a project as in the template: the README is the operator's front page
+  in both, and a project's own skill is catalogued there too.
+- **The guide keeps what the initializer leaves**, in named sections the README links to (the
+  initializer, customizing the law, installing the gates, launching the project, taking a release);
+  its by-hand token steps are gone, and every live reference to a numbered step now names the
+  section. References inside decisions and old sprint entries record their time and stay.
+- The README's list of what the template provides, a count of a growing set, is gone; the catalog
+  and the runbook hold the sets.
+
+### Verification
+
+Eight catalog fixtures in `skill-scan-selftest`.
+
+### Enforcement
+
+`skill-scan-selftest` and `skill-scan`; [[reference_claude_code_skills]].
