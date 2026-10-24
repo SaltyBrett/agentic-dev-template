@@ -315,6 +315,23 @@ list reaching `.claude/` or the session's local files, or a local file the repos
 **Why:** decisions 2026-09-20-009, 2026-09-22-002, 2026-09-25-001 and 2026-10-23-002; [[reference_derived_project_start]], [[reference_template_update]].
 **Alone:** `pre-commit run new-project-selftest --all-files --verbose`
 
+## `birth-probe-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** no gate on a commit. The probe, `scripts/birth_probe.py`, makes a scratch project
+from a committed revision through that revision's initializer, whose suite run is the verdict; a
+birth takes minutes, so GitHub runs it in the `birth` job of `.github/workflows/gates.yml`, once per
+profile, skipped in a project, and an operator runs it by hand.
+**Blocks:** a commit when a probe rule fails a fixture over a stub initializer: a refused birth
+reported green, a birth from the working tree or holding an untracked file instead of the committed
+tree, a scratch that is not a fresh repository with one commit, the initializer run without
+`--apply` or the profile asked for, the source's index written or a `GIT_*` variable or
+`CLAUDE_PROJECT_DIR` reaching the birth, the scratch left behind, a profile skipped when none is
+named, a project's revision born instead of refused, an unknown revision judged.
+**Why:** decision 2026-10-23-017; [[reference_ci_backstop]].
+**Alone:** `pre-commit run birth-probe-selftest --all-files --verbose`; the probe itself,
+`python3 scripts/birth_probe.py [--rev <revision>] [--profile commercial|gcc]`
+
 ## `sanitize-template-selftest`
 
 **Stage:** `pre-commit`
@@ -485,6 +502,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.3 | 2026-10-23 | 2026-10-23-018, 2026-10-23-017 | `birth-probe-selftest` added after `new-project-selftest`: the probe's rules over a stub initializer, the probe itself run on GitHub once per profile (TMPL-2.7) | pending |
 | 1.2 | 2026-10-23 | 2026-10-23-013 | `skill-scan-selftest` and `skill-scan` hold the team presets and the connections of the team-selection skill, and `.mcp.json` (TMPL-5.6) | 8180f9e |
 | 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007, 2026-10-23-010 | Marked as the authority for the gate suite (TMPL-2.3); reflects the skill gate, the persona library, the adoption fixtures, the `.gitignore` union and the authority gate. The README catalog's change to `skill-scan` (2026-10-23-009) is queued in TMPL-5.5 | 515f1a5 |

@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
 **Last Updated:** 2026-10-23
-**Updated By:** S8
+**Updated By:** S9
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,25 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S9 — 2026-10-23 — The birth probe, the doc-queue and the approval gate
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
+ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
+TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 in progress.
+
+### Done
+
+1. TMPL-2.7 built (decision 2026-10-23-018): `scripts/birth_probe.py`, its
+   `birth-probe-selftest` hook and runbook section, the `birth` job in `.github/workflows/gates.yml`;
+   at `38c549d` the probe exits 1 under both profiles at `doc-authority-scan` alone.
+
+### Blockers
+
+- None.
 
 ---
 

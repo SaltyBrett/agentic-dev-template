@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-018 | 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
 | 2026-10-23-017 | 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
 | 2026-10-23-016 | 2026-10-23 | The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit | APPROVED |
 | 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
@@ -3568,3 +3569,55 @@ control.
 
 To be built in TMPL-2.7: the probe red at `38c549d` and green at its own commit, for both profiles;
 the CI step's run observed green with `gh run watch --exit-status`.
+
+---
+
+## Decision 2026-10-23-018: The birth probe as built
+
+**Date:** 2026-10-23
+**Made By:** AI (S9), within decision 2026-10-23-017; the Chair placed TMPL-2.7 before TMPL-2.2
+**Status:** APPROVED
+**Builds:** TMPL-2.7
+**Affects:** `scripts/birth_probe.py` (new), `.pre-commit-config.yaml` (the `birth-probe-selftest`
+hook), `docs/governance/gate_suite_runbook.md` (its section), `.github/workflows/gates.yml` (the
+`birth` job), `AGENTS.md` (the governance map),
+`docs/orchestration/knowledge/reference_ci_backstop.md` (why CI births a project),
+`sprint/story-tracker.md` (TMPL-2.7)
+
+### Context
+
+Decision 2026-10-23-017 fixed what the probe does and left its mechanics to the build: how the
+revision reaches the scratch, what runs the initializer, how the probe's own rules are proved, and
+how CI runs it once per profile.
+
+### Decision
+
+- **The committed tree, by `git archive`**, written to a temporary directory: neither the working
+  tree nor an untracked file reaches the birth, and the source repository gains no worktree or ref.
+  The scratch is a fresh repository holding the tree as one "Initial commit", what GitHub's template
+  flow gives a project, and the initializer is that revision's own, run with `--apply`, the profile
+  and filler values for its tokens. Its exit code is the verdict.
+- **No `GIT_*` variable and no `CLAUDE_PROJECT_DIR` reach git or the birth.** Inside a commit hook
+  git exports the index it is committing, so a scratch `git add` could write into the source's; and a
+  gate reading `CLAUDE_PROJECT_DIR` would judge the source instead of the birth. The initializer runs
+  unbuffered, so its lines keep their place beside the suite's in a CI log.
+- **A self-test hook, `birth-probe-selftest`**, as every script here has, over a stub initializer in
+  a scratch template: a birth takes minutes, so the probe itself is not a commit gate. Its fixtures
+  hold each rule above, the scratch removed, every profile born when none is named, a project's
+  revision refused (exit 2) and an unknown revision unjudged.
+- **CI runs it as a `birth` job**, a matrix over `commercial` and `gcc` beside the `gates` job, so
+  the two births run in parallel and a red one names its profile. The probe step carries
+  `if: hashFiles('.project-profile') == ''`, which skips it in a project; a job-level `if:` cannot
+  read the tree.
+- `AGENTS.md`'s governance map names the script, so an agent changing what a project inherits can
+  run the same check before it pushes.
+
+### Verification
+
+Thirteen fixtures pass; ten broken variants, one per rule, each fail at least one without a crash.
+At `38c549d`, the S7 tree, the probe exits 1 under both profiles, the initializer's suite refusing
+each birth at `doc-authority-scan` alone with the seven violations of decision 2026-10-23-015.
+
+### Enforcement
+
+`birth-probe-selftest`; the `birth` job in `.github/workflows/gates.yml`; [[reference_ci_backstop]].

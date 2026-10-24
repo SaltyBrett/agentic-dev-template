@@ -60,3 +60,31 @@ jobs:
             echo "--- $(git log -1 --format='%h %s' "$sha")"
             pre-commit run --hook-stage commit-msg --commit-msg-filename /tmp/msg --all-files
           done
+
+  # GitHub's "Use this template" copies the default branch as it stands, and several gates judge a
+  # project differently from the template, so every push must also make a healthy project: a
+  # scratch birth from this commit through the initializer, whose suite run is the verdict, once
+  # per profile (decision 2026-10-23-017, [[reference_ci_backstop]]). Skipped in a project.
+  birth:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [commercial, gcc]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - run: pip install pre-commit
+
+      - name: A project born from this commit starts green
+        if: hashFiles('.project-profile') == ''
+        run: python3 scripts/birth_probe.py --profile ${{ matrix.profile }}

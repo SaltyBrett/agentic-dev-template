@@ -142,6 +142,7 @@ References do NOT auto-load — you must explicitly Read each file.
 | `scripts/project_profile.py` | `.project-profile` decides GCC/Gov law or none — strips the docs and switches the scanner together |
 | `docs/governance/framework_decisions.md` | The template's decisions, index and bodies, IDs unchanged; the freshness and session gates read it as one set with `sprint/decision-log.md`, which is the project's. A template session logs here; a project session logs there |
 | `scripts/new_project.py` | Initializes a project from this template; `--profile` required. Fills the decision log's header and leaves it with the `[EXAMPLE]` entry alone |
+| `scripts/birth_probe.py` | Births a scratch project from a committed revision through its initializer, whose suite run is the verdict; CI runs it once per profile in the template |
 | `scripts/template_update.py` | Takes a derived project to a newer release: keyed merges for the knowledge index and the framework decisions, three-way for the rest, `sprint/` never written |
 | `scripts/sanitize_template.py` | Returns the template to its pristine state: the initializer's machinery without the fill. `--check` names every item of build state; runs only in the template |
 | `scripts/template_version.py` | Verifies every tag against the commit it points at, and that its annotation names the bump |
