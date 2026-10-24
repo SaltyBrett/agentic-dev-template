@@ -16,8 +16,8 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 35 |
-| **Not Started** | 3 |
+| **Total Stories** | 38 |
+| **Not Started** | 6 |
 | **In Progress** | 1 |
 | **Blocked** | 0 |
 | **Completed** | 31 |
@@ -102,7 +102,7 @@ that decision 2026-09-23-003 names.
 | TMPL-4.3 | The gate's language-neutral core and the Python profile: the changed functions found from the diff, the limits of `docs/standards/coding_standard_v1.0.md` §2, the recall check, the code review log `docs/code_review_log.md` in place of the exceptions file, the clone check with jscpd, coverage of new lines; the Python profile's pinned tools, its measurer on Python's `ast`, each proved by its fixture; fixtures proved against broken variants; the runbook sections; proved on a scratch copy of Comfy (2026-10-24-008, 2026-10-24-010, 2026-10-24-011). Done at S15: `scripts/code_standard.py` and its three hooks, the range step in CI; 59 fixtures, 25 broken variants caught; on the scratch Comfy each finding paused until the Chair's row and an answered one proceeded with no code changed; [[reference_code_review_log]] | Done | TMPL-4.2 | coding_standard_v1.0.md, doc_control_standard.md | 2026-10-24-007 |
 | TMPL-4.4 | The Rust profile: one pinned tool per slot, its measurer proved by the Rust fixture and the recall check; supporting Bevy cleanly, a requirement of `v2.1.0` (2026-10-24-012): how a Bevy system's parameters and the lints Bevy projects allow (`too_many_arguments`, `type_complexity`) are measured, settled with the Chair at the story's start, the core numbers never loosened without a decision; proved on a scratch copy of PocketGames; whether the Rust toolchain is installed on the operator's machine or proved in CI only, the Chair's at the story's start (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
 | TMPL-4.5 | The TypeScript profile: one pinned tool per slot, its measurer proved by the TypeScript fixture and the recall check; proved on fixture code, no project holding TypeScript yet (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
-| TMPL-4.6 | `v2.1.0` released: the bump judged, cut with the release skill, both runs green; the three projects taken to it through `template_update.py`, each suite green; the Rust profile with Bevy support in it, as the Chair requires (2026-10-24-012) | Not Started | TMPL-3.3, TMPL-4.4, TMPL-4.5 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-4.6 | `v2.1.0` released: the bump judged, cut with the release skill, both runs green; the three projects taken to it through `template_update.py`, each suite green; the Rust profile with Bevy support in it, as the Chair requires (2026-10-24-012); the writing standard in it (2026-10-24-014) | Not Started | TMPL-3.3, TMPL-4.4, TMPL-4.5, TMPL-6.2, TMPL-6.3 | doc_control_standard.md | 2026-10-22-003 |
 
 ---
 
@@ -117,6 +117,16 @@ that decision 2026-09-23-003 names.
 | TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | Done | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
 | TMPL-5.6 | Four library personas in the agent-file shape and linted (a backend engineer, a web developer, a Blender 3D artist, an image and video editor); team presets in team-selection (Application development, Website, Imaging, video and 3D), membership confirmed with the Chair, a gate refusing a preset that names no library persona, proved against broken variants; an opt-in Blender MCP connection offered with the Blender persona, the server vetted and pinned, off by default. Done at S8: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; presets and connections one block held by `skill-scan`; the Blender Lab server pinned to v1.0.3's commit; `docs/governance/gate_suite_runbook.md` says so (2026-10-23-013) | Done | TMPL-1.9 | session_handoff_standard_v2.0.md, secrets_management_standard_v1.0.md | 2026-10-23-012 |
 | TMPL-5.7 | `session-closeout` refuses to close a session whose sprint-status entry is still an emergency checkpoint, headed `emergency checkpoint` or holding the initializer's `### Next` section, and sends it back to the session to bring up to date; `AGENTS.md`'s emergency close says the completing session rewrites the entry; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_session_closeout]] say so. Found at S11 by TMPL-5.4: the probe's first closeout, typed as `/closeout` and so run as the fork, closed S1 on an entry saying its closeout was not completed; the Chair's choice of fix. Done at S11: `unfinished_entry` in `--closeout`, nine fixtures, seven broken variants caught, proved on a scratch clone of the real tree (2026-10-24-002) | Done | TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
+
+---
+
+## Epic: TMPL-6 — The writing standard (v2.1.0, decision 2026-10-24-014)
+
+| Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
+|----------|-------|--------|--------------|-------------------|---------|
+| TMPL-6.1 | Design session with the Chair: the built-in voices and a custom voice made from a sample of the Chair's writing; how a voice is assigned to a document by its path and audience, and to an agent; the guardrails' first lists (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing per voice, development artifacts in production documents); whether the template's own documents are judged; the enforcement model, a refusal or a pause until the Chair answers (2026-10-24-011); the humanizer's flow; logged as decisions, the build stories re-cut if the design needs it | Not Started | — | doc_control_standard.md, document_production_standard_v1.0.md | 2026-10-24-014 |
+| TMPL-6.2 | The law and the gate, from TMPL-6.1's decisions: `docs/standards/writing_standard_v1.0.md` as an authority; the em-dash rule of `docs/standards/document_production_standard_v1.0.md` moved into it (2026-10-24-014); the voice assignments; the prose gate and its hooks with fixtures proved against broken variants; the runbook sections; a path-scoped `.claude/rules/` page for writing | Not Started | TMPL-6.1 | doc_control_standard.md, document_production_standard_v1.0.md | 2026-10-24-014 |
+| TMPL-6.3 | The humanizer skill: the gate's findings in a document rewritten in its assigned voice and the change shown to the Chair before it is kept; listed in `AGENTS.md` and the README's catalog; proved on a scratch copy of a project's documents | Not Started | TMPL-6.2 | doc_control_standard.md | 2026-10-24-014 |
 
 ---
 

@@ -27,6 +27,10 @@ by the hook. TMPL-3.3 in progress.
    and finding; the proof on a scratch copy of Comfy, run from this conversation with each role a
    general-purpose subagent carrying its persona, the story the per-stage timings in `watch_run.py`'s
    finished-run summary, the release pushed to a private scratch repository.
+2. Decision 2026-10-24-014, the Chair's: a writing standard in `v2.1.0`, with voices assigned to a
+   document and an agent, a gate over the mechanical tells of machine-written prose, and a
+   humanizer skill, modelled on Grammarly's Humanizer; epic TMPL-6 opened, its design with the
+   Chair at S18, TMPL-4.6 waiting on it.
 
 ### Blockers
 

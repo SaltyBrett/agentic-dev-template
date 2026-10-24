@@ -63,6 +63,8 @@ There is no state file; the story's folder is read before anything else is done.
      requirement the row cites);
    - the stage's frontmatter from §2, `input:` the stage just before it (`none` for the brief), and
      what §2 says the stage's file holds;
+   - the project's `code-profile.yaml`, where it has one: where the code and the tests live and how
+     coverage runs, so no stage plans a check the gate cannot count;
    - the triggers of §4 by name, to declare in `triggers:` any its work hits;
    - write only its artifact, and for the build the code and its tests; commit nothing; ask
      nothing, but put a question for the Chair in the artifact and set `status: needs-operator`.

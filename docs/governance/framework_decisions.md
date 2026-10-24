@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-014 | 2026-10-24 | The writing standard opens as epic TMPL-6 in `v2.1.0`: assignable voices, a gate over the mechanical tells of machine-written prose (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing, development artifacts in production documents) and a humanizer skill; designed with the Chair at S18; the release waits on it | APPROVED |
 | 2026-10-24-013 | 2026-10-24 | The team standard and the `story-artifacts` gate as built: the artifacts' frontmatter and bodies, the role map and the triggers read by the gate from the standard itself, the release always a trigger, a review or security finding answered in the code review log before the story moves on | APPROVED |
 | 2026-10-24-012 | 2026-10-24 | Rust is the Chair's default language and Bevy the default game engine: the launch's architecture stage proposes them first; the coding standard's Rust profile, supporting Bevy cleanly, is required for `v2.1.0`, its release a story of its own; TMPL-3.2 split into the team standard with its gate and the `/story` skill with the live proof | APPROVED |
 | 2026-10-24-011 | 2026-10-24 | The coding standard advises and documents and never forces a code change: a finding pauses a commit or a story only until `docs/code_review_log.md`, append-only, holds it with the Chair's response; the Chair's acknowledgement is the exception, the exceptions file gone; the gate core and its Python profile as built; amends 2026-10-24-006, 2026-10-24-007 and 2026-10-24-009 | APPROVED |
@@ -4734,3 +4735,48 @@ tree, with no `docs/stories/`, the gate passes.
 
 `story-artifacts-selftest` and `story-artifacts`; [[reference_story_artifacts]].
 
+
+---
+
+## Decision 2026-10-24-014: The writing standard, its gate and a humanizer join v2.1.0
+
+**Date:** 2026-10-24
+**Made By:** Chair (S17): the need, the voices assignable to an agent, the guardrails named, its
+release `v2.1.0`, its design at S18; the epic's shape by the AI
+**Status:** APPROVED
+**Builds:** opens TMPL-6
+**Affects:** `sprint/story-tracker.md` (epic TMPL-6 opened, TMPL-4.6 waiting on it). To be built
+in TMPL-6: `docs/standards/writing_standard_v1.0.md` (new), the prose gate and its hooks (new), the
+humanizer skill (new); the em-dash rule of `docs/standards/document_production_standard_v1.0.md`
+moved into the new standard, queued in TMPL-6.2
+
+### Context
+
+The Chair's projects forbid machine-sounding writing in prose a session reads at its cold start,
+which no gate checks, and agents still produce it: headings and subheadings that read as prose,
+symbols no US keyboard types, technical documents that sound like marketing, and production
+documents that cite development artifacts (decisions, stories, sessions) meaningless to their
+reader. The one rule written into the template, no em dashes, lives in the document production
+standard and holds only for produced documents. The Chair pointed to Grammarly's Humanizer as the
+model: a voice chosen from built-in ones or made from a sample of the writer's own, and flagged
+passages rewritten in it.
+
+### Decision
+
+- **A writing standard (Chair):** the voices and the guardrails in one authority, the procedure in a
+  skill and the enforcement in a gate, the repository's usual split.
+- **Voices are assigned (Chair):** a document, by its path, and an agent are given the voice they
+  must write in; the built-in voices and how a custom voice is made from the Chair's sample are the
+  design session's.
+- **The guardrails the Chair named,** each mechanical where a pattern can show it: characters off a
+  standard US keyboard; headings that read as sentences; marketing and AI phrasing in technical
+  writing; development artifacts in documents for a production reader.
+- **A humanizer:** a skill that rewrites each flagged passage in the document's voice and shows the
+  Chair the change before it is kept.
+- **The plan (Chair):** designed with the Chair at S18 (TMPL-6.1), the enforcement model among its
+  questions (a refusal, or a pause until the Chair answers as decision 2026-10-24-011 has code do);
+  built in `v2.1.0`, TMPL-4.6 waiting on it.
+
+### Enforcement
+
+`session-closeout-check`'s dependency order holds TMPL-4.6 behind TMPL-6; the gate itself is TMPL-6.2.
