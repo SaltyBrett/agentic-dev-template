@@ -268,20 +268,14 @@ def sprint_status_skeleton(values: dict[str, str]) -> str:
 
 ### Next
 
-S1 has no incoming kickoff, so this list stands in for it. From S2 on, next-session tasks live
-in the kickoff, not here.
+S1 has no incoming kickoff, so this stands in for it. From S2 on, next-session tasks live in the
+kickoff, not here.
 
-1. Run the team-selection skill (`.claude/skills/team-selection/SKILL.md`): it asks which
-   specializations the project needs, recommends personas from the library in `personas/`,
-   drafts any it lacks and activates the chosen into `.claude/agents/`. The roster starts empty,
-   and the S2 kickoff must name a persona in it.
-2. Run the planning-session skill (`.claude/skills/planning-session/SKILL.md`) against the
-   approved PRD and Architecture to populate `story-tracker.md`. The kickoff for S2
-   can only cite stories that exist, so S1 opens the first epic before it closes out.
-3. Record the first project decision in `decision-log.md`, its ID prefixed
-   (`{values['PREFIX'] or 'ACME'}-YYYY-MM-DD-NNN`), and remove the `[EXAMPLE]` entry: the state gate
-   refuses it once a real epic exists. The framework's own decisions are in
-   `docs/governance/framework_decisions.md`; knowledge entries declare `teaches:` against them.
+1. Run `/project-launch` (`.claude/skills/project-launch/SKILL.md`): intake, team, PRD,
+   architecture and planning, each stage yours to pause, skip or return to. Its team stage builds
+   the roster the S2 kickoff names a persona from, and its planning stage writes the first epic the
+   kickoff's tasks cite; the project's decisions take IDs prefixed
+   `{values['PREFIX'] or 'ACME'}-YYYY-MM-DD-NNN`.
 
 ---
 
@@ -378,8 +372,11 @@ def run_self_test() -> int:
     print("=" * 60)
     failures = 0
 
+    total = 0
+
     def check(label: str, ok: bool, detail: str = "") -> None:
-        nonlocal failures
+        nonlocal failures, total
+        total += 1
         if ok:
             print(f"  ok    {label}")
         else:
@@ -491,6 +488,10 @@ def run_self_test() -> int:
     _, unknown_in_skeleton = remaining_tokens(sprint_status_skeleton(_VALUES))
     check("the generated sprint-status carries no unfilled tokens", not unknown_in_skeleton,
           f"{sorted(unknown_in_skeleton)}")
+    nxt = sprint_status_skeleton(_VALUES).split("### Next", 1)[-1].split("\n---", 1)[0]
+    steps = re.findall(r"^\d+\. (.*)$", nxt, re.M)
+    check("the S1 entry's one next step is /project-launch (decision 2026-10-23-008)",
+          len(steps) == 1 and steps[0].startswith("Run `/project-launch`"), str(steps))
 
     # The tracker is judged by the gate that will read it on every commit, not by
     # a second opinion. A skeleton that still carried the template's TMPL epics
@@ -512,7 +513,6 @@ def run_self_test() -> int:
     check("a template version is set", bool(re.fullmatch(r"v\d+\.\d+\.\d+", TEMPLATE_VERSION)),
           TEMPLATE_VERSION)
 
-    total = 21
     print(f"\n{'PASSED' if not failures else 'FAILED'}: {total - failures}/{total} checks")
     return 1 if failures else 0
 

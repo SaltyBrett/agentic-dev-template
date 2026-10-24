@@ -344,9 +344,10 @@ commit here; only its guards are proved.
 the decision log or the knowledge base appearing in a mutating list, a regenerated tracker that still carries real stories
 or statistics that do not reconcile at zero, the template's own origin not refused, a public
 project not refused without `--public` or an unreadable visibility treated as a verdict, a mutating
-list reaching `.claude/` or the session's local files, or a local file the repository's own
-`.gitignore` does not cover (read from the tree, global excludes off).
-**Why:** decisions 2026-09-20-009, 2026-09-22-002, 2026-09-25-001 and 2026-10-23-002; [[reference_derived_project_start]], [[reference_template_update]].
+list reaching `.claude/` or the session's local files, a local file the repository's own
+`.gitignore` does not cover (read from the tree, global excludes off), or an S1 entry whose one next
+step is not `/project-launch`.
+**Why:** decisions 2026-09-20-009, 2026-09-22-002, 2026-09-25-001, 2026-10-23-002 and 2026-10-23-021; [[reference_derived_project_start]], [[reference_template_update]], [[reference_project_launch]].
 **Alone:** `pre-commit run new-project-selftest --all-files --verbose`
 
 ## `birth-probe-selftest`
@@ -536,7 +537,8 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | pending |
+| 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | pending |
+| 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | b612e51 |
 | 1.5 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan` hold the approval gate: in a project with a real epic, an approved PRD and architecture or a logged `**Skips:**` (TMPL-5.3) | d7ad4d7 |
 | 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | 0dcccd2 |
 | 1.3 | 2026-10-23 | 2026-10-23-018, 2026-10-23-017 | `birth-probe-selftest` added after `new-project-selftest`: the probe's rules over a stub initializer, the probe itself run on GitHub once per profile (TMPL-2.7) | 19537c4 |

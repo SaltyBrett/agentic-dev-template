@@ -34,7 +34,9 @@ Do not start until all hold; say which one fails and stop.
 4. **For each story set** its Dependencies (story IDs that must be Done first, or `—`), its Required
    Standards from `docs/standards/`, and its PRD Ref.
 5. **Populate `sprint/story-tracker.md`:** Summary Statistics, Dependency Order, one table per epic.
-   Remove the `[EXAMPLE]` epic.
+   Remove the `[EXAMPLE]` epic. Set its `**Source:**` line to the versions the plan is built from,
+   each document's newest version-log version, as `**Source:** PRD 1.1, architecture 1.0`, a skipped
+   one written `skipped`: `/project-launch` reads it to flag a plan built on an older architecture.
 6. **Initialize `sprint/sprint-status.md`:** Current Phase, Current Focus, and this session's entry
    headed `## S<N> — YYYY-MM-DD — <title>`. Replace every `{{PLACEHOLDER}}`.
 7. **Seed `sprint/decision-log.md`** with the planning decisions (layering, scope boundaries,
@@ -49,6 +51,7 @@ Do not start until all hold; say which one fails and stop.
 - Every PRD requirement maps to at least one story, and no story lacks a PRD Ref.
 - Every story has a status, dependencies or `—`, and Required Standards or a justified `—`.
 - The Dependency Order is recorded and no story depends on a story in a later layer.
+- The tracker's `**Source:**` line names the PRD and architecture versions the plan is built from.
 - The Summary Statistics match the rows.
 - `sprint-status.md` holds no `{{PLACEHOLDER}}` and this session's entry is written.
 - The planning decisions are logged and the `[EXAMPLE]` entries are gone.

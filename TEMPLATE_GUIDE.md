@@ -137,10 +137,11 @@ manual stages, which it does not reach.
 ## Step 7: Define Your Stories
 
 **Governed by `docs/standards/sprint_management_standard_v1.0.md`.** For a real project, don't hand-fill
-the tracker ad hoc — have the agent run the **planning-session skill**
-(`.claude/skills/planning-session/SKILL.md`; `/planning-session` in Claude Code) against your approved
-PRD + Architecture. It produces the epics, stories, dependencies, Required Standards, and PRD refs in a
-repeatable structure, and initializes `sprint-status.md` + `decision-log.md`.
+the tracker ad hoc: run **`/project-launch`** (`.claude/skills/project-launch/SKILL.md`), whose stages
+take you from intake through the team, the PRD and the architecture to the **planning-session skill**,
+which produces the epics, stories, dependencies, Required Standards and PRD refs in a repeatable
+structure. `doc-authority-scan` refuses the first real epic until the PRD and the architecture are
+approved or their skips logged.
 
 ---
 

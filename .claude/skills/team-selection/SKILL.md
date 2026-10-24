@@ -18,7 +18,8 @@ delegate to unprompted, so activate what the work needs and no more (decision 20
    grouped by area (software lifecycle; data science, BI and reporting; document management;
    writing; quality control; game development; imaging, video and 3D; other specialists), leaving
    room for a need the library does not name. Ask which persona leads the sessions: that is the
-   one the next kickoff names.
+   one the next kickoff names. Run by `/project-launch`, the expertise the PRD's §9 names is the
+   operator's first answer: recommend from it, and ask only what it leaves open.
 3. **Recommend** the library persona that covers each need and why, and name every need no library
    persona covers. Wait for the operator's yes or changes.
 4. **Activate** each chosen library persona by copying it whole:

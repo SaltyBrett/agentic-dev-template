@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-021 | 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
 | 2026-10-23-020 | 2026-10-23; amended 2026-10-23 | The approval gate as built: in a project with a real epic, one PRD in `docs/prd/` and one architecture in `docs/architecture/` standing approved, a reopened revision standing at its last approved version (amended, the Chair's choice), an approved architecture's `prd:` the PRD's newest version; or an APPROVED project decision headed `**Skips:**` naming the stage (the Chair's form); a rule of `doc-authority-scan`, on every commit | APPROVED |
 | 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
 | 2026-10-23-018 | 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
@@ -3768,3 +3769,59 @@ exit 0; the same skip `PROPOSED`, refused.
 ### Enforcement
 
 `doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-23-021: `/project-launch` as built
+
+**Date:** 2026-10-23
+**Made By:** Chair (S9): that the skill is the Chair's alone, and that a reopened revision stands
+(decision 2026-10-23-020, amended); the rest by the AI, within decision 2026-10-23-008
+**Status:** APPROVED
+**Builds:** TMPL-5.2
+**Affects:** `.claude/skills/project-launch/SKILL.md` (new), `.claude/skills/team-selection/SKILL.md`
+(step 2, the intake's answer), `.claude/skills/planning-session/SKILL.md` (step 5, the `**Source:**`
+line; Done when), `scripts/new_project.py` (the S1 entry's one next step, its fixture, the self-test
+counting its checks), `docs/governance/gate_suite_runbook.md` (`new-project-selftest`), `AGENTS.md`
+(the skills table), `TEMPLATE_GUIDE.md` (Step 7), `README.md` (the structure table),
+`docs/orchestration/knowledge/reference_project_launch.md` (new), `sprint/story-tracker.md` (TMPL-5.2)
+
+### Context
+
+Decision 2026-10-23-008 fixed the five stages, the Chair's control of each and that the state lives
+in the documents, and left three things open: the templates' sections (settled by 2026-10-23-014),
+their frontmatter (likewise), and whether the skill is the Chair's alone.
+
+### Decision
+
+- **The Chair's alone (Chair).** `disable-model-invocation: true`: every stage needs the Chair to
+  answer and approve, so Claude never starts one unasked. The S1 entry names `/project-launch` as
+  its one next step, so the Chair types it.
+- **The main session, never forked**, since a subagent can neither ask the Chair nor see the
+  conversation; another agent follows the file as instructions.
+- **Each stage's state is read from the tree**: intake done when the PRD draft exists in the
+  template's shape; team when the roster holds the three leads; the PRD and the architecture when
+  approved; planning when the tracker holds a real epic. Skipped is an APPROVED `**Skips:**`
+  decision; reopened is an approved document back at `status: draft`; stale is a stage built on an
+  older version of the one before it. A bare `/project-launch` resumes at the first stage neither
+  done nor skipped, or stale; `status` changes nothing.
+- **Intake writes into the PRD draft**: the purpose into §1, what it should accomplish into §3 and
+  §4, the skills into §9 as the expertise the project depends on. A pause between intake and team
+  loses nothing, and the team stage reads §9 as the Chair's first answer to team selection.
+- **A pause resumes from the draft**: a section holding only the template's `<!-- -->` guidance is
+  the next to fill. Each stage's draft is committed as it grows.
+- **The plan records its sources**: the planning skill sets the tracker's `**Source:**` line to the
+  PRD and architecture versions it is built from, which `status` reads to flag a plan built on an
+  older architecture. Only the architecture's `prd:` is gated; the plan's staleness is reported.
+- **A PRD revision reopens the architecture in the same commit**, since `doc-authority-scan` refuses
+  an approved architecture built on an older PRD version.
+
+### Verification
+
+`skill-scan` over the skill and the two it calls; the initializer's fixture for the S1 entry's one
+next step. The live run through every stage with the Chair at the keyboard is TMPL-5.4's.
+
+### Enforcement
+
+`skill-scan`; `new-project-selftest`; `doc-authority-scan` for the approvals the stages produce;
+[[reference_project_launch]].
