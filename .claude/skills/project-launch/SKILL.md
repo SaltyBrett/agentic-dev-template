@@ -115,6 +115,8 @@ The same four steps, led by `solution-architect` (`.claude/agents/solution-archi
 approved PRD, into `docs/architecture/architecture.md` made from `docs/templates/architecture.md`,
 its `prd:` the PRD's newest version, or omitted when the PRD was skipped. Open with the questions the
 PRD leaves to the build: what it runs on, what it connects to, which requirement must never fail.
+Propose Rust first, and Bevy for a game, the Chair's default stack, unless a requirement rules them
+out; the reason another stack is chosen is a decision (decision 2026-10-24-012).
 
 ## 5. Planning
 

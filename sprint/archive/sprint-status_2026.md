@@ -4,6 +4,50 @@ Entries moved from `sprint/sprint-status.md` once it held more than ten, oldest 
 
 ---
 
+## S6 — 2026-10-23 — Adoption from v1.0.0
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-1.10 and
+TMPL-1.7 done; epic TMPL-1 complete.
+
+### Done
+
+1. TMPL-1.10 — `scripts/template_update.py` converts every `docs/personas/` file into the roster,
+   exactly or as a named conflict, with a converter that imports nothing from the project's old
+   scripts; removes `.resources-version`; merges a `source: dev-resources` entry as content and
+   unmarks one no release writes (decision 2026-10-23-005, superseding 2026-09-23-008). Proof:
+   sixteen new fixtures; twenty-eight broken variants each caught, three first caught wrongly and
+   the fixtures rewritten; every real persona file (`v1.0.0`'s, `dev-resources`' frozen tree, the
+   three projects') converted to its library copy byte for byte, the one project persona lint-clean;
+   the first run refused a real wrapped bullet, which showed a fixture had the rule backwards. Scratch
+   clones of the three projects adopted a scratch `v2.0.0`: personas converted, stamp and marker
+   gone, one `.gitignore` conflict each; resolved by hand, the whole suite passed on its first run.
+2. TMPL-1.7 — a scratch birth beside the template (`tmpl-s6-probe`, origin a local bare repository
+   by the operator's choice): `new_project.py --apply` exit 0, suite green, roster empty, library
+   whole, `session-verify` exit 0 at S1 once the birth was committed. The operator ran one live
+   session there: the start report arrived after the trust dialog; team selection asked, waited,
+   activated two personas and drafted one, gate exit 0, committed; `/compact` re-injected "still
+   S1" with the notes and journal; the forked closeout ran as `general-purpose` through scaffold,
+   gate, commit and push, `gh run list` exit 1 with no GitHub remote, and left out the attribution
+   trailer the harness asked for. Read from the session's transcript. Two gaps it reported, fixed
+   (decision 2026-10-23-006): handoff sections 3 to 5 are now tokens to fill, three reverted
+   variants each caught; S1's range starts at the first commit. Knowledge entry
+   [[reference_claude_code_substrate]].
+3. After the first closeout, with the operator: the `.gitignore` conflict settled as a union merge
+   (decision 2026-10-23-007, story TMPL-2.5), and the project launch designed from the operator's
+   proposal (decision 2026-10-23-008): `/project-launch` with intake, team, PRD, architecture and
+   planning stages, each steered by the Chair with pause, skip, return and status; epic TMPL-5
+   opened; and, at the operator's request, the root README as a walkthrough then a catalog of
+   commands, held to the skills by `skill-scan` (decision 2026-10-23-009, TMPL-5.5). The release,
+   TMPL-2.4, waits on all of it. The S7 pair was withdrawn and written again to carry them.
+
+### Blockers
+
+- None. Still unobserved: `disableWorkflows` in a live session. The probe folder `tmpl-s6-probe`
+  beside the template can be deleted.
+
+---
+
 ## S5 — 2026-10-23 — The persona library
 
 **Status:** Started in the same Claude session as S4, after its closeout, at the operator's

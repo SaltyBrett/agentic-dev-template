@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S15
+**Updated By:** S16
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,28 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S16 — 2026-10-24 — The team's law and its gate; Rust and Bevy the default stack
+
+**Status:** Run in the S11 conversation at the Chair's request, the Chair remote, every question
+answered in chat; the cold start run through `scripts/session_start.py` as `/clear` would run it:
+identity gate, pull, `session-verify` ("this is S16") and `doc-queue` each exit 0, the journal's
+`start S16` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-3.2 in
+progress.
+
+### Done
+
+1. Decision 2026-10-24-012, the Chair's: Rust the default language and Bevy the default game engine,
+   the launch's architecture stage proposing them first (`.claude/skills/project-launch/SKILL.md`);
+   the Rust profile, supporting Bevy cleanly, required for `v2.1.0`, TMPL-4.4 carrying the Bevy
+   requirement and TMPL-4.6, the release, waiting on it; TMPL-3.2 split, 3.3 opened for the `/story`
+   skill and the live proof on a scratch copy of Comfy. S6's entry moved to the archive.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -377,50 +399,6 @@ TMPL-2.5 and, by the Chair's choice over TMPL-5.1, TMPL-2.3 done.
 ### Blockers
 
 - None.
-
-## S6 — 2026-10-23 — Adoption from v1.0.0
-
-**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-1.10 and
-TMPL-1.7 done; epic TMPL-1 complete.
-
-### Done
-
-1. TMPL-1.10 — `scripts/template_update.py` converts every `docs/personas/` file into the roster,
-   exactly or as a named conflict, with a converter that imports nothing from the project's old
-   scripts; removes `.resources-version`; merges a `source: dev-resources` entry as content and
-   unmarks one no release writes (decision 2026-10-23-005, superseding 2026-09-23-008). Proof:
-   sixteen new fixtures; twenty-eight broken variants each caught, three first caught wrongly and
-   the fixtures rewritten; every real persona file (`v1.0.0`'s, `dev-resources`' frozen tree, the
-   three projects') converted to its library copy byte for byte, the one project persona lint-clean;
-   the first run refused a real wrapped bullet, which showed a fixture had the rule backwards. Scratch
-   clones of the three projects adopted a scratch `v2.0.0`: personas converted, stamp and marker
-   gone, one `.gitignore` conflict each; resolved by hand, the whole suite passed on its first run.
-2. TMPL-1.7 — a scratch birth beside the template (`tmpl-s6-probe`, origin a local bare repository
-   by the operator's choice): `new_project.py --apply` exit 0, suite green, roster empty, library
-   whole, `session-verify` exit 0 at S1 once the birth was committed. The operator ran one live
-   session there: the start report arrived after the trust dialog; team selection asked, waited,
-   activated two personas and drafted one, gate exit 0, committed; `/compact` re-injected "still
-   S1" with the notes and journal; the forked closeout ran as `general-purpose` through scaffold,
-   gate, commit and push, `gh run list` exit 1 with no GitHub remote, and left out the attribution
-   trailer the harness asked for. Read from the session's transcript. Two gaps it reported, fixed
-   (decision 2026-10-23-006): handoff sections 3 to 5 are now tokens to fill, three reverted
-   variants each caught; S1's range starts at the first commit. Knowledge entry
-   [[reference_claude_code_substrate]].
-3. After the first closeout, with the operator: the `.gitignore` conflict settled as a union merge
-   (decision 2026-10-23-007, story TMPL-2.5), and the project launch designed from the operator's
-   proposal (decision 2026-10-23-008): `/project-launch` with intake, team, PRD, architecture and
-   planning stages, each steered by the Chair with pause, skip, return and status; epic TMPL-5
-   opened; and, at the operator's request, the root README as a walkthrough then a catalog of
-   commands, held to the skills by `skill-scan` (decision 2026-10-23-009, TMPL-5.5). The release,
-   TMPL-2.4, waits on all of it. The S7 pair was withdrawn and written again to carry them.
-
-### Blockers
-
-- None. Still unobserved: `disableWorkflows` in a live session. The probe folder `tmpl-s6-probe`
-  beside the template can be deleted.
-
----
 
 <!-- Add new session updates ABOVE this line, newest first, headed `## S<N> — YYYY-MM-DD — title` -->
 <!-- Each entry: Done (by story ID), Blockers. Next-session tasks live in the kickoff, not here. -->

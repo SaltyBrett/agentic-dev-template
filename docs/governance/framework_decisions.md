@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-012 | 2026-10-24 | Rust is the Chair's default language and Bevy the default game engine: the launch's architecture stage proposes them first; the coding standard's Rust profile, supporting Bevy cleanly, is required for `v2.1.0`, its release a story of its own; TMPL-3.2 split into the team standard with its gate and the `/story` skill with the live proof | APPROVED |
 | 2026-10-24-011 | 2026-10-24 | The coding standard advises and documents and never forces a code change: a finding pauses a commit or a story only until `docs/code_review_log.md`, append-only, holds it with the Chair's response; the Chair's acknowledgement is the exception, the exceptions file gone; the gate core and its Python profile as built; amends 2026-10-24-006, 2026-10-24-007 and 2026-10-24-009 | APPROVED |
 | 2026-10-24-010 | 2026-10-24 | TMPL-4.2 split, larger than one session: 4.2 the standard, the judgement page and the code reviewer; 4.3 the gate's core and the Python profile, proved on Comfy; 4.4 the Rust profile, proved on PocketGames, the Rust toolchain decided there; 4.5 the TypeScript profile, proved on fixture code; TMPL-3.2 waits on 4.3 | APPROVED |
 | 2026-10-24-009 | 2026-10-24; amended 2026-10-24 | The coding standard's judgement page (`.claude/rules/code-quality.md`, path-scoped to code, opening with `CONSTITUTION.md` §4A) and its two briefs: the code reviewer, a new library persona, never the implementer; the security audit, `security-engineer`'s brief for the security stage | APPROVED |
@@ -4634,3 +4635,47 @@ no manifest to judge; a six-parameter function paused it.
 ### Enforcement
 
 `code-standard-selftest`, `code-standard` and `code-standard-range`; [[reference_code_review_log]].
+
+---
+
+## Decision 2026-10-24-012: Rust and Bevy are the default stack, and the Rust profile ships in v2.1.0
+
+**Date:** 2026-10-24
+**Made By:** Chair (S16): Rust the go-to language and Bevy for games whenever possible; the Rust
+profile in this version's build requirements, Bevy a requirement of it; TMPL-3.2 split; Comfy for
+the team's live proof
+**Status:** APPROVED
+**Builds:** TMPL-3.2's scope; TMPL-4.4's scope; opens TMPL-3.3 and TMPL-4.6
+**Affects:** `.claude/skills/project-launch/SKILL.md` (Architecture: the default stack proposed
+first), `sprint/story-tracker.md` (TMPL-3.2 rescoped, TMPL-3.3 and TMPL-4.6 opened, TMPL-4.4's Bevy
+requirement)
+
+### Context
+
+The Chair builds future projects in Rust, and games in Bevy, PocketGames being the first. The
+coding standard's Rust profile (TMPL-4.4) was one of three profiles planned for `v2.1.0` with nothing
+holding it there. Bevy's systems take their resources and queries as parameters, PocketGames' up to
+eleven, and Bevy projects commonly allow clippy's `too_many_arguments` and `type_complexity`, so a
+Rust profile blind to Bevy would report nearly every system. TMPL-3.2 held a standard, a gate, a
+skill and a live proof, more than one session.
+
+### Decision
+
+- **The default stack (Chair):** the launch's architecture stage proposes Rust first, and Bevy for a
+  game, unless a requirement rules them out; choosing another stack is a decision with its reason.
+  The library's `game-engine-developer`, Rust and Bevy only, is the default it serves, not a gap.
+- **The Rust profile is required for `v2.1.0` (Chair),** and supporting Bevy cleanly is a
+  requirement of it. How a Bevy system's parameters and the lints Bevy projects allow are measured
+  is settled with the Chair at TMPL-4.4's start, the numbers of decision 2026-10-24-007 never
+  loosened without a decision.
+- **The release is a story (AI):** TMPL-4.6, `v2.1.0` cut and the projects taken to it, waits on
+  TMPL-3.3, TMPL-4.4 and TMPL-4.5.
+- **TMPL-3.2 split (Chair):** 3.2 the team standard and the `story-artifacts` gate; 3.3 the `/story`
+  skill, its listings and the live proof on a scratch copy of Comfy (Chair), its roles run as
+  general-purpose subagents carrying each persona's prompt from this conversation, since roster
+  agents load only in a session opened in the project.
+
+### Enforcement
+
+`session-closeout-check`'s dependency order over the tracker holds TMPL-4.6 behind TMPL-4.4.
+
