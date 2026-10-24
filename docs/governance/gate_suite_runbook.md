@@ -565,6 +565,51 @@ the last manifest change still surfaces.
 **Why:** decisions 2026-10-24-011 and 2026-10-24-005; [[reference_code_review_log]], [[reference_ci_backstop]].
 **Alone:** `CODE_STANDARD_RANGE=<base>..<head> pre-commit run code-standard-range --hook-stage manual --all-files`
 
+## `story-artifacts-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** `story-artifacts`, which it precedes.
+**Blocks:** a commit when a fixture of the team's gate fails: a team standard whose role-map section
+holds no table, or whose triggers section holds no list, read as empty; a folder no tracker story
+names, an artifact naming another story, a file whose `stage:` is not its name, a file that is no
+stage or a stage the type lacks passed; a stage written before a required earlier one, an input not
+the stage just before, or a role started from a failed input passed; a role the map does not allow
+or the roster lacks, or the builder verifying or reviewing its own work, passed; a brief with no
+numbered criteria, or a passing verify that misses or fails one, passed; a release or Done past a
+trigger the Chair has not approved, a trigger named outside the standard, a build commit's trigger
+path missed, a commit the repository lacks, or a release past an auth, crypto or external-service
+trigger with no security stage, passed, or a trigger demanded before the release; a review finding
+unanswered in the log once the story moves on passed, or demanded before; a release with no CI run,
+or a story marked Done without its last stage, passed; an optional stage required. And when one of
+the gate's own functions is over the coding standard's production limits. A fixture that raises
+fails; it never crashes the self-test.
+**Why:** decisions 2026-10-24-004, 2026-10-24-005, 2026-10-24-006 and 2026-10-24-013;
+[[reference_story_artifacts]].
+**Alone:** `pre-commit run story-artifacts-selftest --all-files --verbose`
+
+## `story-artifacts`
+
+**Stage:** `pre-commit`
+**Pairs with:** `story-artifacts-selftest`.
+**Blocks:** for every folder under `docs/stories/`, a story the team standard does not allow: a
+folder or artifact naming no tracker story; a brief missing or its type unknown; a stage file whose
+frontmatter does not parse with `story`, `stage`, `role`, `input`, `status` and `triggers`; a stage
+the type lacks; a stage written before a required earlier one, an input other than the stage just
+before, or a role started from an input that did not pass; a role the standard's role map does not
+allow at the stage or the roster does not hold; the builder as verifier or reviewer; a brief with
+no numbered acceptance criteria, or a passing verify that does not check each; a trigger named
+outside the standard's list, a build commit the repository lacks; once the story releases or is
+Done, a hit trigger (declared, a build commit on a stack profile trigger path, or the release
+itself) with no approval from the Chair in `approvals.md`, or a release past an auth, crypto or
+external-service trigger with no security stage; once the story moves past its review or security
+stage, a finding there unanswered in `docs/code_review_log.md`; a release with no `run:`; a story
+the tracker marks Done whose last stage is not passing. The role map and the triggers are read from
+`docs/standards/team_standard_v1.0.md`, which, unreadable, stops the gate with exit 2. With no
+`docs/stories/` it passes.
+**Why:** decisions 2026-10-24-004, 2026-10-24-005, 2026-10-24-006, 2026-10-24-011 and 2026-10-24-013;
+[[reference_story_artifacts]].
+**Alone:** `pre-commit run story-artifacts --all-files`
+
 ## `commit-attribution`
 
 **Stage:** `commit-msg`
@@ -600,6 +645,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.13 | 2026-10-24 | 2026-10-24-013 | `story-artifacts-selftest` and `story-artifacts`: every story's handoffs in `docs/stories/<ID>/` held to the team standard (TMPL-3.2) | pending |
 | 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | 109a2a6 |
 | 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |
 | 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | 5a7ab47 |

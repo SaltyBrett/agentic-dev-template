@@ -326,6 +326,25 @@ repos:
         stages: [manual]          # run: CODE_STANDARD_RANGE=<base>..<head> pre-commit run code-standard-range --hook-stage manual --all-files
         pass_filenames: false
         always_run: true
+      # The agentic team's handoffs (docs/standards/team_standard_v1.0.md): every story's artifacts in
+      # docs/stories/<ID>/, the role map and the triggers read from the standard itself, so a project's
+      # additions are judged by its own copy (decisions 2026-10-24-004 to -006 and -013).
+      - id: story-artifacts-selftest
+        name: Story Artifacts Self-Test (every rule fails its broken fixture; the law is read, never assumed)
+        entry: python scripts/story_artifacts.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # an artifact's frontmatter is YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: story-artifacts
+        name: Story Artifacts Gate (each story's handoffs in order, its roles, criteria, triggers and findings)
+        entry: python scripts/story_artifacts.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # parsed, never matched
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
       # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
       - id: commit-attribution
         name: Commit Attribution Gate (no AI attribution in commit messages)

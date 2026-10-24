@@ -19,8 +19,7 @@
 **Status:** Run in the S11 conversation at the Chair's request, the Chair remote, every question
 answered in chat; the cold start run through `scripts/session_start.py` as `/clear` would run it:
 identity gate, pull, `session-verify` ("this is S16") and `doc-queue` each exit 0, the journal's
-`start S16` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-3.2 in
-progress.
+`start S16` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-3.2 done.
 
 ### Done
 
@@ -29,6 +28,15 @@ progress.
    the Rust profile, supporting Bevy cleanly, required for `v2.1.0`, TMPL-4.4 carrying the Bevy
    requirement and TMPL-4.6, the release, waiting on it; TMPL-3.2 split, 3.3 opened for the `/story`
    skill and the live proof on a scratch copy of Comfy. S6's entry moved to the archive.
+2. TMPL-3.2 done (decision 2026-10-24-013): `docs/standards/team_standard_v1.0.md` written as an
+   authority (how a story runs, the artifacts and their frontmatter, the role map by story type, the
+   eleven triggers and the Chair's approvals, findings in the code review log, the security audit);
+   `scripts/story_artifacts.py`, reading the role map and the triggers from the standard itself, and
+   hooks `story-artifacts-selftest` and `story-artifacts`; two runbook sections; `AGENTS.md` and the
+   README name the standard; [[reference_story_artifacts]]. 38 fixtures; 27 broken variants, the
+   first run vacuous (the runner's Python lacked PyYAML), the rerun exposing five fixtures that
+   tripped a neighbouring rule, rewritten until each is caught by its own; `code_standard.py`'s 25
+   rerun and confirmed the same way.
 
 ### Blockers
 

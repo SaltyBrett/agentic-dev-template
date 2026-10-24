@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-013 | 2026-10-24 | The team standard and the `story-artifacts` gate as built: the artifacts' frontmatter and bodies, the role map and the triggers read by the gate from the standard itself, the release always a trigger, a review or security finding answered in the code review log before the story moves on | APPROVED |
 | 2026-10-24-012 | 2026-10-24 | Rust is the Chair's default language and Bevy the default game engine: the launch's architecture stage proposes them first; the coding standard's Rust profile, supporting Bevy cleanly, is required for `v2.1.0`, its release a story of its own; TMPL-3.2 split into the team standard with its gate and the `/story` skill with the live proof | APPROVED |
 | 2026-10-24-011 | 2026-10-24 | The coding standard advises and documents and never forces a code change: a finding pauses a commit or a story only until `docs/code_review_log.md`, append-only, holds it with the Chair's response; the Chair's acknowledgement is the exception, the exceptions file gone; the gate core and its Python profile as built; amends 2026-10-24-006, 2026-10-24-007 and 2026-10-24-009 | APPROVED |
 | 2026-10-24-010 | 2026-10-24 | TMPL-4.2 split, larger than one session: 4.2 the standard, the judgement page and the code reviewer; 4.3 the gate's core and the Python profile, proved on Comfy; 4.4 the Rust profile, proved on PocketGames, the Rust toolchain decided there; 4.5 the TypeScript profile, proved on fixture code; TMPL-3.2 waits on 4.3 | APPROVED |
@@ -4678,4 +4679,58 @@ skill and a live proof, more than one session.
 ### Enforcement
 
 `session-closeout-check`'s dependency order over the tracker holds TMPL-4.6 behind TMPL-4.4.
+
+---
+
+## Decision 2026-10-24-013: The team standard and the story-artifacts gate as built
+
+**Date:** 2026-10-24
+**Made By:** AI (S16), within decisions 2026-10-24-004, 2026-10-24-005, 2026-10-24-006 and
+2026-10-24-011
+**Status:** APPROVED
+**Builds:** TMPL-3.2
+**Affects:** `docs/standards/team_standard_v1.0.md` (new), `scripts/story_artifacts.py` (new),
+`.pre-commit-config.yaml` (two hooks), `docs/governance/gate_suite_runbook.md` (`story-artifacts-selftest`,
+`story-artifacts`), `AGENTS.md` (the governance map), `README.md` (the standards),
+`docs/orchestration/knowledge/reference_story_artifacts.md` (new), `sprint/story-tracker.md` (TMPL-3.2)
+
+### Context
+
+Decisions 2026-10-24-004 to -006 fixed the orchestration, the triggers and the role map, and left
+the artifacts' exact shape and the gate's reading to the build.
+
+### Decision
+
+- **One frontmatter for every stage file:** `story`, `stage` (its file's name), `role`, `input` (the
+  stage just before, `none` for the brief), `status` (pass, fail, needs-operator) and `triggers`;
+  the brief adds `type` and numbered acceptance criteria, the build its `commits`, verify a checks
+  table by criterion, review and security a findings table written as the code review log writes a
+  finding, the release its CI `run`. The Chair's approvals are a table in `approvals.md`.
+- **The law is read, not copied:** the gate reads the role map (§3) and the trigger list (§4) from
+  the team standard at every run, so a project that adds a trigger or a persona to a stage, by a
+  decision, is judged by its own copy; a section that cannot be read stops the gate (exit 2), never
+  reads as nothing to check.
+- **The release is always a trigger**, a deploy or release, so every story that ships waits for the
+  Chair's approval before it closes. A hit trigger is judged once the story releases or is Done;
+  before then it waits for the Chair as the story does.
+- **A finding is judged when the story moves past its stage:** a review or security finding must be
+  answered in the code review log before any later stage exists.
+- **Optional stages:** a game's review and a media story's release; every other stage is required in
+  order, a security stage joining a story that hits an auth or crypto change or an external service.
+- **The gate's own functions meet the coding standard's production limits**, held by its self-test,
+  as `code_standard.py`'s are.
+
+### Verification
+
+Thirty-eight fixtures in `story-artifacts-selftest`; twenty-seven broken variants, one per rule and
+reader, each caught by the fixture written for it. The first variant run passed every variant
+through one crash: the runner's Python lacked PyYAML, so the frontmatter fixtures all raised. Rerun
+with PyYAML, five variants passed, each because its failing fixture also tripped a neighbouring
+rule; the five fixtures were rewritten to isolate their rule, and all twenty-seven are caught. The
+same rerun confirmed `code_standard.py`'s twenty-five, its profile fixture among them. On the real
+tree, with no `docs/stories/`, the gate passes.
+
+### Enforcement
+
+`story-artifacts-selftest` and `story-artifacts`; [[reference_story_artifacts]].
 

@@ -245,4 +245,5 @@ This table is the one home for what each path holds; `docs/README.md` and `TEMPL
 | [Session Handoff](docs/standards/session_handoff_standard_v2.0.md) | Zero-drift session continuity |
 | [Secrets Management](docs/standards/secrets_management_standard_v1.0.md) | Key Vault + SPN auth |
 | [Coding](docs/standards/coding_standard_v1.0.md) | Limits on code a change adds or edits, held by each stack's profile |
+| [Team](docs/standards/team_standard_v1.0.md) | How a story runs through its roles, their handoffs and the Chair's approvals |
 | [Document Control](docs/governance/doc_control_standard.md) | GitHub-governed changes |

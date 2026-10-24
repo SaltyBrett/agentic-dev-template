@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 35 |
-| **Not Started** | 5 |
+| **Not Started** | 4 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 30 |
+| **Completed** | 31 |
 
 ---
 
@@ -88,7 +88,7 @@ that decision 2026-09-23-003 names.
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-3.1 | Design session with the operator: over the library's team (designed in TMPL-1.9, 2026-10-23-003), the artifact each role produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions. Done at S12 with the Chair: the orchestration (2026-10-24-004), the eleven triggers (2026-10-24-005), the role map by story type covering every library persona (2026-10-24-006) | Done | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
-| TMPL-3.2 | The team's law and its enforcement, from decisions 2026-10-24-004, 2026-10-24-005 and 2026-10-24-006 as amended by 2026-10-24-011: `docs/standards/team_standard_v1.0.md` as an authority (the stages, the five story types' role map, the eleven triggers and their detection, the security auditor's brief, findings and the Chair's responses in `docs/code_review_log.md`); the `story-artifacts` gate over `docs/stories/<ID>/` (each artifact's frontmatter, its input passing first, the stage order, roles from the roster, the verifier and reviewer never the builder, acceptance criteria mapped in verify, hit triggers approved by the Chair, review and security findings answered in the log); fixtures proved against broken variants; the runbook sections; split at S16 (2026-10-24-012) | Not Started | TMPL-3.1, TMPL-4.3 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-3.2 | The team's law and its enforcement, from decisions 2026-10-24-004, 2026-10-24-005 and 2026-10-24-006 as amended by 2026-10-24-011: `docs/standards/team_standard_v1.0.md` as an authority (the stages, the five story types' role map, the eleven triggers and their detection, the security auditor's brief, findings and the Chair's responses in `docs/code_review_log.md`); the `story-artifacts` gate over `docs/stories/<ID>/` (each artifact's frontmatter, its input passing first, the stage order, roles from the roster, the verifier and reviewer never the builder, acceptance criteria mapped in verify, hit triggers approved by the Chair, review and security findings answered in the log); fixtures proved against broken variants; the runbook sections; split at S16 (2026-10-24-012). Done at S16: the standard, `scripts/story_artifacts.py` and its two hooks, 38 fixtures, 27 broken variants each caught by its own fixture (2026-10-24-013); [[reference_story_artifacts]] | Done | TMPL-3.1, TMPL-4.3 | doc_control_standard.md | 2026-10-22-003 |
 | TMPL-3.3 | The `/story <ID>` skill, in the main session: one story end to end through the roster's roles, each handing off through a committed artifact the `story-artifacts` gate judges before the next starts, stopping at a trigger or a gate failing three times running, pausing for the Chair's response to each finding, never forcing a code change; listed in `AGENTS.md` and the README's catalog; proved on a scratch copy of Comfy through one story from brief to release, the Chair answering its triggers (2026-10-24-004, 2026-10-24-012) | Not Started | TMPL-3.2 | doc_control_standard.md, coding_standard_v1.0.md | 2026-10-22-003 |
 
 ---
