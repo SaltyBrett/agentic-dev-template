@@ -548,7 +548,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | pending |
+| 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |
 | 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | 30677d3 |
 | 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | 6e94683 |
 | 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | b612e51 |

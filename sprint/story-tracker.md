@@ -18,9 +18,9 @@
 |--------|-------|
 | **Total Stories** | 28 |
 | **Not Started** | 6 |
-| **In Progress** | 2 |
+| **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 20 |
+| **Completed** | 22 |
 
 ---
 
@@ -78,7 +78,7 @@ that decision 2026-09-23-003 names.
 | TMPL-2.5 | The updater merges `.gitignore` by union: `git merge-file --union` for that path alone, named in the dry run; fixtures proved against broken variants; a scratch adoption of the three projects with no `.gitignore` conflict. Done at S7: the dry run names it `union`; the three scratch adoptions of a scratch `v2.0.0` had no conflict and passed the suite | Done | — | doc_control_standard.md | 2026-10-23-007 |
 | TMPL-2.6 | The authority gate in a project: `scripts/doc_authority_scan.py` judges the template's rows and decisions in the template, since their stories and commits are the template's, and finds a row's commit following renames but never a copy; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_doc_authority]] say so. Found at S8 by TMPL-5.1's birth probe, which a birth from `HEAD` failed. Done at S8: a scratch birth starts green and a PRD made from its template stamps its own commit (2026-10-23-015) | Done | TMPL-2.1, TMPL-2.3 | doc_control_standard.md | 2026-10-23-015 |
 | TMPL-2.7 | CI makes a scratch project on every push: `scripts/birth_probe.py` births a committed revision through the initializer, its verdict the initializer's own suite run; `.github/workflows/gates.yml` runs it once per profile, in the template only; proved red at `38c549d` and green at its own commit; [[reference_ci_backstop]] says why | Done | TMPL-2.6 | doc_control_standard.md | 2026-10-23-017 |
-| TMPL-2.8 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows in the template as a project does, its history holding none of their stamped commits; `scripts/birth_probe.py` also runs the suite on the Initial commit, as GitHub does; red at `30677d3`, green at its own commit (2026-10-23-023) | In Progress | TMPL-2.6, TMPL-2.7 | doc_control_standard.md | 2026-10-23-023 |
+| TMPL-2.8 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows in the template as a project does, its history holding none of their stamped commits; `scripts/birth_probe.py` also runs the suite on the Initial commit, as GitHub does; red at `30677d3`, green at its own commit (2026-10-23-023) | Done | TMPL-2.6, TMPL-2.7 | doc_control_standard.md | 2026-10-23-023 |
 
 ---
 
@@ -108,7 +108,7 @@ that decision 2026-09-23-003 names.
 | TMPL-5.2 | `/project-launch`: intake by three questions or a PRD summary with its gaps; team through team-selection; the PRD interview in the product manager's role, saved as it grows; architecture; planning; each stage's opening with pause, skip (logged), return and status; a revision as a new version that flags the stages built on it; the S1 entry's one next step; listed in `AGENTS.md` and held by `skill-scan` | Done | TMPL-5.1, TMPL-1.8 | sprint_management_standard_v1.0.md | 2026-10-23-008 |
 | TMPL-5.3 | The approval gate: in a project, a real epic needs an approved PRD and an approved architecture, or a logged skip of either; fixtures proved against broken variants; a runbook section if it is a hook of its own | Done | TMPL-5.1 | doc_control_standard.md | 2026-10-23-008 |
 | TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen | Not Started | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
-| TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | In Progress | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
+| TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | Done | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
 | TMPL-5.6 | Four library personas in the agent-file shape and linted (a backend engineer, a web developer, a Blender 3D artist, an image and video editor); team presets in team-selection (Application development, Website, Imaging, video and 3D), membership confirmed with the Chair, a gate refusing a preset that names no library persona, proved against broken variants; an opt-in Blender MCP connection offered with the Blender persona, the server vetted and pinned, off by default. Done at S8: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; presets and connections one block held by `skill-scan`; the Blender Lab server pinned to v1.0.3's commit; `docs/governance/gate_suite_runbook.md` says so (2026-10-23-013) | Done | TMPL-1.9 | session_handoff_standard_v2.0.md, secrets_management_standard_v1.0.md | 2026-10-23-012 |
 
 ---

@@ -20,7 +20,8 @@
 `scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
 `doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
 `framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
-private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 in progress.
+private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 done; TMPL-5.4 next, with
+the Chair.
 
 ### Done
 
@@ -33,7 +34,10 @@ private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 in progress.
    for real on the private `SaltyBrett/launch-probe-s10` found GitHub's run on its Initial commit
    red, `doc-authority-scan` judging the uninitialized copy as the template. A copy is now told by
    its history and judged as a project; the birth probe also runs the suite on the Initial commit.
-   At `30677d3` the probe reproduces GitHub's red run exactly.
+   At `30677d3` the probe reproduces GitHub's red run exactly; at `ea19c0d` it is green at the
+   Initial commit and under both profiles, and run 40058466647 is green.
+3. TMPL-5.5 done: the walkthrough's steps 1 to 4 and 9 run for real on `SaltyBrett/launch-probe-s10`
+   as written, the red first run aside; steps 5 to 8 are TMPL-5.4's.
 
 ### Blockers
 

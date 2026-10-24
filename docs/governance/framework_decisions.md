@@ -3890,7 +3890,14 @@ catalog names a skill, what the gate reads, and what the guide keeps were left t
 
 ### Verification
 
-Eight catalog fixtures in `skill-scan-selftest`.
+Eight catalog fixtures in `skill-scan-selftest`, seven broken variants each caught; on the real
+tree a README whose catalog lacked `/doc-drain` refused, restored passing. The walkthrough run for
+real on the private `SaltyBrett/launch-probe-s10`, made from `30677d3`: steps 1 to 4 as written (one
+"Initial commit"; the dry run writing nothing; the apply ending in the line the README quotes; both
+hook types installed; a trailer commit refused by the attribution gate; the birth committed through
+twenty-nine hooks, pushed, its run green), except that GitHub's own run on the Initial commit was
+red, the defect TMPL-2.8 fixed; step 9's commands exit 0, the dry run `already on v1.0.0` while no
+newer release exists. Steps 5 to 8 are TMPL-5.4's live run.
 
 ### Enforcement
 
@@ -3942,7 +3949,10 @@ initializer, whose profile makes the template's rows foreign, and never the run 
 
 Seven copy fixtures in `doc-authority-selftest`, seven broken variants each caught; four
 Initial-commit fixtures in `birth-probe-selftest`, four more broken variants caught beside the ten
-before.
+before. At `30677d3` the probe exits 1, refusing the Initial commit at `doc-authority-scan` with the
+nineteen violations GitHub showed on `SaltyBrett/launch-probe-s10`'s first run, while both profiles
+were green after the initializer; at `ea19c0d`, the commit that fixes it, it exits 0 at the Initial
+commit and under both profiles, and run 40058466647 is green on `gates` and both `birth` jobs.
 
 ### Enforcement
 
