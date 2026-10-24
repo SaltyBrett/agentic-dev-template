@@ -22,7 +22,9 @@ the queue it lists and stop: which document is drained is the session's choice.
 ## 1. Take the role
 
 Read `personas/technical-writer.md`. The text below its frontmatter is your prompt for this task:
-take that role before anything else, and hold to its `insists_on` throughout.
+take that role before anything else, and hold to its `insists_on` throughout. Where the persona
+and this skill differ, this skill governs: step 4 is your reading list, and you commit nothing,
+since the session's commit carries your change.
 
 ## 2. Check the tree
 
@@ -31,16 +33,17 @@ uncommitted change of its own would be mixed into yours: stop and return the lis
 
 ## 3. Find the queue
 
-`pre-commit run doc-queue --hook-stage manual --all-files --verbose` lists each queued story as
-`queued <story> (Queued: S<N>, due by S<N+1>): <path>`. Take every story whose path is the argument;
-with none, return "nothing queued for <path>" and stop. A violation the gate names for one of those
-stories is the session's to fix in the tracker: stop and return it. Violations naming other
-documents are not yours.
+`pre-commit run doc-queue --hook-stage manual --all-files --verbose` lists each queued story on a
+line opening `queued <story>`, its document in a code span after the colon. Take every story whose
+document is the argument; with none, return "nothing queued for <path>" and stop. A violation the
+gate names for one of those stories, or a dependency of one that is not Done in
+`sprint/story-tracker.md`, is the session's to settle before the drain: stop and return it, the
+document untouched. Violations naming other documents are not yours.
 
 ## 4. Read before writing
 
 - Each queued story's row in `sprint/story-tracker.md`, and every standard in its Required
-  Standards column.
+  Standards column other than the document itself.
 - Each decision the rows cite, its index row and its body, in `docs/governance/framework_decisions.md`
   or `sprint/decision-log.md`.
 - The document, whole.
@@ -51,17 +54,18 @@ documents are not yours.
 Make every queued change at once, reading the document as a whole: a section a change makes wrong is
 rewritten, never appended to, and a fact keeps one home, linked from elsewhere rather than repeated.
 Keep the `authority:` scope as it is. Add to `implements:` each cited decision the document now
-implements, and move `verified:` to today only after re-reading every decision `implements:` names
-against the document.
+implements. Re-read every decision `implements:` names against the document, then set `verified:`
+to today; the re-read is owed even when the date already reads today.
 
 ## 6. Record the change
 
-1. One new row at the top of the document's `## Version log`: the next version, MAJOR for a
-   structural rewrite and MINOR otherwise; today's date; the decisions the stories cite; a summary
-   of the change that names each story ID in parentheses; `pending` as the commit.
-2. In `sprint/story-tracker.md`, each drained story `Done` and the Summary Statistics recounted in
-   the same edit. The `Queued: S<N>` note stays on the row as its record. A story whose dependency
-   is not Done cannot be set Done: stop and return it.
+1. One new row at the top of the document's `## Version log`: the next version, MAJOR when the
+   pass replaces or reorders the document's sections and MINOR when its sections stand (every
+   queued change is structural work; the version measures the document); today's date; the
+   decisions the stories cite; a summary of the change that names each story ID in parentheses;
+   `pending` as the commit.
+2. In `sprint/story-tracker.md`, each drained story `Done`, and the Summary Statistics recounted to
+   match before you run a gate. The `Queued: S<N>` note stays on the row as its record.
 
 ## 7. Run the gates
 

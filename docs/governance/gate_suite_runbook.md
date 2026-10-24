@@ -524,7 +524,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | pending |
+| 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | 0dcccd2 |
 | 1.3 | 2026-10-23 | 2026-10-23-018, 2026-10-23-017 | `birth-probe-selftest` added after `new-project-selftest`: the probe's rules over a stub initializer, the probe itself run on GitHub once per profile (TMPL-2.7) | 19537c4 |
 | 1.2 | 2026-10-23 | 2026-10-23-013 | `skill-scan-selftest` and `skill-scan` hold the team presets and the connections of the team-selection skill, and `.mcp.json` (TMPL-5.6) | 8180f9e |
 | 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | e155edf |

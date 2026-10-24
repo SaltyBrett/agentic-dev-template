@@ -3679,7 +3679,16 @@ Eighteen queue fixtures in `doc-authority-selftest`, a current-session fixture i
 `session-closeout-selftest`, and six reporting fixtures in `session-start-selftest`; sixteen broken
 variants each fail at least one without a crash. A reporting fixture caught a real defect on its
 first run: pre-commit's `[ERROR]` line was read as a queue violation. On the template the gate
-reads S9 with nothing queued, since TMPL-2.2's row quotes the note.
+reads S9 with nothing queued, since TMPL-2.2's row quotes the note. On a scratch birth from `0dcccd2`
+with a project decision queued for the writer as PROBE-1.1, `Queued: S1`, the start hook's report
+read PASS with the story listed and its drain named at S1 and at S2, and FAILED with the overdue
+violation and its meaning at S3; the project's suite passed with the story queued. A fresh agent
+then followed `doc-drain` on that tree with only the document's path: it rewrote §8 of the sprint
+standard, wrote version 1.1 citing the decision and the story, set the story Done with the counts,
+ran both gates to exit 0 and committed nothing; committed and stamped there, the gate verified the
+project's own hash. Its friction report changed the skill before it shipped: a story's dependency is
+checked before the document is touched, the skill governs where the persona's prompt differs, the
+version rule says what MAJOR measures, and the re-read before `verified:` is owed on any date.
 
 ### Enforcement
 

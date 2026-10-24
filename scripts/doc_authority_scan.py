@@ -54,6 +54,14 @@ The frontmatter is the registry; there is no list to keep beside it.
                copy, whose copy of the document holds that version
   index        a decision index that cannot be located is never zero decisions
 
+In a project whose tracker holds a real epic, the approval gate (decision 2026-10-23-008), each
+document read as decision 2026-10-23-014 defines it:
+  approval     the PRD in `docs/prd/` and the architecture in `docs/architecture/` are each one
+               document with `status: approved` and the `authority:` line, or an APPROVED decision
+               of the project's own log carries `**Skips:**` naming it (`prd`, `architecture`)
+  prd-version  an approved architecture's `prd:` is the approved PRD's newest version, quoted
+  skips        a `**Skips:**` line names only those two stages
+
 In a project, what the template wrote is judged in the template: a row citing only framework
 decisions is not held to `unmarked` or `commit`, since the story it cites is in the template's
 tracker and the commit in the template's history, the project's squashed at birth; and a framework
@@ -185,7 +193,21 @@ FIXES = {
                "    it in one pass, its version-log row, the stories Done. A change no longer wanted is\n"
                "    descoped by a decision, never left waiting.",
     "session": "Head the newest sprint-status entry `## S<N> — YYYY-MM-DD — <title>`.",
+    "approval": "Approve the document by `docs/templates/README.md`: `status: approved`, the `authority:`\n"
+                "    line for the project's scope, its first version-log row citing the approval decision.\n"
+                "    Or log the Chair's skip: a decision in `sprint/decision-log.md` headed `**Skips:** prd`\n"
+                "    or `**Skips:** architecture`, its reason in the body. One approved document per folder.",
+    "prd-version": "Revise the architecture against the PRD's newest version and approve it again, its\n"
+                   "    `prd:` the quoted version it is built from (decision 2026-10-23-008).",
+    "skips": "`**Skips:**` names the stages passed over, `prd`, `architecture` or both, comma-separated.",
 }
+
+# The approval gate (decision 2026-10-23-008): in a project, a real epic needs an approved PRD and an
+# approved architecture, read as decision 2026-10-23-014 defines them, or a logged skip of either.
+STAGES = {"prd": ("docs/prd/", "PRD"), "architecture": ("docs/architecture/", "architecture")}
+SKIPS = "**Skips:**"
+APPROVED = "approved"
+PROJECT_LOG = "sprint/decision-log.md"
 
 # The writer's queue (decision 2026-10-23-016): a bare note on an open story's row.
 QUEUE_NOTE = "Queued:"
@@ -356,19 +378,23 @@ def decision_bodies(text: str) -> dict[str, str]:
     return out
 
 
-def affects(body: str) -> str | None:
-    """The `**Affects:**` value, its continuation lines joined, or None when the body has no line.
+def header_field(body: str, label: str) -> str | None:
+    """A `**Field:**` value, its continuation lines joined, or None when the body has no line.
     A continuation runs until a blank line, a heading or the next `**Field:**`."""
     lines = body.splitlines()
     for i, line in enumerate(lines):
-        if line.startswith(AFFECTS):
-            value = [line[len(AFFECTS):].strip()]
+        if line.startswith(label):
+            value = [line[len(label):].strip()]
             for more in lines[i + 1:]:
                 if not more.strip() or FIELD.match(more) or more.startswith("#"):
                     break
                 value.append(more.strip())
             return " ".join(value).strip()
     return None
+
+
+def affects(body: str) -> str | None:
+    return header_field(body, AFFECTS)
 
 
 def cites(text: str, did: str) -> bool:
@@ -467,6 +493,73 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
             else:
                 v.append(("unrecorded", f"{did} -> {p}", "no version-log row cites the decision and no open story queues it"))
     return v, reach
+
+
+def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, project: bool) -> list:
+    """The approval gate over in-memory text. In a project whose tracker holds a real epic, each of
+    the PRD and the architecture is approved, one document in its folder with `status: approved`
+    and the `authority:` line, or its skip is logged: an APPROVED decision of the project's own log
+    whose header carries `**Skips:**` naming it. An approved architecture is built from the approved
+    PRD's newest version. Returns violations as (rule, where, message)."""
+    epics = session_closeout.real_epics(tracker)
+    if not project or not epics:
+        return []      # the template, or a project still before its planning session
+    try:
+        decs = kb_freshness_scan.parse_logs(logs)
+    except kb_freshness_scan.DecisionIndexNotFound as e:
+        return [("index", "", str(e))]
+    v: list[tuple[str, str, str]] = []
+    skipped: set[str] = set()
+    for did, body in decision_bodies(logs.get(PROJECT_LOG, "")).items():
+        value = header_field(body, SKIPS)
+        if value is None:
+            continue
+        names = [w.strip().casefold() for w in value.split(",") if w.strip()]
+        if not names or any(n not in STAGES for n in names):
+            v.append(("skips", did, f"`{SKIPS} {value}` names other than `prd` and `architecture`"))
+        if decs.get(did, {}).get("status", "").upper().startswith("APPROVED"):
+            skipped.update(n for n in names if n in STAGES)
+
+    approved: dict[str, list[tuple[str, dict, Authority]]] = {s: [] for s in STAGES}
+    for path, text in sorted(docs.items()):
+        stage = next((s for s, (folder, _) in STAGES.items() if path.startswith(folder)), None)
+        src, _ = session_closeout.split_frontmatter(text)
+        try:
+            keys = yaml.safe_load(src) if stage and src else None
+        except yaml.YAMLError:
+            keys = None    # a claimed authority that does not parse is the `frontmatter` rule's
+        if not isinstance(keys, dict) or keys.get("status") != APPROVED:
+            continue
+        a, _ = read_authority(path, text)
+        if a is None:
+            v.append(("approval", path, "`status: approved`, but the document claims no authority"))
+            continue
+        approved[stage].append((path, keys, a))
+
+    epic = epics[0].removeprefix("Epic:").strip()
+    for stage, (folder, label) in STAGES.items():
+        found = approved[stage]
+        if len(found) > 1:
+            v.append(("approval", ", ".join(p for p, _, _ in found), f"{folder} holds {len(found)} approved documents; "
+                                                                      f"the project has one {label}"))
+        elif not found and stage not in skipped:
+            v.append(("approval", folder, f"the tracker holds a real epic ({epic}), and {folder} holds no approved "
+                                          f"{label} nor does an APPROVED decision log its skip"))
+    if len(approved["architecture"]) == 1 and len(approved["prd"]) == 1:
+        path, keys, _ = approved["architecture"][0]
+        prd_path, _, prd = approved["prd"][0]
+        newest = prd.rows[0].version if prd.rows else None
+        if keys.get("prd") != newest:
+            v.append(("prd-version", path, f"`prd:` reads {keys.get('prd')!r}, and the approved PRD {prd_path} is at "
+                                           f"version {newest!r}"))
+    return v
+
+
+def check_tree(docs: dict[str, str], logs: dict[str, str], tracker: str, project: bool,
+               history: Callable[[str], dict[str, str]]) -> tuple[list, dict]:
+    """Every rule a commit is held to: the authority gate, then the approval gate."""
+    v, reach = judge(docs, logs, tracker, project, history)
+    return v + [x for x in judge_approval(docs, logs, tracker, project) if x not in v], reach
 
 
 def judge_queue(docs: dict[str, str], logs: dict[str, str], tracker: str,
@@ -629,7 +722,7 @@ def foreign_rule(logs: dict[str, str], project: bool) -> Callable[[Row], bool]:
 def cmd_check(listing: bool) -> int:
     docs, logs, tracker, project = gather()
     try:
-        v, reach = judge(docs, logs, tracker, project, cached(first_commits))
+        v, reach = check_tree(docs, logs, tracker, project, cached(first_commits))
     except HistoryUnavailable as e:
         print(f"doc_authority_scan: cannot verify a stored commit: {e}", file=sys.stderr)
         return 2
@@ -923,6 +1016,65 @@ def run_self_test() -> int:
            queue(queued.replace("TMPL-9.3", "INFRA-1.4").replace("S8", "S1"), epic="INFRA-1 — Setup [EXAMPLE]")[0])
     expect("with no session known the gate fails, never passes on nothing", queue(queued, current=None)[0], "session")
     expect("an unreadable decision index fails the queue too", queue(queued, fw=_FW.replace("## Decision Index", "## Decisions"))[0], "index")
+
+    # The approval gate (decisions 2026-10-23-008 and 2026-10-23-014)
+    prd = ("---\nauthority: product requirements — Acme\nimplements: []\nverified: 2026-10-27\nstatus: approved\n"
+           f"template: '1.0'\n---\n\n# PRD\n\n## Version log\n\n{_HEADER}"
+           "| 1.1 | 2026-10-26 | ACME-2026-10-25-001 | fact: `FR-2` added | pending |\n"
+           "| 1.0 | 2026-10-25 | ACME-2026-10-25-001 | fact: approved, made from `docs/templates/prd.md` 1.0 | pending |\n")
+    arch = (prd.replace("product requirements", "architecture").replace("template: '1.0'\n", "template: '1.0'\nprd: '1.1'\n")
+            .split("| 1.1 |")[0] + "| 1.0 | 2026-10-26 | ACME-2026-10-25-001 | fact: approved, built from PRD 1.1 | pending |\n")
+    both = {"docs/prd/prd.md": prd, "docs/architecture/architecture.md": arch}
+
+    def approval(docs: dict | None = None, proj: str = _PROJ, tracker: str = _TRACK, project: bool = True,
+                 fw: str = _FW) -> list:
+        try:
+            return judge_approval(both if docs is None else docs, {"sprint/decision-log.md": proj, FRAMEWORK_LOG: fw},
+                                  tracker, project)
+        except Exception as e:  # a crash is a failed fixture, never a crashed self-test
+            return [("crash", "", f"{type(e).__name__}: {e}")]
+
+    def skipping(stages: str, status: str = "APPROVED") -> str:
+        return (_PROJ.replace("| [EXAMPLE] 2025-01-15-001", f"| ACME-2026-10-26-001 | 2026-10-26 | Skip | {status} |\n"
+                              "| [EXAMPLE] 2025-01-15-001")
+                + f"\n## Decision ACME-2026-10-26-001: Skip\n\n**Skips:** {stages}\n**Affects:** none\n\n---\n")
+
+    only_arch, only_prd = {"docs/architecture/architecture.md": arch}, {"docs/prd/prd.md": prd}
+    expect("an approved PRD and an architecture built from its newest version pass", approval())
+    expect("a real epic with no PRD fails", approval(only_arch), "approval")
+    expect("a real epic with no architecture fails", approval(only_prd), "approval")
+    expect("a PRD still a draft is no approval",
+           approval({**only_arch, "docs/prd/prd.md": "---\nstatus: draft\ntemplate: '1.0'\n---\n\n# PRD\n"}), "approval")
+    expect("a PRD reopened as a draft for revision, its authority kept, is no approval until approved again",
+           approval({**only_arch, "docs/prd/prd.md": prd.replace("status: approved", "status: draft")}), "approval")
+    expect("`status: approved` without the authority line fails",
+           approval({**only_arch, "docs/prd/prd.md": "---\nstatus: approved\ntemplate: '1.0'\n---\n\n# PRD\n"}), "approval")
+    expect("an approved PRD outside `docs/prd/` is not the project's PRD", approval({**only_arch, "docs/other/prd.md": prd}), "approval")
+    expect("two approved PRDs fail", approval({**both, "docs/prd/two.md": prd.replace("— Acme", "— Acme two")}), "approval")
+    expect("an architecture built from an older PRD version fails",
+           approval({**only_prd, "docs/architecture/architecture.md": arch.replace("prd: '1.1'", "prd: '1.0'")}), "prd-version")
+    expect("an unquoted `prd:` is a number, never the version",
+           approval({**only_prd, "docs/architecture/architecture.md": arch.replace("prd: '1.1'", "prd: 1.1")}), "prd-version")
+    expect("a logged skip of the PRD passes without one, and the architecture's `prd:` is not read",
+           approval({"docs/architecture/architecture.md": arch.replace("prd: '1.1'", "prd: '9.9'")}, proj=skipping("prd")))
+    expect("a logged skip of the architecture passes without one", approval(only_prd, proj=skipping("architecture")))
+    expect("one decision may skip both", approval({}, proj=skipping("prd, architecture")))
+    expect("a skip whose decision is not APPROVED counts for nothing", approval(only_prd, proj=skipping("architecture", "PROPOSED")),
+           "approval")
+    expect("a skip naming another stage fails", approval(proj=skipping("planning")), "skips")
+    expect("a skip in the framework's log counts for nothing",
+           approval(only_prd, fw=_FW.replace("| 2026-10-24-001 |", "| 2026-10-26-009 | 2026-10-26 | Skip | APPROVED |\n| 2026-10-24-001 |")
+                    + "\n## Decision 2026-10-26-009: Skip\n\n**Skips:** architecture\n**Affects:** none\n"), "approval")
+    expect("the template is not judged", approval({}, project=False))
+    expect("a project before its first real epic is not judged", approval({}, tracker=born))
+    expect("an unreadable decision index fails the approval too", approval(proj=_PROJ.replace("## Decision Index", "## Decisions")),
+           "index")
+    logs = {"sprint/decision-log.md": _PROJ, FRAMEWORK_LOG: _FW}
+    expect("the commit's check runs the approval gate beside the authority rules",
+           check_tree({"docs/a.md": _doc()}, logs, _TRACK, True, lambda p: {})[0], "approval")
+    expect("and the authority rules beside it",
+           check_tree({"docs/a.md": _doc(rows=own.format("ACME-2026-10-25-001") + _ROW2 + _ROW1), **both}, logs, _TRACK, True,
+                      lambda p: {})[0], "unmarked")
 
     # --stamp and the git readers
     try:

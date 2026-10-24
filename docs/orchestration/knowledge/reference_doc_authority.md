@@ -133,6 +133,13 @@ its first step, since a forked skill's `agent:` resolves only to a built-in or a
 the writer is a library persona. It leaves its change uncommitted: the main session reviews a
 rewrite it did not write before it enters history.
 
+The skill was proved the way a forked skill runs: a fresh agent given the scratch tree and the
+document's path alone, asked to follow the body and to report where it could not. It drained the
+story correctly and named eight frictions, four of them real (a dependency checked only after the
+rewrite, the persona's commit rule against the skill's, MAJOR undefined against "structural",
+`verified:` on an unchanged date), all fixed before release. A procedure read by an agent that
+cannot ask is proved by such an agent, not by its author.
+
 ## Honest limit
 
 The gate cannot read prose. A row citing a decision says the document was updated, not that it was
