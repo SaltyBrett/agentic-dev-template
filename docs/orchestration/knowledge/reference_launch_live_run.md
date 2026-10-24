@@ -1,8 +1,8 @@
 ---
 name: What the live runs of /project-launch showed
-description: 'The record of TMPL-5.4, the Chair at the keyboard in a private project made by the README''s walkthrough: what each stage did as written, where the session told the Chair something the gates contradict (a closeout before planning, a failing session-verify after an emergency close), the defects those exposed and the decisions that fixed them, and what is still unobserved. Read before changing the launch skill, the README walkthrough, or the closeout rules at a project''s first session.'
+description: 'The record of TMPL-5.4, the Chair at the keyboard in a private project made by the README''s walkthrough, through every stage to the first closeout: what each stage did as written, where the session told the Chair something the gates contradict (a closeout before planning, a failing session-verify after an emergency close), the two silent gaps the third run found (a bare `**Affects:**` path unread, a closeout run on an entry still saying it had not been), and the decisions and stories that answer them. Read before changing the launch skill, the README walkthrough, or the closeout rules at a project''s first session.'
 teaches: [2026-10-23-023, 2026-10-23-024]
-verified: 2026-10-23
+verified: 2026-10-24
 metadata:
   type: reference
 ---
@@ -60,13 +60,57 @@ had opened that way, and the birth probe had not judged that run. Fixed by decis
 - `/closeout` before planning ran as a fork, read the tree three times, wrote nothing and committed
   nothing.
 
-## Not yet observed
+## Run 3
 
-An approved PRD, a skip with its reason, planning and its `**Source:**` line, a return to revise an
-approved document with the plan flagged stale, and the first closeout after planning.
+- `/clear` began a new conversation, still S1, and `/project-launch` resumed at the PRD review with
+  `product-manager` leading. On the Chair's approval it wrote the approval decision
+  `LP-2026-10-24-001`, `status: approved`, the `authority:` line and the 1.0 row (`5794166`), then
+  stamped the row (`8c748b1`).
+- **`skip architecture`** asked the reason and logged `LP-2026-10-24-002`, APPROVED, headed
+  `**Skips:** architecture` and `**Affects:** none`, the Chair's reason quoted in its body
+  (`4169b9c`); then it opened planning.
+- **Planning**, in the delivery manager's role, wrote epic LP-1 and its stories, the tracker's
+  `**Source:**` line reading `PRD 1.0, architecture skipped`, and decision `LP-2026-10-24-003`,
+  removing the log's `[EXAMPLE]` entry (`0e19e71`). `doc-authority-scan`, run in the probe by the
+  template's session on that commit, exit 0.
+- **`/project-launch prd`** reopened the PRD (`e30b46c`), committed the draft (`28832c7`), and on
+  approval wrote 1.1, MINOR, citing `LP-2026-10-24-004` (`1ae29c9`), then stamped it (`62006ff`);
+  with the architecture skipped there was nothing to reopen. **`status`** read planning stale: the
+  `**Source:**` line names 1.0, the PRD stands at 1.1.
+- **The first closeout**, `/closeout product-manager <brief>`, ran as the fork: scaffold, fill,
+  `session-closeout` "closing S1 … PASSED" with no pair to archive, `checkpoint: closeout S1`
+  (`c0a6db7`) with no attribution trailer although its harness asked for one, pushed with every
+  earlier S1 commit; run 40063609570 green on `gates` and both `birth` jobs. Its kickoff cites
+  LP-1.1; in the probe afterwards `session-verify` exits 0, "This is S2".
+
+Two gaps it found, each passing silently:
+
+- **A bare `**Affects:**` path is not read.** `LP-2026-10-24-001` named `docs/prd/prd.md` without
+  a code span. The gate reads an `**Affects:**` path only from a code span, so it checked nothing
+  and passed, and `docs/templates/README.md` step 5 says only "naming the document's path". The
+  probe's session found it while writing the revision's decision and fixed its own in `1ae29c9`.
+  The Chair chose a refusal in the gate and the README's wording (TMPL-2.9).
+- **The closeout ran on an entry that said it had not.** S1's entry, written as an emergency
+  checkpoint in run 2, kept its heading, a Status saying the closeout was not completed, and the
+  initializer's `### Next`, though its Done was kept current. The session offered to bring it up to
+  date before the closeout, but `/closeout` typed by the Chair runs straight into the fork, so the
+  main session never had the turn, and the fork's check accepts any entry holding Status, Done and
+  Blockers. It noted the stale Status in the handoff's §5 rather than edit outside the pair. The
+  Chair chose a refusal in the closeout gate (TMPL-5.7).
+
+The fork also ran `pre-commit run --all-files` outside its steps, since the entry recorded no exit
+code for the handoff's §6.
+
+## Not observed
+
+A re-plan after the stale flag: the probe's S2 kickoff moves the PRD on again first.
 
 ## Rules
 
 - A session's account of what a gate will do is a claim; run the gate.
 - Give the Chair the command for a boundary that works in the session they are in: `/clear`.
 - Record a live run from the project's commits, journal and transcripts, never from memory.
+- A precondition a forked skill leaves to the main session is skipped when the operator types the
+  skill; the gate the fork runs is where it holds.
+- A gate that reads a value only in one form refuses the other form, or the other form passes
+  unread.

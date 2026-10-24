@@ -2,8 +2,8 @@
 
 **Current Phase:** Template maintenance
 **Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
-**Last Updated:** 2026-10-23
-**Updated By:** S10
+**Last Updated:** 2026-10-24
+**Updated By:** S11
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,38 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S11 — 2026-10-24 — The launch proved live, and two silent gaps
+
+**Status:** Cold start through `scripts/session_start.py` at session start: identity gate, pull,
+`session-verify` and `doc-queue` each exit 0; the reads done by hand. Persona
+`framework-maintainer`. TMPL-5.4 done, its third run with the Chair at the keyboard in
+`SaltyBrett/launch-probe-s10` observing every remaining stage through the probe's first closeout.
+Two gaps it found, each passing silently, opened as TMPL-2.9 and TMPL-5.7 by the Chair's choice of
+fix, both before TMPL-2.4.
+
+### Done
+
+1. TMPL-5.4's third run, read from the probe's commits and transcripts: the PRD approved and stamped
+   (`5794166`, `8c748b1`); `skip architecture` logged with the Chair's reason (`4169b9c`); planning's
+   epic LP-1 with the `**Source:**` line `PRD 1.0, architecture skipped` (`0e19e71`),
+   `doc-authority-scan` on it exit 0; the PRD revised to 1.1 and re-approved (`1ae29c9`, `62006ff`),
+   `status` reading planning stale; the first closeout `c0a6db7` passing `session-closeout`, pushed,
+   run 40063609570 green on `gates` and both `birth` jobs; the probe's `session-verify` after it
+   exit 0, "This is S2". Recorded in [[reference_launch_live_run]]; TMPL-5.4 Done.
+2. TMPL-2.9 opened: `doc-authority-scan` does not read an `**Affects:**` path outside a code span,
+   and `docs/templates/README.md` step 5 does not say to use one, so the probe's PRD approval passed
+   unchecked. The Chair chose a refusal in the gate and the README's wording.
+3. TMPL-5.7 opened: the probe's first closeout, typed as `/closeout` and run as the fork, closed S1
+   on an entry still headed `emergency checkpoint`, saying its closeout was not completed, its
+   `### Next` stale. The Chair chose a refusal in the closeout gate. TMPL-2.4 waits on both.
+4. S1's entry moved to `sprint/archive/sprint-status_2026.md`, the eleventh over the cap.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -420,41 +452,6 @@ no live document; `session-verify --hook-stage manual` remains in the gate runbo
 3. Found while building TMPL-1.2: the cold start's `session-verify` passed a dirty tree, because
    pre-commit's stash hid an unstaged edit (measured at the S1 closeout commit). Decision
    2026-09-22-003 amended; the command carries `--all-files` everywhere it is written.
-
-### Blockers
-
-- None.
-
----
-
-## S1 — 2026-10-22 — Planning: v2.0.0 and v2.1.0 decided, four epics opened
-
-**Status:** The first session on the public `v1.0.0`, a planning session with the operator and no
-build work. Three decisions logged. 2026-10-22-001: the framework runs on Claude Code's native
-machinery where that removes overhead and not a control: a `SessionStart` hook runs the cold
-start and re-injects after compaction, a `Stop` hook enforces checkpoint discipline, a
-`PostToolUse` journal and a working-notes file bank the uncommitted interval, personas become
-subagents, procedures become forked skills, judgement rules become path-scoped, the constitution
-and checklist shrink, the interop contract retires; git hooks and CI remain the enforcement.
-Measured: the cold start today reads about 74 KB across ten files, the procedure exists in four
-places; the installed Claude Code is 2.1.267 and native `AGENTS.md` needs 2.1.277, so `CLAUDE.md`
-stays as the bridge until then. 2026-10-22-002: authoritative documents carry `authority:`
-frontmatter and a version log, decisions carry `Affects:`, a gate accepts a version-log row or an
-open tracker story and nothing else, the commit is stamped after the fact and verified, and a
-technical-writer agent drains the queue at cold start, bounded by age, never at closeout.
-2026-10-22-003: `v2.1.0` is the role-agent team whose handoffs are gated artifacts and the
-three-layer coding standard, each opened by a design session, the standard proved against real
-code before adoption. The compaction question answered on the record: committed state, the brain,
-the kickoff, the journal and the notes survive it; reasoning never written down does not, and the
-`Stop` hook narrows that to one turn. Since `v1.0.0`, by the operator outside any session here:
-three projects born from the template (`Supplier_Research_Dev`, `Comfy`, `PocketGames`), each
-private, initialized green, no template friction.
-
-### Done
-
-1. Decisions 2026-10-22-001, -002, -003; epics TMPL-1 (7 stories), TMPL-2 (4), TMPL-3 (2),
-   TMPL-4 (2) opened, 15 stories, dependencies set so the substrate precedes the documents gate,
-   and both precede the team and the standard.
 
 ### Blockers
 
