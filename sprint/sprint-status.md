@@ -28,6 +28,11 @@ by the hook. TMPL-6.1 in progress.
 2. Design question 2, the assignment (decision 2026-10-24-017): `writing-profile.yaml` beside
    `code-profile.yaml`, ordered path rules giving a voice and an audience, no frontmatter; a file no
    rule names judged as production; an agent's voice in the same profile, a document's own winning.
+3. Design question 3, the first lists (decision 2026-10-24-018), measured on the template's tree
+   first: characters off a US keyboard, letters excepted, code included; headings with a comma or
+   semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, the lean
+   design the Chair chose for its upkeep; development references in production documents; a
+   project's allow list; tone found by the document reviewer and fixed by the editor.
 
 ### Blockers
 

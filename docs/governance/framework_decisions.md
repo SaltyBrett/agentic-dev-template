@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-018 | 2026-10-24 | The writing guardrails' first lists: characters off a US keyboard, letters excepted, code included; headings with a comma or semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, read by the gate; development references in production documents; a project's allow list; tone judged by the document reviewer against a rules page, rewritten by the editor | APPROVED |
 | 2026-10-24-017 | 2026-10-24 | Voices and audiences assigned in `writing-profile.yaml`, beside `code-profile.yaml`: ordered path rules, the first match winning, no frontmatter; a file no rule names judged as production; an agent's voice in the same profile, a document's own voice winning | APPROVED |
 | 2026-10-24-016 | 2026-10-24 | The writing standard's voices: seven built in, the three proposed and Grammarly's four; one file per voice holding its traits and phrase list; a custom voice keeping the Chair's sample of 200 words or more and the traits drawn from it, kept in its own project, private | APPROVED |
 | 2026-10-24-015 | 2026-10-24 | The `/story` skill as built, proved live on a scratch copy of Comfy: roles write and the main session gates, commits and asks; a finding reaches the code review log once, with the Chair's words; the code reviewer persona at version 3; three gaps the proof found opened as TMPL-3.4, TMPL-2.10 and TMPL-4.7, the release waiting on them | APPROVED |
@@ -4943,3 +4944,75 @@ would take, and whether a strict default would discourage adoption.
 ### Enforcement
 
 None yet: the profile's reader and the audience rule are TMPL-6's gate.
+
+---
+
+## Decision 2026-10-24-018: The writing guardrails' first lists, mechanical and judged
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): each rule below and its scope; the lean phrase design over a list per
+voice, for the cost of maintaining it; the reviewer finding and the editor fixing. The patterns'
+exact form by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 3)
+**Affects:** none at this decision. To be built in TMPL-6: the writing standard's two phrase tables,
+`writing-profile.yaml`'s `allow:` list, `.claude/rules/writing.md` (new),
+`personas/document-reviewer.md` and `personas/editor.md` (new versions)
+
+### Context
+
+Decision 2026-10-24-014 named four guardrails; this one sets their first lists, measured on the
+template's 152 tracked markdown files at S18 with a probe outside the repository. Twenty distinct
+characters off a US keyboard appeared, U+2014 em dash 729 times and box drawing about 720 times in
+two standards' diagrams, U+00A7 section sign 259, U+2026 ellipsis 31, arrows 17, emoji 2. Of 1,273
+headings, 142 hold a comma or semicolon, 151 run over 8 words, none ends in a full stop, and 105
+are a colon and a subtitle, most of them the `## Decision <ID>: <title>` format the gates read.
+Thirty-one hits of single AI or marketing words were all legitimate: a browser's audio unlock,
+Claude Code's harness, Windows' elevated sandbox, "highest-leverage", Grammarly's preset names. A
+bare word is noise; a list holds exact phrases. The Chair asked whether per-voice lists would become
+a surface too costly to maintain.
+
+### Decision
+
+- **Characters, every voice and audience (Chair):** the gate refuses any character outside printable
+  ASCII, tab and newline, except letters and their accents (Unicode categories L and M), so a name
+  keeps its spelling. Code blocks are judged too, a pasted tree or arrow being the same tell. Each
+  finding names the character by its code point with its ASCII replacement: U+2014 to a comma, a
+  colon or parentheses; curly quotes to straight; U+2026 to three full stops; U+00A7 to "section";
+  box drawing to `|` and `+--`. The standard names a character by code point, never by the
+  character itself.
+- **Headings, every voice and audience (Chair):** a heading reads as a sentence when it holds a
+  comma or semicolon, ends in `.`, `!`, `;` or `:`, or runs over 8 words, a code span counting as
+  one word. A question mark is allowed. A colon and a subtitle are judgement, since `Step 1: Install`
+  and the decision format are sound.
+- **Phrases, two tables in the standard (Chair):** an AI table for every voice and a marketing table
+  for every voice but `creative`; a voice says only which tables apply to it, and per-voice lists
+  wait until a need is shown and a decision adds them. The gate reads the tables from the standard,
+  as `story-artifacts` reads the team standard's role map, each phrase in a code span so the
+  standard never flags itself. Matching is case-insensitive at word boundaries, outside code spans,
+  where a phrase is quoted rather than used. A phrase joins only once seen in an agent's writing, by
+  a review finding or a humanizer rewrite, and leaves at its first false positive; each change is a
+  `fact:` row. The seed, every form listed:
+  - AI: `delve into`, `a testament to`, `it's worth noting`, `it is worth noting`, `it's important to
+    note`, `it is important to note`, `plays a pivotal role`, `plays a crucial role`, `plays a vital
+    role`, `in the realm of`, `let's dive in`, `I hope this helps`, and `and more`, `and much more`
+    or `and so much more` closing a list;
+  - marketing: `seamless`, `seamlessly`, `cutting-edge`, `game-changer`, `game-changing`, `unlock
+    the power`, `unlock the potential`, `harness the power`, `world-class`, `best-in-class`,
+    `next-generation`, `revolutionize`, `supercharge`, `effortless`, `effortlessly`.
+- **Development references, production documents only (Chair):** decision IDs with or without a
+  project's prefix, story IDs, session numbers, wikilinks, "the Chair", the sprint and orchestration
+  paths, and commit hashes of 7 to 40 hex characters holding a digit and a letter. A reference in a
+  code span still counts.
+- **One allow list per project (Chair):** `allow:` in `writing-profile.yaml`, exact strings exempt
+  from the phrase and reference rules, one line per real collision (Amazon S3, a commit a runbook
+  pins). It starts empty.
+- **Judgement (Chair):** tone against the voice's traits, filler, hedging, flattery, the rule-of-three
+  cadence, uniform rhythm, vague claims and colon subtitles are held by `.claude/rules/writing.md`,
+  path-scoped to the markdown the profile governs. The `document-reviewer` judges a document against
+  it and records findings; the `editor` rewrites them through the humanizer; the reviewer is never
+  the builder (decision 2026-10-24-006).
+
+### Enforcement
+
+None yet: the rules are TMPL-6's gate, the judgement its rules page and the two personas.
