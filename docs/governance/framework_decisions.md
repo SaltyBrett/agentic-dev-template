@@ -3616,7 +3616,10 @@ how CI runs it once per profile.
 
 Thirteen fixtures pass; ten broken variants, one per rule, each fail at least one without a crash.
 At `38c549d`, the S7 tree, the probe exits 1 under both profiles, the initializer's suite refusing
-each birth at `doc-authority-scan` alone with the seven violations of decision 2026-10-23-015.
+each birth at `doc-authority-scan` alone with the seven violations of decision 2026-10-23-015. At
+`19537c4`, the commit that builds it, it exits 0 under both, locally and on GitHub: run 40050465938,
+`gates`, `birth (commercial)` and `birth (gcc)` each `success` under `gh run watch --exit-status`,
+both probe steps run, not skipped.
 
 ### Enforcement
 

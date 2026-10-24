@@ -19,13 +19,15 @@
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
 exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
 ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
-TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 in progress.
+TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 done.
 
 ### Done
 
-1. TMPL-2.7 built (decision 2026-10-23-018): `scripts/birth_probe.py`, its
-   `birth-probe-selftest` hook and runbook section, the `birth` job in `.github/workflows/gates.yml`;
-   at `38c549d` the probe exits 1 under both profiles at `doc-authority-scan` alone.
+1. TMPL-2.7 (decision 2026-10-23-018): `scripts/birth_probe.py`, its `birth-probe-selftest` hook
+   and runbook section, the `birth` job in `.github/workflows/gates.yml`, [[reference_ci_backstop]].
+   Thirteen fixtures, ten broken variants caught. At `38c549d` the probe exits 1 under both
+   profiles at `doc-authority-scan` alone; at `19537c4` it exits 0 under both, and run 40050465938
+   is green on `gates` and both `birth` jobs.
 
 ### Blockers
 
