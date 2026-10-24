@@ -92,12 +92,15 @@ At any point: `/project-launch status` shows where each stage stands, `/project-
 the draft and stops, `/project-launch skip <stage>` passes over a stage with your reason logged as a
 decision, and `/project-launch <stage>` returns to one, to resume, review or revise it. A bare
 `/project-launch` resumes where the launch stopped. The state is the documents themselves, so a
-stage left in one session is picked up in the next ([reference_project_launch](docs/orchestration/knowledge/reference_project_launch.md)).
+stage left in one conversation is picked up in the next. Until planning writes the first epic, a new
+conversation is still S1, and there is nothing to close out: end the conversation to take a break
+between stages ([reference_project_launch](docs/orchestration/knowledge/reference_project_launch.md)).
 
 ### 7. Close out the session
 
-Say "close out the session", or type `/closeout <persona> <brief>`: the slug of the persona that
-leads the next session, then what it should do. The session first commits what it learned and
+Once the launch has planned the first epic, say "close out the session", or type
+`/closeout <persona> <brief>`: the slug of the persona that leads the next session, then what it
+should do. A closeout before then is refused, since the next kickoff's tasks must cite stories. The session first commits what it learned and
 decided; the closeout then writes the next session's handoff and kickoff, runs the closeout gate,
 commits, pushes, watches the `gates` run, and returns the kickoff's text.
 

@@ -24,9 +24,10 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-024 | 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
 | 2026-10-23-023 | 2026-10-23 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows and decisions in the template as a project does, its history holding none of their stamped commits; the birth probe also runs the suite on the Initial commit, as GitHub does; amends 2026-10-23-015, 2026-10-23-017 and 2026-10-23-018 | APPROVED |
 | 2026-10-23-022 | 2026-10-23 | The README front page as built: a nine-step walkthrough from `gh repo create` to taking a release, each step what to type and what to see; a catalog of the commands by skill path, the operator scripts, the session hooks and the gates by link; `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing a skill the `## Catalog` section does not name, in the template and in a project | APPROVED |
-| 2026-10-23-021 | 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
+| 2026-10-23-021 | 2026-10-23; amended 2026-10-23 | `/project-launch` as built: the Chair's alone (`disable-model-invocation`), in the main session; each stage's state read from the documents, with skipped, reopened and stale; intake's answers written into the PRD draft, §9 carrying the expertise to the team stage; the plan's versions on the tracker's `**Source:**` line; the S1 entry's one next step | APPROVED |
 | 2026-10-23-020 | 2026-10-23; amended 2026-10-23 | The approval gate as built: in a project with a real epic, one PRD in `docs/prd/` and one architecture in `docs/architecture/` standing approved, a reopened revision standing at its last approved version (amended, the Chair's choice), an approved architecture's `prd:` the PRD's newest version; or an APPROVED project decision headed `**Skips:**` naming the stage (the Chair's form); a rule of `doc-authority-scan`, on every commit | APPROVED |
 | 2026-10-23-019 | 2026-10-23 | The doc-queue as built: `doc_authority_scan.py --queue`, a manual hook the start hook runs at cold start and the closeout reports; a note counts written bare on an open story naming one authority and a decision; the session at work is one rule in `session_closeout.py`; the drain is `doc-drain`, forked as `general-purpose` in the writer's role, uncommitted | APPROVED |
 | 2026-10-23-018 | 2026-10-23; amended 2026-10-23 | The birth probe as built: the revision's tree by `git archive`, one "Initial commit", that revision's initializer with `--apply`, no `GIT_*` or `CLAUDE_PROJECT_DIR` reaching it; a `birth-probe-selftest` hook over a stub initializer; a `birth` job in CI, one run per profile, skipped in a project; red at `38c549d` under both profiles | APPROVED |
@@ -39,7 +40,7 @@
 | 2026-10-23-011 | 2026-10-23 | The standards, the document-control standard and the gate runbook are the first authorities: each log starts at marking at the version the document states, citing every decision that names it or queueing it; the hand-kept changelog tables and `**Version:**` lines go; file names keep their version; the runbook gate skips the closing version log; the authority matrix retires in the template, a project's copy left to the project | APPROVED |
 | 2026-10-23-010 | 2026-10-23; amended 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
 | 2026-10-23-009 | 2026-10-23 | The root README is the operator's front page: a step-by-step walkthrough from creating a project through the session loop, then a catalog of every command, operator script and session hook, the gates by link to their runbook; `skill-scan` holds the catalog to the skills; the live launch proof follows the walkthrough as written | APPROVED |
-| 2026-10-23-008 | 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
+| 2026-10-23-008 | 2026-10-23; amended 2026-10-23 | A project launches through `/project-launch`: intake by three questions or a summary of the PRD, team, PRD, architecture and planning, each stage led by its persona and steered by the chair with pause, skip, return and status; documents versioned and approved on record, a revision flagging the stages built on it; a gate that a real epic needs an approved PRD and architecture or a logged skip | APPROVED |
 | 2026-10-23-007 | 2026-10-23 | The updater merges `.gitignore` by union, keeping both sides' lines where both changed the same place, since project and template both append at its end; every other three-way path still conflicts | APPROVED |
 | 2026-10-23-006 | 2026-10-23 | What the substrate's live proof found: the closeout's scaffold leaves handoff sections 3 to 5 as tokens to fill, since a pre-filled `- None.` passed unwritten beside a logged decision, and S1's range starts at the repository's first commit | APPROVED |
 | 2026-10-23-005 | 2026-10-23 | Adoption from `v1.0.0`, judged by what the project holds: every `docs/personas/` file converted into the roster exactly or refused as a conflict, by a converter that reads nothing from the project's old scripts; the sync's stamp removed; a `source: dev-resources` entry merged like any other and, where no release writes it, stripped of the declaration | APPROVED |
@@ -2945,6 +2946,11 @@ scratch adoption of the three projects with no `.gitignore` conflict.
 
 ## Decision 2026-10-23-008: A project launches through `/project-launch`
 
+**Amended 2026-10-23 (TMPL-5.4, the Chair, decision 2026-10-23-024):** before planning, a stage's end
+is a session boundary taken by ending the conversation, not by a closeout: no kickoff can cite a
+story until planning writes the first, and the next conversation is still S1. The first closeout
+comes after planning and names the next stage's persona.
+
 **Date:** 2026-10-23
 **Made By:** Chair (S6): the skill, its stages and the chair's control of each stage; the
 refinements by the AI, approved by the Chair; the mechanics left to the build
@@ -3788,6 +3794,9 @@ exit 0; the same skip `PROPOSED`, refused.
 
 ## Decision 2026-10-23-021: `/project-launch` as built
 
+**Amended 2026-10-23 (TMPL-5.4, decision 2026-10-23-024):** the skill says a boundary before planning
+is a new conversation, still S1, and that a pause with nothing changed commits nothing.
+
 **Date:** 2026-10-23
 **Made By:** Chair (S9): that the skill is the Chair's alone, and that a reopened revision stands
 (decision 2026-10-23-020, amended); the rest by the AI, within decision 2026-10-23-008
@@ -3958,3 +3967,43 @@ commit and under both profiles, and run 40058466647 is green on `gates` and both
 
 `doc-authority-selftest` and `doc-authority-scan`; `birth-probe-selftest` and the CI `birth` job;
 [[reference_doc_authority]], [[reference_ci_backstop]].
+
+---
+
+## Decision 2026-10-23-024: Before planning, a launch boundary is a new conversation
+
+**Date:** 2026-10-23
+**Made By:** Chair (S10), on the AI's report from the live run
+**Status:** APPROVED
+**Amends:** 2026-10-23-008 (a stage's end as a session boundary), 2026-10-23-021 (the skill's text)
+**Builds:** TMPL-5.4's finding
+**Affects:** `.claude/skills/project-launch/SKILL.md` (Opening a stage, `pause`), `README.md`
+(walkthrough steps 6 and 7), `docs/orchestration/knowledge/reference_project_launch.md` (why the
+first closeout comes after planning)
+
+### Context
+
+The live run of `/project-launch` on `SaltyBrett/launch-probe-s10` (TMPL-5.4) stopped in the PRD
+stage, and the session offered the Chair a closeout it could not make: every task of a kickoff must
+cite a story in a real epic (`session_closeout.py`, `task-story`), and the first real epic is the
+commit planning makes, which the approval gate refuses until the PRD and the architecture stand
+approved or skipped. Decision 2026-10-23-008's "closing out there names the next stage's persona"
+holds only from planning on. A new conversation in the probe, by contrast, was still S1, its
+`session-verify` passing with no pair.
+
+### Decision
+
+- **Before planning, the Chair takes a boundary by ending the conversation (Chair).** The next is
+  still S1, and `/project-launch` resumes from the documents, taking the next stage's lead from the
+  roster as it already does. No gate changes.
+- **The first closeout comes after planning**, naming the lead the Chair chose at the team stage.
+- **A pause with nothing changed since the last commit commits nothing**, as the live session did.
+
+### Verification
+
+`pre-commit run session-verify --hook-stage manual --all-files` in the probe after the session
+stopped: exit 0, "This is S1". The resumed live run opens a new conversation there.
+
+### Enforcement
+
+The kickoff linter's `task-story` rule, unchanged, is why; [[reference_project_launch]].

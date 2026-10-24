@@ -47,8 +47,9 @@ The documents decide: a decision approving a document that no longer exists appr
   the template's `<!-- -->` guidance. Change nothing. The launch is done when every stage is done or
   skipped.
 - `pause`: write the current stage's draft, commit it as `checkpoint: launch — <stage> paused`, say
-  where it stopped, and stop. Resuming reads the draft: a section still holding only the template's
-  `<!-- -->` guidance is the next one to fill.
+  where it stopped, and stop; with nothing changed since the last commit, there is nothing to
+  commit. Resuming reads the draft: a section still holding only the template's `<!-- -->`
+  guidance is the next one to fill.
 - `skip <stage>`: ask the Chair's reason, then log it in `sprint/decision-log.md` as a decision whose
   ID carries the project's story prefix, its header block holding `**Skips:** <stage>` and
   `**Affects:** none`, the reason in its body (`docs/templates/README.md`, Skipping a document).
@@ -60,8 +61,11 @@ The documents decide: a decision approving a document that no longer exists appr
 ## Opening a stage
 
 Tell the Chair what the stage produces, who leads it and the commands above, then begin. A stage's
-end is a session boundary the Chair may take: the closeout skill, given the next stage's lead as the
-persona, starts the next stage with fresh context.
+end is a session boundary the Chair may take. Before planning, the Chair takes it by ending the
+conversation, never by a closeout: a kickoff's tasks cite stories, and planning writes the first.
+The next conversation is still S1, its cold start passing with no handoff yet, and
+`/project-launch` resumes from the documents with the next stage's lead. From planning on, the
+closeout skill, given the next lead as the persona, takes the boundary.
 
 ## 1. Intake
 

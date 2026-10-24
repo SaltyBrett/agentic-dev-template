@@ -38,6 +38,11 @@ Chair at the keyboard in `SaltyBrett/launch-probe-s10`.
    Initial commit and under both profiles, and run 40058466647 is green.
 3. TMPL-5.5 done: the walkthrough's steps 1 to 4 and 9 run for real on `SaltyBrett/launch-probe-s10`
    as written, the red first run aside; steps 5 to 8 are TMPL-5.4's.
+4. TMPL-5.4's first live run, the Chair at the keyboard in `SaltyBrett/launch-probe-s10`: intake,
+   a pause, `status`, a bare resume and team selection worked as written; it stopped in the PRD
+   stage. It found that no closeout is possible before planning, so a boundary before planning is a
+   new conversation, still S1 (decision 2026-10-23-024, the Chair's choice, amending 2026-10-23-008
+   and 2026-10-23-021).
 
 ### Blockers
 
