@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-025 | 2026-10-24 | The template's `README.md` is a development document in the template alone: a `template:` list of rules in `writing-profile.yaml`, which the writing gate applies only where `.project-profile` is absent, so a project's README is production; built in TMPL-6.3 | APPROVED |
 | 2026-10-24-024 | 2026-10-24 | The subagent ceiling joins `v2.1.0`: the operator sets the session's model and effort, the orchestrator chooses each subagent's for its task and never above, the operator choosing whether it may change model and effort or effort only; opened as TMPL-3.5, designed with the Chair at its start; TMPL-4.6 waits on it | APPROVED |
 | 2026-10-24-023 | 2026-10-24 | TMPL-6 re-cut to the design: 6.2 the law, 6.3 the gate, 6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6, each project swept at adoption | APPROVED |
 | 2026-10-24-022 | 2026-10-24 | The document production standard's §9 moves whole to the writing standard: the em-dash line into the character rule, its prose rules into the `business` voice's traits, §9 a pointer, the vendor rule to §10, which stays; a deliverable's markdown source judged by the gate, the produced file's text by the document-production skill's check step | APPROVED |
@@ -5314,3 +5315,52 @@ and effort; a spawn's own effort needs v2.1.292, and 2.1.308 is installed.
 
 `session-closeout-check`'s dependency order holds TMPL-4.6 behind TMPL-3.5; the hook itself is
 TMPL-3.5's.
+
+---
+
+## Decision 2026-10-24-025: The template's README is development in the template alone
+
+**Date:** 2026-10-24
+**Made By:** Chair (S19): the README a development document in the template and production in
+every project, by rules the gate applies only in the template. The `template:` key and its reader by
+the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.2 (its plan)
+**Affects:** `writing-profile.yaml` (new, its `template:` list naming `README.md`),
+`docs/standards/writing_standard_v1.0.md` (new, its profile section describing the `template:`
+list), `sprint/story-tracker.md` (TMPL-6.3 reads the list, both rows citing this decision)
+
+### Context
+
+Every tracked markdown file in the template is written for an agent or the Chair except
+`README.md`, the front page for a template adopter. A probe at S19 found 4 session numbers, 1 "the
+Chair" and 8 `sprint/` or `docs/orchestration/` paths in it: the template's product is a
+development framework, so its product vocabulary is the list the audience rule refuses (decision
+2026-10-24-018). `TEMPLATE_GUIDE.md` also cites decision IDs and wikilinks; it is the framework's
+manual in a project too, and development everywhere. The template's `writing-profile.yaml` is also
+the starter a project is born with, and the updater carries it into the three projects at adoption.
+A project's README is production: Comfy's describes its application to its users.
+
+### Decision
+
+- **Development in the template alone (Chair):** `writing-profile.yaml` holds a `template:` list
+  of rules, in the shape of `rules:`, which the writing gate applies ahead of `rules:` only where
+  `.project-profile` is absent, the template's identity since the profile toggle of decision
+  2026-09-20-009 (AI). `README.md` is its one rule, development in the `technical` voice. In a project the
+  list is inert and its README is production, as decision 2026-10-24-017 has every file no rule
+  names. Nothing rewrites the profile at birth or at an update, and the list merges three-way like
+  the rest of the file.
+- **Weighed and refused (Chair):** a development rule shipped to every project, which leaves a
+  project's own README unjudged for development references until someone deletes the rule, the
+  silent pass decision 2026-10-24-017 refused; and the template's `allow:` holding `S1`, `the Chair`,
+  `sprint/` and `docs/orchestration/`, which exempts those strings in every production file and has
+  to be emptied at birth and by the updater, since a project's list starts empty (decision
+  2026-10-24-018).
+- **The consequence at adoption:** SCM's and PocketGames' READMEs are still the template's, so the
+  writing gate flags them when each takes `v2.1.0`; each writes its own README or adds a rule of its
+  own, in TMPL-4.6's sweep (decision 2026-10-24-019).
+
+### Enforcement
+
+The writing gate's reader of the `template:` list, with fixtures in and out of the template, is
+TMPL-6.3's.

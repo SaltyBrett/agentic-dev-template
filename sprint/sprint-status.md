@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S18
+**Updated By:** S19
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,28 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S19 — 2026-10-24 — The writing standard's law
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
+S19") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
+by the hook. TMPL-6.2's plan settled with the Chair; the build in progress.
+
+### Done
+
+1. TMPL-6.2's plan, settled with the Chair: the writing standard's eleven sections, the voice file's
+   shape, the profile's development paths, `agents: {}`, and consistency over cleverness on the
+   rules page. Probes outside the repository measured the tree first: twenty distinct characters off
+   a US keyboard, and `README.md` the template's one production file.
+2. The README's audience (decision 2026-10-24-025, the Chair's): development in the template alone,
+   by a `template:` list the gate applies only where `.project-profile` is absent, so a project's
+   README is production; its reader added to TMPL-6.3.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -347,49 +369,6 @@ by the Chair's choice.
    `AGENTS.md` and the handoff standard; `/clear` named as the boundary (2026-10-23-024, amended).
    Both runs recorded in [[reference_launch_live_run]]. Still unobserved: an approval, a skip with
    its reason, planning, a revision and the first closeout.
-
-### Blockers
-
-- None.
-
----
-
-## S9 — 2026-10-23 — The birth probe, the doc-queue and the approval gate
-
-**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
-ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
-TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7, TMPL-2.2 and
-TMPL-5.3 and TMPL-5.2 done, the Chair choosing mid-session that a reopened revision stands at
-its last approved version (decision 2026-10-23-020, amended).
-
-### Done
-
-1. TMPL-2.7 (decision 2026-10-23-018): `scripts/birth_probe.py`, its `birth-probe-selftest` hook
-   and runbook section, the `birth` job in `.github/workflows/gates.yml`, [[reference_ci_backstop]].
-   Thirteen fixtures, ten broken variants caught. At `38c549d` the probe exits 1 under both
-   profiles at `doc-authority-scan` alone; at `19537c4` it exits 0 under both, and run 40050465938
-   is green on `gates` and both `birth` jobs.
-2. TMPL-2.2 (decision 2026-10-23-019): the `doc-queue` gate as `doc_authority_scan.py --queue`,
-   run at cold start by `scripts/session_start.py` and reported by the closeout skill; the
-   `doc-drain` skill; the runbook's `doc-queue` section, the document-control standard's Recording a
-   change, `AGENTS.md`'s cold start and skills table, [[reference_doc_authority]]. Sixteen broken
-   variants caught. On a scratch birth the cold-start report read the queued story PASS at S1 and
-   S2 and FAILED at S3; a fresh agent drained it by the skill alone, and its friction report
-   corrected four steps before the skill shipped.
-3. TMPL-5.3 (decision 2026-10-23-020): the approval gate in `doc-authority-scan`, a real epic
-   needing an approved PRD and architecture or an APPROVED decision headed `**Skips:**`, the
-   Chair's form; the runbook, the document-control standard, `docs/templates/README.md` and the
-   planning skill's preconditions. Twenty-one fixtures, fifteen broken variants caught. On a scratch
-   birth: refused with no documents and with drafts, passing once approved by the README, refused
-   on a PRD revision the architecture lags, passing on an approved skip and refused on a proposed
-   one.
-4. TMPL-5.2 (decision 2026-10-23-021): `/project-launch`, the Chair's alone, in the main session,
-   each stage's state read from the documents; team selection takes intake's answer, planning
-   records its sources on the tracker's `**Source:**` line, the S1 entry's one next step names it;
-   [[reference_project_launch]]. Decision 2026-10-23-020 amended so a revision in progress can be
-   committed. A fresh agent applied `status` to two scratch trees and its friction report sharpened
-   five rules; a birth from `6e94683` green under both profiles. The live run is TMPL-5.4's.
 
 ### Blockers
 
