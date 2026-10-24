@@ -4,6 +4,49 @@ Entries moved from `sprint/sprint-status.md` once it held more than ten, oldest 
 
 ---
 
+## S10 — 2026-10-23 — The README front page and the live launch
+
+**Status:** Continued in the S9 conversation at the Chair's request; the cold start run through
+`scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
+`doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
+`framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
+private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 done; TMPL-5.4 in progress, two
+live runs with the Chair in `SaltyBrett/launch-probe-s10` recorded, its second half carried to S11
+by the Chair's choice.
+
+### Done
+
+1. TMPL-5.5 built (decision 2026-10-23-022): `README.md` as the operator's front page, a nine-step
+   walkthrough and a catalog of commands, operator scripts, session hooks and gates;
+   `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing
+   a skill the README's `## Catalog` does not name. Eight fixtures, seven broken variants caught;
+   on the real tree a README missing `/doc-drain` refused, restored passing.
+2. TMPL-2.8 opened and built (decision 2026-10-23-023, the Chair's choice of fix): the walkthrough run
+   for real on the private `SaltyBrett/launch-probe-s10` found GitHub's run on its Initial commit
+   red, `doc-authority-scan` judging the uninitialized copy as the template. A copy is now told by
+   its history and judged as a project; the birth probe also runs the suite on the Initial commit.
+   At `30677d3` the probe reproduces GitHub's red run exactly; at `ea19c0d` it is green at the
+   Initial commit and under both profiles, and run 40058466647 is green.
+3. TMPL-5.5 done: the walkthrough's steps 1 to 4 and 9 run for real on `SaltyBrett/launch-probe-s10`
+   as written, the red first run aside; steps 5 to 8 are TMPL-5.4's.
+4. TMPL-5.4's first live run, the Chair at the keyboard in `SaltyBrett/launch-probe-s10`: intake,
+   a pause, `status`, a bare resume and team selection worked as written; it stopped in the PRD
+   stage. It found that no closeout is possible before planning, so a boundary before planning is a
+   new conversation, still S1 (decision 2026-10-23-024, the Chair's choice, amending 2026-10-23-008
+   and 2026-10-23-021).
+5. TMPL-5.4's second run: a new conversation was S1 and resumed at the PRD; the draft's gaps logged
+   in §11 and committed; a closeout before planning refused without a write. The emergency close's
+   claim that the next `session-verify` fails, false before a project's first closeout, corrected in
+   `AGENTS.md` and the handoff standard; `/clear` named as the boundary (2026-10-23-024, amended).
+   Both runs recorded in [[reference_launch_live_run]]. Still unobserved: an approval, a skip with
+   its reason, planning, a revision and the first closeout.
+
+### Blockers
+
+- None.
+
+---
+
 ## S9 — 2026-10-23 — The birth probe, the doc-queue and the approval gate
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each

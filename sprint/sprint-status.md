@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S19
+**Updated By:** S20
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -13,6 +13,25 @@
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
 
 ---
+
+## S20 — 2026-10-24 — The writing standard's gate
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
+S20") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
+by the hook. TMPL-6.3 in progress: its plan settled with the Chair.
+
+### Done
+
+1. TMPL-6.3's plan, settled with the Chair (decision 2026-10-24-026): a glob that decides nothing
+   refused in a production rule only, the text mode reading Office files itself, a custom voice
+   told by the standard's section 2 table, the allow list exact but wrap-tolerant; the readers and
+   the rules' exact reading by the AI. A probe outside the repository found 167 tracked markdown
+   files, no carriage return, no YAML comment in a frontmatter and backtick fences only.
+2. The writing standard at 1.1: the gate's reading stated in sections 2, 4, 5, 6, 7, 8, 9 and 11.
+
+### Blockers
+
+- None.
 
 ## S19 — 2026-10-24 — The writing standard's law
 
@@ -341,49 +360,6 @@ taken to it, `dev-resources` archived.
    No project syncs from `dev-resources`. Recorded in [[reference_v2_adoption]].
 8. TMPL-2.4 done: `dev-resources` given a retirement notice at the top of its README (`4e062ea`,
    run 40067296277 green), then archived, read-only, at the Chair's choice.
-
-### Blockers
-
-- None.
-
----
-
-## S10 — 2026-10-23 — The README front page and the live launch
-
-**Status:** Continued in the S9 conversation at the Chair's request; the cold start run through
-`scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
-`doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
-`framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
-private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 done; TMPL-5.4 in progress, two
-live runs with the Chair in `SaltyBrett/launch-probe-s10` recorded, its second half carried to S11
-by the Chair's choice.
-
-### Done
-
-1. TMPL-5.5 built (decision 2026-10-23-022): `README.md` as the operator's front page, a nine-step
-   walkthrough and a catalog of commands, operator scripts, session hooks and gates;
-   `TEMPLATE_GUIDE.md` cut to named sections on what the initializer leaves; `skill-scan` refusing
-   a skill the README's `## Catalog` does not name. Eight fixtures, seven broken variants caught;
-   on the real tree a README missing `/doc-drain` refused, restored passing.
-2. TMPL-2.8 opened and built (decision 2026-10-23-023, the Chair's choice of fix): the walkthrough run
-   for real on the private `SaltyBrett/launch-probe-s10` found GitHub's run on its Initial commit
-   red, `doc-authority-scan` judging the uninitialized copy as the template. A copy is now told by
-   its history and judged as a project; the birth probe also runs the suite on the Initial commit.
-   At `30677d3` the probe reproduces GitHub's red run exactly; at `ea19c0d` it is green at the
-   Initial commit and under both profiles, and run 40058466647 is green.
-3. TMPL-5.5 done: the walkthrough's steps 1 to 4 and 9 run for real on `SaltyBrett/launch-probe-s10`
-   as written, the red first run aside; steps 5 to 8 are TMPL-5.4's.
-4. TMPL-5.4's first live run, the Chair at the keyboard in `SaltyBrett/launch-probe-s10`: intake,
-   a pause, `status`, a bare resume and team selection worked as written; it stopped in the PRD
-   stage. It found that no closeout is possible before planning, so a boundary before planning is a
-   new conversation, still S1 (decision 2026-10-23-024, the Chair's choice, amending 2026-10-23-008
-   and 2026-10-23-021).
-5. TMPL-5.4's second run: a new conversation was S1 and resumed at the PRD; the draft's gaps logged
-   in §11 and committed; a closeout before planning refused without a write. The emergency close's
-   claim that the next `session-verify` fails, false before a project's first closeout, corrected in
-   `AGENTS.md` and the handoff standard; `/clear` named as the boundary (2026-10-23-024, amended).
-   Both runs recorded in [[reference_launch_live_run]]. Still unobserved: an approval, a skip with
-   its reason, planning, a revision and the first closeout.
 
 ### Blockers
 

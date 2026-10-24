@@ -1,6 +1,6 @@
 ---
 authority: writing - the voices a document is written in and the mechanical and judged rules its text obeys
-implements: [2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025]
+implements: [2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025, 2026-10-24-026]
 verified: 2026-10-24
 ---
 
@@ -75,7 +75,9 @@ tables: [ai, marketing]
   with a `## Sample` section after the traits, holding the Chair's words in one fenced block, 200
   words or more, the reference a rewrite imitates. Its words are kept as written and its characters
   obey section 5 like any text. The traits are drawn from the sample and approved by the Chair
-  before the file is kept.
+  before the file is kept. The gate tells a custom voice by this section's table: a voice file the
+  table does not name must hold its sample, and a name the table lists with no file is refused
+  (decision 2026-10-24-026).
 - A custom voice lives in its project, private. The template ships the built-in voices only, and the
   updater leaves a project's own voice file alone. The humanizer's voice mode captures one.
 
@@ -119,7 +121,10 @@ allow: []                 # section 9
 
 - **`rules`:** each rule a list of `paths` globs with a `voice` and an `audience`, `production` or
   `development`. A glob may name a single file. In a glob, `**/` is any run of directories or none,
-  `**` anything, and `*` and `?` stay inside one path segment.
+  `**` anything, and `*` and `?` stay inside one path segment. A glob in a production rule that
+  decides nothing, matching no tracked file or only files an earlier rule claims, is refused: the
+  file it meant can fall to a later development rule and pass unjudged. A development glob is never
+  refused, since a missed development path is judged the stricter way (decision 2026-10-24-026).
 - **`template`:** rules in the same shape, applied ahead of `rules` only in the template, where
   `.project-profile` is absent, and inert in a project. The template's `README.md`, written for an
   adopter of a development framework, is development there and production in every project
@@ -131,8 +136,10 @@ allow: []                 # section 9
   writes in the default voice. The gate judges a document by its own voice, since it cannot tell
   who wrote a file.
 - **`allow`:** the exact strings of section 9.
-- Every voice the profile names is a file in `docs/standards/voices/`. The gate prints any file's
-  voice and audience on request.
+- Every voice the profile names is a file in `docs/standards/voices/`, every `agents:` slug is an
+  agent in `.claude/agents/`, and a key the profile does not define is refused.
+  `python3 scripts/writing_standard.py --which <path>` prints a file's voice and audience and the
+  rule that gave them, or the rule to add.
 - The updater merges the profile three-way, so a development path a release adds reaches a project
   and the project's own rules are kept.
 
@@ -141,7 +148,7 @@ allow: []                 # section 9
 ## 5. Characters
 
 Every voice and audience. A governed file holds printable ASCII (U+0020 to U+007E), tab and
-newline, and letters and their accents (Unicode categories L and M), so a name keeps its spelling.
+newline (a carriage return only before a newline), and letters and their accents (Unicode categories L and M), so a name keeps its spelling.
 Code blocks are judged too, a pasted tree or arrow being the same tell (decision 2026-10-24-018). A
 rule, fixture or entry about a character names it by its code point, never by the character itself.
 
@@ -175,12 +182,14 @@ arrows and box drawing) are made by script in the humanizer; the rest are rewrit
 
 ## 6. Headings
 
-Every voice and audience. A heading, a line opening with one to six `#` outside a code block, reads
-as a sentence and is refused when it:
+Every voice and audience. A heading is a line of the body, after any frontmatter and outside a code
+block, opening with up to three spaces and one to six `#` followed by a space or the line's end. It
+reads as a sentence and is refused when it:
 
 - holds a comma or a semicolon;
 - ends in a full stop, an exclamation mark, a semicolon or a colon;
-- runs over 8 words, a code span counting as one word.
+- runs over 8 words, a word being a token that holds a letter or a digit and a code span counting
+  as one word.
 
 A question mark is allowed. A colon followed by a subtitle is judgement (section 10), since
 `Step 1: Install` and the decision format are sound.
@@ -188,20 +197,23 @@ A question mark is allowed. A colon followed by a subtitle is judgement (section
 **The label rule:** in the formats the gates read, the label before the title is not counted toward
 the 8 words: `S<N> - <date> -` opening a sprint-status entry, `Decision <ID>:` opening a decision,
 and `Epic: <ID> -` opening an epic in the tracker (decision 2026-10-24-019). Their parsers read the
-U+2014 form those labels held before as well.
+U+2014 form those labels held before as well, and the gate matches a label by its pattern in any
+file, in either form.
 
 ---
 
 ## 7. Phrases
 
-Two tables of exact phrases, which the gate reads from this section (decision 2026-10-24-018).
+Two tables of exact phrases, which the gate reads from this section (decision 2026-10-24-018). Each
+`### <Name> phrases` table is keyed by its first word in lower case, the key a voice's `tables:`
+names (decision 2026-10-24-026).
 
 - The AI table applies to every voice. The marketing table applies to every voice whose `tables:`
   names it, every built-in voice but `creative`.
 - Matching is case-insensitive at word boundaries, outside code spans and code blocks, where a
-  phrase is quoted rather than used. The space between two words of a phrase matches any
-  whitespace, a line break included. Each phrase sits in a code span here, so this standard never
-  flags itself.
+  phrase is quoted rather than used, and the frontmatter is matched too. The space between two
+  words of a phrase matches any whitespace, a line break included, and an apostrophe matches
+  U+2019 as well. Each phrase sits in a code span here, so this standard never flags itself.
 - **Where** is `anywhere`, or `list end`: the phrase closes a sentence or a list item, followed by
   a full stop, an exclamation mark or a closing parenthesis, or ending its paragraph or list item.
 - Every form is listed, and a phrase matches only as written. A phrase joins a table only once it
@@ -261,9 +273,9 @@ production reader:
 | A story ID | `<PREFIX>-<epic>.<story>`, as `TMPL-6.2` |
 | A session number | `S` and a number standing as a word, as `S19` |
 | A wikilink | two square brackets on each side of a slug |
-| The Chair | `the Chair` or `The Chair` |
+| The Chair | `the Chair` or `The Chair`, across a line break too |
 | A sprint or orchestration path | `sprint/` or `docs/orchestration/` |
-| A commit hash | 7 to 40 hexadecimal characters holding a digit and a letter |
+| A commit hash | 7 to 40 lower-case hexadecimal characters holding a digit and a letter |
 
 A reference in a code span or a code block still counts. A production document that must cite one,
 as a runbook pinning a commit does, has the exact string in the allow list.
@@ -278,6 +290,10 @@ line per real collision, as `Amazon S3` or a commit a runbook pins (decisions 20
 
 - A finding is exempt where the text it flags lies inside an occurrence of an allowed string in the
   same file. A heading is exempt when an allowed string holds its whole text.
+- An allowed string matches exactly and case-sensitively, a space in it matching any whitespace, a
+  line break included. Each finding prints the flagged text widened to its whitespace-bounded word
+  as the line to add, a character off ASCII written `\uXXXX` so the profile stays ASCII; a longer
+  string exempts less (decision 2026-10-24-026).
 - The list starts empty, in the template and in every project born from it.
 - There is no log of mechanical findings. The list is the record, and each line is a visible commit.
 - A change to the list is a gate change: in `/story` it is the trigger of a gate or CI change,
@@ -311,7 +327,11 @@ A Word, Excel, PDF or PowerPoint deliverable is judged twice (decision 2026-10-2
 - its markdown source, from which `scripts/md_to_docx.py` makes it, by the gate as any governed
   file, in the voice and audience its profile rule gives;
 - the produced file's text, by the document-production skill's check step, which runs this
-  standard's mechanical rules over it as a production document.
+  standard's mechanical rules over it as a production document:
+  `python3 scripts/writing_standard.py --text <file> --source <draft.md>` reads a `.docx`, `.pptx`
+  or `.xlsx` itself, a Word heading style or a slide title read as a heading, or a `.txt` or `.md`
+  already extracted, as a PDF's text is. `--source` gives the voice its profile rule names, and the
+  audience is production whatever the rule says (decision 2026-10-24-026).
 
 The brand's locked terms and the vendor spelling rule are project data, in section 10 of
 `docs/standards/document_production_standard_v1.0.md`; how a deliverable looks is that standard's.
@@ -322,4 +342,5 @@ The brand's locked terms and the vendor spelling rule are project data, in secti
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.1 | 2026-10-24 | 2026-10-24-026 | The gate's reading stated (TMPL-6.3): a production glob that decides nothing refused, a custom voice told by section 2's table, the allow list wrap-tolerant with the line each finding prints, `--which`, the text mode over Office files, and the exact reading of characters, headings, phrases and references | pending |
 | 1.0 | 2026-10-24 | 2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025 | Written as the authority for writing (TMPL-6.2): the voices and audiences, the profile, the four mechanical rules and the phrase tables, the allow list, refusal and judgement, and produced documents | d1c6ef9 |

@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-026 | 2026-10-24 | The writing gate's design, settled at TMPL-6.3's plan: a glob that decides nothing refused in a production rule only; the text mode reading Office files itself; a custom voice told by the standard's section 2 table; the allow list exact but wrap-tolerant, each finding printing its widened word; the readers and the rules' exact reading by the AI | APPROVED |
 | 2026-10-24-025 | 2026-10-24 | The template's `README.md` is a development document in the template alone: a `template:` list of rules in `writing-profile.yaml`, which the writing gate applies only where `.project-profile` is absent, so a project's README is production; built in TMPL-6.3 | APPROVED |
 | 2026-10-24-024 | 2026-10-24 | The subagent ceiling joins `v2.1.0`: the operator sets the session's model and effort, the orchestrator chooses each subagent's for its task and never above, the operator choosing whether it may change model and effort or effort only; opened as TMPL-3.5, designed with the Chair at its start; TMPL-4.6 waits on it | APPROVED |
 | 2026-10-24-023 | 2026-10-24 | TMPL-6 re-cut to the design: 6.2 the law, 6.3 the gate, 6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6, each project swept at adoption | APPROVED |
@@ -5364,3 +5365,71 @@ A project's README is production: Comfy's describes its application to its users
 
 The writing gate's reader of the `template:` list, with fixtures in and out of the template, is
 TMPL-6.3's.
+
+---
+
+## Decision 2026-10-24-026: The writing gate's design
+
+**Date:** 2026-10-24
+**Made By:** Chair (S20): a glob that decides nothing refused in a production rule only; the text
+mode reading Office files itself; a custom voice told by the standard's section 2 table; the allow
+list exact but wrap-tolerant, each finding printing its widened word. The readers, the rules' exact
+reading, the output and the updater's fixtures by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.3 (its plan)
+**Affects:** `docs/standards/writing_standard_v1.0.md` (sections 2, 4, 5, 6, 7, 8, 9 and 11 state
+the gate's reading, at 1.1), `scripts/template_update.py` (two self-test fixtures, the merge
+unchanged), `.claude/skills/document-production/SKILL.md` (the check step names the text mode),
+`sprint/story-tracker.md` (TMPL-6.3 cites this decision)
+
+### Context
+
+Decisions 2026-10-24-016 to 2026-10-24-025 and the writing standard at 1.0 set the writing gate's
+law and left its reading to TMPL-6.3's plan. A probe at S20 found the template's 167 tracked
+markdown files plain to read: no carriage return, no YAML comment in a frontmatter, backtick fences
+only, no heading without its space. Five of the starter profile's development globs
+(`docs/prd/**`, `docs/architecture/**`, `docs/stories/**`, `docs/code_review_log.md`,
+`evidence/**`) match nothing in the template by design, and a project at its first session holds
+none of them either.
+
+### Decision
+
+- **A glob that decides nothing is refused in a production rule only (Chair):** a glob decides
+  nothing when it matches no tracked file, or only files an earlier rule already claims. A missed
+  development path is judged as production, the stricter way, and fails loudly; a missed production
+  path can fall to a later development rule and pass unjudged. The starter's project paths are
+  development, so the template and a newborn project pass.
+- **The text mode reads Office files itself (Chair):** `--text <file>` reads a `.docx`, `.pptx` or
+  `.xlsx` with the standard library, a Word heading style or a slide title read as a heading, or a
+  `.txt` or `.md` already extracted, which is how a PDF is checked. `--source <path>` gives the
+  voice the source's profile rule names; the audience is production whatever the rule says.
+- **A custom voice is one section 2's table does not name (Chair):** the gate reads the built-in
+  names from the standard's `Voice | For` table. Any other voice file must hold a `## Sample` with
+  one fenced block of 200 words or more, and a name the table lists with no file is refused.
+- **The allow list is exact and wrap-tolerant (Chair):** case-sensitive, a space in an allowed
+  string matching any whitespace, a line break included. Each finding prints the flagged text
+  widened to its whitespace-bounded word as the YAML line to add, a character off ASCII written
+  `\uXXXX` so the profile stays ASCII, and says that a longer string exempts less.
+- **The law read from the standard (AI):** the character table's code points as single points,
+  lists and ranges, its `any other` row required; every `### <Name> phrases` table of section 7,
+  keyed by its first word lower-cased, each phrase a code span and each Where `anywhere` or `list
+  end`. A table missing or malformed stops the gate with exit 2, never reads as empty.
+- **The profile read strictly (AI):** a profile missing or unparseable is exit 2. An unknown key, a
+  voice with no file, an audience other than the two, or an `agents:` slug with no agent in
+  `.claude/agents/` is a finding, exit 1. The template is where `.project-profile` is absent.
+- **The rules' exact reading (AI):** characters over the whole file, a carriage return allowed only
+  before a newline. Headings in the body: up to three spaces, one to six `#` and a space or the
+  line's end, outside a fence; a word is a token holding a letter or a digit; the label rule matches
+  its pattern in any file, with a hyphen or U+2014. Phrases outside fences and code spans, the
+  frontmatter included, an apostrophe matching U+2019 too. References over the whole file, a commit
+  hash in lower-case hexadecimal, `the Chair` matching across a line break.
+- **The output (AI):** each finding as `path:line:col rule`, its fix and its allow line, then a
+  count by rule; exit 0 clean, 1 a finding, 2 cannot run. `--which <path>` prints the voice, the
+  audience and the rule that gave them, or the rule to add.
+- **The updater (AI):** unchanged. Two fixtures in its self-test hold `writing-profile.yaml`
+  three-way and a custom voice in neither release left alone, and a scratch copy proves both.
+
+### Enforcement
+
+`writing-standard-selftest` and `writing-standard`, the gate at the manual stage until TMPL-6.6;
+`template-update-selftest` over the two fixtures.
