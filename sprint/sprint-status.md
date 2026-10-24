@@ -49,6 +49,14 @@ fix, both before TMPL-2.4, and both built.
    `TEMPLATE_GUIDE.md`. Proved on a scratch `v2.0.0` cut from `dee7385`: each project's clone adopted
    by the release's updater with no conflict, refused only by the two `approval` lines, then green
    with the as-is approval, before and after the stamp.
+6. TMPL-2.4: `v2.0.0` released by the Chair (`/release`): `release: v2.0.0` at `a159053`, tagged
+   MAJOR; runs 40066350212 (`main`) and 40066356871 (the tag) green on `gates` and both `birth` jobs.
+7. TMPL-2.4: the three projects taken to `v2.0.0`, each by the release's updater, its documents
+   approved as they stood, stamped, pushed and green on `gates` and both `birth` jobs:
+   Supplier_Research_Dev (`96993b6`, `9f05e46`; architecture skipped by the Chair; run
+   40066882658), Comfy (`ba0da08`, `13b9f4d`; run 40066960006, carrying its unpushed S4 commits),
+   PocketGames (`5089cf5`, `3fbc6e3` on `build/milestone-1`, its working branch; run 40067080070).
+   No project syncs from `dev-resources`. Recorded in [[reference_v2_adoption]].
 
 ### Blockers
 
