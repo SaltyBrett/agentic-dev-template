@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-016 | 2026-10-23 | The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit | APPROVED |
 | 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
 | 2026-10-23-014 | 2026-10-23 | The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers | APPROVED |
 | 2026-10-23-013 | 2026-10-23 | TMPL-5.6 as built: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; the three presets as proposed, Website with `business-writer`; presets and connections one YAML block in team selection, held by `skill-scan`; the connection the Blender Lab server pinned to v1.0.3's commit, the community server rejected | APPROVED |
@@ -3476,3 +3477,48 @@ derived that commit.
 ### Enforcement
 
 `doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-23-016: The doc-queue as designed
+
+**Date:** 2026-10-23
+**Made By:** Chair (S8): which stories are the writer's queue, the drain's agent, that the drain does
+not commit, and that S9 builds it
+**Status:** APPROVED
+**Builds:** TMPL-2.2, within decision 2026-10-22-002
+**Affects:** `scripts/session_start.py` (runs the gate at cold start), `.pre-commit-config.yaml` (a
+manual-stage `doc-queue` hook; its script settled in the build), `docs/governance/gate_suite_runbook.md`
+(its section), `.claude/skills/` (the drain skill), `AGENTS.md` (the skills table),
+`sprint/story-tracker.md` (TMPL-2.2)
+
+### Context
+
+Decision 2026-10-22-002 queues a structural change to an authority as a tracker story, and drains
+the queue at cold start, bounded by a `Queued: S<N>` note: the `doc-queue` gate fails while a queued
+story is older than one session, and the technical writer drains one document per forked
+invocation, returning the rows it wrote. The authority gate counts any open story citing a decision
+and a path as queueing it, and today the only such story is TMPL-5.5, whose runbook change describes
+a gate it has not built: no writer could drain it, in one session or any. And `agent:` in a forked
+skill resolves only to a built-in or a roster agent, while `technical-writer` is a library persona.
+
+### Decision
+
+- **The writer's queue is the stories marked for it (Chair).** An open story whose row carries
+  `Queued: S<N>`, written by the session that queued a change for the writer, is in the queue; at a
+  session later than S<N+1> it fails `doc-queue`. A story that makes its own document change, as
+  TMPL-5.5 does, carries no note and is an ordinary story.
+- **The drain forks as `general-purpose` in the writer's role (Chair):** its first step reads
+  `personas/technical-writer.md`, present in the template and every project, and takes that prompt.
+  One document per invocation, every queued change to it in one pass.
+- **The drain leaves its change for review (Chair):** it rewrites the document, adds the version-log
+  row citing the story, sets the story Done with the tracker's counts, runs the gates, and returns
+  the rows it wrote; the main session reviews the diff and commits.
+- **The gate runs at cold start by the `SessionStart` hook** as a manual-stage hook, reported, and is
+  visible at closeout, never a closeout step (decision 2026-10-22-002).
+- **Built in S9 (Chair).**
+
+### Verification and enforcement
+
+To be built in TMPL-2.2: the gate's fixtures, each proved against a broken variant; its runbook
+section passing `gate-runbook`; the drain skill passing `skill-scan` and listed in `AGENTS.md`.

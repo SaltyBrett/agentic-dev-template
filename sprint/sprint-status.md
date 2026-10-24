@@ -17,7 +17,9 @@
 ## S8 — 2026-10-23 — Four personas, team presets and the Blender connection
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook.
+exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-5.1,
+TMPL-2.6 (opened and done in the session, a release blocker its proof found) and TMPL-5.6 done;
+TMPL-2.2 designed with the Chair and left to S9 by the Chair's choice.
 
 ### Done
 
@@ -46,7 +48,10 @@ exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the 
    twenty-five broken variants caught, a dead dedent removed when its variant passed; on real trees
    the template refused the connection, a birth wrote none, a project refused it without the
    persona and passed with it.
-4. TMPL-2.2's row corrected: `dev-resources` retired, the `technical-writer` already in the library.
+4. TMPL-2.2's row corrected (`dev-resources` retired, the `technical-writer` already in the library)
+   and its design settled with the Chair for S9 to build (decision 2026-10-23-016): the queue is the
+   stories marked `Queued: S<N>`, so TMPL-5.5's own runbook change is not the writer's; the drain
+   forks as `general-purpose` in the library writer's role and leaves its change for review.
 
 ### Blockers
 
