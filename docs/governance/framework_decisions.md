@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-016 | 2026-10-24 | The writing standard's voices: seven built in, the three proposed and Grammarly's four; one file per voice holding its traits and phrase list; a custom voice keeping the Chair's sample of 200 words or more and the traits drawn from it, kept in its own project, private | APPROVED |
 | 2026-10-24-015 | 2026-10-24 | The `/story` skill as built, proved live on a scratch copy of Comfy: roles write and the main session gates, commits and asks; a finding reaches the code review log once, with the Chair's words; the code reviewer persona at version 3; three gaps the proof found opened as TMPL-3.4, TMPL-2.10 and TMPL-4.7, the release waiting on them | APPROVED |
 | 2026-10-24-014 | 2026-10-24 | The writing standard opens as epic TMPL-6 in `v2.1.0`: assignable voices, a gate over the mechanical tells of machine-written prose (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing, development artifacts in production documents) and a humanizer skill; designed with the Chair at S18; the release waits on it | APPROVED |
 | 2026-10-24-013 | 2026-10-24 | The team standard and the `story-artifacts` gate as built: the artifacts' frontmatter and bodies, the role map and the triggers read by the gate from the standard itself, the release always a trigger, a review or security finding answered in the code review log before the story moves on | APPROVED |
@@ -4845,3 +4846,49 @@ line flagged seven.
 ### Enforcement
 
 `skill-scan` over the skill; `story-artifacts` over what it writes; [[reference_story_live_run]].
+
+---
+
+## Decision 2026-10-24-016: The writing standard's voices, built in and custom
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): the built-in set, the three proposed and Grammarly's; a custom voice
+keeping its sample and the traits drawn from it; the Chair's custom voice kept in each project,
+private. Simple and plain merged, the file's shape and its folder by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 1)
+**Affects:** none at this decision. To be built in TMPL-6: `docs/standards/voices/` (new), one file
+per built-in voice
+
+### Context
+
+Decision 2026-10-24-014 left the built-in voices and the capture of a custom voice to this session.
+Grammarly's Humanizer, the model, makes a custom voice from a name and a sample of the writer's own
+writing of 200 words or more, kept as its style reference and shared with Grammarly's Paraphraser,
+whose preset styles are Academic, Professional, Streamlined, Creative and Simple (Grammarly's help
+pages, read 2026-10-24). A voice is how a document sounds. Who reads it, a production or a
+development reader, is its audience, assigned apart from the voice (design question 2).
+
+### Decision
+
+- **Seven built-in voices (Chair):** the three proposed, `technical` (READMEs, runbooks, standards,
+  references and the development records), `business` (briefings, proposals and statements of work,
+  in the document production standard's house style) and `simple` (help text and app copy for a
+  general reader); and Grammarly's, `professional`, `academic`, `streamlined` and `creative`, since
+  the Chair's later projects will need creative writing and others. Grammarly's Simple and the
+  proposed plain voice are one voice, named `simple` (AI).
+- **A voice is one markdown file (AI):** `docs/standards/voices/<slug>.md`, holding its traits
+  (sentence length, person, register, contractions, what it never does) and its phrase list (design
+  question 3). The standard is the law and the voices are its data, as `code-profile.yaml` is the
+  coding standard's.
+- **A custom voice keeps its sample and its traits (Chair):** the Chair's sample word for word, the
+  reference a rewrite imitates, and the traits drawn from it, approved by the Chair before the file
+  is kept. A gate counts the sample at 200 words or more; whose writing it is, no gate can tell.
+- **A custom voice lives in its project, private (Chair):** the template ships the built-in voices
+  only. The updater already leaves alone a file in neither release, a project's custom voice
+  included, which the build proves; using the voice in another project is a copy of one file. Its
+  capture is the humanizer skill's (design question 6).
+
+### Enforcement
+
+None yet: the voice files and the sample count are TMPL-6's gate.

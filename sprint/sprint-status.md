@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S17
+**Updated By:** S18
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,24 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S18 — 2026-10-24 — The writing standard designed with the Chair
+
+**Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
+S18") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
+by the hook. TMPL-6.1 in progress.
+
+### Done
+
+1. Design question 1, the voices (decision 2026-10-24-016): seven built in, the three proposed and
+   Grammarly's four; a custom voice keeping the Chair's sample of 200 words or more and the traits
+   drawn from it, in its own project, private.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -340,51 +358,6 @@ its last approved version (decision 2026-10-23-020, amended).
    [[reference_project_launch]]. Decision 2026-10-23-020 amended so a revision in progress can be
    committed. A fresh agent applied `status` to two scratch trees and its friction report sharpened
    five rules; a birth from `6e94683` green under both profiles. The live run is TMPL-5.4's.
-
-### Blockers
-
-- None.
-
----
-
-## S8 — 2026-10-23 — Four personas, team presets and the Blender connection
-
-**Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
-exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. TMPL-5.1,
-TMPL-2.6 (opened and done in the session, a release blocker its proof found) and TMPL-5.6 done;
-TMPL-2.2 designed with the Chair and left to S9 by the Chair's choice.
-
-### Done
-
-1. TMPL-5.1 — `docs/templates/prd.md` and `docs/templates/architecture.md`, with
-   `docs/templates/README.md` for making and approving a document (decision 2026-10-23-014). The
-   Chair chose the location, each template an authority for its own scope, and both section lists;
-   a made document is a draft, claiming no authority, until its approval decision gives it its first
-   row. Proof on a scratch birth from this tree: drafts unregistered, exit 0; a copy that kept the
-   template's line refused as `scope`; approved and stamped with its approval commit, exit 0; a
-   swapped hash refused.
-2. TMPL-2.6 — two defects of the authority gate, found by that proof (decision 2026-10-23-015, the
-   Chair's choice of fix). A birth from the committed `HEAD` was refused at its first suite run:
-   seven violations, each a template row or decision whose story a project's tracker cannot hold,
-   since S7's marking came after its last scratch adoption. In a project the template's rows and
-   decisions are now judged in the template. And `git log --follow` follows copies, so a PRD made
-   from its template was stamped with the template's commit; the history now follows renames only.
-   Nine fixtures, nine broken variants caught; a scratch birth starts green.
-3. TMPL-5.6 — four library personas, `backend-engineer`, `web-developer`, `blender-artist` and
-   `image-video-editor`, slugs and the three presets' membership the Chair's (decision
-   2026-10-23-013). The presets and the connections are one YAML block in the team-selection skill;
-   `skill-scan` gained `preset` and `connection`, so a preset naming a missing persona, an unpinned
-   connection, or `.mcp.json` holding one in the template or without its persona fails. The
-   connection is Blender Lab's own MCP server at v1.0.3's commit, its add-on pinned by SHA-256; the
-   community server was rejected for default-on telemetry, PyPI builds its repository cannot
-   reproduce and four advisories ([[reference_blender_mcp]]). Proof: eighty-three fixtures,
-   twenty-five broken variants caught, a dead dedent removed when its variant passed; on real trees
-   the template refused the connection, a birth wrote none, a project refused it without the
-   persona and passed with it.
-4. TMPL-2.2's row corrected (`dev-resources` retired, the `technical-writer` already in the library)
-   and its design settled with the Chair for S9 to build (decision 2026-10-23-016): the queue is the
-   stories marked `Queued: S<N>`, so TMPL-5.5's own runbook change is not the writer's; the drain
-   forks as `general-purpose` in the library writer's role and leaves its change for review.
 
 ### Blockers
 

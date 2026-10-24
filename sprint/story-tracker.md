@@ -17,8 +17,8 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 41 |
-| **Not Started** | 9 |
-| **In Progress** | 0 |
+| **Not Started** | 8 |
+| **In Progress** | 1 |
 | **Blocked** | 0 |
 | **Completed** | 32 |
 
@@ -127,7 +127,7 @@ that decision 2026-09-23-003 names.
 
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
-| TMPL-6.1 | Design session with the Chair: the built-in voices and a custom voice made from a sample of the Chair's writing; how a voice is assigned to a document by its path and audience, and to an agent; the guardrails' first lists (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing per voice, development artifacts in production documents); whether the template's own documents are judged; the enforcement model, a refusal or a pause until the Chair answers (2026-10-24-011); the humanizer's flow; logged as decisions, the build stories re-cut if the design needs it | Not Started | — | doc_control_standard.md, document_production_standard_v1.0.md | 2026-10-24-014 |
+| TMPL-6.1 | Design session with the Chair: the built-in voices and a custom voice made from a sample of the Chair's writing; how a voice is assigned to a document by its path and audience, and to an agent; the guardrails' first lists (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing per voice, development artifacts in production documents); whether the template's own documents are judged; the enforcement model, a refusal or a pause until the Chair answers (2026-10-24-011); the humanizer's flow; logged as decisions, the build stories re-cut if the design needs it | In Progress | — | doc_control_standard.md, document_production_standard_v1.0.md | 2026-10-24-014 |
 | TMPL-6.2 | The law and the gate, from TMPL-6.1's decisions: `docs/standards/writing_standard_v1.0.md` as an authority; the em-dash rule of `docs/standards/document_production_standard_v1.0.md` moved into it (2026-10-24-014); the voice assignments; the prose gate and its hooks with fixtures proved against broken variants; the runbook sections; a path-scoped `.claude/rules/` page for writing | Not Started | TMPL-6.1 | doc_control_standard.md, document_production_standard_v1.0.md | 2026-10-24-014 |
 | TMPL-6.3 | The humanizer skill: the gate's findings in a document rewritten in its assigned voice and the change shown to the Chair before it is kept; listed in `AGENTS.md` and the README's catalog; proved on a scratch copy of a project's documents | Not Started | TMPL-6.2 | doc_control_standard.md | 2026-10-24-014 |
 
