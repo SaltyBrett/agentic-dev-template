@@ -1,0 +1,46 @@
+# writing-profile.yaml: the voice and audience each governed markdown file is judged in.
+# The law is docs/standards/writing_standard_v1.0.md, section 4. Rules are ordered and the first
+# match wins; a file no rule names is production, in the default voice.
+
+rules:
+  # The framework's development paths: written for the people and agents building the project.
+  # A path a project adds for its users or operators, as docs/runbooks/, stays production.
+  - paths:
+      - "AGENTS.md"
+      - "CONSTITUTION.md"
+      - "TEMPLATE_GUIDE.md"
+      - ".claude/**"
+      - "personas/**"
+      - "sprint/**"
+      - "docs/README.md"
+      - "docs/architecture/**"
+      - "docs/code_review_log.md"
+      - "docs/governance/**"
+      - "docs/orchestration/**"
+      - "docs/prd/**"
+      - "docs/standards/**"
+      - "docs/stories/**"
+      - "docs/templates/**"
+      - "evidence/**"
+      - "resources/README.md"
+    voice: technical
+    audience: development
+
+# Applied ahead of rules only in the template, where .project-profile is absent; inert in a project.
+template:
+  # The template's front page, written for an adopter of a development framework. A project's
+  # README is production (decision 2026-10-24-025).
+  - paths:
+      - "README.md"
+    voice: technical
+    audience: development
+
+default: technical
+
+# A roster slug and its voice, the voice the agent writes everything in. An agent not named writes
+# in the default voice; in a document the profile assigns, the document's voice wins.
+agents: {}
+
+# Exact strings exempt from the four mechanical rules, one per real collision. A change here is a
+# gate change the Chair approves.
+allow: []
