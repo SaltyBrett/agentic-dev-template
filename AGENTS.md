@@ -175,6 +175,7 @@ second home that drifts (decision 2026-10-23-001).
 | `.claude/skills/closeout/SKILL.md` | Session end. Forked: it sees the tree and its arguments, not this conversation |
 | `.claude/skills/doc-drain/SKILL.md` | A story queued for the technical writer (`Queued: S<N>`), one document per run, when the cold start lists it. Forked in the writer's role; leaves its change for review |
 | `.claude/skills/project-launch/SKILL.md` | A project's first session, and whenever a stage needs revisiting: intake, team, PRD, architecture and planning, each the Chair's to pause, skip or return to; the operator's alone |
+| `.claude/skills/story/SKILL.md` | One story end to end through the team's roles, each handing off through a gated, committed artifact in `docs/stories/<ID>/`; stops for the Chair at each trigger and finding. In the main session; the Chair's alone |
 | `.claude/skills/team-selection/SKILL.md` | A project's first session, and whenever the work needs a persona the roster lacks |
 | `.claude/skills/planning-session/SKILL.md` | Building or re-planning the sprint from an approved PRD and architecture |
 | `.claude/skills/document-production/SKILL.md` | Before any Word, Excel, PDF or PowerPoint deliverable |

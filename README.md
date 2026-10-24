@@ -137,6 +137,7 @@ Each command is a skill: in Claude Code you type it; another agent opens the fil
 | Command | Skill | What it does | When |
 |---------|-------|--------------|------|
 | `/project-launch` | `.claude/skills/project-launch/SKILL.md` | Intake, team, PRD, architecture and planning, each stage yours to pause, skip or return to; `status`, `pause`, `skip <stage>`, `<stage>` | A project's first session, and whenever a stage needs revisiting. Yours alone: Claude never starts it |
+| `/story <ID>` | `.claude/skills/story/SKILL.md` | Runs one story from brief to release through the team's roles, each stage's artifact gated and committed in `docs/stories/<ID>/`; asks you at each review trigger and each review or security finding; `<ID> status` | A planned story, once its dependencies are done. Yours alone: Claude never starts it |
 | `/closeout <persona> <brief>` | `.claude/skills/closeout/SKILL.md` | Writes the next session's handoff and kickoff, runs the closeout gate, commits, pushes, watches CI, returns the kickoff | Session end, or when context runs high |
 | `/team-selection` | `.claude/skills/team-selection/SKILL.md` | Builds or extends the persona roster from the library, with presets and opt-in connections | Run by `/project-launch`; again when the work needs a specialization the roster lacks |
 | `/planning-session` | `.claude/skills/planning-session/SKILL.md` | Turns the approved PRD and architecture into layers, epics and stories | Run by `/project-launch`; again to re-plan |
