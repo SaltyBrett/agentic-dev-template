@@ -100,9 +100,12 @@ conversation, to take a break between stages ([reference_project_launch](docs/or
 
 Once the launch has planned the first epic, say "close out the session", or type
 `/closeout <persona> <brief>`: the slug of the persona that leads the next session, then what it
-should do. A closeout before then is refused, since the next kickoff's tasks must cite stories. The session first commits what it learned and
-decided; the closeout then writes the next session's handoff and kickoff, runs the closeout gate,
-commits, pushes, watches the `gates` run, and returns the kickoff's text.
+should do. A closeout before then is refused, since the next kickoff's tasks must cite stories.
+Said, the session first commits what it learned and decided; typed, the closeout starts at once,
+so let the session commit first. The closeout then writes the next session's handoff and kickoff,
+runs the closeout gate, commits, pushes, watches the `gates` run, and returns the kickoff's text.
+The gate refuses an entry for the session still headed `emergency checkpoint`, or S1's still
+holding its `### Next`.
 
 ### 8. The session loop
 

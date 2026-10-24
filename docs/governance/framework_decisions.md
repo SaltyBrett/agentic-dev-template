@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-002 | 2026-10-24 | `session-closeout` refuses to close a session whose entry is still headed `emergency checkpoint` or holds the initializer's `### Next`, a record saying the session is still open; the closeout and launch skills, `AGENTS.md`'s emergency close, the README's step 7 and the initializer's S1 text say so; found by the live launch's first closeout, typed as `/closeout` and run as the fork | APPROVED |
 | 2026-10-24-001 | 2026-10-24 | `doc-authority-scan` refuses an authority's path written outside a code span in `**Affects:**`, which it never reads there, and `docs/templates/README.md` step 5 says the path goes in a code span; found by the live launch, whose PRD approval named the PRD bare and passed unchecked | APPROVED |
 | 2026-10-23-024 | 2026-10-23; amended 2026-10-23 | Before planning, a launch stage's session boundary is a new conversation, still S1, not a closeout, since no kickoff can cite a story until planning writes the first; the first closeout comes after planning; amends 2026-10-23-008 and 2026-10-23-021 | APPROVED |
 | 2026-10-23-023 | 2026-10-23 | A copy of the template before its initializer, GitHub's "Initial commit", judges the template's rows and decisions in the template as a project does, its history holding none of their stamped commits; the birth probe also runs the suite on the Initial commit, as GitHub does; amends 2026-10-23-015, 2026-10-23-017 and 2026-10-23-018 | APPROVED |
@@ -4063,3 +4064,59 @@ from the cutoff names an authority bare.
 ### Enforcement
 
 `doc-authority-selftest` and `doc-authority-scan`; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-24-002: A closeout refuses an entry that says the session is still open
+
+**Date:** 2026-10-24
+**Made By:** Chair (S11), on the AI's report from the live launch: a refusal in the closeout gate;
+the rule's reading by the AI
+**Status:** APPROVED
+**Builds:** TMPL-5.7
+**Affects:** `scripts/session_closeout.py` (`unfinished_entry`, `cmd_closeout`, the docstring, the
+fixtures), `scripts/new_project.py` (the S1 entry's `### Next` text), `.claude/skills/closeout/SKILL.md`
+(step 1.2), `.claude/skills/project-launch/SKILL.md` (Planning), `AGENTS.md` (the emergency close),
+`README.md` (walkthrough step 7), `docs/standards/session_handoff_standard_v2.0.md` (§7),
+`docs/governance/gate_suite_runbook.md` (`session-closeout-selftest`, `session-closeout`),
+`docs/orchestration/knowledge/reference_session_closeout.md`, `sprint/story-tracker.md` (TMPL-5.7)
+
+### Context
+
+TMPL-5.4's third run closed the probe's S1 on an entry still headed `emergency checkpoint`, written
+in the second run, its Status saying the closeout of S1 was not completed and the initializer's
+`### Next` standing in for a kickoff the closeout had just written. The session had offered to
+rewrite the entry first; the Chair typed `/closeout`, which runs the forked skill at once, so the
+main session never had the turn. The skill's precondition, that the session commit its entry
+first, was left to the session; the fork's check accepted any entry holding Status, Done and
+Blockers, and the gate read only the heading's number. The README's step 7 said the session first
+commits what it learned, true only when the closeout is asked for in words.
+
+### Decision
+
+- **The closeout gate refuses the open record (Chair).** `--closeout` fails as `emergency-entry`
+  when the entry it closes has a title starting `emergency checkpoint`, in any case, and as
+  `next-section` when the entry holds a `### Next` heading outside fenced code. Only the newest
+  entry is read, and only at the closeout: at a cold start, and in `--check`, the emergency entry is
+  the true record.
+- The heading is the marker, since `AGENTS.md` prescribes it; the Status sentence is prose and is
+  not read.
+- The closeout skill's step 1.2 returns such an entry to the session before writing the pair; the
+  launch's planning stage brings S1's entry up to date before closing out; `AGENTS.md`'s emergency
+  close says the completing session rewrites the entry; the README's step 7 says a typed
+  `/closeout` starts at once; the initializer's `### Next` says it goes before S1's closeout.
+- Ships in `v2.0.0` before TMPL-2.4. A new refusal, so MAJOR on its own
+  ([[reference_template_versioning]]): every project's first closeout now removes the `### Next`.
+
+### Verification
+
+Nine fixtures in `session-closeout-selftest`; seven broken variants each caught by the fixture
+written for it. On a scratch clone of the real tree with the S12 pair scaffolded: the S11 heading
+set to `emergency checkpoint` refused by `--closeout` as `emergency-entry`, and passed by `--check`
+and `--verify`; a `### Next` added refused as `next-section` by `--closeout` alone; restored,
+neither; with the rule left out of `--closeout`, the emergency heading passed it.
+
+### Enforcement
+
+`session-closeout-selftest` and `session-closeout`; the closeout skill's step 1.2, held by
+`skill-scan`; [[reference_session_closeout]].

@@ -87,7 +87,8 @@ References do NOT auto-load — you must explicitly Read each file.
   to the tracker, decision log, or knowledge base. (You cannot self-measure context; rely on the
   user's signal and work-unit boundaries.) **Emergency close**, when the user says context is
   critical: commit a minimal `## S<N> — <date> — emergency checkpoint` entry and say plainly that the
-  closeout was not completed; the next session completes it before building. Before a project's
+  closeout was not completed; the next session completes it before building, rewriting the entry
+  for what was done, since `session-closeout` refuses one still so headed. Before a project's
   first closeout there is nothing to complete: the next conversation is still S1.
 - **Sprint planning:** run the planning-session skill.
 

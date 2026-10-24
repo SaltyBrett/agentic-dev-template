@@ -24,7 +24,9 @@ next one: its tasks by story ID, their success criteria, the mandatory reads, op
 1. `git status --short` lists nothing. The session commits its work before invoking you; an
    uncommitted change means it did not, so stop and return the list.
 2. The newest entry in `sprint/sprint-status.md` is headed `## S<N> — YYYY-MM-DD — <title>` and holds
-   Status, Done and Blockers for this session. N is this session's number.
+   Status, Done and Blockers for this session. N is this session's number. An entry still headed
+   `emergency checkpoint`, or S1's still holding the initializer's `### Next`, says the session is
+   still open: return it to the session to rewrite, since `session-closeout` refuses it.
 3. The persona slug names a file in `.claude/agents/`, the project's roster, and the brief names
    at least one task by a story ID that `sprint/story-tracker.md` holds. A missing slug or brief, or
    a persona not in the roster, goes back to the session: the team-selection skill activates one.

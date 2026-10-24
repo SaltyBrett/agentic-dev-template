@@ -21,7 +21,7 @@
 `framework-maintainer`. TMPL-5.4 done, its third run with the Chair at the keyboard in
 `SaltyBrett/launch-probe-s10` observing every remaining stage through the probe's first closeout.
 Two gaps it found, each passing silently, opened as TMPL-2.9 and TMPL-5.7 by the Chair's choice of
-fix, both before TMPL-2.4.
+fix, both before TMPL-2.4, and both built.
 
 ### Done
 
@@ -37,9 +37,12 @@ fix, both before TMPL-2.4.
    `docs/templates/README.md` step 5 did not say to use one, so the probe's PRD approval passed
    unchecked. Now the `bare-path` rule refuses an authority's path written bare, and step 5 says
    so; seven fixtures, five broken variants each caught, the real tree passing.
-3. TMPL-5.7 opened: the probe's first closeout, typed as `/closeout` and run as the fork, closed S1
-   on an entry still headed `emergency checkpoint`, saying its closeout was not completed, its
-   `### Next` stale. The Chair chose a refusal in the closeout gate. TMPL-2.4 waits on both.
+3. TMPL-5.7 opened and built (decision 2026-10-24-002, the Chair's choice of fix): the probe's
+   first closeout, typed as `/closeout` and run as the fork, closed S1 on an entry still headed
+   `emergency checkpoint`, saying its closeout was not completed, its `### Next` stale. Now
+   `--closeout` refuses an entry so headed or holding `### Next`; the closeout and launch skills,
+   `AGENTS.md`, the README's step 7 and the initializer's S1 text say so. Nine fixtures, seven
+   broken variants each caught; on a scratch clone of the real tree refused by `--closeout` alone.
 4. S1's entry moved to `sprint/archive/sprint-status_2026.md`, the eleventh over the cap.
 
 ### Blockers

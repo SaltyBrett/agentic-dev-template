@@ -1,8 +1,8 @@
 ---
 name: Session closeout is a gate and its artifacts live one session
-description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, a project''s roster held to the template''s library by version, the tracker''s dependency and live-placeholder rules as controls, and the one defect the live probe found.'
-teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005, 2026-10-23-003, 2026-10-23-006]
-verified: 2026-10-23
+description: 'Why the end-of-session protocol became a script: a prose checklist let a kickoff prompt live only in chat and let handoffs accrete rules nothing watched. Numbered sessions, a handoff/kickoff pair consumed by one session then archived, personas as Claude Code agent files gated by shape not by list and append-only by version against the committed copy, a project''s roster held to the template''s library by version, the tracker''s dependency and live-placeholder rules as controls, why the closing entry must not still be an emergency checkpoint or hold S1''s `### Next`, and the one defect the live probe found.'
+teaches: [2026-09-21-001, 2026-09-23-002, 2026-09-24-001, 2026-10-22-005, 2026-10-23-003, 2026-10-23-006, 2026-10-23-024, 2026-10-24-002]
+verified: 2026-10-24
 metadata:
   type: reference
 ---
@@ -147,6 +147,19 @@ passed because no fixture asked the closeout question. The fix separates `closin
 cold-start verify, and a fixture now pins it. The lesson repeats one already recorded: a fixture set
 that only asks the questions you thought of is not proof; run the tool on the real tree as well.
 
+## The entry being closed must say the session is
+
+The gate read the closing entry's heading for N and nothing else, so the record of a session could
+say what it liked. The live launch (TMPL-5.4) closed a project's S1 on an entry still headed
+`emergency checkpoint`, its Status saying the closeout was not completed and the initializer's
+`### Next` still standing in for a kickoff that now existed. The session had offered to fix the
+entry first, but the Chair typed `/closeout`, which runs the fork at once: the main session never had
+the turn the skill's precondition leaves to it, and the fork's check accepted any entry holding
+Status, Done and Blockers. So `--closeout` now refuses an entry headed `emergency checkpoint`, or one
+holding `### Next`, and only there: at a cold start the emergency entry is the true record (decision
+2026-10-24-002). The Status sentence is prose and is not read; the heading is what `AGENTS.md`
+prescribes, so it is the marker.
+
 ## pre-commit reports the rotation as a failure
 
 When the closeout archives a pair, pre-commit prints `files were modified by this hook` and exits
@@ -165,7 +178,10 @@ exit codes together are what the handoff records.
 - The sprint-status entry comes first; the scaffold and the closeout both read the session number
   from it.
 - If the closeout cannot be completed, commit an emergency entry and say so. `--verify` failing next
-  session is the correct outcome, not something to route around.
+  session is the correct outcome, not something to route around; before a project's first closeout
+  there is no pair, so it passes and the next conversation is still S1 (decision 2026-10-23-024).
+- The session that completes a closeout rewrites the entry first, its heading and Status for what
+  was done and S1's `### Next` removed; `--closeout` refuses either left standing.
 - Run the closeout with `--all-files`, or pre-commit judges a stash of the last commit rather than
   the files just edited ([[reference_precommit_stash]]).
 - A kickoff task may cite only this repository's stories. The lint reads every ID-shaped token in

@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 30 |
-| **Not Started** | 6 |
+| **Not Started** | 5 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 24 |
+| **Completed** | 25 |
 
 ---
 
@@ -111,7 +111,7 @@ that decision 2026-09-23-003 names.
 | TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen. Done at S11: three runs on `SaltyBrett/launch-probe-s10`, the last through approval, a skip with its reason, planning, a revision read stale and the first closeout, its `gates` run green; [[reference_launch_live_run]] | Done | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
 | TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | Done | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
 | TMPL-5.6 | Four library personas in the agent-file shape and linted (a backend engineer, a web developer, a Blender 3D artist, an image and video editor); team presets in team-selection (Application development, Website, Imaging, video and 3D), membership confirmed with the Chair, a gate refusing a preset that names no library persona, proved against broken variants; an opt-in Blender MCP connection offered with the Blender persona, the server vetted and pinned, off by default. Done at S8: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; presets and connections one block held by `skill-scan`; the Blender Lab server pinned to v1.0.3's commit; `docs/governance/gate_suite_runbook.md` says so (2026-10-23-013) | Done | TMPL-1.9 | session_handoff_standard_v2.0.md, secrets_management_standard_v1.0.md | 2026-10-23-012 |
-| TMPL-5.7 | `session-closeout` refuses to close a session whose sprint-status entry is still an emergency checkpoint, headed `emergency checkpoint` or holding the initializer's `### Next` section, and sends it back to the session to bring up to date; `AGENTS.md`'s emergency close says the completing session rewrites the entry; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_session_closeout]] say so. Found at S11 by TMPL-5.4: the probe's first closeout, typed as `/closeout` and so run as the fork, closed S1 on an entry saying its closeout was not completed; the Chair's choice of fix | Not Started | TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
+| TMPL-5.7 | `session-closeout` refuses to close a session whose sprint-status entry is still an emergency checkpoint, headed `emergency checkpoint` or holding the initializer's `### Next` section, and sends it back to the session to bring up to date; `AGENTS.md`'s emergency close says the completing session rewrites the entry; fixtures proved against broken variants; `docs/governance/gate_suite_runbook.md` and [[reference_session_closeout]] say so. Found at S11 by TMPL-5.4: the probe's first closeout, typed as `/closeout` and so run as the fork, closed S1 on an entry saying its closeout was not completed; the Chair's choice of fix. Done at S11: `unfinished_entry` in `--closeout`, nine fixtures, seven broken variants caught, proved on a scratch clone of the real tree (2026-10-24-002) | Done | TMPL-5.4 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
 
 ---
 

@@ -269,7 +269,8 @@ def sprint_status_skeleton(values: dict[str, str]) -> str:
 ### Next
 
 S1 has no incoming kickoff, so this stands in for it. From S2 on, next-session tasks live in the
-kickoff, not here.
+kickoff, not here. Remove this section before S1's closeout, which `session-closeout` refuses
+while it stands.
 
 1. Run `/project-launch` (`.claude/skills/project-launch/SKILL.md`): intake, team, PRD,
    architecture and planning, each stage yours to pause, skip or return to. Its team stage builds

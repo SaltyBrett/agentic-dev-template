@@ -243,8 +243,10 @@ accepted, an agent file whose frontmatter does not parse or whose list item is a
 the module needing PyYAML to read a prompt, an unscoped, dead or restating rule passing, a glob
 reading `*` across directories, a kickoff task citing no story passing, tracker
 statistics that do not reconcile passing, a Done story on an undone dependency passing, an example
-row in a live sprint passing, a fresh project's closeout producing no pair.
-**Why:** decisions 2026-09-21-001 and 2026-10-22-005; [[reference_session_closeout]].
+row in a live sprint passing, a fresh project's closeout producing no pair, an entry being closed
+still headed `emergency checkpoint` or holding the initializer's `### Next` passing, or a mention
+in a title, a fenced `### Next`, an older entry or an unreadable heading refused.
+**Why:** decisions 2026-09-21-001, 2026-10-22-005 and 2026-10-24-002; [[reference_session_closeout]].
 **Alone:** `pre-commit run session-closeout-selftest --all-files --verbose`
 
 ## `session-closeout-check`
@@ -283,9 +285,11 @@ sentence of `AGENTS.md`.
 **Stage:** `manual`
 **Pairs with:** `session-closeout-selftest`. Run once, at session end, by the agent.
 **Blocks:** ending a session that produced no pair for the next one, or whose produced pair fails
-any rule of `session-closeout-check`. It first archives every pair older than the session being
-closed, so the folder holds at most the consumed pair and the produced one.
-**Why:** decisions 2026-09-21-001 and 2026-09-22-003; [[reference_session_closeout]],
+any rule of `session-closeout-check`; or whose sprint-status entry is still headed `emergency
+checkpoint`, or still holds the initializer's `### Next`, a record saying the session is still
+open. It first archives every pair older than the session being closed, so the folder holds at
+most the consumed pair and the produced one.
+**Why:** decisions 2026-09-21-001, 2026-09-22-003 and 2026-10-24-002; [[reference_session_closeout]],
 [[reference_precommit_stash]].
 **Alone:** `pre-commit run session-closeout --hook-stage manual --all-files`. The flag is
 load-bearing: without it pre-commit stashes unstaged edits to tracked files first and the gate
@@ -549,6 +553,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | pending |
 | 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | 5a7ab47 |
 | 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |
 | 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | 30677d3 |

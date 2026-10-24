@@ -49,8 +49,10 @@ WHAT IT CHECKS
     YAML does not parse, in every session, a second brain beside AGENTS.md; at least one file git
     would commit matches it, or it never loads; and it repeats no sentence of AGENTS.md
 --closeout  session end: archives every pair older than the session being closed, then verifies
-            that the pair for the next session exists and passes every check above, and on a pass
-            clears the session journal and working notes (session_journal.py).
+            that the pair for the next session exists and passes every check above, and that the
+            entry being closed is no longer an emergency checkpoint nor holds the initializer's
+            `### Next` (decision 2026-10-24-002); on a pass clears the session journal and working
+            notes (session_journal.py).
 --verify    cold start: the verification of --closeout without the rotation, plus a clean tree.
             A fresh project — no pairs and sprint-status at S1 — passes.
 --scaffold  writes the next session's HANDOFF/KICKOFF skeletons; they fail --check until filled
@@ -565,6 +567,33 @@ def newest_session(text: str) -> int | None:
     return int(m.group(1)) if m else None
 
 
+def unfinished_entry(text: str) -> list[tuple[str, str]]:
+    """What the closeout refuses in the entry it closes (decision 2026-10-24-002): a heading still
+    the emergency checkpoint's, whose Status says the closeout was not completed, or the
+    initializer's `### Next`, which stands in for S1's kickoff only until S1 closes out. Passed,
+    either closes the session on a record saying it is still open. Read at the closeout alone: at a
+    cold start the emergency entry is the true record."""
+    _, secs = sections(text)
+    m = STATUS_ENTRY.match(f"## {secs[0][0]}") if secs else None
+    if not m:
+        return []   # the `status` rule reports an unreadable heading
+    heading, body = secs[0]
+    v: list[tuple[str, str]] = []
+    if norm(heading.split(" — ", 2)[-1]).lower().startswith("emergency checkpoint"):
+        v.append(("emergency-entry", f"S{m.group(1)}'s entry is still the emergency checkpoint. Rewrite its "
+                                     "heading and Status for what the session did, then close out"))
+    fenced = False
+    for line in body.splitlines():
+        if FENCE.match(line):
+            fenced = not fenced
+        elif not fenced and norm(line) == "### Next":
+            v.append(("next-section", f"S{m.group(1)}'s entry holds the initializer's `### Next`, which stands "
+                                      "in for S1's kickoff only until S1 closes out. Remove it; the next "
+                                      "session's tasks go in its kickoff"))
+            break
+    return v
+
+
 def current_session(text: str, has_kickoff: Callable[[int], bool]) -> int | None:
     """The session at work, from sprint-status and the pairs: the newest entry, plus one when the
     next session's kickoff exists, as at a cold start before the session writes its own entry. The
@@ -998,6 +1027,9 @@ def cmd_closeout() -> int:
         nums = {n: k for n, k in nums.items() if n >= current}
     for rule, detail in verify_state(current, set(nums), closing=True):
         v.append((rule, "sprint/handoffs/", detail))
+    if STATUS.is_file():
+        for rule, detail in unfinished_entry(STATUS.read_text(encoding="utf-8")):
+            v.append((rule, "sprint/sprint-status.md", detail))
     rc = report(f"Session Closeout (closing S{current})" if current else "Session Closeout", v, notes)
     if rc == 0:
         # Imported here, not at the top: the published package (pyproject.toml) ships this module
@@ -1340,6 +1372,27 @@ def run_self_test() -> int:
     check("newest sprint-status session is read from the first H2", newest_session(_STATUS) == 3)
     check("a legacy heading yields no session",
           newest_session(_STATUS.replace("## S3 — 2026-09-21 — closeout", "## Session 3 Update")) is None)
+
+    # The entry a closeout closes (decision 2026-10-24-002)
+    emergency = _STATUS.replace("— closeout", "— emergency checkpoint")
+    nxt = "\n### Next\n\nS1 has no incoming kickoff, so this stands in for it.\n\n1. Run `/project-launch`.\n"
+    expect("closeout: a written entry passes", unfinished_entry(_STATUS))
+    expect("closeout: an entry still headed emergency checkpoint fails", unfinished_entry(emergency), "emergency-entry")
+    expect("closeout: the heading in another case, with a suffix, still fails",
+           unfinished_entry(_STATUS.replace("— closeout", "— Emergency  Checkpoint: launch paused")), "emergency-entry")
+    expect("closeout: a title that only mentions one passes",
+           unfinished_entry(_STATUS.replace("— closeout", "— The launch, after an emergency checkpoint")))
+    expect("closeout: the initializer's `### Next` in the entry fails",
+           unfinished_entry(_STATUS.replace("closeout\n\ntext\n", "closeout\n\ntext\n" + nxt, 1)), "next-section")
+    expect("closeout: both together fail as both",
+           unfinished_entry(emergency.replace("checkpoint\n\ntext\n", "checkpoint\n\ntext\n" + nxt, 1)),
+           "emergency-entry", "next-section")
+    expect("closeout: `### Next` inside fenced code, or a `### Next steps`, passes",
+           unfinished_entry(_STATUS.replace("closeout\n\ntext\n", "closeout\n\ntext\n\n```\n### Next\n```\n\n### Next steps\n", 1)))
+    expect("closeout: an older entry is not the one being closed",
+           unfinished_entry(_STATUS.replace("— older\n\ntext\n", "— emergency checkpoint\n\ntext\n" + nxt)))
+    expect("closeout: an unreadable heading is the status rule's, not this one's",
+           unfinished_entry("# Sprint Status\n\n## Notes\n" + nxt))
 
     computed, declared, ids = tracker_counts(_TRACKER)
     expect("tracker: matching statistics pass; the [EXAMPLE] epic is skipped",

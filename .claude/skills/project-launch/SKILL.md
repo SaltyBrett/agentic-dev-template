@@ -119,8 +119,9 @@ Take the delivery manager's prompt (`.claude/agents/delivery-manager.md`) and ru
 planning-session skill, `.claude/skills/planning-session/SKILL.md`; its tracker's `**Source:**` line
 names the versions the plan is built from. The first real epic it writes is the commit
 `doc-authority-scan` refuses unless the PRD and the architecture stand approved or skipped. With
-planning done the launch is done, unless an earlier stage is neither done nor skipped; the session
-closes out with the lead the Chair named.
+planning done the launch is done, unless an earlier stage is neither done nor skipped. The session
+brings the S1 entry up to date, a heading and Status for what it did and the initializer's
+`### Next` removed, commits it, and closes out with the lead the Chair named.
 
 ## Revising an approved document
 
