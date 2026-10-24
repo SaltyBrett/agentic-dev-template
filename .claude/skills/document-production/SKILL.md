@@ -32,7 +32,10 @@ deliverable is made from them.
      the end (§6);
    - the produced file's text passes the writing standard's mechanical rules as a production
      document, in the voice its source's profile rule gives: characters, headings, phrases and
-     development references (`docs/standards/writing_standard_v1.0.md`, section 11);
+     development references (`docs/standards/writing_standard_v1.0.md`, section 11).
+     `python3 scripts/writing_standard.py --text <file> --source <draft.md>` exits 0: it reads a
+     Word, PowerPoint or Excel file itself, and a PDF is checked by its text extracted with
+     `pdftotext`, or by the Word file it was made from;
    - the locked terms and vendor spellings (§10);
    - the type's locked closing line, confirmed current with the user (§7).
 6. **Report** the file's path, the type, the pairing and the starter used, and each deviation from

@@ -860,6 +860,21 @@ def run_self_test() -> int:
     bad = {p: classify(p) for p, w in decided.items() if classify(p) != w}
     check("the Claude Code paths and the recovery files classify as decided", not bad, str(bad))
 
+    # The writing profile merges three-way, so a development path a release adds reaches a project
+    # beside its own lines; a project's custom voice is in neither release, so no step names it
+    # (decisions 2026-10-24-016, 2026-10-24-017 and 2026-10-24-026).
+    profile = (b'rules:\n  - paths:\n      - "AGENTS.md"\n      - "sprint/**"\n    voice: technical\n'
+               b'    audience: development\ndefault: technical\nallow: []\n')
+    ours = profile.replace(b"allow: []", b'allow: ["Amazon S3"]')
+    theirs = profile.replace(b'      - "sprint/**"\n', b'      - "sprint/**"\n      - "docs/new/**"\n')
+    step = plan_path("writing-profile.yaml", classify("writing-profile.yaml"), ours, profile, theirs, set(), set())
+    check("the writing profile merges three-way: the release's new path and the project's allow line both kept",
+          step is not None and step.verdict == "merge" and b'"docs/new/**"' in (step.write or b"")
+          and b"Amazon S3" in (step.write or b""), str(step))
+    voice = "docs/standards/voices/chair.md"
+    check("a project's custom voice, in neither release, is left alone",
+          classify(voice) == "three-way" and plan_path(voice, classify(voice), b"mine", None, None, set(), set()) is None)
+
     # The roster and the library are one path each, named in four places: the closeout gate reads
     # both, and the initializer, the sanitizer and this map each decide them. A rename that missed
     # one (TMPL-1.3 renamed the registry in three lists with no fixture) would leave a project

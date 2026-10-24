@@ -610,6 +610,50 @@ the tracker marks Done whose last stage is not passing. The role map and the tri
 [[reference_story_artifacts]].
 **Alone:** `pre-commit run story-artifacts --all-files`
 
+## `writing-standard-selftest`
+
+**Stage:** `pre-commit`
+**Pairs with:** `writing-standard`, which it precedes.
+**Blocks:** a commit when a fixture of the writing gate fails: a character table, phrase table or
+voice table that cannot be read, or one with no `any other` row, read as empty; a profile key,
+voice, audience, agent slug or allow entry the standard does not allow passed, or a profile that
+does not parse read; a production glob that decides nothing passed, or a development one refused;
+the `template:` rules applied in a project or never in the template; a voice whose `name` is not
+its file's, whose `tables` the standard lacks, or a custom voice whose sample is missing, in two
+blocks or under 200 words, passed; a character off the allowed set passed, or an accented letter,
+a carriage return before a newline or a run counted twice refused; a heading with a comma, a
+semicolon, a closing mark or over 8 words passed, or a label, a code span, a link or a dash
+counted; a phrase missed across a line break, in the frontmatter or with U+2019, or found in a code
+span, a code block or across a paragraph break, or a `list end` phrase flagged mid-sentence; a
+development reference passed in production or refused in development; an allowed string not
+exempting the text inside it, exempting across case, or printing a line unwidened or unescaped; a
+Word heading style, a footer, a slide title or a sheet's strings unread by the text mode, or a PDF
+read as text. And when one of the gate's own functions is over the coding standard's production
+limits, or the script holds a character off ASCII. A fixture that raises fails; it never crashes
+the self-test.
+**Why:** decisions 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-025 and
+2026-10-24-026; [[reference_writing_standard_design]].
+**Alone:** `pre-commit run writing-standard-selftest --all-files --verbose`
+
+## `writing-standard`
+
+**Stage:** `manual`
+**Pairs with:** `writing-standard-selftest`. At the manual stage until the template's sweep,
+TMPL-6.6, which moves it to the commit stage; the template's own tree fails it until then.
+**Blocks:** every markdown file git tracks, judged whole in the voice and audience
+`writing-profile.yaml` gives it: a character off printable ASCII, tab, newline and letters; a
+heading with a comma or a semicolon, a closing `.`, `!`, `;` or `:`, or over 8 words, the label of
+a format the gates read not counted; a phrase of the voice's tables outside code spans and code
+blocks; in a production file, a development reference. A finding an occurrence of an `allow:`
+string holds is exempt; each prints its fix and the allow line. Before any file, the profile and
+the voices are judged: a key, voice, audience or agent the standard does not allow, a production
+glob that decides nothing, a custom voice without its sample. The standard, the voices or the
+profile unreadable stops the gate with exit 2. `--which <path>` prints a file's voice and audience;
+`--text <file> --source <draft.md>` judges a produced deliverable as production.
+**Why:** decisions 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025
+and 2026-10-24-026; [[reference_writing_standard_design]].
+**Alone:** `pre-commit run writing-standard --hook-stage manual --all-files --verbose`
+
 ## `commit-attribution`
 
 **Stage:** `commit-msg`
@@ -645,6 +689,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.14 | 2026-10-24 | 2026-10-24-023, 2026-10-24-026 | `writing-standard-selftest` and `writing-standard`: every tracked markdown file judged whole against the writing standard, the gate at the manual stage until TMPL-6.6 (TMPL-6.3) | pending |
 | 1.13 | 2026-10-24 | 2026-10-24-013 | `story-artifacts-selftest` and `story-artifacts`: every story's handoffs in `docs/stories/<ID>/` held to the team standard (TMPL-3.2) | a2d1a78 |
 | 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | 109a2a6 |
 | 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |

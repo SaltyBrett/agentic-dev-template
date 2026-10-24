@@ -28,6 +28,23 @@ by the hook. TMPL-6.3 in progress: its plan settled with the Chair.
    the rules' exact reading by the AI. A probe outside the repository found 167 tracked markdown
    files, no carriage return, no YAML comment in a frontmatter and backtick fences only.
 2. The writing standard at 1.1: the gate's reading stated in sections 2, 4, 5, 6, 7, 8, 9 and 11.
+3. TMPL-6.3, the gate: `scripts/writing_standard.py`, the law read from the standard's sections 2,
+   5 and 7, the profile and voices judged first, then every tracked markdown file whole; `--which`,
+   and `--text` over `.docx`, `.pptx` and `.xlsx` read with the standard library. Its self-test
+   holds 144 fixtures; a scratch harness broke the script 53 ways, one rule each, and every broken
+   copy failed its self-test at the fixture named for that rule. Writing the harness found three
+   fixtures that could not fail (closing hashes, a dash, a link's comma), each made to.
+4. TMPL-6.3, the hooks: `writing-standard-selftest` at the commit stage and `writing-standard` at
+   the manual stage, with their sections and the runbook at 1.14. A real Word file made by
+   `scripts/md_to_docx.py` showed the converter writing U+2014 into every footer; the footer now
+   reads `Generated from Markdown (draft)`, and a clean source's file passes `--text`.
+5. TMPL-6.3, the updater: two fixtures in `template_update.py`'s self-test, each failing against a
+   broken copy. On a scratch template with two releases, a project born green from the first, with
+   a custom voice and its own profile lines, took the second: the profile merged, both sides' lines
+   kept; the voice byte for byte unchanged; the suite green; `--which README.md` production there.
+   The first birth was refused by `session-closeout-check` over a fixture's unresolved wikilink,
+   now a real slug.
+6. The document-production skill's check step names `--text` (2026-10-24-022).
 
 ### Blockers
 

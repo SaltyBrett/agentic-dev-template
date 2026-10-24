@@ -374,7 +374,7 @@ def convert_md_to_docx(md_path, docx_path):
     footer = footer_section.footer
     footer_para = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
     footer_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = footer_para.add_run('Generated from Markdown — Draft')
+    run = footer_para.add_run('Generated from Markdown (draft)')
     run.font.size = Pt(8)
     run.font.color.rgb = RGBColor(128, 128, 128)
     run.font.name = 'Catamaran'

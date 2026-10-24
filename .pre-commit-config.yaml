@@ -345,6 +345,26 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
         always_run: true
+      # The writing standard (docs/standards/writing_standard_v1.0.md): every markdown file git tracks,
+      # judged whole in the voice and audience writing-profile.yaml gives it, the character and phrase
+      # tables read from the standard itself (decisions 2026-10-24-018 to -020 and -026). The gate runs
+      # at the manual stage until the template's sweep, TMPL-6.6, moves it to the commit stage.
+      - id: writing-standard-selftest
+        name: Writing Standard Self-Test (every rule fails its broken fixture; the law is read, never assumed)
+        entry: python scripts/writing_standard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the profile and the voices' frontmatter are YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: writing-standard
+        name: Writing Standard Gate (characters, headings, phrases and development references, whole files)
+        entry: python scripts/writing_standard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # parsed, never matched
+        stages: [manual]          # run: pre-commit run writing-standard --hook-stage manual --all-files --verbose
+        pass_filenames: false
+        always_run: true
       # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
       - id: commit-attribution
         name: Commit Attribution Gate (no AI attribution in commit messages)
