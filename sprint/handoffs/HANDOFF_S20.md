@@ -44,7 +44,6 @@
 - Whether the gate refuses a profile glob that matches nothing: five of the starter's globs (`docs/prd/**`, `docs/architecture/**`, `docs/stories/**`, `docs/code_review_log.md`, `evidence/**`) are project paths that match nothing in the template by design.
 - A persona's changelog lines keep the U+2014 form the persona gate reads until TMPL-6.4 moves the formats to ASCII, so the changelog lines of `personas/editor.md` and `personas/document-reviewer.md` are the expected findings among the files S19 wrote.
 - Carried, not S20's: TMPL-3.4, TMPL-3.5, TMPL-2.10, TMPL-4.7, TMPL-4.4 and TMPL-4.5, all before the `v2.1.0` release TMPL-4.6. TMPL-6.4 needs only TMPL-6.1 and can run in any session.
-- The Chair deletes the scratch repositories `SaltyBrett/story-probe-s17` and `SaltyBrett/launch-probe-s10`, and the clones `/Users/twdaddy/code/personal/story-probe-s17`, `/Users/twdaddy/code/personal/launch-probe-s10` and `/Users/twdaddy/code/personal/tmpl-s6-probe`.
 
 ## 6. Verification observed
 
