@@ -56,11 +56,12 @@ The frontmatter is the registry; there is no list to keep beside it.
 
 In a project whose tracker holds a real epic, the approval gate (decision 2026-10-23-008), each
 document read as decision 2026-10-23-014 defines it:
-  approval     the PRD in `docs/prd/` and the architecture in `docs/architecture/` are each one
-               document with `status: approved` and the `authority:` line, or an APPROVED decision
-               of the project's own log carries `**Skips:**` naming it (`prd`, `architecture`)
-  prd-version  an approved architecture's `prd:` is the approved PRD's newest version, quoted
-  skips        a `**Skips:**` line names only those two stages
+  approval     the PRD in `docs/prd/` and the architecture in `docs/architecture/` each stand
+               approved, one document with the `authority:` line and a version-log row, its status
+               `approved`, or `draft` while reopened for revision, when the newest row stands; or an
+               APPROVED decision of the project's own log carries `**Skips:**` naming it
+  prd-version  an architecture with `status: approved` has the PRD's newest version as `prd:`, quoted
+  skips        a `**Skips:**` line names only the stages of `/project-launch`
 
 In a project, what the template wrote is judged in the template: a row citing only framework
 decisions is not held to `unmarked` or `commit`, since the story it cites is in the template's
@@ -205,8 +206,13 @@ FIXES = {
 # The approval gate (decision 2026-10-23-008): in a project, a real epic needs an approved PRD and an
 # approved architecture, read as decision 2026-10-23-014 defines them, or a logged skip of either.
 STAGES = {"prd": ("docs/prd/", "PRD"), "architecture": ("docs/architecture/", "architecture")}
+# Every stage of `/project-launch` may be skipped; only the two above are held by the gate.
+LAUNCH_STAGES = ("intake", "team", "prd", "architecture", "planning")
 SKIPS = "**Skips:**"
 APPROVED = "approved"
+# A document reopened for revision keeps its authority and its rows, and its last approved version
+# stands until it is approved again (decision 2026-10-23-020, amended).
+REOPENED = "draft"
 PROJECT_LOG = "sprint/decision-log.md"
 
 # The writer's queue (decision 2026-10-23-016): a bare note on an open story's row.
@@ -497,10 +503,11 @@ def judge(docs: dict[str, str], logs: dict[str, str], tracker: str, project: boo
 
 def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, project: bool) -> list:
     """The approval gate over in-memory text. In a project whose tracker holds a real epic, each of
-    the PRD and the architecture is approved, one document in its folder with `status: approved`
-    and the `authority:` line, or its skip is logged: an APPROVED decision of the project's own log
-    whose header carries `**Skips:**` naming it. An approved architecture is built from the approved
-    PRD's newest version. Returns violations as (rule, where, message)."""
+    the PRD and the architecture stands approved, one document in its folder with the `authority:`
+    line and a version-log row, `status: approved`, or `status: draft` while reopened for revision,
+    when its newest row is the version that stands; or its skip is logged: an APPROVED decision of
+    the project's own log whose header carries `**Skips:**` naming it. An architecture with
+    `status: approved` is built from the PRD's newest version. Returns (rule, where, message)."""
     epics = session_closeout.real_epics(tracker)
     if not project or not epics:
         return []      # the template, or a project still before its planning session
@@ -515,8 +522,8 @@ def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, pro
         if value is None:
             continue
         names = [w.strip().casefold() for w in value.split(",") if w.strip()]
-        if not names or any(n not in STAGES for n in names):
-            v.append(("skips", did, f"`{SKIPS} {value}` names other than `prd` and `architecture`"))
+        if not names or any(n not in LAUNCH_STAGES for n in names):
+            v.append(("skips", did, f"`{SKIPS} {value}` names other than the launch stages, {', '.join(LAUNCH_STAGES)}"))
         if decs.get(did, {}).get("status", "").upper().startswith("APPROVED"):
             skipped.update(n for n in names if n in STAGES)
 
@@ -528,13 +535,16 @@ def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, pro
             keys = yaml.safe_load(src) if stage and src else None
         except yaml.YAMLError:
             keys = None    # a claimed authority that does not parse is the `frontmatter` rule's
-        if not isinstance(keys, dict) or keys.get("status") != APPROVED:
+        status = keys.get("status") if isinstance(keys, dict) else None
+        if status not in (APPROVED, REOPENED):
             continue
         a, _ = read_authority(path, text)
         if a is None:
-            v.append(("approval", path, "`status: approved`, but the document claims no authority"))
-            continue
-        approved[stage].append((path, keys, a))
+            if status == APPROVED:
+                v.append(("approval", path, "`status: approved`, but the document claims no authority"))
+            continue      # a first draft claims nothing and stands for nothing
+        if a.rows:        # with no row it was never approved; `no-log` is the authority gate's
+            approved[stage].append((path, keys, a))
 
     epic = epics[0].removeprefix("Epic:").strip()
     for stage, (folder, label) in STAGES.items():
@@ -548,8 +558,8 @@ def judge_approval(docs: dict[str, str], logs: dict[str, str], tracker: str, pro
     if len(approved["architecture"]) == 1 and len(approved["prd"]) == 1:
         path, keys, _ = approved["architecture"][0]
         prd_path, _, prd = approved["prd"][0]
-        newest = prd.rows[0].version if prd.rows else None
-        if keys.get("prd") != newest:
+        newest = prd.rows[0].version
+        if keys.get("status") == APPROVED and keys.get("prd") != newest:
             v.append(("prd-version", path, f"`prd:` reads {keys.get('prd')!r}, and the approved PRD {prd_path} is at "
                                            f"version {newest!r}"))
     return v
@@ -1045,10 +1055,19 @@ def run_self_test() -> int:
     expect("a real epic with no architecture fails", approval(only_prd), "approval")
     expect("a PRD still a draft is no approval",
            approval({**only_arch, "docs/prd/prd.md": "---\nstatus: draft\ntemplate: '1.0'\n---\n\n# PRD\n"}), "approval")
-    expect("a PRD reopened as a draft for revision, its authority kept, is no approval until approved again",
-           approval({**only_arch, "docs/prd/prd.md": prd.replace("status: approved", "status: draft")}), "approval")
-    expect("`status: approved` without the authority line fails",
-           approval({**only_arch, "docs/prd/prd.md": "---\nstatus: approved\ntemplate: '1.0'\n---\n\n# PRD\n"}), "approval")
+    expect("a PRD reopened for revision, its authority and rows kept, stands at its last approved version",
+           approval({**only_arch, "docs/prd/prd.md": prd.replace("status: approved", "status: draft")}))
+    expect("an architecture reopened for revision is not held to the PRD's newest version",
+           approval({**only_prd, "docs/architecture/architecture.md":
+                     arch.replace("status: approved", "status: draft").replace("prd: '1.1'", "prd: '1.0'")}))
+    expect("a document that claims the authority with no row was never approved",
+           approval({**only_arch, "docs/prd/prd.md": prd.replace("status: approved", "status: draft").split("| 1.1 |")[0]}),
+           "approval")
+    expect("a status other than approved or draft stands for nothing",
+           approval({**only_arch, "docs/prd/prd.md": prd.replace("status: approved", "status: final")}), "approval")
+    found = approval({**only_arch, "docs/prd/prd.md": "---\nstatus: approved\ntemplate: '1.0'\n---\n\n# PRD\n"})
+    check("`status: approved` without the authority line fails, naming the document",
+          {r for r, _, _ in found} == {"approval"} and any(w == "docs/prd/prd.md" for _, w, _ in found), str(found))
     expect("an approved PRD outside `docs/prd/` is not the project's PRD", approval({**only_arch, "docs/other/prd.md": prd}), "approval")
     expect("two approved PRDs fail", approval({**both, "docs/prd/two.md": prd.replace("— Acme", "— Acme two")}), "approval")
     expect("an architecture built from an older PRD version fails",
@@ -1061,7 +1080,10 @@ def run_self_test() -> int:
     expect("one decision may skip both", approval({}, proj=skipping("prd, architecture")))
     expect("a skip whose decision is not APPROVED counts for nothing", approval(only_prd, proj=skipping("architecture", "PROPOSED")),
            "approval")
-    expect("a skip naming another stage fails", approval(proj=skipping("planning")), "skips")
+    expect("a skip naming no launch stage fails", approval(proj=skipping("everything")), "skips")
+    expect("a skip of a stage the gate does not hold passes, and approves nothing",
+           approval(only_prd, proj=skipping("team")), "approval")
+    expect("a skip of the ungated stages beside approved documents passes", approval(proj=skipping("intake, planning")))
     expect("a skip in the framework's log counts for nothing",
            approval(only_prd, fw=_FW.replace("| 2026-10-24-001 |", "| 2026-10-26-009 | 2026-10-26 | Skip | APPROVED |\n| 2026-10-24-001 |")
                     + "\n## Decision 2026-10-26-009: Skip\n\n**Skips:** architecture\n**Affects:** none\n"), "approval")

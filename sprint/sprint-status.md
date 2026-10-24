@@ -20,7 +20,8 @@
 exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
 ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
 TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7, TMPL-2.2 and
-TMPL-5.3 done.
+TMPL-5.3 done; TMPL-5.2 in progress, the Chair choosing that a reopened revision stands at its
+last approved version (decision 2026-10-23-020, amended).
 
 ### Done
 

@@ -31,9 +31,12 @@ the commit that leaves the document behind (decision 2026-10-22-002, [[reference
   project marks its PRD, its architecture and its runbooks; a PRD or an architecture is made from
   its template as a draft and becomes the authority for the project's scope when it is approved.
   Once a project's tracker holds a real epic, `doc-authority-scan` requires both approved, one
-  document each in `docs/prd/` and `docs/architecture/`, the architecture's `prd:` the PRD's newest
-  version; or the Chair's skip, an APPROVED decision in `sprint/decision-log.md` headed
-  `**Skips:** prd` or `**Skips:** architecture`.
+  document each in `docs/prd/` and `docs/architecture/`, an approved architecture's `prd:` the
+  PRD's newest version; or the Chair's skip, an APPROVED decision in `sprint/decision-log.md`
+  headed `**Skips:** prd` or `**Skips:** architecture`. A document reopened for revision
+  (`status: draft`, its authority and rows kept) stands at its last approved version until it is
+  approved again, so a revision in progress can be committed; approving a PRD revision is refused
+  until the architecture built on the old version is reopened too.
 - One scope, one authority. A document that takes over a scope takes the `authority:` line; the one
   it replaces drops the line and says where the scope went. Two documents claiming one scope fail
   the gate.
@@ -124,6 +127,7 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.4 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | Authorities: a document reopened for revision stands at its last approved version, and a PRD revision's approval waits on the architecture being reopened (TMPL-5.2) | pending |
 | 1.3 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | Authorities names the approval gate: a real epic needs an approved PRD and architecture, or a skip logged with `**Skips:**` (TMPL-5.3) | d7ad4d7 |
 | 1.2 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | Recording a change names the `Queued: S<N>` note, the `doc-queue` gate at cold start and the doc-drain skill (TMPL-2.2) | 0dcccd2 |
 | 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | e155edf |

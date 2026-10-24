@@ -54,10 +54,12 @@ to every project; the documents made from it are the project's, in `docs/prd/` a
 
    Commit, then `python3 scripts/doc_authority_scan.py --stamp` writes the commit into the row.
 
-A revision reopens the document as a new version: `status: draft` until it is approved again, then a
-row at the new version citing the decision that approved it. The architecture records the PRD
-version it was built from, so a new PRD version shows which architecture was built on the old one
-(decision 2026-10-23-008).
+A revision reopens the document as a new version: `status: draft` until it is approved again, its
+`authority:` line and its rows kept, then a row at the new version citing the decision that approved
+it. Until then its last approved version stands, so a revision in progress can be committed. The
+architecture records the PRD version it was built from: approving a new PRD version is refused
+until the architecture built on the old one is reopened in the same commit, then revised and
+approved against the new one (decisions 2026-10-23-008 and 2026-10-23-020).
 
 ## Skipping a document
 
@@ -75,5 +77,7 @@ is approved or its skip is logged (decision 2026-10-23-020). A skip is the Chair
 **Affects:** none
 ```
 
-`**Skips:** prd, architecture` passes over both. An architecture approved after its PRD was skipped
-is built from no PRD version, and its `prd:` is not read.
+`**Skips:** prd, architecture` passes over both. Any stage of `/project-launch` can be named
+(`intake`, `team`, `prd`, `architecture`, `planning`); only `prd` and `architecture` stand in for an
+approval. An architecture approved after its PRD was skipped is built from no PRD version, and its
+`prd:` is not read.

@@ -156,6 +156,14 @@ header line, `**Skips:** prd` or `architecture`, so the gate reads it as it read
 the reason lives in the body where every other rationale does. Only the project's own log counts,
 since a skip is a project's choice and the framework's decisions are not.
 
+A revision does not suspend the approval. As first built, a reopened draft was no approval, and
+once a real epic existed every commit of a revision in progress was refused: the launch skill's
+pause could not save one. The Chair chose that the last approved version stands while the document
+is reopened, its authority and rows kept, the new row written at approval. The flag on a later
+stage comes from the same rule: approving a PRD revision leaves an approved architecture built on
+the old version, which the gate refuses until the architecture is reopened (decision 2026-10-23-020,
+amended).
+
 ## Honest limit
 
 The gate cannot read prose. A row citing a decision says the document was updated, not that it was
