@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 30 |
-| **Not Started** | 3 |
+| **Not Started** | 2 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 27 |
+| **Completed** | 28 |
 
 ---
 
@@ -96,8 +96,8 @@ that decision 2026-09-23-003 names.
 
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
-| TMPL-4.1 | Design session with a specialized reviewer agent: the core limits as numbers, the per-stack tool-mapping rule, the one judgement page; proved against a known-good and a known-bad codebase before adoption; logged | Not Started | TMPL-2.4 | doc_control_standard.md | 2026-10-22-003 |
-| TMPL-4.2 | Build: the core gates as a stack profile in the suite, the `.claude/rules/` page, the reviewer and auditor briefs; proof on one project | Not Started | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-4.1 | Design session with a specialized reviewer agent: the core limits as numbers, the per-stack tool-mapping rule, the one judgement page; proved against a known-good and a known-bad codebase before adoption; logged. Done at S13 with the Chair and a reviewer agent: the limits proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas (2026-10-24-007), proved measurement and the mapping rule (2026-10-24-008), the judgement page and the reviewer and auditor briefs (2026-10-24-009); [[reference_coding_standard_calibration]] | Done | TMPL-2.4 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-4.2 | Build: the core gates as a stack profile in the suite, the `.claude/rules/` page, the reviewer and auditor briefs; proof on one project. Scoped at S13 by decisions 2026-10-24-007 to -009: `docs/standards/coding_standard_v1.0.md`, stack profiles for Rust, Python and TypeScript with pinned tools each proved by its measurement fixture and the recall check, the gate over changed functions (limits, new clones, coverage of new lines, the exceptions file), `.claude/rules/code-quality.md`, `personas/code-reviewer.md`, fixtures proved against broken variants, the runbook sections; the proof on one project | Not Started | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
 
 ---
 

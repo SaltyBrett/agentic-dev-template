@@ -4,6 +4,53 @@ Entries moved from `sprint/sprint-status.md` once it held more than ten, oldest 
 
 ---
 
+## S3 — 2026-10-22 — Personas as agent files; path-scoped rules
+
+**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
+`session-verify` (PASS); both hook types installed; `gh` on the keyring; Claude Code 2.1.308. The
+sub-agents page was read whole (curl) before any build, and it changed the plan: under
+`claude --agent` an agent's body replaces Claude Code's built-in system prompt whole. A scratch
+probe confirmed the rest (persona canary back, `AGENTS.md` loaded, `agent_type` in the hook input)
+and measured the agent run's prompt about 2,500 tokens smaller than a control. Two choices went to
+the operator, both answered with the recommendation: the session takes its persona from the start
+hook, `--agent` optional; `dev-resources` keeps both registry trees until TMPL-2.4, because Comfy
+and PocketGames sync `docs/personas/` with `v1.0.0` scripts (decision 2026-10-22-005, amending
+2026-10-22-001). TMPL-1.3 and TMPL-1.5 done.
+
+### Done
+
+1. TMPL-1.3 — the five personas are agent files in `.claude/agents/` (frontmatter: name = slug,
+   version, expertise, insists_on, changelog; body = the Invocation, text and versions unchanged);
+   `docs/personas/` removed. `persona-lint` parses the frontmatter as YAML, lazily, so the session
+   hook needs no PyYAML; the conversion found four list items that YAML read as mappings until
+   quoted. The kickoff names the agent and the lint still accepts `KICKOFF_S3.md`'s copy.
+   `session_start.py` reads `agent_type` and injects the agent's prompt unless the session runs as
+   it. Sync, updater, initializer, sanitizer, manifest and docs follow the path. Self-tests 87, 28
+   and 18 then; 22 broken variants, each caught. Live: the agent run and a plain run each held the
+   persona (the hook said which way); an unbumped body edit exited 1 here and through the published
+   hook in `dev-resources`. `dev-resources` 9002dfb pins the template twice (pre-commit accepts it;
+   both trees judged) and its `gates` run 39884359420 was green; the template's 386d7b6 run
+   39884095218 green before it. The sync back: every agent `up-to-date`, stamp `main 9002dfb`. A
+   scratch clone of Comfy still resolved every persona from the frozen tree; its
+   `reference_macos_toolchain` CONFLICT comes from S2's publish and is the sync's documented
+   one-`--take`-per-project cost, not this move.
+2. TMPL-1.5 — four rules in `.claude/rules/` (gate scripts and the suite, knowledge entries,
+   decision logs, sprint documents). `CONSTITUTION.md` §6.3 is a pointer: its reasoning moved to
+   [[reference_kb_freshness]], its instructions to two rules; the knowledge index shed its
+   frontmatter block and its frontmatter-less template. The state gate refuses a rule with no
+   parseable `paths:`, a dead glob, or a repeat of `AGENTS.md` (decision 2026-10-22-006). Canary:
+   absent with no tool used and after reading `README.md`, present after reading the matching
+   entry. The first repeat check compared whole sentences and a planted clause copy passed it; it
+   now finds a sentence inside the other text either way, and the re-plant fails. 102 fixtures, 15
+   variants caught. The banned-feature scan refused one rule's quoted hook `entry:` as a bare
+   interpreter; reworded, not exempted.
+
+### Blockers
+
+- None.
+
+---
+
 ## S2 — 2026-10-22 — One cold start in `AGENTS.md`; Claude Code hooks
 
 **Status:** Cold start clean apart from `main` having no upstream (lost in the `v1.0.0` cut); set

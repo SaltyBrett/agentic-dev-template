@@ -24,6 +24,9 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-009 | 2026-10-24 | The coding standard's judgement page (`.claude/rules/code-quality.md`, path-scoped to code, opening with `CONSTITUTION.md` §4A) and its two briefs: the code reviewer, a new library persona, never the implementer; the security audit, `security-engineer`'s brief for the security stage | APPROVED |
+| 2026-10-24-008 | 2026-10-24 | The coding standard's measurement is proved, per language: each stack's profile names one pinned tool per slot, configured to the core numbers and never looser, and a tool counts only once it passes its language's measurement fixture and a recall check on every run; `lizard` 1.17.10 fails Rust and TypeScript | APPROVED |
+| 2026-10-24-007 | 2026-10-24 | The coding standard's core limits, proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas: per added or edited function, complexity 15, 60 code lines, 5 parameters; no new clones; 80% of new lines covered; tests at complexity 10 and 100 lines; file length a reviewer signal at 500; exceptions recorded, never growing | APPROVED |
 | 2026-10-24-006 | 2026-10-24 | The team's role map: five story types (software, data, document, game, media) whose brief picks the stages and roles; every library persona given its artifact and its judging gate; the verifier and reviewer never the builder; `devops-engineer` ships; the code reviewer's slot left to TMPL-4.1 | APPROVED |
 | 2026-10-24-005 | 2026-10-24 | The review triggers: decision 2026-10-22-003's seven plus a deploy or release, a gate or CI change, data loss and a license change; detected from the diff where the change shows it and declared by a role otherwise; a story closes only with every hit trigger approved by the operator in its folder | APPROVED |
 | 2026-10-24-004 | 2026-10-24 | The team's orchestration: a `/story <ID>` skill in the main session runs one story end to end, each role a subagent from the roster handing off through committed artifacts in `docs/stories/<ID>/`, a gate judging each before the next role starts; it stops only at a review trigger or a gate failing three times running; the law in a new team standard | APPROVED |
@@ -4321,3 +4324,181 @@ brief is TMPL-4's.
 
 To be built in TMPL-3.2: the `story-artifacts` gate over the map; the persona lint over any persona
 it adds.
+
+---
+
+## Decision 2026-10-24-007: The coding standard's core limits, proved against known-good and known-bad code
+
+**Date:** 2026-10-24
+**Made By:** Chair (S13, the TMPL-4.1 design session): the reference codebases, every limit below and
+its scope, on the evidence of the session and of the specialized reviewer agent
+**Status:** APPROVED
+**Builds:** TMPL-4.1, the mechanical layer of decision 2026-10-22-003
+**Affects:** `sprint/story-tracker.md` (TMPL-4.1 done, TMPL-4.2 scoped). To be built in TMPL-4.2:
+`docs/standards/coding_standard_v1.0.md` (new), the exceptions file, the gate
+
+### Context
+
+Decision 2026-10-22-003 asked for a core of numbers, proved against a known-good and a known-bad
+codebase before adoption, since this standard is the hardest thing in the framework to unwind. The
+Chair asked that it be language-agnostic as far as possible, with Rust cleanly supported, and an
+industry standard rather than a fit to the few codebases the framework holds, which agents wrote.
+
+### Decision
+
+- **The reference codebases (Chair).** Known-good: ripgrep 14.1.1 (Rust), packaging 24.1 (Python),
+  zod v3.23.8 (TypeScript), pinned at their tags. Known-bad: the Gilded Rose and Tennis refactoring
+  katas, the industry's teaching examples of bad code, in the same three languages. All measured,
+  never run. The framework's own code was measured only to report what adopting would mean.
+- **Per function a change adds or edits (Chair):** cyclomatic complexity at most 15, at most 60
+  code lines (blanks and comments excluded), at most 5 parameters.
+- **Duplication (Chair):** a change adds no clone of existing code, at jscpd's defaults of 50
+  tokens and 5 lines with its size caps lifted, unless the clone is a recorded exception; the
+  codebase's duplication rate never rises.
+- **Coverage (Chair):** at least 80% of a change's new lines covered by tests, SonarQube's gate.
+- **Tests (Chair):** complexity at most 10, at most 100 code lines; duplication in tests reported,
+  not gated; test helpers held to the production limits.
+- **File length (Chair):** a reviewer signal, not a gate: a change that grows a file past 500
+  production lines is flagged to the code reviewer.
+- **Scope and exceptions (Chair):** only code a change adds or edits is judged. An edited function
+  already over a limit is brought under it or recorded at its current value. An exception is an
+  entry in a checked-in exceptions file naming the function, the metric, its value, a category
+  (data or table, parser or state machine, exhaustive dispatch over a closed set, generated code,
+  measured hot path) and the reason; the code reviewer approves each, and the gate fails a function
+  that grows past its recorded value. A tool's own suppression comment counts only with a matching
+  entry.
+- MINOR, `v2.1.0` (decision 2026-10-22-003): a stack profile a project opts into.
+
+### Evidence
+
+The published defaults: NIST SP 500-235 §2.5 (McCabe's limit of 10, "limits as high as 15 have been
+used successfully as well"); SonarQube's Sonar way gate (new-code coverage at least 80%, new-code
+duplication at most 3%); clippy (7 arguments, 100 lines); pylint (5 arguments, 50 statements, 1,000
+module lines); ESLint (complexity 20, 50 lines per function). Measured with lizard and jscpd, the
+Rust and TypeScript figures from copies the reviewer agent repaired where lizard fails
+(decision 2026-10-24-008):
+
+- **Complexity 15:** about 20 of some 2,800 known-good functions exceed it, about half of which the
+  reviewer judged should have been split (ripgrep's `from_low_args` at 41, zod's `ZodString._parse`
+  at 53), the rest parsers, state machines and exhaustive dispatch. It catches Gilded Rose's
+  `update_quality` (19) in all three languages, Tennis 2 (30 to 40) in all three, and Tennis 1 and 6
+  in TypeScript (16). At 20 Gilded Rose passes; at 10 some 66 known-good functions exceed, many only
+  by Rust's `?`.
+- **60 code lines:** about 20 known-good functions exceed it, about 12 judged should split; it
+  catches Tennis 2 in all three languages and Tennis 6 in TypeScript. At 80 it catches no kata.
+- **5 parameters:** one known-good function exceeds it (packaging's `_cmpkey`); ripgrep never does.
+  It catches no kata: a design signal, not a kata detector.
+- **Duplication:** packaging 0%, zod 2.88% in production code, ripgrep 87 clones, mostly
+  deliberate parallel implementations; Gilded Rose's 8-line in-function clone in Rust and TypeScript
+  is caught at the 5-line default and missed at 10. A percentage judges a small change noisily, so
+  the gate judges new clones.
+- **Tests:** one known-good exception each at complexity 10 (ripgrep's harness, zod's
+  exhaustiveness switch) and one at 100 lines (zod's email table, a fixture candidate).
+- **File length:** a gate would fail all three references (ripgrep 17 of 87 files over 500, 6 over
+  1,000; zod's `types.ts` 4,561 lines).
+- **What a mechanical limit cannot catch:** Tennis 3 (complexity 8, 14 lines; cryptic names, nested
+  ternaries, an arithmetic trick) passes every limit; only the reviewer catches it.
+- **Coverage is not proved here:** proving it means running the reference code, which the session
+  did not do; TMPL-4.2 proves it on a project.
+- **Our code, for adoption:** at these limits the template's scripts have 25 of 304 functions over,
+  Comfy 13 of 125, PocketGames 23 of 804 (lizard, unrepaired), which is why the gate judges changed
+  code, not the codebase.
+
+### Enforcement
+
+To be built in TMPL-4.2: the coding-standard gate over changed code, its fixtures proved against
+broken variants; [[reference_coding_standard_calibration]].
+
+---
+
+## Decision 2026-10-24-008: The coding standard's measurement is proved per language, and each stack maps it to tools
+
+**Date:** 2026-10-24
+**Made By:** Chair (S13): that each language's measurer proves itself; the mapping rule as drafted by
+the AI from the reviewer agent's findings
+**Status:** APPROVED
+**Builds:** TMPL-4.1, the per-stack tool-mapping rule of decision 2026-10-22-003
+**Affects:** `sprint/story-tracker.md` (TMPL-4.2 scoped). To be built in TMPL-4.2: the stack
+profiles, their measurement fixtures
+
+### Context
+
+The specialized reviewer agent found that lizard 1.17.10, the multi-language measurer the session
+began with, silently fails to measure much Rust and TypeScript: in ripgrep it measured 1,196 of
+2,673 functions, none of `crates/ignore/src/dir.rs`'s 58 (reproduced by the session); it drops a
+TypeScript class method with a return type (reproduced), so zod's `ZodString._parse` and the Tennis
+kata's complexity-40 method were invisible; it ignores Python's `match`; and its `#lizard forgives`
+comment drops a function from every metric with no reason recorded. jscpd skips files over 1,000
+lines or 100 KB by default and finds exact copies only. A gate that measures nothing reports green.
+
+### Decision
+
+- **A measurer proves itself (Chair).** Each stack's tool for the function limits passes a
+  measurement fixture of its language's hard cases (Rust lifetimes and raw strings, a TypeScript
+  method with a return type and a bare `catch`, Python's `match`) and, on every run, a recall check:
+  it finds as many functions in each changed file as the file defines, or the gate fails. Tool
+  versions are pinned.
+- **The mapping rule.** Each stack's profile names one pinned tool per slot: the function measurer,
+  the clone detector, the formatter, the linter, the type checker, coverage, the dependency and
+  license audit, and the trigger paths of decision 2026-10-24-005. The numbers are the core's
+  (decision 2026-10-24-007), the same in every stack; a tool is configured to them, stricter or
+  equal, never looser. A stack with an empty slot is not adoptable. The planning session chooses
+  the profile.
+- **The starting candidates, for TMPL-4.2 to prove:** Rust: rustfmt, clippy (5 arguments, 60
+  lines), the compiler, cargo-llvm-cov, cargo-audit and cargo-deny. Python: ruff format, ruff
+  (complexity 15, 5 arguments), mypy in strict mode, coverage.py with diff coverage, pip-audit.
+  TypeScript: prettier, ESLint (complexity 15, 60 lines skipping blanks and comments, 5
+  parameters), `tsc --strict`, vitest coverage, npm audit with a license check. jscpd with its caps
+  lifted for clones in all three. lizard only where it passes its fixture.
+- **Generated code** is declared by path in the profile; a generated-code marker anywhere else is
+  refused.
+
+### Enforcement
+
+To be built in TMPL-4.2: each profile's fixture and the recall check in the gate's self-test, proved
+against broken variants; [[reference_coding_standard_calibration]].
+
+---
+
+## Decision 2026-10-24-009: The coding standard's judgement page and its reviewer and auditor briefs
+
+**Date:** 2026-10-24
+**Made By:** Chair (S13): the auditor a brief for `security-engineer`, the reviewer a new persona,
+the page and both briefs as drafted by the AI from the reviewer agent's draft
+**Status:** APPROVED
+**Builds:** TMPL-4.1, the judgement layer of decision 2026-10-22-003 and the code reviewer's slot
+left by decision 2026-10-24-006
+**Affects:** `sprint/story-tracker.md` (TMPL-4.2 scoped). To be built in TMPL-4.2:
+`.claude/rules/code-quality.md` (new), `personas/code-reviewer.md` (new); the audit brief with the
+stages, in TMPL-3.2
+
+### Decision
+
+- **The judgement page**, `.claude/rules/code-quality.md`, path-scoped to the stack's code files,
+  opens with `CONSTITUTION.md` §4A, then holds what no gate checks: read the design before the
+  code; one reason to change per function; names that say what a thing is for, and no repeated
+  literal; policy in a table or data rather than in branching; a helper instead of a copy, near-copies
+  the clone detector misses included; errors explicit, never swallowed; comments that say why; the
+  codebase's own conventions; no speculative generality, and dead code deleted; no limit gamed by
+  hiding logic in closures, part1 and part2 splits or mode flags, but a split by responsibility; an
+  exception only as an entry in the exceptions file.
+- **The code reviewer (Chair: a new library persona, `code-reviewer`).** Never the implementer; never
+  edits the code. Reads every changed function whole, the callers and callees it crosses, the
+  story's acceptance criteria, the standard and the gate's output, and first checks that the gate
+  measured the change, an unmeasured function being a blocking finding. Judges cohesion, naming,
+  near-copy duplication, attempts to game a limit, every new exception against its category, and
+  whether tests assert behaviour. Does not re-argue a number the gate settled or restyle what the
+  formatter owns. Reports each finding with its location, severity (blocking, fix in this change,
+  minor), evidence and the shape of the fix; blocks only on a violation of the standard, unmeasured
+  code, an unjustified exception or a new clone, never on taste; passes when no blocking finding
+  remains and the gates are green on the final revision.
+- **The security audit (Chair: a brief for `security-engineer`, no new persona),** the security stage
+  of decision 2026-10-24-006: the change read against the OWASP Top 10 and the CWE Top 25 for its
+  stack, secrets, authorization, input handling and data flows, the dependency and license audit's
+  results; each finding with its exploit path, severity and fix; the stage fails while a high or
+  critical finding is open, and a finding it cannot clear is a trigger (decision 2026-10-24-005).
+
+### Enforcement
+
+To be built: the page held by the rule gate (`session-closeout-check`'s rule lint), the persona by
+the persona lint, in TMPL-4.2; the audit brief with the stages in TMPL-3.2.

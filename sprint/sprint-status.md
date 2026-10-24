@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S12
+**Updated By:** S13
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,38 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S13 — 2026-10-24 — The coding standard calibrated on industry code
+
+**Status:** Run in the S11 conversation at the Chair's request, the Chair remote, every question
+answered in chat; the cold start run through `scripts/session_start.py` as `/clear` would run it:
+identity gate, pull, `session-verify` ("this is S13") and `doc-queue` each exit 0, the journal's
+`start S13` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-4.1 done,
+design and proof only, no build.
+
+### Done
+
+1. TMPL-4.1, with the Chair and a specialized reviewer agent. The Chair chose industry reference
+   code over the framework's own: ripgrep 14.1.1, packaging 24.1 and zod v3.23.8 as known-good,
+   the Gilded Rose and Tennis refactoring katas as known-bad, in Rust, Python and TypeScript, pinned,
+   measured with lizard and jscpd and never run. Published defaults confirmed against their sources
+   (NIST SP 500-235 §2.5, SonarQube's Sonar way, clippy, pylint, ESLint). Decision 2026-10-24-007:
+   per changed function complexity 15, 60 code lines, 5 parameters; no new clones; 80% of new lines
+   covered; tests at 10 and 100; file length a reviewer signal at 500; exceptions recorded and never
+   growing. Decision 2026-10-24-008: each language's measurer proves itself by a fixture and a recall
+   check, the reviewer agent having found lizard 1.17.10 silently skipping Rust and TypeScript
+   (ripgrep's `dir.rs`, 58 functions, measured as none; a typed TypeScript method dropped; both
+   reproduced by the session); the per-stack mapping rule. Decision 2026-10-24-009: the judgement
+   page and the code reviewer's and security auditor's briefs. Recorded in
+   [[reference_coding_standard_calibration]].
+2. TMPL-4.2 scoped by them in the tracker. S3's entry moved to
+   `sprint/archive/sprint-status_2026.md`, the eleventh over the cap.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -399,53 +431,6 @@ operator's alone (decision 2026-10-23-001). TMPL-1.4 and TMPL-1.6 done.
    in the template, inactive, with each project activating what it needs into `.claude/agents/` at
    its first session (decision 2026-10-23-003). TMPL-1.8 opened ahead of TMPL-1.7, four questions
    left open for its start, and the S5 pair re-pointed to it.
-
-### Blockers
-
-- None.
-
----
-
-## S3 — 2026-10-22 — Personas as agent files; path-scoped rules
-
-**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
-`session-verify` (PASS); both hook types installed; `gh` on the keyring; Claude Code 2.1.308. The
-sub-agents page was read whole (curl) before any build, and it changed the plan: under
-`claude --agent` an agent's body replaces Claude Code's built-in system prompt whole. A scratch
-probe confirmed the rest (persona canary back, `AGENTS.md` loaded, `agent_type` in the hook input)
-and measured the agent run's prompt about 2,500 tokens smaller than a control. Two choices went to
-the operator, both answered with the recommendation: the session takes its persona from the start
-hook, `--agent` optional; `dev-resources` keeps both registry trees until TMPL-2.4, because Comfy
-and PocketGames sync `docs/personas/` with `v1.0.0` scripts (decision 2026-10-22-005, amending
-2026-10-22-001). TMPL-1.3 and TMPL-1.5 done.
-
-### Done
-
-1. TMPL-1.3 — the five personas are agent files in `.claude/agents/` (frontmatter: name = slug,
-   version, expertise, insists_on, changelog; body = the Invocation, text and versions unchanged);
-   `docs/personas/` removed. `persona-lint` parses the frontmatter as YAML, lazily, so the session
-   hook needs no PyYAML; the conversion found four list items that YAML read as mappings until
-   quoted. The kickoff names the agent and the lint still accepts `KICKOFF_S3.md`'s copy.
-   `session_start.py` reads `agent_type` and injects the agent's prompt unless the session runs as
-   it. Sync, updater, initializer, sanitizer, manifest and docs follow the path. Self-tests 87, 28
-   and 18 then; 22 broken variants, each caught. Live: the agent run and a plain run each held the
-   persona (the hook said which way); an unbumped body edit exited 1 here and through the published
-   hook in `dev-resources`. `dev-resources` 9002dfb pins the template twice (pre-commit accepts it;
-   both trees judged) and its `gates` run 39884359420 was green; the template's 386d7b6 run
-   39884095218 green before it. The sync back: every agent `up-to-date`, stamp `main 9002dfb`. A
-   scratch clone of Comfy still resolved every persona from the frozen tree; its
-   `reference_macos_toolchain` CONFLICT comes from S2's publish and is the sync's documented
-   one-`--take`-per-project cost, not this move.
-2. TMPL-1.5 — four rules in `.claude/rules/` (gate scripts and the suite, knowledge entries,
-   decision logs, sprint documents). `CONSTITUTION.md` §6.3 is a pointer: its reasoning moved to
-   [[reference_kb_freshness]], its instructions to two rules; the knowledge index shed its
-   frontmatter block and its frontmatter-less template. The state gate refuses a rule with no
-   parseable `paths:`, a dead glob, or a repeat of `AGENTS.md` (decision 2026-10-22-006). Canary:
-   absent with no tool used and after reading `README.md`, present after reading the matching
-   entry. The first repeat check compared whole sentences and a planted clause copy passed it; it
-   now finds a sentence inside the other text either way, and the re-plant fails. 102 fixtures, 15
-   variants caught. The banned-feature scan refused one rule's quoted hook `entry:` as a bare
-   interpreter; reworded, not exempted.
 
 ### Blockers
 
