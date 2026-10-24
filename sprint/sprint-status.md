@@ -33,6 +33,10 @@ by the hook. TMPL-6.1 in progress.
    semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, the lean
    design the Chair chose for its upkeep; development references in production documents; a
    project's allow list; tone found by the document reviewer and fixed by the editor.
+4. Design question 4, the template's own documents (decision 2026-10-24-019): the template opts in;
+   every tracked markdown file swept before `v2.1.0` is published, records included; whole files
+   judged from then on, against drift past the rules; the formats the gates read moved to ASCII;
+   each project swept at adoption.
 
 ### Blockers
 

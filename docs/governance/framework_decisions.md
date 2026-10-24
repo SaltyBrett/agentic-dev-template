@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-019 | 2026-10-24 | The template opts in to the writing standard: every tracked markdown file swept before `v2.1.0` is published, records included; then whole files judged on every commit, never changed lines only; the formats the gates read moved to ASCII; each project swept at adoption | APPROVED |
 | 2026-10-24-018 | 2026-10-24 | The writing guardrails' first lists: characters off a US keyboard, letters excepted, code included; headings with a comma or semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, read by the gate; development references in production documents; a project's allow list; tone judged by the document reviewer against a rules page, rewritten by the editor | APPROVED |
 | 2026-10-24-017 | 2026-10-24 | Voices and audiences assigned in `writing-profile.yaml`, beside `code-profile.yaml`: ordered path rules, the first match winning, no frontmatter; a file no rule names judged as production; an agent's voice in the same profile, a document's own voice winning | APPROVED |
 | 2026-10-24-016 | 2026-10-24 | The writing standard's voices: seven built in, the three proposed and Grammarly's four; one file per voice holding its traits and phrase list; a custom voice keeping the Chair's sample of 200 words or more and the traits drawn from it, kept in its own project, private | APPROVED |
@@ -5016,3 +5017,55 @@ a surface too costly to maintain.
 ### Enforcement
 
 None yet: the rules are TMPL-6's gate, the judgement its rules page and the two personas.
+
+---
+
+## Decision 2026-10-24-019: The template is swept, then judged whole
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): the template opted in; everything swept before publishing, records
+included; whole files from then on, against drift past the rules; each project swept at adoption.
+The formats' move to ASCII and the label rule by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 4)
+**Affects:** none at this decision. To be built in TMPL-6: every tracked markdown file swept; the
+authorities among them are named, with their version-log rows, by the decision that re-cuts the
+stories
+
+### Context
+
+The template's tree held about 729 U+2014 em dashes, 720 box-drawing characters, 259 U+00A7 section
+signs and 260 headings that read as sentences at S18 (decision 2026-10-24-018). Its files are of
+two kinds: those every project receives, which agents read at each cold start and imitate, and its
+own records (`sprint/`, the archives, the bodies of logged decisions). The coding standard judges
+changed lines only and the template does not opt in to it (decision 2026-10-24-011), since legacy
+code is costly to clean. The Chair wants the new version clean and compliant with its standards
+before it is published, and named the risk: these characters exist because drift bypassed rules
+already in place.
+
+### Decision
+
+- **The template opts in (Chair),** unlike the coding standard.
+- **Everything is swept now (Chair):** every tracked markdown file, records included, is made to
+  pass the gate in TMPL-6 before `v2.1.0` is published. The sweep changes no decision's substance,
+  Status or dates, so it amends none (AI).
+- **Whole files from then on (Chair):** every governed file is judged in full at every commit and in
+  CI, never changed lines only. In a clean tree the two give the same findings for new work; they
+  part on text that entered unjudged, by a commit without the hooks or `--no-verify`, a template
+  update, or a first push judged at its tip (TMPL-2.10). Changed lines would never see that text
+  again; whole files catch it at the next commit. Prose is cheap to clean, with the humanizer, which
+  is why the coding standard's reason for changed lines does not carry over.
+- **Each project is swept at adoption (Chair):** taking `v2.1.0` (TMPL-4.6), each project's
+  documents are swept with the humanizer, the Chair reviewing the diffs, before its suite is green.
+- **The formats the gates read move to ASCII (AI):** the sprint-status entry heading, the handoff
+  and kickoff headings, a persona's changelog lines and the tracker's epic headings use a hyphen
+  for U+2014. Their parsers read both forms, since the updater never writes a project's `sprint/`
+  and it keeps the old form until its own sweep. In those formats the label before the title
+  (`S<N> - <date> -`, `Decision <ID>:`, `Epic: <ID> -`) is not counted toward a heading's 8 words.
+- **No gate is loosened for the sweep (AI):** where one holds text append-only, as the persona gate
+  holds a changelog by version, whether the sweep's change is a new version or a normalized compare
+  is settled with the Chair in the build.
+
+### Enforcement
+
+None yet: the sweep and the gate over whole files are TMPL-6's.
