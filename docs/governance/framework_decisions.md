@@ -24,8 +24,9 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-020 | 2026-10-24 | The writing gate refuses a mechanical finding, locally and in CI, printing its fix; an exception is an exact string in the profile's allow list, now covering all four mechanical rules, a change to it a gate change the Chair approves; a judgement finding pauses its story until the Chair answers in the code review log | APPROVED |
 | 2026-10-24-019 | 2026-10-24 | The template opts in to the writing standard: every tracked markdown file swept before `v2.1.0` is published, records included; then whole files judged on every commit, never changed lines only; the formats the gates read moved to ASCII; each project swept at adoption | APPROVED |
-| 2026-10-24-018 | 2026-10-24 | The writing guardrails' first lists: characters off a US keyboard, letters excepted, code included; headings with a comma or semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, read by the gate; development references in production documents; a project's allow list; tone judged by the document reviewer against a rules page, rewritten by the editor | APPROVED |
+| 2026-10-24-018 | 2026-10-24; amended 2026-10-24 | The writing guardrails' first lists: characters off a US keyboard, letters excepted, code included; headings with a comma or semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, read by the gate; development references in production documents; a project's allow list; tone judged by the document reviewer against a rules page, rewritten by the editor | APPROVED |
 | 2026-10-24-017 | 2026-10-24 | Voices and audiences assigned in `writing-profile.yaml`, beside `code-profile.yaml`: ordered path rules, the first match winning, no frontmatter; a file no rule names judged as production; an agent's voice in the same profile, a document's own voice winning | APPROVED |
 | 2026-10-24-016 | 2026-10-24 | The writing standard's voices: seven built in, the three proposed and Grammarly's four; one file per voice holding its traits and phrase list; a custom voice keeping the Chair's sample of 200 words or more and the traits drawn from it, kept in its own project, private | APPROVED |
 | 2026-10-24-015 | 2026-10-24 | The `/story` skill as built, proved live on a scratch copy of Comfy: roles write and the main session gates, commits and asks; a finding reaches the code review log once, with the Chair's words; the code reviewer persona at version 3; three gaps the proof found opened as TMPL-3.4, TMPL-2.10 and TMPL-4.7, the release waiting on them | APPROVED |
@@ -4950,6 +4951,10 @@ None yet: the profile's reader and the audience rule are TMPL-6's gate.
 
 ## Decision 2026-10-24-018: The writing guardrails' first lists, mechanical and judged
 
+**Amended 2026-10-24 (S18, the Chair, decision 2026-10-24-020):** the allow list exempts text from
+all four mechanical rules, characters and headings included, and a change to it is a gate change
+the Chair approves.
+
 **Date:** 2026-10-24
 **Made By:** Chair (S18): each rule below and its scope; the lean phrase design over a list per
 voice, for the cost of maintaining it; the reviewer finding and the editor fixing. The patterns'
@@ -5069,3 +5074,49 @@ already in place.
 ### Enforcement
 
 None yet: the sweep and the gate over whole files are TMPL-6's.
+
+---
+
+## Decision 2026-10-24-020: Mechanical findings refuse, judgement pauses
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): a mechanical finding refused, its exception an exact string in the allow
+list, now for every mechanical rule, a change to the list approved by the Chair; a judgement
+finding pausing its story until the Chair answers. The trigger path by the AI
+**Status:** APPROVED
+**Amends:** 2026-10-24-018 (the allow list's reach)
+**Builds:** TMPL-6.1 (design question 5)
+**Affects:** none at this decision. To be built in TMPL-6: the writing gate's refusal, the allow
+list over every mechanical rule, `writing-profile.yaml` among the trigger paths of a gate or CI
+change
+
+### Context
+
+Decision 2026-10-24-014 left the enforcement model to this session: a refusal, or a pause until
+the Chair answers in a log as decision 2026-10-24-011 has code do. The coding standard never
+refuses, since a code change is costly and risky and the Chair decides what proceeds. A mechanical
+writing finding always has a cheap and certain fix, which the humanizer makes, and its rare
+legitimate exception (a reading in degrees, a commit a runbook pins, Amazon S3) is an exact string.
+A judgement finding is taste.
+
+### Decision
+
+- **A mechanical finding refuses (Chair):** characters, headings, phrases and references refuse the
+  commit locally and fail the `gates` run in CI. Each finding prints its fix and the allow-list line
+  that would exempt it.
+- **The allow list is the only exception (Chair):** exact strings in `writing-profile.yaml`'s
+  `allow:`, now exempting text from all four mechanical rules, where decision 2026-10-24-018 named
+  the phrase and reference rules only. There is no log of mechanical findings: the list is the
+  record, and each line is a visible commit.
+- **A change to the allow list is a gate change (Chair):** in `/story` it is the trigger of a gate
+  or CI change, approved by the Chair before the story closes; the profile is counted among the
+  trigger paths that show it (AI).
+- **A judgement finding pauses (Chair):** the `document-reviewer`'s findings take the review path
+  every finding already takes, recorded in the code review log with the Chair's response, the story
+  waiting until the Chair answers (decisions 2026-10-24-011, 2026-10-24-013 and 2026-10-24-015). No
+  new log.
+
+### Enforcement
+
+None yet: the refusal and the allow list are TMPL-6's gate; the judgement path is
+`story-artifacts`'s, as built.

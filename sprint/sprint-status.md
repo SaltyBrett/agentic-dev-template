@@ -37,6 +37,10 @@ by the hook. TMPL-6.1 in progress.
    every tracked markdown file swept before `v2.1.0` is published, records included; whole files
    judged from then on, against drift past the rules; the formats the gates read moved to ASCII;
    each project swept at adoption.
+5. Design question 5, enforcement (decision 2026-10-24-020, amending 2026-10-24-018): a mechanical
+   finding refuses the commit and fails CI, its only exception an exact string in the allow list,
+   now over all four rules, a change to it a gate change the Chair approves; a judgement finding
+   pauses its story until the Chair answers in the code review log.
 
 ### Blockers
 
