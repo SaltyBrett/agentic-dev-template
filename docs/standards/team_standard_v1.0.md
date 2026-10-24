@@ -142,4 +142,4 @@ check was the right one; those are the roles' and the Chair's ([[reference_story
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.0 | 2026-10-24 | 2026-10-24-004, 2026-10-24-005, 2026-10-24-006, 2026-10-24-009, 2026-10-24-011, 2026-10-24-013 | Written as the authority for the agentic team (TMPL-3.2): the orchestration, the artifacts, the role map by story type, the review triggers and the Chair's approvals, findings in the code review log, the security audit | pending |
+| 1.0 | 2026-10-24 | 2026-10-24-004, 2026-10-24-005, 2026-10-24-006, 2026-10-24-009, 2026-10-24-011, 2026-10-24-013 | Written as the authority for the agentic team (TMPL-3.2): the orchestration, the artifacts, the role map by story type, the review triggers and the Chair's approvals, findings in the code review log, the security audit | a2d1a78 |
