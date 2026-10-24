@@ -45,6 +45,9 @@ by the hook. TMPL-6.1 in progress.
    certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice,
    the gate run again and every code span, link and number checked; the Chair reviews each file
    before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode.
+7. Design question 7, the em-dash rule (decision 2026-10-24-022): the document production
+   standard's §9 moves whole to the writing standard, §10 stays; a deliverable's source judged by
+   the gate and its produced file by the document-production skill.
 
 ### Blockers
 

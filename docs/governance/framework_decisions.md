@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-022 | 2026-10-24 | The document production standard's §9 moves whole to the writing standard: the em-dash line into the character rule, its prose rules into the `business` voice's traits, §9 a pointer, the vendor rule to §10, which stays; a deliverable's markdown source judged by the gate, the produced file's text by the document-production skill's check step | APPROVED |
 | 2026-10-24-021 | 2026-10-24 | The `/humanize` skill, in the main session: certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice, the gate run again and every code span, link and number checked; the Chair reviews each file before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode capturing a custom voice; started by an agent or the Chair | APPROVED |
 | 2026-10-24-020 | 2026-10-24 | The writing gate refuses a mechanical finding, locally and in CI, printing its fix; an exception is an exact string in the profile's allow list, now covering all four mechanical rules, a change to it a gate change the Chair approves; a judgement finding pauses its story until the Chair answers in the code review log | APPROVED |
 | 2026-10-24-019 | 2026-10-24 | The template opts in to the writing standard: every tracked markdown file swept before `v2.1.0` is published, records included; then whole files judged on every commit, never changed lines only; the formats the gates read moved to ASCII; each project swept at adoption | APPROVED |
@@ -5174,3 +5175,44 @@ the same kind.
 ### Enforcement
 
 None yet: `skill-scan` over the skill once built, and the writing gate over what it keeps.
+
+---
+
+## Decision 2026-10-24-022: The house style's writing rules move to the writing standard
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): §9 moved whole, §10 kept; a deliverable's source judged by the gate and
+its produced file by the skill
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 7)
+**Affects:** `docs/standards/document_production_standard_v1.0.md` (§9 replaced by a pointer to the
+writing standard, its vendor rule moved to §10), `.claude/skills/document-production/SKILL.md` (the
+check step), `personas/editor.md` (its em-dash line pointing to the writing standard, a new version);
+queued in TMPL-6
+
+### Context
+
+The document production standard's §9, "Writing Mechanics (House Style)", holds the template's one
+written rule against a machine tell, no U+2014 em dash anywhere, and it binds only produced Word,
+Excel, PDF and PowerPoint files; the document-production skill checks it by searching the file for
+the character, and the `editor` persona insists on it. Decision 2026-10-24-018's character rule now
+covers U+2014 and every other character off a US keyboard in all governed markdown. §9 also holds
+the vendor spelling rule, which points to §10's list, and prose rules (depersonalized framing;
+direct, executive-ready prose with no filler) that read as the `business` voice's traits.
+
+### Decision
+
+- **§9 moves whole (Chair):** words to the writing standard, looks kept by document production. The
+  em-dash line becomes the character rule; direct, executive-ready prose and depersonalized framing
+  become the `business` voice's traits; §9 becomes a one-line pointer to the writing standard.
+- **§10 stays (Chair):** the brand's locked terms are project data, filled in like the brand tokens;
+  the vendor spelling rule joins it, and `.claude/rules/writing.md` points the reviewer to it.
+- **A deliverable is judged twice (Chair):** its markdown source, from which `md_to_docx.py` makes
+  it, by the gate as any document; the produced file's text by the document-production skill's
+  check step, which runs the writing gate's rules over it as a production document in place of the
+  U+2014 search.
+
+### Enforcement
+
+The writing gate over the source; the skill's check step over the produced file, which no gate
+runs.
