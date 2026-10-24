@@ -1,7 +1,7 @@
 ---
 name: The writing standard's design and why
-description: 'Why the writing standard is shaped as it is: voice and audience kept apart, assigned in writing-profile.yaml and never in frontmatter, a file no rule names judged as production, exact phrases and never bare words, a sweep and then whole files rather than changed lines, mechanical findings refused and judgement paused, the formats the gates read moved to ASCII with parsers reading both, and why the humanizer stops for the Chair only over text already in the tree. Read before building or changing any part of TMPL-6.'
-teaches: [2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-021, 2026-10-24-025]
+description: 'Why the writing standard is shaped as it is: voice and audience kept apart, assigned in writing-profile.yaml and never in frontmatter, a file no rule names judged as production, exact phrases and never bare words, a sweep and then whole files rather than changed lines, mechanical findings refused and judgement paused, the formats the gates read moved to ASCII with parsers reading both, and why the humanizer stops for the Chair only over text already in the tree. And the gate: an idle glob refused only in a production rule, Office files read by the text mode, a custom voice told by section 2, the allow list wrap-tolerant, and what its build found. Read before building or changing any part of TMPL-6.'
+teaches: [2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-021, 2026-10-24-025, 2026-10-24-026]
 verified: 2026-10-24
 metadata:
   type: reference
@@ -92,6 +92,41 @@ A rewrite of text already in the tree changes words someone kept, so the Chair s
 before it is kept. An agent's own draft that the gate refuses is the agent's to fix, as a failing
 test is; stopping there would halt every document story over a comma. A guard holds every code
 span, link and number through a rewrite, so meaning cannot drift unseen.
+
+## Why the gate refuses only an idle production glob
+
+A glob decides nothing when it matches no tracked file, or only files an earlier rule claims. A
+missed development path is judged as production, the stricter way, so its documents fail loudly.
+A missed production path can fall to a later development rule and pass unjudged, the silent pass
+again. So the gate refuses the second and never the first, and the starter's project paths
+(`docs/prd/**` and the rest), which match nothing in the template or a newborn project, pass.
+
+## Why the text mode reads Office files itself
+
+A Word, PowerPoint or Excel file is zipped XML that the standard library reads, so the check step
+is one command a person can run, with no extraction improvised per document. The first real run
+paid for it: a file made by `scripts/md_to_docx.py` failed on a U+2014 its source never held,
+written into every footer by the converter. A check on the source alone would never have seen it.
+
+## Why section 2 names the built-in voices
+
+A voice file the standard's table does not name must carry its sample, so a custom voice written
+without the Chair's words is refused rather than passing in the built-in shape. A project that adds
+its voice to the table opts out on purpose, in a visible commit.
+
+## Why the allow list tolerates a wrap
+
+Markdown here is wrapped near 100 columns, so an allowed `Amazon S3` can break across a line; a
+space in an allowed string matches any whitespace. Each finding prints the flagged text widened to
+its word, escaped to ASCII, as the line to add: the narrowest string a person can recognize.
+
+## What the build found
+
+- Writing the broken-copy harness, before running it, found three fixtures that passed with their
+  rule removed: closing hashes, a dash counted as a word, a link's comma. A fixture is the check
+  only once a broken copy fails it ([[reference_kb_frontmatter_validation]]).
+- A scratch birth was refused by `session-closeout-check` over a fixture's literal wikilink to no
+  entry. A fixture that writes a wikilink names a real slug.
 
 ## Rules
 

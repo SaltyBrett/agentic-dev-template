@@ -689,7 +689,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.14 | 2026-10-24 | 2026-10-24-023, 2026-10-24-026 | `writing-standard-selftest` and `writing-standard`: every tracked markdown file judged whole against the writing standard, the gate at the manual stage until TMPL-6.6 (TMPL-6.3) | pending |
+| 1.14 | 2026-10-24 | 2026-10-24-023, 2026-10-24-026 | `writing-standard-selftest` and `writing-standard`: every tracked markdown file judged whole against the writing standard, the gate at the manual stage until TMPL-6.6 (TMPL-6.3) | f58936b |
 | 1.13 | 2026-10-24 | 2026-10-24-013 | `story-artifacts-selftest` and `story-artifacts`: every story's handoffs in `docs/stories/<ID>/` held to the team standard (TMPL-3.2) | a2d1a78 |
 | 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | 109a2a6 |
 | 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |

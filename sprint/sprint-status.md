@@ -18,7 +18,8 @@
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
 S20") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
-by the hook. TMPL-6.3 in progress: its plan settled with the Chair.
+by the hook. TMPL-6.3 done: its plan settled with the Chair, then the gate built, proved against
+broken copies and run on the real tree.
 
 ### Done
 
@@ -45,10 +46,21 @@ by the hook. TMPL-6.3 in progress: its plan settled with the Chair.
    The first birth was refused by `session-closeout-check` over a fixture's unresolved wikilink,
    now a real slug.
 6. The document-production skill's check step names `--text` (2026-10-24-022).
+7. The real tree, `pre-commit run writing-standard --hook-stage manual --all-files --verbose`:
+   exit 1, the sweep's size for TMPL-6.6 at 1379 findings in 152 of 167 files, characters 1190
+   (U+2014 745, U+00A7 285, box drawing and arrows most of the rest, a run of one character one
+   finding) and headings 189; no phrase, reference, profile or voice finding, the template holding
+   no production file. The files S19 wrote pass, apart from the U+2014 changelog lines of
+   `personas/editor.md` and `personas/document-reviewer.md`, which TMPL-6.4 moves; this session's
+   text adds none.
+8. The writing standard's 1.1 row and the runbook's 1.14 row stamped;
+   [[reference_writing_standard_design]] gained the gate's reasons and what its build found.
 
 ### Blockers
 
 - None.
+
+---
 
 ## S19 — 2026-10-24 — The writing standard's law
 

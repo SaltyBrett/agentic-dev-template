@@ -342,5 +342,5 @@ The brand's locked terms and the vendor spelling rule are project data, in secti
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.1 | 2026-10-24 | 2026-10-24-026 | The gate's reading stated (TMPL-6.3): a production glob that decides nothing refused, a custom voice told by section 2's table, the allow list wrap-tolerant with the line each finding prints, `--which`, the text mode over Office files, and the exact reading of characters, headings, phrases and references | pending |
+| 1.1 | 2026-10-24 | 2026-10-24-026 | The gate's reading stated (TMPL-6.3): a production glob that decides nothing refused, a custom voice told by section 2's table, the allow list wrap-tolerant with the line each finding prints, `--which`, the text mode over Office files, and the exact reading of characters, headings, phrases and references | 4dbcc97 |
 | 1.0 | 2026-10-24 | 2026-10-24-014, 2026-10-24-016, 2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-022, 2026-10-24-025 | Written as the authority for writing (TMPL-6.2): the voices and audiences, the profile, the four mechanical rules and the phrase tables, the allow list, refusal and judgement, and produced documents | d1c6ef9 |
