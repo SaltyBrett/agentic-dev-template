@@ -41,6 +41,7 @@
 - The probe's skill, README and `AGENTS.md` were brought up to the template by copy, since no release carries them yet.
 - For TMPL-2.4: a project born from `main` between releases stamps `.template-version` as `v1.0.0` though it carries later changes, so the updater's three-way base for it is `v1.0.0` ([[reference_template_versioning]]).
 - The library has no general mobile-game engine persona: `game-engine-developer` is Rust/Bevy only, observed at the probe's team stage ([[reference_launch_live_run]]).
+- Open question on TMPL-2.4's row, found after the S10 closeout and the Chair's to settle before any adoption: the three projects' PRDs and architectures predate the approved form, so the approval gate refuses them after adoption until each is approved or skipped ([[reference_project_launch]]).
 - Decision 2026-10-23-022 was settled by the AI within 2026-10-23-009; 2026-10-23-023 and 2026-10-23-024 are the Chair's, each on the AI's report.
 - The Blender connection's uv command was read from the pinned commit's tree and never run; the first operator to activate it runs it first ([[reference_blender_mcp]]).
 - `disableWorkflows` is still unobserved in a live session (decision 2026-10-23-006).
