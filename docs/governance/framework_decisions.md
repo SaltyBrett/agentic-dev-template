@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-23-017 | 2026-10-23 | CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release | APPROVED |
 | 2026-10-23-016 | 2026-10-23 | The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit | APPROVED |
 | 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
 | 2026-10-23-014 | 2026-10-23 | The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers | APPROVED |
@@ -3522,3 +3523,48 @@ skill resolves only to a built-in or a roster agent, while `technical-writer` is
 
 To be built in TMPL-2.2: the gate's fixtures, each proved against a broken variant; its runbook
 section passing `gate-runbook`; the drain skill passing `skill-scan` and listed in `AGENTS.md`.
+
+---
+
+## Decision 2026-10-23-017: CI makes a scratch project on every push
+
+**Date:** 2026-10-23
+**Made By:** Chair (after the S8 closeout), on the AI's recommendation; the shape by the AI
+**Status:** APPROVED
+**Builds:** opens TMPL-2.7
+**Affects:** `scripts/birth_probe.py` (new), `.github/workflows/gates.yml` (a step),
+`docs/orchestration/knowledge/reference_ci_backstop.md` (why the backstop births a project),
+`sprint/story-tracker.md` (TMPL-2.7; TMPL-2.4 waits on it)
+
+### Context
+
+From the S7 closeout push until the S8 closeout push, every project born from the template was
+refused by its own first suite run, while the template's CI stayed green (decision 2026-10-23-015).
+CI judges the template, and several gates judge a project differently: the profile's stripped
+documents, the tracker the initializer regenerates, the project's decisions beside the framework's,
+the roster. GitHub's "Use this template" copies the default branch as it stands, not a release tag,
+so `main` must make a healthy project at every push. The regression was found only because TMPL-5.1's
+proof needed a birth, and the lesson stood as prose in [[reference_doc_authority]]: a rule with no
+control.
+
+### Decision
+
+- **`scripts/birth_probe.py`** makes a scratch project from a committed revision (`HEAD` unless
+  named): the revision's tree in a temporary directory, a fresh repository, the initializer with
+  `--apply` and a profile. Its verdict is the initializer's own: the suite run that already refuses a
+  birth that is not green. A script, so the operator or any agent runs the same check locally, as
+  the release does.
+- **CI runs it on every push and pull request in the template**, once for each profile
+  (`commercial`, `gcc`), since the profile's stripping is one way a birth breaks; skipped where
+  `.project-profile` exists, in a project. It reports, as the rest of CI does (decision
+  2026-09-22-001): a red run is fixed in the same session.
+- **Proved against a real broken commit**: at `38c549d`, the S7 tree, it fails for the defect
+  TMPL-2.6 fixed; at the commit that builds it, it passes.
+- **Out of scope**: an existing project taken to a newer release through `template_update.py`,
+  heavier and kept by hand at the release (TMPL-2.4).
+- Part of `v2.0.0`; TMPL-2.4 waits on TMPL-2.7.
+
+### Verification and enforcement
+
+To be built in TMPL-2.7: the probe red at `38c549d` and green at its own commit, for both profiles;
+the CI step's run observed green with `gh run watch --exit-status`.

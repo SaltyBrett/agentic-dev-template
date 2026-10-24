@@ -37,11 +37,12 @@
 - 2026-10-23-014 The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers
 - 2026-10-23-015 In a project the authority gate judges what the template wrote in the template, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010, whose Date now reads `2026-10-23; amended 2026-10-23`
 - 2026-10-23-016 The doc-queue as designed for TMPL-2.2: the writer's queue is the open stories marked `Queued: S<N>`, failing at cold start once older than one session; the drain forks as `general-purpose` in the library technical writer's role, one document each, and leaves its change for the main session to review and commit
+- 2026-10-23-017 CI makes a scratch project on every push to the template: `scripts/birth_probe.py` births a committed revision through the initializer, whose own suite run is the verdict, once per profile; proved red at the commit that blocked births; built as TMPL-2.7 before the release
 
 ## 5. Blockers and open questions
 
 - No blockers.
-- Proposed to the Chair at the S8 handover, not decided: a CI job that runs a scratch birth, so a template change that blocks births fails CI. The regression TMPL-2.6 fixed was invisible to CI, which judges only the template.
+- Approved by the Chair after the S8 closeout: decision 2026-10-23-017 and story TMPL-2.7, a scratch birth in CI on every push, so a template change that blocks births turns CI red. The Chair orders it against TMPL-2.2 at the start of S9.
 - Births from the template were refused by `doc-authority-scan` from the S7 closeout push until the S8 closeout push, which carries the fix (decision 2026-10-23-015).
 - The Blender connection's uv command was read from the pinned commit's tree and never run; the first operator to activate it runs it first ([[reference_blender_mcp]]).
 - Decision 2026-10-23-013's gate design and server choice, 2026-10-23-014's draft-then-authority form and 2026-10-23-015's copy fix were made by the AI within approved decisions, and reported to the Chair at the S8 handover.
