@@ -25,6 +25,9 @@ by the hook. TMPL-6.1 in progress.
 1. Design question 1, the voices (decision 2026-10-24-016): seven built in, the three proposed and
    Grammarly's four; a custom voice keeping the Chair's sample of 200 words or more and the traits
    drawn from it, in its own project, private.
+2. Design question 2, the assignment (decision 2026-10-24-017): `writing-profile.yaml` beside
+   `code-profile.yaml`, ordered path rules giving a voice and an audience, no frontmatter; a file no
+   rule names judged as production; an agent's voice in the same profile, a document's own winning.
 
 ### Blockers
 

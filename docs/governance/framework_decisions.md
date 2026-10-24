@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-017 | 2026-10-24 | Voices and audiences assigned in `writing-profile.yaml`, beside `code-profile.yaml`: ordered path rules, the first match winning, no frontmatter; a file no rule names judged as production; an agent's voice in the same profile, a document's own voice winning | APPROVED |
 | 2026-10-24-016 | 2026-10-24 | The writing standard's voices: seven built in, the three proposed and Grammarly's four; one file per voice holding its traits and phrase list; a custom voice keeping the Chair's sample of 200 words or more and the traits drawn from it, kept in its own project, private | APPROVED |
 | 2026-10-24-015 | 2026-10-24 | The `/story` skill as built, proved live on a scratch copy of Comfy: roles write and the main session gates, commits and asks; a finding reaches the code review log once, with the Chair's words; the code reviewer persona at version 3; three gaps the proof found opened as TMPL-3.4, TMPL-2.10 and TMPL-4.7, the release waiting on them | APPROVED |
 | 2026-10-24-014 | 2026-10-24 | The writing standard opens as epic TMPL-6 in `v2.1.0`: assignable voices, a gate over the mechanical tells of machine-written prose (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing, development artifacts in production documents) and a humanizer skill; designed with the Chair at S18; the release waits on it | APPROVED |
@@ -4892,3 +4893,53 @@ development reader, is its audience, assigned apart from the voice (design quest
 ### Enforcement
 
 None yet: the voice files and the sample count are TMPL-6's gate.
+
+---
+
+## Decision 2026-10-24-017: Voices and audiences assigned in writing-profile.yaml
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): one profile beside `code-profile.yaml` and no frontmatter; a file no rule
+names judged as production; an agent's voice in the same profile, a document's own voice winning.
+The default voice, the files in scope and the profile's merge by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 2)
+**Affects:** none at this decision. To be built in TMPL-6: `writing-profile.yaml` (new, the starter
+profile)
+
+### Context
+
+A voice says how a document sounds (decision 2026-10-24-016). Its audience says whether it may cite
+development references: decision and story IDs, session numbers, sprint paths, wikilinks, "the
+Chair", commit hashes. A development document may; a production document, written for the
+project's users or operators, may not. The Chair asked what frontmatter would give and what it
+would take, and whether a strict default would discourage adoption.
+
+### Decision
+
+- **One profile, no frontmatter (Chair):** `writing-profile.yaml` at the root holds ordered rules,
+  each a list of path globs with a voice and an audience, `production` or `development`; the first
+  rule that matches a file wins, and a rule may name a single file. Frontmatter was weighed and
+  refused: at S18, 102 of the template's 152 markdown files carry frontmatter that Claude Code or a
+  gate already reads and judges (skills, rules, agents, personas, knowledge entries, authorities),
+  and an unknown key in a skill fails silently; GitHub shows a README's frontmatter to its
+  production reader as a table; and a project's change to the block of a file the template ships
+  would conflict at every update. The gate prints any file's voice and audience on request.
+- **A file no rule names is production (Chair):** development references are refused unless its
+  path is declared development. The starter profile declares every framework development path, so
+  a project is born with no finding, and the gate's message prints the rule to add. The audience
+  rule fires only on development references; the adoption risk is noise, which keeps the phrase
+  lists short and exact (design question 3).
+- **An agent's voice is in the same profile (Chair):** an `agents:` map from a roster slug to a
+  voice, the persona files unchanged. It is the agent's voice for everything it writes, commit
+  messages, pull request descriptions and replies included; in a document the profile assigns, the
+  document's voice wins, and the agent's brief says so. The gate judges a document by its own
+  voice, since it cannot tell who wrote a file.
+- **The details (AI):** the profile's `default` names the voice of a file no rule names,
+  `technical` in the starter profile; the gate judges the markdown git tracks; the updater merges
+  the profile three-way, so a development path a release adds reaches a project's profile and the
+  project's own rules are kept.
+
+### Enforcement
+
+None yet: the profile's reader and the audience rule are TMPL-6's gate.
