@@ -44,6 +44,7 @@
 - 2026-10-24-021 The humanizer's flow
 - 2026-10-24-022 The house style's writing rules move to the writing standard
 - 2026-10-24-023 TMPL-6 re-cut to the design
+- 2026-10-24-024 The subagent ceiling, opened as TMPL-3.5 after the closeout, its design at its start
 
 ## 5. Blockers and open questions
 
@@ -51,7 +52,7 @@
 - The Chair decides which of the template's own files are production in its `writing-profile.yaml`. `README.md` and `TEMPLATE_GUIDE.md` use S1, sessions and the Chair as product vocabulary for a template adopter. The options are the allow list or a development rule.
 - A persona's changelog lines keep the em-dash form the persona gate's `CHANGELOG_ENTRY` reads until TMPL-6.4 moves the formats to ASCII. The two new persona versions write their changelog line in the current form.
 - The document-production skill's check step cannot name the writing gate's command until TMPL-6.3 builds it, since `skill-scan` refuses a script or hook that does not exist.
-- Carried, not S19's: TMPL-3.4, TMPL-2.10, TMPL-4.7, TMPL-4.4 and TMPL-4.5, all before the `v2.1.0` release TMPL-4.6.
+- Carried, not S19's: TMPL-3.4, TMPL-3.5, TMPL-2.10, TMPL-4.7, TMPL-4.4 and TMPL-4.5, all before the `v2.1.0` release TMPL-4.6.
 - The Chair deletes the scratch repositories `SaltyBrett/story-probe-s17` and `SaltyBrett/launch-probe-s10`, and the clones `/Users/twdaddy/code/personal/story-probe-s17`, `/Users/twdaddy/code/personal/launch-probe-s10` and `/Users/twdaddy/code/personal/tmpl-s6-probe`.
 
 ## 6. Verification observed

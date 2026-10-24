@@ -53,6 +53,10 @@ the build re-cut.
    6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the
    sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6; S19 opens with TMPL-6.2.
 9. [[reference_writing_standard_design]]: why each choice, for the builders of TMPL-6.2 to TMPL-6.6.
+10. After the closeout, the Chair's ask (decision 2026-10-24-024): the subagent ceiling, the session's
+    model and effort never exceeded by a subagent, the operator choosing model and effort or effort
+    only; opened as TMPL-3.5 with its design at its start, TMPL-4.6 waiting on it;
+    [[reference_claude_code_subagent_model]], read in the documentation, not yet observed.
 
 ### Blockers
 

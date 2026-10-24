@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-024 | 2026-10-24 | The subagent ceiling joins `v2.1.0`: the operator sets the session's model and effort, the orchestrator chooses each subagent's for its task and never above, the operator choosing whether it may change model and effort or effort only; opened as TMPL-3.5, designed with the Chair at its start; TMPL-4.6 waits on it | APPROVED |
 | 2026-10-24-023 | 2026-10-24 | TMPL-6 re-cut to the design: 6.2 the law, 6.3 the gate, 6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6, each project swept at adoption | APPROVED |
 | 2026-10-24-022 | 2026-10-24 | The document production standard's §9 moves whole to the writing standard: the em-dash line into the character rule, its prose rules into the `business` voice's traits, §9 a pointer, the vendor rule to §10, which stays; a deliverable's markdown source judged by the gate, the produced file's text by the document-production skill's check step | APPROVED |
 | 2026-10-24-021 | 2026-10-24 | The `/humanize` skill, in the main session: certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice, the gate run again and every code span, link and number checked; the Chair reviews each file before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode capturing a custom voice; started by an agent or the Chair | APPROVED |
@@ -5264,3 +5265,52 @@ before `v2.1.0` is published, the Chair reviewing each file.
 
 `session-closeout-check`'s dependency order over the tracker; `doc-authority-scan` over each
 authority named above, queued by its story's row.
+
+---
+
+## Decision 2026-10-24-024: The subagent ceiling
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18, after its closeout): the ceiling, the choice per task, the operator's choice
+of model and effort or effort only, in `v2.1.0`; its own story, designed at its start. The research
+and the story's shape by the AI
+**Status:** APPROVED
+**Builds:** opens TMPL-3.5
+**Affects:** `sprint/story-tracker.md` (TMPL-3.5 opened, TMPL-4.6 waiting on it). To be built in
+TMPL-3.5: `.claude/settings.json` (a `PreToolUse` hook on the `Agent` tool), its script (new),
+`.claude/skills/story/SKILL.md` (each role's model and effort), `docs/standards/team_standard_v1.0.md`
+(the ceiling and its record), `AGENTS.md` (the minimum Claude Code version)
+
+### Context
+
+The operator sets each session's model and reasoning effort. `/story`, and the humanizer to come,
+spawn subagents and choose neither, so every role runs at whatever the session and its agent file
+resolve to. Read in Claude Code's documentation on 2026-10-24 ([[reference_claude_code_subagent_model]]):
+no built-in setting caps a subagent relative to its parent, `maxEffortLevel` and `availableModels`
+being fixed values; a `PreToolUse` hook on the `Agent` tool sees a spawn's requested model, and
+probably its effort, and can refuse it; the session's effort reaches every tool hook, its model only
+the `SessionStart` and model-switch hooks; a roster agent's own `model:` can raise a subagent's model
+without the spawn naming one; Claude Code ranks no models; a forked skill runs at the session's model
+and effort; a spawn's own effort needs v2.1.292, and 2.1.308 is installed.
+
+### Decision
+
+- **The ceiling (Chair):** a subagent's model and effort never exceed the session's.
+- **The orchestrator chooses per task (Chair):** within the ceiling, the main session gives each
+  subagent the model and effort its task needs.
+- **The operator's choice (Chair):** whether the orchestrator may change the model and the effort,
+  or the effort only, every subagent staying on the session's model.
+- **In `v2.1.0`, its own story (Chair):** TMPL-3.5, TMPL-4.6 waiting on it. Its session opens with
+  the design questions, one decision each: where the operator's choice lives, committed per project
+  or set per session; the ranking of models, the Chair's, as data; whether a spawn over the ceiling
+  is refused or lowered; whether a story's artifacts record each role's model and effort for audit;
+  how a role's tier is chosen, a table in the team standard or the orchestrator's judgement per
+  brief. Its build opens with a logging probe of the `Agent` tool's real input, since whether
+  `effort` is in it, and whether a forked skill reaches the matcher, are not documented (AI).
+- **The honest limit (AI):** a spawn leaves nothing in git, so this is the first control here that
+  only a Claude Code hook can enforce; another agent is held by the written rule alone.
+
+### Enforcement
+
+`session-closeout-check`'s dependency order holds TMPL-4.6 behind TMPL-3.5; the hook itself is
+TMPL-3.5's.
