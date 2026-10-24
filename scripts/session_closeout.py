@@ -57,8 +57,8 @@ WHAT IT CHECKS
             A fresh project — no pairs and sprint-status at S1 — passes.
 --scaffold  writes the next session's HANDOFF/KICKOFF skeletons; they fail --check until filled
 --personas  the persona rule of --check alone, for a repository that holds a registry and no
-            sprint state — `dev-resources` consumes it as the `persona-lint` hook published by
-            `.pre-commit-hooks.yaml` (decision 2026-09-23-005)
+            sprint state, as `dev-resources` did until it was archived at `v2.0.0` — published
+            as the `persona-lint` hook by `.pre-commit-hooks.yaml` (decision 2026-09-23-005)
 --self-test in-memory fixtures, run before the gate on every commit
 
 WHAT IT DELIBERATELY DOES NOT DO

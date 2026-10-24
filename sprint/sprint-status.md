@@ -21,7 +21,8 @@
 `framework-maintainer`. TMPL-5.4 done, its third run with the Chair at the keyboard in
 `SaltyBrett/launch-probe-s10` observing every remaining stage through the probe's first closeout.
 Two gaps it found, each passing silently, opened as TMPL-2.9 and TMPL-5.7 by the Chair's choice of
-fix, both before TMPL-2.4, and both built.
+fix, both before TMPL-2.4, and both built. Then TMPL-2.4 done: `v2.0.0` released, the three projects
+taken to it, `dev-resources` archived.
 
 ### Done
 
@@ -57,6 +58,8 @@ fix, both before TMPL-2.4, and both built.
    40066882658), Comfy (`ba0da08`, `13b9f4d`; run 40066960006, carrying its unpushed S4 commits),
    PocketGames (`5089cf5`, `3fbc6e3` on `build/milestone-1`, its working branch; run 40067080070).
    No project syncs from `dev-resources`. Recorded in [[reference_v2_adoption]].
+8. TMPL-2.4 done: `dev-resources` given a retirement notice at the top of its README (`4e062ea`,
+   run 40067296277 green), then archived, read-only, at the Chair's choice.
 
 ### Blockers
 

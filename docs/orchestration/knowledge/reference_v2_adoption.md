@@ -43,6 +43,8 @@ commit, `--stamp`, the stamp's commit, the suite again, and the push with its `g
   waits for the project's own release step.
 
 Each run was green on `gates` and both `birth` jobs; the run IDs are in the S11 sprint-status entry.
+Then `dev-resources`, which no project syncs from any longer, was given a retirement notice at the
+top of its README, pushed with its run green, and archived, read-only.
 
 ## Rules
 

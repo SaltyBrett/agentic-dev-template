@@ -47,7 +47,9 @@ was the wrong shape for that, three ways:
 ## What still holds
 
 - A project on `v1.0.0` keeps its own copy of the script, its stamp and its closeout rule until it
-  adopts `v2.0.0`; `dev-resources` keeps serving it and is archived once all have adopted (TMPL-2.4).
+  adopts `v2.0.0`. `dev-resources` served the three projects until each adopted, and was archived,
+  read-only, once all three had (TMPL-2.4, 2026-10-24); a project still on `v1.0.0` can fetch from
+  it but publish nothing.
   Adoption settles what the sync left (decision 2026-10-23-005, [[reference_template_update]]): each
   `docs/personas/` file is converted into the roster, the stamp removed, and a marked entry merged as
   content, so the `source: dev-resources` declaration, the resource-entry class of decision
