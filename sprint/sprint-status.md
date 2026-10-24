@@ -20,8 +20,8 @@
 exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
 ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
 TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7, TMPL-2.2 and
-TMPL-5.3 done; TMPL-5.2 in progress, the Chair choosing that a reopened revision stands at its
-last approved version (decision 2026-10-23-020, amended).
+TMPL-5.3 and TMPL-5.2 done, the Chair choosing mid-session that a reopened revision stands at
+its last approved version (decision 2026-10-23-020, amended).
 
 ### Done
 
@@ -44,6 +44,12 @@ last approved version (decision 2026-10-23-020, amended).
    birth: refused with no documents and with drafts, passing once approved by the README, refused
    on a PRD revision the architecture lags, passing on an approved skip and refused on a proposed
    one.
+4. TMPL-5.2 (decision 2026-10-23-021): `/project-launch`, the Chair's alone, in the main session,
+   each stage's state read from the documents; team selection takes intake's answer, planning
+   records its sources on the tracker's `**Source:**` line, the S1 entry's one next step names it;
+   [[reference_project_launch]]. Decision 2026-10-23-020 amended so a revision in progress can be
+   committed. A fresh agent applied `status` to two scratch trees and its friction report sharpened
+   five rules; a birth from `6e94683` green under both profiles. The live run is TMPL-5.4's.
 
 ### Blockers
 

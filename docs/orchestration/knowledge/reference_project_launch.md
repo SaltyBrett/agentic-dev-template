@@ -59,6 +59,10 @@ architecture stands in for its approval at the gate.
 `skill-scan` proves the commands the skill names exist; it cannot prove the interview is good. The
 proof of the stages is a live run with the Chair at the keyboard, through a pause, a skip and a
 return to revise (TMPL-5.4).
+The reading rules were proved the other way a skill can be: a fresh agent given only the file
+applied `status` to two scratch trees, and every rule it could not apply without guessing (which
+Status a skip is read by, a decision approving a deleted file, when the launch is done, a plan with
+no recorded versions) became a sentence in the skill before release.
 
 ## Rules
 

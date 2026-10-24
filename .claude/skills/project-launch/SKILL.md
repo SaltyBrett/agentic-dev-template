@@ -17,28 +17,35 @@ Arguments: $ARGUMENTS
 ## Where each stage stands
 
 There is no launch file; each stage's state is read from the tree, before anything else is done.
+The documents decide: a decision approving a document that no longer exists approves nothing.
 
 | Stage | Led by | Done when |
 |-------|--------|-----------|
-| 1. `intake` | the session | `docs/prd/prd.md` exists with a `status:` in its frontmatter: the PRD draft in the template's shape |
+| 1. `intake` | the session | `docs/prd/prd.md` exists with `status:` and `template:` in its frontmatter: the PRD draft in the template's shape |
 | 2. `team` | the team-selection skill | `.claude/agents/` holds `product-manager`, `solution-architect` and `delivery-manager` |
 | 3. `prd` | `product-manager` | `docs/prd/prd.md` has `status: approved` and the `authority:` line |
 | 4. `architecture` | `solution-architect` | `docs/architecture/architecture.md` is approved the same way, its `prd:` the PRD's newest version-log version |
 | 5. `planning` | `delivery-manager` | `sprint/story-tracker.md` holds an epic not marked `[EXAMPLE]` |
 
-- **Skipped:** an APPROVED decision in `sprint/decision-log.md` carries `**Skips:**` naming the stage.
+- **Skipped:** a decision in `sprint/decision-log.md` whose Status in the Decision Index is
+  APPROVED, as `doc-authority-scan` reads it, carries `**Skips:**` naming the stage. A stage both
+  skipped and done reads as done.
 - **Reopened:** an approved document is back at `status: draft` for revision, its `authority:` line
   and rows kept; its last approved version stands meanwhile.
 - **Stale:** built on an older version of the stage before it. An approved architecture whose
   `prd:` is older than the PRD's newest version, which `doc-authority-scan` refuses; or a plan whose
-  tracker `**Source:**` line names an older architecture version than the architecture's newest.
+  tracker `**Source:**` line names an older version of either document than its newest. A plan
+  whose `**Source:**` line names no versions was made before this skill: done, its staleness unknown.
 - **In progress:** a draft that is not yet approved, or a roster holding some of the three leads.
+- **Not started:** none of the above; `status` names what is missing.
 
 ## The commands
 
 - No argument: resume at the first stage that is neither done nor skipped, or that is stale.
 - `status`: list the five stages, each as not started, in progress, done, skipped, reopened or
-  stale, with the file or decision that says so. Change nothing.
+  stale, with the file or decision that says so, and for a draft the sections still holding only
+  the template's `<!-- -->` guidance. Change nothing. The launch is done when every stage is done or
+  skipped.
 - `pause`: write the current stage's draft, commit it as `checkpoint: launch — <stage> paused`, say
   where it stopped, and stop. Resuming reads the draft: a section still holding only the template's
   `<!-- -->` guidance is the next one to fill.
@@ -107,8 +114,9 @@ PRD leaves to the build: what it runs on, what it connects to, which requirement
 Take the delivery manager's prompt (`.claude/agents/delivery-manager.md`) and run the
 planning-session skill, `.claude/skills/planning-session/SKILL.md`; its tracker's `**Source:**` line
 names the versions the plan is built from. The first real epic it writes is the commit
-`doc-authority-scan` refuses unless the PRD and the architecture stand approved or skipped. The
-launch is done when planning is; the session closes out with the lead the Chair named.
+`doc-authority-scan` refuses unless the PRD and the architecture stand approved or skipped. With
+planning done the launch is done, unless an earlier stage is neither done nor skipped; the session
+closes out with the lead the Chair named.
 
 ## Revising an approved document
 

@@ -3819,7 +3819,13 @@ their frontmatter (likewise), and whether the skill is the Chair's alone.
 ### Verification
 
 `skill-scan` over the skill and the two it calls; the initializer's fixture for the S1 entry's one
-next step. The live run through every stage with the Chair at the keyboard is TMPL-5.4's.
+next step, caught by two broken skeletons; a birth from `6e94683` green under both profiles. A fresh
+agent given only the skill applied `status` to two scratch trees and read every stage as the rules
+say; its friction report sharpened them before release: a skip's status is the index's, as the gate
+reads it; the documents decide over a decision approving a file that is gone; the launch is done
+when every stage is done or skipped; a plan with no versions on its `**Source:**` line is done with
+its staleness unknown, and stale compares both documents it names. The live run through every stage
+with the Chair at the keyboard is TMPL-5.4's.
 
 ### Enforcement
 

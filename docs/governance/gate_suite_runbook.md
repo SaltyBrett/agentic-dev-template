@@ -537,7 +537,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | pending |
+| 1.7 | 2026-10-23 | 2026-10-23-021, 2026-10-23-008 | `new-project-selftest` holds the S1 entry's one next step, `/project-launch` (TMPL-5.2) | 6e94683 |
 | 1.6 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan`: a revision reopened with its authority and rows stands at its last approved version, and `**Skips:**` names any launch stage (TMPL-5.2) | b612e51 |
 | 1.5 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | `doc-authority-selftest` and `doc-authority-scan` hold the approval gate: in a project with a real epic, an approved PRD and architecture or a logged `**Skips:**` (TMPL-5.3) | d7ad4d7 |
 | 1.4 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | `doc-queue` added after `doc-authority-scan`, a manual hook run at cold start over the stories marked `Queued: S<N>`; `doc-authority-selftest` holds its fixtures; the preamble no longer counts the manual hooks (TMPL-2.2) | 0dcccd2 |
