@@ -83,7 +83,7 @@ TEMPLATE_REPO_NAME = "agentic-dev-template"
 # Bumped when a release is tagged. Written to .template-version so a project can
 # answer "which template version am I on" — `--template` squashes history, so
 # nothing else records it.
-TEMPLATE_VERSION = "v1.0.0"
+TEMPLATE_VERSION = "v2.0.0"
 
 # Files whose {{TOKENS}} are per-project values. Everything else is documentation
 # of the skeleton, or brand values deferred to first document production.
