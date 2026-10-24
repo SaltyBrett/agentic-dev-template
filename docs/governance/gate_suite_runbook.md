@@ -422,8 +422,12 @@ other needs `--hook-stage <stage>`), or a workflow that is missing or unreadable
 frontmatter that does not parse or an unknown key passing, a hook id the config lacks or a stage it
 does not declare passing, a `pre-commit run` without `--all-files` passing, a flag its script never
 names passing, a hook's entry run bare passing, a skill missing from `AGENTS.md` passing, an
-unreadable config read as an empty suite.
-**Why:** decision 2026-10-23-001; [[reference_claude_code_skills]].
+unreadable config read as an empty suite; a preset naming a persona the library lacks, an
+unparsable or second presets block, a connection pinned to a tag, a branch or nothing, or a
+connection in the template's `.mcp.json` or in a project without its persona passing. A fixture
+that raises is a failure.
+**Why:** decisions 2026-10-23-001 and 2026-10-23-013; [[reference_claude_code_skills]],
+[[reference_blender_mcp]].
 **Alone:** `pre-commit run skill-scan-selftest --all-files --verbose`
 
 ## `skill-scan`
@@ -437,8 +441,13 @@ directory, no description or one past the listing cap, `context` other than `for
 directory with no `SKILL.md`); a command in its code that names a hook the config lacks, a stage
 the hook does not declare, a `pre-commit run` without `--all-files`, a script or flag that does not
 exist, or a hook's entry run bare; and a skill `AGENTS.md` does not name by path, or a path it names
-with no skill. Prose is not read. Exits 2, never 0, without PyYAML.
-**Why:** decision 2026-10-23-001; [[reference_claude_code_skills]].
+with no skill. In the team-selection skill, its one fenced `yaml` block: a preset that is not a
+list of personas `personas/` holds, each named once; a connection that names no library persona or
+is pinned to no exact release (a version, or a git source at a full commit). And `.mcp.json`
+holding a connection in the template, in a project whose roster lacks its persona, or other than
+the skill gives it. Prose is not read. Exits 2, never 0, without PyYAML.
+**Why:** decisions 2026-10-23-001 and 2026-10-23-013; [[reference_claude_code_skills]],
+[[reference_blender_mcp]].
 **Alone:** `pre-commit run skill-scan --all-files`
 
 ## `commit-attribution`
@@ -476,5 +485,6 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.2 | 2026-10-23 | 2026-10-23-013 | `skill-scan-selftest` and `skill-scan` hold the team presets and the connections of the team-selection skill, and `.mcp.json` (TMPL-5.6) | pending |
 | 1.1 | 2026-10-23 | 2026-10-23-015 | `doc-authority-selftest` and `doc-authority-scan` say that in a project the template's rows and decisions are judged in the template, and that a row's commit is found following renames but never a copy (TMPL-2.6) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001, 2026-10-23-003, 2026-10-23-005, 2026-10-23-007, 2026-10-23-010 | Marked as the authority for the gate suite (TMPL-2.3); reflects the skill gate, the persona library, the adoption fixtures, the `.gitignore` union and the authority gate. The README catalog's change to `skill-scan` (2026-10-23-009) is queued in TMPL-5.5 | 515f1a5 |

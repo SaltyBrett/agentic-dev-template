@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 skill_scan.py — every skill under `.claude/skills/` loads the way its frontmatter says, names only
-hooks, stages and commands that exist, and is listed in `AGENTS.md` for an agent that is not Claude.
+hooks, stages, commands and personas that exist, and is listed in `AGENTS.md` for an agent that is
+not Claude; a connection the team-selection skill offers is written only where it was chosen.
 
 THE FAILURE THIS CLOSES
 -----------------------
@@ -11,6 +12,9 @@ skill naming one that runs nothing, which is what the runbook page did before it
 2026-09-23-001). And Claude Code fails silently on a skill: a frontmatter that does not parse loads
 the skill with no fields, so a `context: fork` or a `disable-model-invocation` is lost without a
 word; a key it does not know is ignored; a directory with no `SKILL.md` is not a skill at all.
+Team presets name library personas the same way, so a rename would leave a preset pointing at
+nothing; and an MCP connection runs code on the operator's machine, so it belongs only in a project
+that activated its persona and said yes (decision 2026-10-23-012).
 
 WHAT IT CHECKS
 --------------
@@ -30,12 +34,21 @@ WHAT IT CHECKS
   bare-gate    a script invoked with exactly a hook's entry: run it through `pre-commit run <id>`
   unlisted     a skill `AGENTS.md` does not name by path, or a path it names with no skill
   config       the config cannot be read as a suite — never read as zero hooks
+  preset       the team-selection skill holds no single fenced `yaml` block with `presets:`, or
+               one that does not parse, or a preset that is not a list of personas `personas/`
+               holds, each once
+  connection   a connection in that block that names no library persona, is not a server with a
+               `command` and `args`, or pins no exact version; or `.mcp.json` holding it in the
+               template, in a project whose roster lacks its persona, or other than the skill
+               gives it; or `.mcp.json` that does not parse
 
 WHAT IT DELIBERATELY DOES NOT DO
 --------------------------------
 Commands are read from inline code spans and fenced blocks only; a command written as bare prose
 is not seen. It cannot tell whether the steps are right, only that what they name exists and runs
-at the stage they say. A skill's `paths:` globs are not checked; no skill here sets one.
+at the stage they say. A skill's `paths:` globs are not checked; no skill here sets one. Whether a
+preset is the right team is the Chair's judgement; whether the operator approved the connection in
+Claude Code is per clone and outside the repository.
 
 Usage:  pre-commit run skill-scan --all-files            # portable; pre-commit provides pyyaml
         python3 scripts/skill_scan.py
@@ -46,9 +59,11 @@ Exit 0 = clean, 1 = violations (blocks the commit), 2 = cannot run.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 
 try:
@@ -73,6 +88,10 @@ SKILLS = ".claude/skills/"
 AGENTS_DIR = ".claude/agents/"
 CONFIG = ROOT / ".pre-commit-config.yaml"
 BRAIN = ROOT / "AGENTS.md"
+LIBRARY_DIR = "personas/"                # the persona library a preset names from
+TEAM_SKILL = "team-selection"            # the skill holding the presets and connections
+MCP_CONFIG = ".mcp.json"                 # Claude Code's project-scoped MCP servers
+PROFILE = ROOT / ".project-profile"      # present in a project, absent in the template
 
 # The frontmatter reference of https://code.claude.com/docs/en/skills.md, read 2026-10-23.
 KNOWN_KEYS = {
@@ -92,6 +111,12 @@ SPLIT = re.compile(r"&&|\|\||;|\|")
 PRE_COMMIT_RUN = re.compile(r"\bpre-commit\s+run\b(.*)")
 SCRIPT = re.compile(r"(?<![\w/.-])(?:(python3?|py)\s+)?(?:\./)?scripts/([A-Za-z0-9_]+\.py)\b(.*)")
 LISTED = re.compile(r"\.claude/skills/([A-Za-z0-9_-]+)/SKILL\.md")
+# An argument that pins one release: `name==1.2.3` for pip and uv, `name@1.2.3` for uvx's short form,
+# or a git source at a full commit (`git+https://host/repo.git@<40 hex>#subdirectory=…`); a tag or a
+# branch can move, so it is no pin.
+PINNED = re.compile(r"^(?:(?P<package>[A-Za-z0-9][A-Za-z0-9._-]*)(?:==|@)\d+(?:\.\d+)*"
+                    r"|(?P<repo>git\+https://[^@\s#]+)@[0-9a-f]{40}(?:#\S+)?)$")
+PACKAGE = re.compile(r"[=<>~!@\[]")      # where a requirement's package name ends
 # `pre-commit run` options that take a value, so the value is never read as a hook id.
 VALUED = {"--hook-stage", "--from-ref", "--to-ref", "--commit-msg-filename", "--color",
           "--remote-branch", "--local-branch", "--remote-name", "--remote-url", "--source", "--origin"}
@@ -150,6 +175,18 @@ FIXES = {
     "config": (
         ".pre-commit-config.yaml must parse as YAML and hold at least one hook under repos[].hooks[].\n"
         "    An unreadable config is never treated as an empty suite."
+    ),
+    "preset": (
+        "Keep one fenced ```yaml block in the team-selection skill whose `presets:` maps each preset's\n"
+        "    name to a list of persona slugs, each a file in personas/ and named once. A persona renamed\n"
+        "    in the library is renamed in the presets in the same commit (decision 2026-10-23-012)."
+    ),
+    "connection": (
+        "A connection is keyed by a library persona and gives a server with a `command`, `args` and an\n"
+        "    exact version (`<package>==<version>`, `<package>@<version>`, or `git+https://…@<full commit>`).\n"
+        "    It is written to .mcp.json\n"
+        "    only in a project whose roster holds the persona, on the operator's yes, exactly as the skill\n"
+        "    gives it; the template enables none. To change it, change the skill and re-vet."
     ),
 }
 
@@ -300,11 +337,135 @@ def lint_skill(name: str, text: str, agents: set[str], stages: dict[str, list[st
     return v
 
 
+def yaml_blocks(body: str) -> list[str]:
+    """The text of each fenced block whose info string is `yaml`. YAML reads a block indented
+    under a list item as it is."""
+    out: list[str] = []
+    block: list[str] | None = None
+    fenced = False
+    for line in body.splitlines():
+        if FENCE.match(line):
+            if block is not None:
+                out.append("\n".join(block))
+            fenced = not fenced
+            block = [] if fenced and line.strip()[3:].strip() == "yaml" else None
+            continue
+        if block is not None:
+            block.append(line)
+    return out
+
+
+def team_block(text: str) -> tuple[dict | None, list[tuple[str, str]]]:
+    """The team-selection skill's one `presets:` block. A yaml block that does not parse is
+    refused, since it may be the one; none or two is refused, never read as no presets."""
+    where = f"{SKILLS}{TEAM_SKILL}/SKILL.md"
+    found: list[dict] = []
+    for block in yaml_blocks(frontmatter(text)[1]):
+        try:
+            data = yaml.safe_load(block)
+        except yaml.YAMLError as e:
+            return None, [("preset", f"{where}: a fenced yaml block does not parse: "
+                                     f"{getattr(e, 'problem', None) or str(e).splitlines()[0]}")]
+        if isinstance(data, dict) and "presets" in data:
+            found.append(data)
+    if len(found) != 1:
+        return None, [("preset", f"{where}: {len(found)} fenced yaml blocks hold `presets:`; it needs one")]
+    return found[0], []
+
+
+def preset_violations(data: dict, library: set[str]) -> list[tuple[str, str]]:
+    where = f"{SKILLS}{TEAM_SKILL}/SKILL.md"
+    presets = data.get("presets")
+    if not isinstance(presets, dict) or not presets:
+        return [("preset", f"{where}: `presets:` is not a mapping of preset names to persona lists")]
+    v: list[tuple[str, str]] = []
+    for name, members in presets.items():
+        if not isinstance(members, list) or not members or not all(isinstance(m, str) for m in members):
+            v.append(("preset", f"{where}: preset `{name}` is not a list of persona slugs"))
+            continue
+        v.extend(("preset", f"{where}: preset `{name}` names `{m}`, which {LIBRARY_DIR} lacks")
+                 for m in members if m not in library)
+        v.extend(("preset", f"{where}: preset `{name}` names `{m}` twice")
+                 for m in sorted({m for m in members if members.count(m) > 1}))
+    return v
+
+
+def documented_connections(data: dict, library: set[str]) -> tuple[list[tuple[str, str, dict, str]], list]:
+    """([(persona, server name, server, package)], violations) from the block's `connections:`."""
+    where = f"{SKILLS}{TEAM_SKILL}/SKILL.md"
+    conns = data.get("connections", {})
+    if not isinstance(conns, dict):
+        return [], [("connection", f"{where}: `connections:` is not a mapping of personas to servers")]
+    out: list[tuple[str, str, dict, str]] = []
+    v: list[tuple[str, str]] = []
+    for persona, servers in conns.items():
+        if persona not in library:
+            v.append(("connection", f"{where}: connection `{persona}` names no persona in {LIBRARY_DIR}"))
+        if not isinstance(servers, dict) or not servers:
+            v.append(("connection", f"{where}: connection `{persona}` gives no server"))
+            continue
+        for name, server in servers.items():
+            args = server.get("args") if isinstance(server, dict) else None
+            if not (isinstance(server, dict) and isinstance(server.get("command"), str) and isinstance(args, list)
+                    and all(isinstance(a, str) for a in args)):
+                v.append(("connection", f"{where}: `{name}` is not a server with a `command` and a list of `args`"))
+                continue
+            pins = [m.group("package") or m.group("repo") for m in map(PINNED.match, args) if m]
+            if not pins:
+                v.append(("connection", f"{where}: `{name}` pins no exact version in its args {args}"))
+                continue
+            out.append((persona, name, server, pins[0]))
+    return out, v
+
+
+def mcp_violations(documented: list[tuple[str, str, dict, str]], mcp: str | None, roster: set[str],
+                   project: bool) -> list[tuple[str, str]]:
+    """Each server in .mcp.json that is a documented connection, by its name or by running its
+    package, is written only in a project, with its persona in the roster, exactly as documented."""
+    if mcp is None or not documented:
+        return []
+    try:
+        config = json.loads(mcp)
+    except json.JSONDecodeError as e:
+        return [("connection", f"{MCP_CONFIG} does not parse as JSON: {e}")]
+    servers = config.get("mcpServers", {}) if isinstance(config, dict) else None
+    if not isinstance(servers, dict):
+        return [("connection", f"{MCP_CONFIG} is not an object whose `mcpServers` maps names to servers")]
+    v: list[tuple[str, str]] = []
+    for persona, key, server, package in documented:
+        for name, entry in servers.items():
+            args = entry.get("args") if isinstance(entry, dict) else None
+            runs = isinstance(args, list) and any(isinstance(a, str) and PACKAGE.split(a, 1)[0] == package for a in args)
+            if name != key and not runs:
+                continue
+            if not project:
+                v.append(("connection", f"{MCP_CONFIG}: `{name}` is the {persona} connection; the template enables none"))
+            elif persona not in roster:
+                v.append(("connection", f"{MCP_CONFIG}: `{name}` is the {persona} connection, and the roster holds no {persona}"))
+            elif name != key or entry != server:
+                v.append(("connection", f"{MCP_CONFIG}: `{name}` differs from the `{key}` server the skill gives"))
+    return v
+
+
+def team_violations(files: dict[str, str], library: set[str], roster: set[str], mcp: str | None,
+                    project: bool) -> list[tuple[str, str]]:
+    text = files.get(f"{SKILLS}{TEAM_SKILL}/SKILL.md")
+    if text is None:
+        return []
+    data, v = team_block(text)
+    if data is None:
+        return v
+    documented, cv = documented_connections(data, library)
+    return preset_violations(data, library) + cv + mcp_violations(documented, mcp, roster, project)
+
+
 def scan(files: dict[str, str], config_text: str, brain: str, agents: set[str],
-         scripts: dict[str, str]) -> tuple[int, list[tuple[str, str]]]:
+         scripts: dict[str, str], library: set[str] | None = None, mcp: str | None = None,
+         project: bool = False) -> tuple[int, list[tuple[str, str]]]:
     """(skills found, violations). `files` maps every path under .claude/skills/ git would commit
-    to its text; `agents` holds the agent names in .claude/agents/; `scripts` maps each file in
-    scripts/ to its source."""
+    to its text; `agents` holds the agent names in .claude/agents/, the roster; `scripts` maps each
+    file in scripts/ to its source; `library` holds the persona slugs in personas/; `mcp` is the
+    text of .mcp.json, None when there is none; `project` is true outside the template."""
     try:
         stages = {h: s or [] for h, s in config_hooks(config_text)}
         entries = hook_entries(config_text)
@@ -326,6 +487,7 @@ def scan(files: dict[str, str], config_text: str, brain: str, agents: set[str],
     skills = {n for n, t in dirs.items() if t is not None}
     v.extend(("unlisted", f"AGENTS.md does not name {SKILLS}{n}/SKILL.md") for n in sorted(skills - listed))
     v.extend(("unlisted", f"AGENTS.md names {SKILLS}{n}/SKILL.md, which does not exist") for n in sorted(listed - skills))
+    v.extend(team_violations(files, library or set(), agents, mcp, project))
     return len(skills), v
 
 
@@ -345,12 +507,14 @@ def check() -> int:
         config_text = CONFIG.read_text(encoding="utf-8")
         files = {p: (ROOT / p).read_text(encoding="utf-8") for p in would_commit(SKILLS)}
         agents = {Path(p).stem for p in would_commit(AGENTS_DIR) if p.endswith(".md")}
+        library = {Path(p).stem for p in would_commit(LIBRARY_DIR) if p.endswith(".md")}
         scripts = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "scripts").glob("*.py")}
         brain = BRAIN.read_text(encoding="utf-8") if BRAIN.is_file() else ""
+        mcp = (ROOT / MCP_CONFIG).read_text(encoding="utf-8") if would_commit(MCP_CONFIG) else None
     except (OSError, subprocess.CalledProcessError) as e:
         print(f"skill_scan: cannot read the tree: {e}", file=sys.stderr)
         return 2
-    count, found = scan(files, config_text, brain, agents, scripts)
+    count, found = scan(files, config_text, brain, agents, scripts, library, mcp, PROFILE.is_file())
 
     print("\nSkill Scan Results")
     print("=" * 60)
@@ -361,7 +525,7 @@ def check() -> int:
         for rule, detail in found:
             print(f"  Rule:    {rule}\n  Detail:  {detail}\n  Fix:     {FIXES[rule]}\n")
         return 1
-    print("\nPASSED: every skill parses, names real hooks, stages and scripts, and AGENTS.md lists it")
+    print("\nPASSED: every skill parses, names real hooks, stages, scripts and personas, and AGENTS.md lists it")
     return 0
 
 
@@ -434,6 +598,34 @@ _BRAIN = """# Brain
 | `.claude/skills/release/SKILL.md` | release |
 """
 
+_PRESETS = """presets:
+  Application development: [product-manager, backend-engineer]
+  Imaging, video and 3D: [blender-artist, image-video-editor]
+"""
+
+_CONNECTIONS = """connections:
+  blender-artist:
+    blender:
+      command: uvx
+      args: [blender-mcp==1.4.0]
+"""
+
+_TEAM = f"""---
+name: team-selection
+description: Build the roster.
+---
+
+# Team selection
+
+Offer a preset first; activate with `cp personas/<slug>.md .claude/agents/<slug>.md`.
+
+```yaml
+{_PRESETS}{_CONNECTIONS}```
+"""
+
+_LIBRARY = {"product-manager", "backend-engineer", "blender-artist", "image-video-editor"}
+_MCP = '{"mcpServers": {"blender": {"command": "uvx", "args": ["blender-mcp==1.4.0"]}}}'
+
 
 def run_self_test() -> int:
     print("\nSkill Scan Self-Test")
@@ -449,9 +641,20 @@ def run_self_test() -> int:
         failures += 0 if ok else 1
 
     def run(fork: str = _FORK, inline: str = _INLINE, brain: str = _BRAIN, config: str = _CONFIG,
-            extra: dict | None = None, agents: set | None = None) -> list:
+            extra: dict | None = None, agents: set | None = None, team: str | None = None,
+            library: set = _LIBRARY, mcp: str | None = None, project: bool = False) -> list:
         files = {f"{SKILLS}closeout/SKILL.md": fork, f"{SKILLS}release/SKILL.md": inline, **(extra or {})}
-        return scan(files, config, brain, agents if agents is not None else {"framework-maintainer"}, _SCRIPTS)[1]
+        if team is not None:
+            files[f"{SKILLS}{TEAM_SKILL}/SKILL.md"] = team
+            brain += f"| `{SKILLS}{TEAM_SKILL}/SKILL.md` | team |\n"
+        try:
+            return scan(files, config, brain, agents if agents is not None else {"framework-maintainer"},
+                        _SCRIPTS, library, mcp, project)[1]
+        except Exception as e:  # a fixture that raises is a failure, never a crash of the self-test
+            return [("raised", f"{type(e).__name__}: {e}")]
+
+    def team(old: str = "", new: str = "", **kw) -> list:
+        return run(team=_TEAM.replace(old, new) if old else _TEAM, **kw)
 
     def expect(label: str, found: list, *rules: str) -> None:
         got = sorted(r for r, _ in found)
@@ -529,6 +732,74 @@ def run_self_test() -> int:
     # config
     for label, text in (("unparsable YAML", "repos: [\n"), ("zero hooks", "repos:\n  - repo: local\n    hooks: []\n")):
         expect(f"a config with {label} is refused, never read as an empty suite", run(config=text), "config")
+    # presets (decision 2026-10-23-012)
+    expect("presets naming library personas and a pinned connection pass", team())
+    block = team_block(_TEAM)[0] or {}
+    check_("the block is read by a parser, a preset name holding a comma kept whole",
+           block.get("presets", {}).get("Imaging, video and 3D") == ["blender-artist", "image-video-editor"], str(block))
+    expect("a preset naming a persona the library lacks fails",
+           team(library=_LIBRARY - {"backend-engineer"}), "preset")
+    expect("a preset left on an old slug fails", team("backend-engineer]", "backend-engineers]"), "preset")
+    expect("an empty preset fails", team("[product-manager, backend-engineer]", "[]"), "preset")
+    expect("a preset member that is not a slug fails",
+           team("[product-manager, backend-engineer]", "[product-manager, [backend-engineer]]"), "preset")
+    expect("a persona named twice in one preset fails",
+           team("[product-manager, backend-engineer]", "[product-manager, product-manager]"), "preset")
+    expect("`presets:` that is not a mapping fails", team(_PRESETS, "presets: [product-manager]\n"), "preset")
+    expect("a skill with no presets block fails, never read as no presets", team("```yaml", "```text"), "preset")
+    expect("two presets blocks fail", team("```\n", "```\n\n```yaml\n" + _PRESETS + "```\n"), "preset")
+    expect("a yaml block that does not parse fails", team("[blender-mcp==1.4.0]", "[blender-mcp==1.4.0"), "preset")
+    expect("a second yaml block that does not parse fails, since it may be the presets",
+           team("```\n", "```\n\n```yaml\npresets: [\n```\n"), "preset")
+    expect("an unclosed yaml block is never read", team(_CONNECTIONS + "```\n", _CONNECTIONS), "preset")
+    expect("a yaml block indented under a list item is read",
+           team("```yaml\n" + _PRESETS + _CONNECTIONS + "```",
+                "1. Offer:\n\n   ```yaml\n" + textwrap.indent(_PRESETS + _CONNECTIONS, "   ") + "   ```"))
+    expect("a presets block in another skill is not judged",
+           run(inline=_INLINE + "\n```yaml\npresets:\n  X: [ghost]\n```\n"))
+    # connections
+    expect("a connection keyed by no library persona fails",
+           team("  blender-artist:\n    blender:", "  blender-artiste:\n    blender:"), "connection")
+    expect("a connection that pins no version fails", team("[blender-mcp==1.4.0]", "[blender-mcp]"), "connection")
+    expect("`@latest` is no pin", team("[blender-mcp==1.4.0]", "[blender-mcp@latest]"), "connection")
+    expect("a range is no pin", team("[blender-mcp==1.4.0]", "['blender-mcp>=1.4.0']"), "connection")
+    expect("the `name@version` pin is accepted", team("[blender-mcp==1.4.0]", "[blender-mcp@1.4.0]"))
+    git = "git+https://example.org/lab/server.git"
+    sha = "2cea8d566dde07fbac28a61d698909d69724e853"
+    expect("a git source at a full commit is a pin",
+           team("[blender-mcp==1.4.0]", f"[--from, '{git}@{sha}#subdirectory=mcp', blender-mcp]"))
+    for rev in ("v1.0.3", "main", sha[:12]):
+        expect(f"a git source at `{rev}` is no pin, since it can move or is not whole",
+               team("[blender-mcp==1.4.0]", f"[--from, '{git}@{rev}#subdirectory=mcp', blender-mcp]"), "connection")
+    expect("a project's git source at another commit fails",
+           team("[blender-mcp==1.4.0]", f"[--from, '{git}@{sha}', blender-mcp]", project=True, agents={"blender-artist"},
+                mcp=f'{{"mcpServers": {{"b3d": {{"command": "uvx", "args": ["--from", "{git}@{"0" * 40}", "blender-mcp"]}}}}}}'),
+           "connection")
+    expect("a server with no command fails", team("      command: uvx\n", ""), "connection")
+    expect("args that are not a list fail", team("[blender-mcp==1.4.0]", "blender-mcp==1.4.0"), "connection")
+    expect("`connections:` that is not a mapping fails", team(_CONNECTIONS, "connections: [blender]\n"), "connection")
+    expect("a block with no connections passes", team(_CONNECTIONS, ""))
+    # .mcp.json
+    expect("the template holding the connection in .mcp.json fails, its persona active or not",
+           team(mcp=_MCP, agents={"blender-artist"}), "connection")
+    expect("the template's .mcp.json with another server passes",
+           team(mcp='{"mcpServers": {"docs": {"command": "npx", "args": ["docs-mcp@2.0.0"]}}}'))
+    expect("a project with the persona and the server as the skill gives it passes",
+           team(mcp=_MCP, project=True, agents={"blender-artist"}))
+    expect("a project whose roster lacks the persona fails", team(mcp=_MCP, project=True), "connection")
+    expect("a project's server at another version fails",
+           team(mcp=_MCP.replace("1.4.0", "1.5.0"), project=True, agents={"blender-artist"}), "connection")
+    expect("a project's server with an env the skill does not give fails",
+           team(mcp=_MCP.replace("]}", '], "env": {"X": "1"}}'), project=True, agents={"blender-artist"}), "connection")
+    expect("the package run unpinned under another name fails",
+           team(mcp='{"mcpServers": {"b3d": {"command": "uvx", "args": ["blender-mcp"]}}}', project=True,
+                agents={"blender-artist"}), "connection")
+    expect("the package found after `--from` is still the connection",
+           team(mcp='{"mcpServers": {"b3d": {"command": "uvx", "args": ["--from", "blender-mcp==1.4.0", "x"]}}}'),
+           "connection")
+    expect("a .mcp.json that does not parse fails", team(mcp="{"), "connection")
+    expect("a .mcp.json that is not an object fails", team(mcp="[]"), "connection")
+    expect("a .mcp.json with no servers passes", team(mcp="{}"))
 
     print(f"\n{'PASSED' if not failures else 'FAILED'}: {total - failures}/{total} checks")
     return 1 if failures else 0

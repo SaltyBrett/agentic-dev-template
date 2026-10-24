@@ -1,7 +1,7 @@
 ---
 name: A skill is repository markdown, a forked skill starts blind, and its frontmatter fails silently
 description: 'How .claude/skills/ works, read against the skills reference on 2026-10-23: a skill with context: fork runs as general-purpose unless agent: says otherwise, sees none of the conversation, loads AGENTS.md and git status but not the persona the start hook injected, and runs in the background with fewer tools unless background: false; disable-model-invocation hides the description and blocks Claude''s own call; an unparsable frontmatter loads the skill with no fields and an unknown key is ignored, both silently. Why the closeout takes its brief as arguments, why AGENTS.md lists every skill, and what the skill gate checks. Read before adding or editing a skill.'
-teaches: [2026-10-23-001]
+teaches: [2026-10-23-001, 2026-10-23-013]
 verified: 2026-10-23
 metadata:
   type: reference
@@ -73,7 +73,9 @@ Every silent frontmatter failure above, and every command in a skill's code (inl
 blocks): a `pre-commit run` must name a hook the config declares, at a stage it declares, with
 `--all-files`; a `scripts/<name>.py` must exist with every flag named; a hook's own entry run with an
 interpreter is refused, since a gate is invoked through pre-commit ([[reference_precommit_interpreter]]).
-It cannot read prose, so a command written outside code is not seen, and it cannot judge whether the
+In the team-selection skill it also reads the one YAML block of presets and connections: every
+persona named must be in `personas/`, every connection pinned, and `.mcp.json` must hold a
+connection only in a project that activated its persona ([[reference_blender_mcp]]). It cannot read prose, so a command written outside code is not seen, and it cannot judge whether the
 steps are right.
 
 ## Rules

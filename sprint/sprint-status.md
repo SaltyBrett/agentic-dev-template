@@ -35,8 +35,18 @@ exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the 
    decisions are now judged in the template. And `git log --follow` follows copies, so a PRD made
    from its template was stamped with the template's commit; the history now follows renames only.
    Nine fixtures, nine broken variants caught; a scratch birth starts green.
-3. TMPL-5.6 — in progress: the four personas lint clean, the presets in team selection held by
-   `skill-scan`; the Blender server being vetted.
+3. TMPL-5.6 — four library personas, `backend-engineer`, `web-developer`, `blender-artist` and
+   `image-video-editor`, slugs and the three presets' membership the Chair's (decision
+   2026-10-23-013). The presets and the connections are one YAML block in the team-selection skill;
+   `skill-scan` gained `preset` and `connection`, so a preset naming a missing persona, an unpinned
+   connection, or `.mcp.json` holding one in the template or without its persona fails. The
+   connection is Blender Lab's own MCP server at v1.0.3's commit, its add-on pinned by SHA-256; the
+   community server was rejected for default-on telemetry, PyPI builds its repository cannot
+   reproduce and four advisories ([[reference_blender_mcp]]). Proof: eighty-three fixtures,
+   twenty-five broken variants caught, a dead dedent removed when its variant passed; on real trees
+   the template refused the connection, a birth wrote none, a project refused it without the
+   persona and passed with it.
+4. TMPL-2.2's row corrected: `dev-resources` retired, the `technical-writer` already in the library.
 
 ### Blockers
 

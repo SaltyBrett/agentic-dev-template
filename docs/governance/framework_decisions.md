@@ -26,6 +26,7 @@
 |----|------|-------|--------|
 | 2026-10-23-015 | 2026-10-23 | In a project the authority gate judges what the template wrote in the template: a row citing only framework decisions is held to neither its marker nor its hash, a framework decision to neither its `**Affects:**` nor its record, so a birth from the template starts green; and a row's commit is found following renames but never a copy; amends 2026-10-23-010 | APPROVED |
 | 2026-10-23-014 | 2026-10-23 | The PRD and architecture templates as built: in `docs/templates/`, each the authority for its own scope so a document made from it claims the project's; a made document a draft until approved, when it becomes the authority with its first row citing the approval; the PRD's eleven sections with goals, FR and NFR numbered, the architecture's thirteen ending in the dependency layers | APPROVED |
+| 2026-10-23-013 | 2026-10-23 | TMPL-5.6 as built: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; the three presets as proposed, Website with `business-writer`; presets and connections one YAML block in team selection, held by `skill-scan`; the connection the Blender Lab server pinned to v1.0.3's commit, the community server rejected | APPROVED |
 | 2026-10-23-012 | 2026-10-23 | The library gains a backend engineer, a web developer, a Blender 3D artist and an image and video editor; team-selection offers named team presets, a gate refusing a preset that names no library persona; an opt-in Blender MCP connection offered with the Blender persona, off by default; built as TMPL-5.6 before the release | APPROVED |
 | 2026-10-23-011 | 2026-10-23 | The standards, the document-control standard and the gate runbook are the first authorities: each log starts at marking at the version the document states, citing every decision that names it or queueing it; the hand-kept changelog tables and `**Version:**` lines go; file names keep their version; the runbook gate skips the closing version log; the authority matrix retires in the template, a project's copy left to the project | APPROVED |
 | 2026-10-23-010 | 2026-10-23; amended 2026-10-23 | The authority gate as built: the frontmatter is the registry; a version-log row is a `fact:` with its fact or the change of a story citing its decision; `**Affects:**` required from decisions dated 2026-10-22; a hash verified as the first commit holding its version, the template's rows verified in the template; one scope, one authority | APPROVED |
@@ -3271,6 +3272,80 @@ grouped by area, and the template configures no MCP server.
 To be built in TMPL-5.6: the four personas lint clean; the preset gate's fixtures, each proved
 against a broken variant, with a runbook section if it is a hook of its own; the connection
 documented with its pinned version, and refused nowhere it was not chosen.
+
+---
+
+## Decision 2026-10-23-013: Four personas, team presets and the Blender connection as built
+
+**Date:** 2026-10-23
+**Made By:** Chair (S8): the slugs and each preset's membership; the gate's home, the data block,
+the pin's forms and the choice of server by the AI within decision 2026-10-23-012, reported to the
+Chair
+**Status:** APPROVED
+**Builds:** TMPL-5.6, the open items of decision 2026-10-23-012
+**Affects:** `personas/backend-engineer.md`, `personas/web-developer.md`, `personas/blender-artist.md`,
+`personas/image-video-editor.md` (new), `.claude/skills/team-selection/SKILL.md` (the connection
+step, Team presets, Connections, the data block), `scripts/skill_scan.py` (rules `preset` and
+`connection`), `docs/governance/gate_suite_runbook.md` (`skill-scan-selftest` and `skill-scan`),
+`docs/orchestration/knowledge/reference_blender_mcp.md` (new), `sprint/story-tracker.md` (TMPL-5.6)
+
+### Context
+
+Decision 2026-10-23-012 left to the build the four slugs, the presets' membership, the gate's script,
+and the server and the file the connection is written to.
+
+### Decision
+
+- **Slugs (Chair):** `backend-engineer`, `web-developer`, `blender-artist` and `image-video-editor`,
+  the last so it is never confused with the writing `editor`. Each is at version 1 with the shared
+  habits of decision 2026-10-23-004; the backend engineer, who touches data, keeps it out of the
+  session, and the Blender artist saves and says what a script will change before running it in a
+  connected Blender.
+- **Presets (Chair), as proposed:** Application development (`product-manager`,
+  `solution-architect`, `ux-designer`, `frontend-engineer`, `backend-engineer`, `qa-engineer`,
+  `devops-engineer`, `security-engineer`); Website (`ux-designer`, `web-developer`,
+  `business-writer`, `qa-engineer`); Imaging, video and 3D (`blender-artist`, `image-video-editor`,
+  `generative-video-engineer`).
+- **One YAML block** at the end of the team-selection skill holds `presets:` and `connections:`, read
+  by a parser. A connection is keyed by its persona and gives the `.mcp.json` server entry, so the
+  block is the one home of the pin.
+- **The gate is `skill-scan`**, two rules beside its own: a skill names only personas that exist as
+  it names only hooks that exist, and it already reads the roster. `preset` refuses a missing,
+  unparsable or second block and a preset naming a persona `personas/` lacks or naming one twice.
+  `connection` refuses a connection naming no library persona or pinned to no exact release
+  (`==` or `@` a version, or a git source at a full commit, since a tag or branch can move); and
+  `.mcp.json` holding a connection, by its name or by running its package, in the template, in a
+  project whose roster lacks the persona, or other than written. No new hook.
+- **The file is `.mcp.json`**, Claude Code's project scope, at the repository root: committed, so
+  the choice is the project's, and approved once in each clone by its operator.
+- **The server is Blender Lab's**, the Blender Foundation's own, at v1.0.3, commit
+  `2cea8d566dde07fbac28a61d698909d69724e853`, its add-on pinned by the SHA-256 of its release zip:
+  no telemetry and no outside service. The community server, though far more widely used, was
+  rejected: telemetry on by default, PyPI builds its repository cannot reproduce, four advisories,
+  and a PyPI name, `blender-mcp`, that installs it in place of Blender Lab's
+  ([[reference_blender_mcp]]). Blender Lab's needs Blender 5.1 or newer.
+
+### Consequences
+
+- The project launch's team stage offers the presets; a persona the library lacks is still drafted
+  as the project's own.
+- Moving the pin is a change to the skill's block and a fresh vetting, recorded in the entry.
+- A headless run loads a committed connection without asking; the entry and the skill say so.
+
+### Verification
+
+`skill-scan`'s self-test: eighty-three checks, every new rule with a passing and a failing case and a
+fixture that raises reported as a failure; twenty-five broken variants of the new code each failed
+at least one without a crash, and one dead branch (a dedent PyYAML never needed) removed when its
+variant passed. The four personas lint clean, and a planted persona whose name differs from its file
+was refused. On the real tree the gate refused the skill with no presets block, then passed with it.
+On a copy of the template, `.mcp.json` holding the connection, written from the block, was refused
+with the persona active or not. A scratch birth wrote no `.mcp.json`; there the same file was refused
+without `blender-artist` in the roster, passed with it, and was refused at another commit.
+
+### Enforcement
+
+`skill-scan-selftest` and `skill-scan`; `session-closeout-check` for the personas.
 
 ---
 
