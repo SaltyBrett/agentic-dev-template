@@ -41,6 +41,10 @@ by the hook. TMPL-6.1 in progress.
    finding refuses the commit and fails CI, its only exception an exact string in the allow list,
    now over all four rules, a change to it a gate change the Chair approves; a judgement finding
    pauses its story until the Chair answers in the code review log.
+6. Design question 6, the humanizer (decision 2026-10-24-021): `/humanize` in the main session;
+   certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice,
+   the gate run again and every code span, link and number checked; the Chair reviews each file
+   before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode.
 
 ### Blockers
 

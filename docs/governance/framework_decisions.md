@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-021 | 2026-10-24 | The `/humanize` skill, in the main session: certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice, the gate run again and every code span, link and number checked; the Chair reviews each file before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode capturing a custom voice; started by an agent or the Chair | APPROVED |
 | 2026-10-24-020 | 2026-10-24 | The writing gate refuses a mechanical finding, locally and in CI, printing its fix; an exception is an exact string in the profile's allow list, now covering all four mechanical rules, a change to it a gate change the Chair approves; a judgement finding pauses its story until the Chair answers in the code review log | APPROVED |
 | 2026-10-24-019 | 2026-10-24 | The template opts in to the writing standard: every tracked markdown file swept before `v2.1.0` is published, records included; then whole files judged on every commit, never changed lines only; the formats the gates read moved to ASCII; each project swept at adoption | APPROVED |
 | 2026-10-24-018 | 2026-10-24; amended 2026-10-24 | The writing guardrails' first lists: characters off a US keyboard, letters excepted, code included; headings with a comma or semicolon, end punctuation or over 8 words; two exact-phrase tables in the standard, read by the gate; development references in production documents; a project's allow list; tone judged by the document reviewer against a rules page, rewritten by the editor | APPROVED |
@@ -5120,3 +5121,56 @@ A judgement finding is taste.
 
 None yet: the refusal and the allow list are TMPL-6's gate; the judgement path is
 `story-artifacts`'s, as built.
+
+---
+
+## Decision 2026-10-24-021: The humanizer's flow
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): the editor subagent rewriting flagged text only, the guard on meaning, the
+review per file, an agent fixing its own draft, one skill with a voice mode, started by an agent or
+the Chair. The skill's name and the subagent's source by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (design question 6)
+**Affects:** none at this decision. To be built in TMPL-6: `.claude/skills/humanize/SKILL.md` (new),
+listed in `AGENTS.md` and `README.md`
+
+### Context
+
+Decision 2026-10-24-014 gave the humanizer its shape: the flagged passages rewritten in the
+document's voice and the change shown to the Chair before it is kept. Only the main session can
+ask the Chair (decision 2026-10-24-015). The template's own sweep (decision 2026-10-24-019) is
+thousands of fixes across every tracked markdown file, and each project's sweep at adoption is of
+the same kind.
+
+### Decision
+
+- **One skill, `/humanize`, in the main session (Chair; the name by the AI):** it runs the writing
+  gate over the files it is given and works through the findings.
+- **Certain fixes by script (Chair):** a fix with one right answer is applied mechanically: curly
+  quotes to straight, U+2026 to three full stops, invisible and non-breaking spaces, arrows to
+  `->`, box drawing to `|` and `+--`.
+- **The editor rewrites the flagged text only (Chair):** an `editor` subagent, the roster's or a
+  general-purpose one carrying `personas/editor.md` where the roster has none (AI), rewrites each
+  flagged sentence or heading, and any finding the `document-reviewer` recorded, in the document's
+  assigned voice; a custom voice brings its traits and its sample. A whole-document pass in a voice
+  is made only when the Chair asks for one.
+- **The gate, then a guard on meaning (Chair):** the gate runs again, up to three tries, the
+  findings still open after the third going to the Chair; and every code span, link and number in
+  the passage must survive the rewrite, a development reference removed from a production document
+  excepted, so the meaning cannot drift unseen.
+- **The Chair reviews each file before it is kept (Chair):** the script's fixes shown as counts by
+  kind, the editor's rewrites change by change; the Chair keeps the file, keeps some of its changes
+  or rejects it. The main session commits only what the Chair kept.
+- **For text already in the tree (Chair):** the sweep, a project's adoption, or a file the Chair
+  points at. An agent's own uncommitted draft that the gate refuses is fixed by the agent, as a
+  failing test is, and reaches the Chair through its story's review.
+- **A voice mode (Chair):** the same skill takes the Chair's sample, counts it at 200 words or more,
+  drafts the traits from it, and writes the voice file once the Chair approves them (decision
+  2026-10-24-016).
+- **Started by an agent or the Chair (Chair):** an agent may start it when the gate refuses text
+  already in the tree, and so may the Chair; it never keeps a change without the Chair's answer.
+
+### Enforcement
+
+None yet: `skill-scan` over the skill once built, and the writing gate over what it keeps.
