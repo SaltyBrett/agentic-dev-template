@@ -139,5 +139,5 @@ The starting candidates for each slot, Rust, Python and TypeScript, are in decis
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.1 | 2026-10-24 | 2026-10-24-011 | The standard advises and documents: every finding recorded in `docs/code_review_log.md` with the Chair's response, the exceptions file merged into it, a tool that cannot run a finding (TMPL-4.3) | pending |
+| 1.1 | 2026-10-24 | 2026-10-24-011 | The standard advises and documents: every finding recorded in `docs/code_review_log.md` with the Chair's response, the exceptions file merged into it, a tool that cannot run a finding (TMPL-4.3) | 109a2a6 |
 | 1.0 | 2026-10-24 | 2026-10-24-007, 2026-10-24-008, 2026-10-24-009, 2026-10-22-003 | Written as the authority for the coding standard (TMPL-4.2): the core limits, their scope, the exceptions file, proved measurement and the stack profiles' mapping rule | 1389fa9 |

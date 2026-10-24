@@ -600,7 +600,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | pending |
+| 1.12 | 2026-10-24 | 2026-10-24-011 | `code-standard-selftest`, `code-standard` and `code-standard-range`: the coding standard's gate over the code a change adds or edits, each finding answered in the code review log (TMPL-4.3) | 109a2a6 |
 | 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |
 | 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | 5a7ab47 |
 | 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |
