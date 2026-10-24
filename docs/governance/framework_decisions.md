@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-023 | 2026-10-24 | TMPL-6 re-cut to the design: 6.2 the law, 6.3 the gate, 6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6, each project swept at adoption | APPROVED |
 | 2026-10-24-022 | 2026-10-24 | The document production standard's §9 moves whole to the writing standard: the em-dash line into the character rule, its prose rules into the `business` voice's traits, §9 a pointer, the vendor rule to §10, which stays; a deliverable's markdown source judged by the gate, the produced file's text by the document-production skill's check step | APPROVED |
 | 2026-10-24-021 | 2026-10-24 | The `/humanize` skill, in the main session: certain fixes by script, the flagged text rewritten by an editor subagent in the assigned voice, the gate run again and every code span, link and number checked; the Chair reviews each file before it is kept; for text already in the tree, an agent fixing its own draft; a voice mode capturing a custom voice; started by an agent or the Chair | APPROVED |
 | 2026-10-24-020 | 2026-10-24 | The writing gate refuses a mechanical finding, locally and in CI, printing its fix; an exception is an exact string in the profile's allow list, now covering all four mechanical rules, a change to it a gate change the Chair approves; a judgement finding pauses its story until the Chair answers in the code review log | APPROVED |
@@ -5216,3 +5217,50 @@ direct, executive-ready prose with no filler) that read as the `business` voice'
 
 The writing gate over the source; the skill's check step over the produced file, which no gate
 runs.
+
+---
+
+## Decision 2026-10-24-023: TMPL-6 re-cut to the design
+
+**Date:** 2026-10-24
+**Made By:** Chair (S18): the re-cut as proposed; S19 to open with TMPL-6.2. The cut by the AI
+**Status:** APPROVED
+**Builds:** TMPL-6.1 (its re-cut); opens TMPL-6.4, TMPL-6.5 and TMPL-6.6
+**Affects:** `sprint/story-tracker.md` (TMPL-6.2 and TMPL-6.3 re-cut, TMPL-6.4 to TMPL-6.6 opened,
+TMPL-6.1 done, TMPL-4.6 waiting on TMPL-6.6). Queued in TMPL-6, each by its story's row:
+`docs/standards/document_production_standard_v1.0.md` (TMPL-6.2, §9),
+`docs/governance/gate_suite_runbook.md` (TMPL-6.3, the writing gate's sections),
+`docs/standards/session_handoff_standard_v2.0.md` and `docs/standards/sprint_management_standard_v1.0.md`
+(TMPL-6.4, the formats), `docs/standards/team_standard_v1.0.md` (TMPL-6.5, the trigger path); and
+every authority swept in TMPL-6.6: `docs/governance/doc_control_standard.md`,
+`docs/governance/gate_suite_runbook.md`, `docs/standards/coding_standard_v1.0.md`,
+`docs/standards/document_production_standard_v1.0.md`, `docs/standards/secrets_management_standard_v1.0.md`,
+`docs/standards/session_handoff_standard_v2.0.md`, `docs/standards/sprint_management_standard_v1.0.md`,
+`docs/standards/team_standard_v1.0.md`, `docs/templates/architecture.md`, `docs/templates/prd.md`
+
+### Context
+
+Decision 2026-10-24-014 opened TMPL-6 with two build stories, the law and the gate in one and the
+humanizer in the other, to be re-cut if the design needed it. Decisions 2026-10-24-016 to
+2026-10-24-022 set a design larger than two stories: a standard, seven voices and a profile; a gate
+over whole files; the formats four gate scripts read moved to ASCII; a skill with a voice mode and
+the agent's voice delivered to sessions and story roles; and a sweep of every tracked markdown file
+before `v2.1.0` is published, the Chair reviewing each file.
+
+### Decision
+
+- **Five build stories, in order:** TMPL-6.2, the law (the standard, the voices, the profile, the
+  rules page, the two personas, §9's move); TMPL-6.3, the gate, at the manual stage until the
+  sweep, since the template's own tree cannot pass it before then; TMPL-6.4, the formats the gates
+  read moved to ASCII, needing nothing else in the epic; TMPL-6.5, the humanizer and the agent's
+  voice, proved on a scratch copy of a project's documents; TMPL-6.6, the sweep, after 6.4 and 6.5,
+  which turns the gate on and leaves a project born with no finding.
+- **The release waits on the sweep:** TMPL-4.6 depends on TMPL-6.6, which holds the rest of the
+  epic behind it, and sweeps each project's documents with `/humanize` at adoption (decision
+  2026-10-24-019).
+- **S19 opens with TMPL-6.2 (Chair).**
+
+### Enforcement
+
+`session-closeout-check`'s dependency order over the tracker; `doc-authority-scan` over each
+authority named above, queued by its story's row.

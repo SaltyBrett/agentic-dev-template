@@ -18,7 +18,8 @@
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
 S18") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
-by the hook. TMPL-6.1 in progress.
+by the hook. TMPL-6.1 done: seven design questions answered by the Chair, one decision each, and
+the build re-cut.
 
 ### Done
 
@@ -48,6 +49,9 @@ by the hook. TMPL-6.1 in progress.
 7. Design question 7, the em-dash rule (decision 2026-10-24-022): the document production
    standard's §9 moves whole to the writing standard, §10 stays; a deliverable's source judged by
    the gate and its produced file by the document-production skill.
+8. TMPL-6 re-cut, approved by the Chair (decision 2026-10-24-023): TMPL-6.2 the law, 6.3 the gate,
+   6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the
+   sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6; S19 opens with TMPL-6.2.
 
 ### Blockers
 
