@@ -19,8 +19,8 @@
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull and `session-verify` each
 exit 0; the reads done by hand. Persona `framework-maintainer`, injected by the hook. The Chair
 ordered TMPL-2.7 before TMPL-2.2, chose a `**Skips:**` line on a decision as a logged skip for
-TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7 and TMPL-2.2
-done; TMPL-5.3 in progress.
+TMPL-5.3, and made `/project-launch` the Chair's alone for TMPL-5.2. TMPL-2.7, TMPL-2.2 and
+TMPL-5.3 done.
 
 ### Done
 
@@ -36,6 +36,13 @@ done; TMPL-5.3 in progress.
    variants caught. On a scratch birth the cold-start report read the queued story PASS at S1 and
    S2 and FAILED at S3; a fresh agent drained it by the skill alone, and its friction report
    corrected four steps before the skill shipped.
+3. TMPL-5.3 (decision 2026-10-23-020): the approval gate in `doc-authority-scan`, a real epic
+   needing an approved PRD and architecture or an APPROVED decision headed `**Skips:**`, the
+   Chair's form; the runbook, the document-control standard, `docs/templates/README.md` and the
+   planning skill's preconditions. Twenty-one fixtures, fifteen broken variants caught. On a scratch
+   birth: refused with no documents and with drafts, passing once approved by the README, refused
+   on a PRD revision the architecture lags, passing on an approved skip and refused on a proposed
+   one.
 
 ### Blockers
 

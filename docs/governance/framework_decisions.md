@@ -3745,7 +3745,13 @@ the gate lives, were left to the build; 2026-10-23-008's Affects line guessed
 ### Verification
 
 Twenty-one fixtures, two of them over `check_tree`; fifteen broken variants each fail at least one
-without a crash, the variant that left the rule out of the command among them.
+without a crash, the variant that left the rule out of the command among them. On a scratch birth from
+`d7ad4d7` under `commercial`: before planning, exit 0; the first real epic with no documents
+refused, both folders named; with both documents made as drafts by `docs/templates/README.md`,
+refused again; both approved by its steps, exit 0 with the rows pending and again once stamped, the
+project's whole suite green; the PRD revised to 1.1 with the architecture still built from 1.0,
+refused as `prd-version`; the architecture removed and an APPROVED `**Skips:** architecture` logged,
+exit 0; the same skip `PROPOSED`, refused.
 
 ### Enforcement
 

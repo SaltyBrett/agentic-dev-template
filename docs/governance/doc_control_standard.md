@@ -124,7 +124,7 @@ project has one.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.3 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | Authorities names the approval gate: a real epic needs an approved PRD and architecture, or a skip logged with `**Skips:**` (TMPL-5.3) | pending |
+| 1.3 | 2026-10-23 | 2026-10-23-020, 2026-10-23-008 | Authorities names the approval gate: a real epic needs an approved PRD and architecture, or a skip logged with `**Skips:**` (TMPL-5.3) | d7ad4d7 |
 | 1.2 | 2026-10-23 | 2026-10-23-019, 2026-10-23-016 | Recording a change names the `Queued: S<N>` note, the `doc-queue` gate at cold start and the doc-drain skill (TMPL-2.2) | 0dcccd2 |
 | 1.1 | 2026-10-23 | 2026-10-23-014, 2026-10-23-008 | Authorities names the document templates in `docs/templates/` and how a PRD or an architecture made from one becomes the project's authority at approval (TMPL-5.1) | e155edf |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-010 | Rewritten around the authority gate (TMPL-2.3): Authorities and Recording a change added; Branching & Protection corrected, the template being public with a ruleset on `main` and a project private by default; the "changelog table" step replaced by the version log | 515f1a5 |
