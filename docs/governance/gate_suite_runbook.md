@@ -553,7 +553,7 @@ gitleaks environment and needs the network once)
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | pending |
+| 1.11 | 2026-10-24 | 2026-10-24-002 | `session-closeout-selftest` and `session-closeout` refuse to close an entry still headed `emergency checkpoint` or holding the initializer's `### Next` (TMPL-5.7) | 20bc428 |
 | 1.10 | 2026-10-24 | 2026-10-24-001 | `doc-authority-selftest` and `doc-authority-scan` refuse an authority's path written bare in `**Affects:**` (TMPL-2.9) | 5a7ab47 |
 | 1.9 | 2026-10-23 | 2026-10-23-023, 2026-10-23-015, 2026-10-23-018 | `doc-authority-selftest` and `doc-authority-scan` judge a copy of the template before its initializer as a project; `birth-probe-selftest` holds the probe's run on the Initial commit (TMPL-2.8) | ea19c0d |
 | 1.8 | 2026-10-23 | 2026-10-23-009, 2026-10-23-022 | `skill-scan-selftest` and `skill-scan` hold the README's catalog: a skill its `## Catalog` section does not name is refused; the preamble points the hook install at the README's walkthrough (TMPL-5.5) | 30677d3 |

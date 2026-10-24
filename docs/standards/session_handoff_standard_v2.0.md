@@ -237,6 +237,6 @@ governs.
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
-| 2.2 | 2026-10-24 | 2026-10-24-002 | fact: §7 says `session-closeout` refuses an entry still headed `emergency checkpoint` or holding the initializer's `### Next` | pending |
+| 2.2 | 2026-10-24 | 2026-10-24-002 | fact: §7 says `session-closeout` refuses an entry still headed `emergency checkpoint` or holding the initializer's `### Next` | 20bc428 |
 | 2.1 | 2026-10-23 | 2026-10-23-024 | fact: §7 says `session-verify` passes before a project's first closeout, the next conversation still S1, as observed on a live launch (TMPL-5.4) | 5b886bc |
 | 2.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-22-001, 2026-10-22-005, 2026-10-23-001, 2026-10-23-003 | Marked as the authority for session handoffs (TMPL-2.3); reflects the cold start in `AGENTS.md`, personas as agent files, the closeout as a skill and the persona library. The changelog table it replaces, every row of it at 2.0 since 2026-09-21, is in git | 515f1a5 |
