@@ -20,8 +20,8 @@
 `scripts/session_start.py` as `/clear` would run it: identity gate, pull, `session-verify` and
 `doc-queue` each exit 0, the journal's `start S10` line written; the reads done by hand. Persona
 `framework-maintainer`. The Chair scheduled TMPL-5.4 for this session after TMPL-5.5, on a real
-private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 done; TMPL-5.4 next, with
-the Chair.
+private repository made by the walkthrough. TMPL-5.5 and TMPL-2.8 done; TMPL-5.4 in progress, the
+Chair at the keyboard in `SaltyBrett/launch-probe-s10`.
 
 ### Done
 

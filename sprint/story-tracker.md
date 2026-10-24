@@ -17,8 +17,8 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 28 |
-| **Not Started** | 6 |
-| **In Progress** | 0 |
+| **Not Started** | 5 |
+| **In Progress** | 1 |
 | **Blocked** | 0 |
 | **Completed** | 22 |
 
@@ -107,7 +107,7 @@ that decision 2026-09-23-003 names.
 | TMPL-5.1 | The PRD and architecture templates: their sections, frontmatter in TMPL-2.1's `authority:` format, a version log, and the version of the document each was built from. Done at S8: `docs/templates/prd.md` and `docs/templates/architecture.md`, each the authority for its own scope, and `docs/templates/README.md`; a made document a draft until approved; proved on a scratch birth (2026-10-23-014) | Done | TMPL-2.1 | doc_control_standard.md | 2026-10-23-008 |
 | TMPL-5.2 | `/project-launch`: intake by three questions or a PRD summary with its gaps; team through team-selection; the PRD interview in the product manager's role, saved as it grows; architecture; planning; each stage's opening with pause, skip (logged), return and status; a revision as a new version that flags the stages built on it; the S1 entry's one next step; listed in `AGENTS.md` and held by `skill-scan` | Done | TMPL-5.1, TMPL-1.8 | sprint_management_standard_v1.0.md | 2026-10-23-008 |
 | TMPL-5.3 | The approval gate: in a project, a real epic needs an approved PRD and an approved architecture, or a logged skip of either; fixtures proved against broken variants; a runbook section if it is a hook of its own | Done | TMPL-5.1 | doc_control_standard.md | 2026-10-23-008 |
-| TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen | Not Started | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
+| TMPL-5.4 | Proof: a scratch birth and one live session with the Chair at the keyboard through every stage, with a pause, a skip and a return to revise an approved document, following the README's walkthrough as written; observations recorded as seen | In Progress | TMPL-5.2, TMPL-5.3, TMPL-5.5 | session_handoff_standard_v2.0.md | 2026-10-23-008 |
 | TMPL-5.5 | The root README as the operator's front page: a step-by-step walkthrough from creating a project through `/project-launch`, the session loop and taking a release, then a catalog of every command, operator script and session hook, the gates by link to the runbook; `TEMPLATE_GUIDE.md` cut to what the initializer does not do; `skill-scan` refusing a skill the catalog does not name, its section in `docs/governance/gate_suite_runbook.md` saying so | Done | TMPL-5.2 | doc_control_standard.md | 2026-10-23-009 |
 | TMPL-5.6 | Four library personas in the agent-file shape and linted (a backend engineer, a web developer, a Blender 3D artist, an image and video editor); team presets in team-selection (Application development, Website, Imaging, video and 3D), membership confirmed with the Chair, a gate refusing a preset that names no library persona, proved against broken variants; an opt-in Blender MCP connection offered with the Blender persona, the server vetted and pinned, off by default. Done at S8: `backend-engineer`, `web-developer`, `blender-artist`, `image-video-editor`; presets and connections one block held by `skill-scan`; the Blender Lab server pinned to v1.0.3's commit; `docs/governance/gate_suite_runbook.md` says so (2026-10-23-013) | Done | TMPL-1.9 | session_handoff_standard_v2.0.md, secrets_management_standard_v1.0.md | 2026-10-23-012 |
 
