@@ -18,7 +18,7 @@
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
 S17") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
-by the hook. TMPL-3.3 in progress.
+by the hook. TMPL-3.3 done.
 
 ### Done
 
@@ -31,6 +31,19 @@ by the hook. TMPL-3.3 in progress.
    document and an agent, a gate over the mechanical tells of machine-written prose, and a
    humanizer skill, modelled on Grammarly's Humanizer; epic TMPL-6 opened, its design with the
    Chair at S18, TMPL-4.6 waiting on it.
+3. TMPL-3.3 done (decision 2026-10-24-015): `.claude/skills/story/SKILL.md`, in the main session
+   and the Chair's alone, listed in `AGENTS.md` and the README's catalog, `skill-scan` green. Proved
+   on `story-probe-s17`, a clone of Comfy taken to a scratch `v2.1.0` by `template_update.py` with no
+   conflict: CU-4.6 ran from brief to release, each role a general-purpose subagent carrying its
+   persona, each artifact committed and passing `story-artifacts`, the build passing `code-standard`;
+   two review findings answered by the Chair, `tests 1` fixed in the change with verify and review
+   run again, `duplication 6` acknowledged with a later story; the release stopped until approved,
+   then pushed to the private `SaltyBrett/story-probe-s17`, run 40111133105 green. On the closed
+   story, the approval removed failed `trigger` and a log row removed failed `finding`.
+   `personas/code-reviewer.md` version 3; [[reference_story_live_run]].
+4. Three gaps the proof found, opened by the Chair as TMPL-3.4 (stale artifacts pass), TMPL-2.10 (a
+   first push judged at its tip only) and TMPL-4.7 (the format check counting diff context, one
+   unformatted line flagging seven); TMPL-4.6 waits on them.
 
 ### Blockers
 

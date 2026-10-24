@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-015 | 2026-10-24 | The `/story` skill as built, proved live on a scratch copy of Comfy: roles write and the main session gates, commits and asks; a finding reaches the code review log once, with the Chair's words; the code reviewer persona at version 3; three gaps the proof found opened as TMPL-3.4, TMPL-2.10 and TMPL-4.7, the release waiting on them | APPROVED |
 | 2026-10-24-014 | 2026-10-24 | The writing standard opens as epic TMPL-6 in `v2.1.0`: assignable voices, a gate over the mechanical tells of machine-written prose (characters off a US keyboard, headings that read as sentences, AI and marketing phrasing, development artifacts in production documents) and a humanizer skill; designed with the Chair at S18; the release waits on it | APPROVED |
 | 2026-10-24-013 | 2026-10-24 | The team standard and the `story-artifacts` gate as built: the artifacts' frontmatter and bodies, the role map and the triggers read by the gate from the standard itself, the release always a trigger, a review or security finding answered in the code review log before the story moves on | APPROVED |
 | 2026-10-24-012 | 2026-10-24 | Rust is the Chair's default language and Bevy the default game engine: the launch's architecture stage proposes them first; the coding standard's Rust profile, supporting Bevy cleanly, is required for `v2.1.0`, its release a story of its own; TMPL-3.2 split into the team standard with its gate and the `/story` skill with the live proof | APPROVED |
@@ -4780,3 +4781,67 @@ passages rewritten in it.
 ### Enforcement
 
 `session-closeout-check`'s dependency order holds TMPL-4.6 behind TMPL-6; the gate itself is TMPL-6.2.
+
+---
+
+## Decision 2026-10-24-015: The /story skill as built, and what its live proof found
+
+**Date:** 2026-10-24
+**Made By:** AI (S17), within decisions 2026-10-24-004, 2026-10-24-011 and 2026-10-24-013; the
+Chair's: the plan, the proof's story, its release to a private scratch repository and its runner,
+every finding's and the release's answer, and the three gaps opened as stories
+**Status:** APPROVED
+**Builds:** TMPL-3.3; opens TMPL-3.4, TMPL-2.10 and TMPL-4.7
+**Affects:** `.claude/skills/story/SKILL.md` (new), `AGENTS.md` (the skills table), `README.md` (the
+catalog), `personas/code-reviewer.md` (version 3), `docs/orchestration/knowledge/reference_story_live_run.md`
+(new), `sprint/story-tracker.md` (TMPL-3.3 done; TMPL-3.4, TMPL-2.10 and TMPL-4.7 opened, TMPL-4.6
+waiting on them)
+
+### Context
+
+Decision 2026-10-24-004 fixed the orchestration and 2026-10-24-013 the artifacts the gate judges;
+the procedure, and its proof on a scratch copy of Comfy run from the template's conversation
+(2026-10-24-012), were TMPL-3.3's.
+
+### Decision
+
+- **Roles write; the main session gates, commits and asks.** A role writes only its artifact, and
+  the build its code and tests; it never commits and never asks, returning a question as
+  `status: needs-operator`. The main session runs `story-artifacts` and the stage's gates itself,
+  commits, and stops for the Chair: one committer, and the only place that can ask.
+- **A finding reaches the log once, with the Chair's words.** The log is append-only (2026-10-24-011),
+  so a row written to await a response could never receive it. The role records findings in its
+  artifact; the skill commits it, puts each to the Chair, and appends the row with the answer. A
+  finding the Chair wants fixed goes back to the builder, its row naming the fix once committed,
+  and verify and review run again. The code reviewer persona, which appended its own rows, is
+  version 3.
+- **The build commits twice:** the code, then `build.md` naming that commit, which an artifact
+  cannot do for its own.
+- **A trigger stops the story at the commit that hits it,** and the release always, before its role
+  ships.
+- **Every role's brief carries the project's `code-profile.yaml`,** since the proof's first brief,
+  written without it, planned a check the gate could not count.
+- **Three gaps, opened as stories (Chair), each a gate fix in `v2.1.0`, TMPL-4.6 waiting on them:**
+  `story-artifacts` checks an input's status and not its age, so a verify and review older than a
+  rebuilt build still pass (TMPL-3.4); CI judges a new repository's or branch's first push over
+  `HEAD~1..HEAD` alone, leaving every earlier commit unjudged by the commit-msg and coding-standard
+  steps (TMPL-2.10); `code-standard` counts the context lines of a `ruff format --diff` hunk as
+  unformatted, flagging a correct changed line within three lines of legacy unformatted code
+  (TMPL-4.7).
+
+### Verification
+
+`story-probe-s17`, a clone of Comfy taken to a scratch `v2.1.0` by `template_update.py` (no conflict,
+the suite green), eight roles activated by the team-selection skill, a Python code profile. CU-4.6,
+the per-stage times in `watch_run.py`'s finished-run summary, ran from brief to release, every role a
+general-purpose subagent carrying its persona: each artifact committed and passing `story-artifacts`;
+the build passing `code-standard`; two review findings put to the Chair, `tests 1` fixed in the
+change and the build, verify and review run again, `duplication 6` acknowledged with a later story;
+the release stopped until the Chair approved it, then pushed to the private `SaltyBrett/story-probe-s17`,
+run 40111133105 green on `gates` and both `birth` jobs. On the closed story, the approval row
+removed failed `trigger` and a log row removed failed `finding`. `format_rows` on one unformatted
+line flagged seven.
+
+### Enforcement
+
+`skill-scan` over the skill; `story-artifacts` over what it writes; [[reference_story_live_run]].
