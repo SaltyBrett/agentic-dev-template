@@ -1,9 +1,9 @@
 # Sprint Status
 
 **Current Phase:** Template maintenance
-**Current Focus:** v2.0.0 — the Claude-native substrate and authoritative documents; then v2.1.0, the team and the coding standard
+**Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S11
+**Updated By:** S12
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,35 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S12 — 2026-10-24 — The team designed: orchestration, triggers and the role map
+
+**Status:** Run in the S11 conversation at the Chair's request, the Chair remote with no terminal,
+every question answered in chat; the cold start run through `scripts/session_start.py` as `/clear`
+would run it: identity gate, pull, `session-verify` ("this is S12") and `doc-queue` each exit 0, the
+journal's `start S12` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-3.1
+done, design only, no build.
+
+### Done
+
+1. TMPL-3.1, the design session with the Chair, logged as three decisions. The orchestration
+   (2026-10-24-004): a `/story <ID>` skill in the main session, since no subagent can ask the
+   operator, runs one story end to end, each role a roster subagent handing off through committed
+   artifacts in `docs/stories/<ID>/`, a gate judging each before the next role starts, stopping only
+   at a trigger or a gate failing three times running; the law in a new team standard. The triggers
+   (2026-10-24-005): decision 2026-10-22-003's seven plus a deploy or release, a gate or CI change,
+   data loss and a license change, detected from the diff and declared by the roles, a story closing
+   only with each hit trigger approved. The role map (2026-10-24-006): five story types, every
+   library persona given its artifact and judging gate, `devops-engineer` shipping, the code
+   reviewer's slot left to TMPL-4.1.
+2. TMPL-3.2 scoped by them in the tracker; it waits on TMPL-4.2. S2's entry moved to
+   `sprint/archive/sprint-status_2026.md`, the eleventh over the cap.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -417,62 +446,6 @@ and PocketGames sync `docs/personas/` with `v1.0.0` scripts (decision 2026-10-22
    now finds a sentence inside the other text either way, and the re-plant fails. 102 fixtures, 15
    variants caught. The banned-feature scan refused one rule's quoted hook `entry:` as a bare
    interpreter; reworded, not exempted.
-
-### Blockers
-
-- None.
-
----
-
-## S2 — 2026-10-22 — One cold start in `AGENTS.md`; Claude Code hooks
-
-**Status:** Cold start clean apart from `main` having no upstream (lost in the `v1.0.0` cut); set
-to `origin/main`, which it already equalled. TMPL-1.1 done. Claude Code is 2.1.308, past the
-2.1.277 condition, and the native read was observed before `CLAUDE.md` went: a scratch repository's
-`AGENTS.md` canary came back from `claude -p`, and an empty `CLAUDE.md` beside it made the answer
-`NONE` ([[reference_claude_code_agents_md]]). Cold start measured as every file it makes a
-mandatory read, the session pair included and the story's Required Standards excluded both times:
-89,493 bytes across 12 files before, 60,616 across 9 after; the governance files alone 67,723 →
-38,846. The handoff standard is now read at closeout, reached from `AGENTS.md`, not at every cold
-start. Two of the kickoff's greps cannot hold literally, and were judged by intent:
-`AGENT_INTEROP` remains in decision bodies, the tracker row and the S2 pair, all records, and in
-no live document; `session-verify --hook-stage manual` remains in the gate runbook's per-hook
-`Alone:` line and one knowledge entry's observation, neither a copy of the procedure.
-
-### Done
-
-1. TMPL-1.1 — `AGENTS.md` alone holds the cold start; it gained the Standard Selection Rule, the
-   index-first rule, the enforcement sentence from the interop contract, a plan-first line from
-   `CLAUDE.md`, and a ban on any `CLAUDE.md` that would hide it. `CONSTITUTION.md` §2.1, §2.2, §2.4,
-   the handoff standard §8 and §11, `README.md`, `TEMPLATE_GUIDE.md`, `docs/README.md`, the sprint
-   standard and the index header point there. The checklist holds auth and the hook install only,
-   so the scanner's exemption for it went, proved by a planted feature that now blocks.
-   `AGENT_INTEROP.md` and `CLAUDE.md` deleted. Knowledge entries citing moved text re-verified:
-   `reference_precommit_interpreter` (names the exempt set, not its members),
-   `reference_macos_toolchain` §6 (true before and after 2.1.277; a resource entry, published at
-   closeout).
-
-2. TMPL-1.2 — the hooks reference read in full before any hook was written. `session_start.py`
-   (`SessionStart`, matchers startup, clear and compact), `session_stop.py` (`Stop`) and
-   `session_journal.py` (`PostToolUse` and `PostToolUseFailure` on Edit, Write, Bash), each with a
-   self-test hook and a runbook section; the notes' fixed shape; `disableWorkflows`; `ask` rules for
-   the one-way doors; the closeout gate clears journal and notes. Decision 2026-10-22-004: both
-   files gitignored. Observed in scratch clones, not assumed: the first turn quoted the gate lines
-   and the kickoff; a real `/compact` re-injected the notes and the kickoff; the `Stop` hook sent a
-   turn back with `sprint-status.md` modified and allowed it once committed; the journal gained a
-   line per Edit and per Bash with the failing exit code; the four one-way doors were refused under
-   a matching allow rule. Nineteen broken variants, each failing a fixture. Beside nine pre-commit
-   stash windows the ignored journal kept 2,400 of 2,400 lines; tracked, it lost 2,306 and
-   pre-commit crashed leaving an unstaged edit only in its cache. `PreCompact` blocking a manual
-   `/compact` works; not registered, since blocking the recovery compaction fails the request
-   ([[reference_claude_code_hooks]]). `clear` was added to the kickoff's two matchers: it empties
-   the context as a new session does. The `Stop` hook answers with `additionalContext`, not a
-   block, after a block raised a "hook error" notice in the probe. Two defects the first live
-   run found: `git pull --ff-only` refuses a dirty tree under `pull.rebase` (now `--no-rebase`);
-   untracked directories hid their files from the stale-notes rule (now `--untracked-files=all`).
-3. Found while building TMPL-1.2: the cold start's `session-verify` passed a dirty tree, because
-   pre-commit's stash hid an unstaged edit (measured at the S1 closeout commit). Decision
-   2026-09-22-003 amended; the command carries `--all-files` everywhere it is written.
 
 ### Blockers
 

@@ -24,6 +24,9 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-006 | 2026-10-24 | The team's role map: five story types (software, data, document, game, media) whose brief picks the stages and roles; every library persona given its artifact and its judging gate; the verifier and reviewer never the builder; `devops-engineer` ships; the code reviewer's slot left to TMPL-4.1 | APPROVED |
+| 2026-10-24-005 | 2026-10-24 | The review triggers: decision 2026-10-22-003's seven plus a deploy or release, a gate or CI change, data loss and a license change; detected from the diff where the change shows it and declared by a role otherwise; a story closes only with every hit trigger approved by the operator in its folder | APPROVED |
+| 2026-10-24-004 | 2026-10-24 | The team's orchestration: a `/story <ID>` skill in the main session runs one story end to end, each role a subagent from the roster handing off through committed artifacts in `docs/stories/<ID>/`, a gate judging each before the next role starts; it stops only at a review trigger or a gate failing three times running; the law in a new team standard | APPROVED |
 | 2026-10-24-003 | 2026-10-24 | At adoption of `v2.0.0`, a project with real epics approves the PRD and architecture it has been built from as they stand, in the adoption commit: authority frontmatter, a version log opening at the version each states, a project approval decision; with no architecture, the Chair's skip; settles TMPL-2.4's open question | APPROVED |
 | 2026-10-24-002 | 2026-10-24 | `session-closeout` refuses to close a session whose entry is still headed `emergency checkpoint` or holds the initializer's `### Next`, a record saying the session is still open; the closeout and launch skills, `AGENTS.md`'s emergency close, the README's step 7 and the initializer's S1 text say so; found by the live launch's first closeout, typed as `/closeout` and run as the fork | APPROVED |
 | 2026-10-24-001 | 2026-10-24 | `doc-authority-scan` refuses an authority's path written outside a code span in `**Affects:**`, which it never reads there, and `docs/templates/README.md` step 5 says the path goes in a code span; found by the live launch, whose PRD approval named the PRD bare and passed unchecked | APPROVED |
@@ -4173,3 +4176,148 @@ clone does, its S4 never closed out.
 ### Enforcement
 
 `doc-authority-scan`'s approval rule, unchanged; [[reference_doc_authority]].
+
+---
+
+## Decision 2026-10-24-004: The team's orchestration is a main-session skill over gated artifacts
+
+**Date:** 2026-10-24
+**Made By:** Chair (S12, the TMPL-3.1 design session): the orchestrator in the main session, the
+artifacts committed per story, one story end to end, the law in a new standard; the mechanics by
+the AI, to be settled in TMPL-3.2
+**Status:** APPROVED
+**Builds:** TMPL-3.1, the orchestration of decision 2026-10-22-003
+**Affects:** `sprint/story-tracker.md` (TMPL-3.1 done, TMPL-3.2 scoped). To be built in TMPL-3.2:
+`docs/standards/team_standard_v1.0.md` (new), `.claude/skills/story/SKILL.md` (new), the
+`story-artifacts` gate (new)
+
+### Context
+
+Decision 2026-10-22-003 made the team role subagents handing off through gated artifacts, never
+conversation, with the operator's checkpoints a written list of triggers, orchestrated as a saved
+workflow invoked one story at a time. Two facts bound the shape ([[reference_claude_code_skills]]):
+no subagent has AskUserQuestion, so only the main session can stop and ask the operator; and a
+forked skill sees none of the conversation.
+
+### Decision
+
+- **The orchestrator is a skill in the main session (Chair):** `/story <ID>` runs one story. It
+  calls each role as a subagent of the roster's agent type, so the role's prompt is the persona,
+  passing it the path of its input artifact; it runs the gate on the artifact the role writes, and
+  commits it as a checkpoint before the next role starts. A role the story needs and the roster
+  lacks stops the run and names it; the team-selection skill activates it.
+- **The artifacts live in the repository (Chair):** `docs/stories/<ID>/`, one committed file per
+  stage (`brief`, `design`, `build`, `verify`, `review`, `security`, `docs`, `release`), each with
+  frontmatter a gate reads: the story, the role, its input, a status of `pass`, `fail` or
+  `needs-operator`, and the triggers it declares. A build's artifact records the commits and the
+  checks it ran; the change itself is in the codebase.
+- **One story runs end to end (Chair):** it stops only at a review trigger (decision 2026-10-24-005)
+  or when a gate still fails after three attempts running, and then reports what it stopped on.
+- **The law has its own home (Chair):** a new standard, `docs/standards/team_standard_v1.0.md`, an
+  authority with a version log, holds the roles, stages, artifacts and triggers, and a project may
+  extend its triggers; `/story` is the procedure and `story-artifacts` the enforcement, the
+  repository's usual split.
+- **MINOR**, `v2.1.0` (decision 2026-10-22-003): the gate judges only `docs/stories/`, which no
+  project holds until it opts in, so adopting asks nothing of a project.
+
+### Consequences
+
+- TMPL-3.2 builds the standard, the skill and the gate, with fixtures proved against broken
+  variants, the runbook sections, `AGENTS.md`'s skills table and the README's catalog, then proves
+  them on one project through a story end to end. It waits on TMPL-4.2, whose stack profile gives
+  the build stage its gates and the trigger detection its paths.
+
+### Enforcement
+
+To be built in TMPL-3.2: the `story-artifacts` gate and `skill-scan` over `/story`.
+
+---
+
+## Decision 2026-10-24-005: The review triggers, detected from the diff and declared by the roles
+
+**Date:** 2026-10-24
+**Made By:** Chair (S12, the TMPL-3.1 design session): the four triggers added and the detection;
+the recording of an approval by the AI, to be settled in TMPL-3.2
+**Status:** APPROVED
+**Builds:** TMPL-3.1, the review-trigger list of decision 2026-10-22-003
+**Affects:** `sprint/story-tracker.md` (TMPL-3.2 scoped). To be built in TMPL-3.2: the triggers in
+`docs/standards/team_standard_v1.0.md`, their detection in the `story-artifacts` gate
+
+### Context
+
+Decision 2026-10-22-003 listed the points at which a story stops for the operator: a new
+dependency, a schema change, an auth or crypto change, an external service, a cost, a security
+finding the auditor cannot clear, anything a gate cannot judge. A list that only the roles apply
+passes silently when a role forgets.
+
+### Decision
+
+- **Eleven triggers (Chair):** the seven, plus a deploy or release (anything that ships to users:
+  a production deploy, a store submission, a public tag), a change to the project's own gates,
+  hooks, CI or branch protection, a change that deletes data or migrates it lossily, and a license
+  change or a dependency whose license breaks the project's policy.
+- **Detected two ways (Chair):** from the diff where the change shows it (dependency manifests and
+  lockfiles, migration and schema paths, auth and crypto paths, infrastructure-as-code, CI and hook
+  files, the license file), the paths per stack coming from TMPL-4.2's stack profile; and declared by
+  a role in its artifact's frontmatter where no path can show it (an external service, a cost, a
+  finding not cleared, a judgement no gate makes).
+- **The operator's approval is recorded in the story's folder** by the orchestrator, with the
+  trigger, what was approved and the operator's words; a story's release, and its Done, is refused
+  while any trigger it hit has none.
+- A project adds its own triggers to the standard's list; it removes none.
+
+### Enforcement
+
+To be built in TMPL-3.2: the `story-artifacts` gate's trigger rules, each with fixtures proved
+against broken variants.
+
+---
+
+## Decision 2026-10-24-006: The team's role map, by story type
+
+**Date:** 2026-10-24
+**Made By:** Chair (S12, the TMPL-3.1 design session): every library role covered by story type,
+`devops-engineer` shipping, the map approved as drafted by the AI
+**Status:** APPROVED
+**Builds:** TMPL-3.1, the artifact each role produces and the gate that judges it
+**Affects:** `sprint/story-tracker.md` (TMPL-3.2 scoped). To be built in TMPL-3.2: the map in
+`docs/standards/team_standard_v1.0.md`
+
+### Context
+
+The library holds the team of decision 2026-10-23-004 across five areas, more than the software
+lifecycle decision 2026-10-22-003 named, and no release manager or code reviewer; the reviewer's
+brief is TMPL-4's.
+
+### Decision
+
+- **A story has a type, set in its brief, that picks its stages and roles.** The verifier and the
+  reviewer are never the builder. A security stage joins any type whose story hits an auth, crypto
+  or external-service trigger.
+
+| Type | brief | design | build | verify | review | security | docs | release |
+|------|-------|--------|-------|--------|--------|----------|------|---------|
+| software | `product-manager` or `business-analyst` | `solution-architect`, `ux-designer` for UI | `software-engineer`, `frontend-engineer`, `backend-engineer` or `web-developer` | `qa-engineer` | the code reviewer | `security-engineer` | `technical-writer` | `devops-engineer` |
+| data | `business-analyst` | `solution-architect`, or `data-platform-engineer` on the Microsoft stack | `data-engineer`, `analytics-engineer`, `bi-developer`, `ml-engineer`, `data-scientist`, `data-analyst` or `reporting-analyst` | `data-quality-engineer` | the code reviewer | `security-engineer` | `technical-writer` | `devops-engineer` |
+| document | `business-analyst` or `product-manager` | `information-architect` | `business-writer` or `technical-writer` | `editor` | `document-reviewer` | — | — | `document-controller` |
+| game | `game-producer` | `game-designer`, with `narrative-designer` and `game-ui-ux-designer` | `game-engine-developer`, `game-artist` or `game-audio-designer` | `game-qa-tester` | the code reviewer, for code | — | — | `devops-engineer` |
+| media | `product-manager` | — | `generative-video-engineer`, `image-video-editor` or `blender-artist` | `image-video-editor`, not the builder | — | — | — | `devops-engineer`, when something ships |
+
+- **Outside the per-story flow:** `delivery-manager` writes the plan, judged by the approval gate
+  and the tracker's rules; `framework-maintainer` writes the template's gates, judged by their
+  self-tests against broken variants.
+- **The judging gates, by stage.** Every artifact: `story-artifacts`, its shape, its input passing
+  before the role started, the stage order. Brief: numbered acceptance criteria, each PRD reference
+  resolving. Build: TMPL-4.2's stack profile (tests, linter, types, coverage, complexity) and the
+  suite; for data, the data tests observed; for assets, the architecture's budgets. Verify: every
+  acceptance criterion mapped to a check observed passing. Review and security: every finding
+  resolved, or a trigger; gitleaks and the dependency audit stay in the suite. Docs, and a
+  document's release: `doc-authority-scan`. Release: the CI run observed green, its ID recorded.
+- **`devops-engineer` ships (Chair);** no release-manager persona.
+- **The code reviewer's slot is TMPL-4.1's**, which drafts the reviewer and the auditor briefs; a
+  code story's review stage waits for it, which is why TMPL-3.2 waits on TMPL-4.2.
+
+### Enforcement
+
+To be built in TMPL-3.2: the `story-artifacts` gate over the map; the persona lint over any persona
+it adds.

@@ -17,10 +17,10 @@
 | Metric | Count |
 |--------|-------|
 | **Total Stories** | 30 |
-| **Not Started** | 4 |
+| **Not Started** | 3 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 26 |
+| **Completed** | 27 |
 
 ---
 
@@ -87,8 +87,8 @@ that decision 2026-09-23-003 names.
 
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
-| TMPL-3.1 | Design session with the operator: over the library's team (designed in TMPL-1.9, 2026-10-23-003), the artifact each role produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions | Not Started | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
-| TMPL-3.2 | Build: the role agents, their skills, the saved workflow, the trigger list as a gate; proof on one project through a story end to end | Not Started | TMPL-3.1, TMPL-4.2 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-3.1 | Design session with the operator: over the library's team (designed in TMPL-1.9, 2026-10-23-003), the artifact each role produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions. Done at S12 with the Chair: the orchestration (2026-10-24-004), the eleven triggers (2026-10-24-005), the role map by story type covering every library persona (2026-10-24-006) | Done | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
+| TMPL-3.2 | Build: the role agents, their skills, the saved workflow, the trigger list as a gate; proof on one project through a story end to end. Scoped at S12 by decisions 2026-10-24-004 to -006: `docs/standards/team_standard_v1.0.md` (the stages, the role map, the eleven triggers), the main-session `/story <ID>` skill, the `story-artifacts` gate over `docs/stories/<ID>/` with its trigger detection, fixtures proved against broken variants, the runbook sections, `AGENTS.md`'s skills table and the README's catalog | Not Started | TMPL-3.1, TMPL-4.2 | doc_control_standard.md | 2026-10-22-003 |
 
 ---
 
