@@ -52,6 +52,7 @@ the build re-cut.
 8. TMPL-6 re-cut, approved by the Chair (decision 2026-10-24-023): TMPL-6.2 the law, 6.3 the gate,
    6.4 the formats the gates read moved to ASCII, 6.5 the humanizer and the agent's voice, 6.6 the
    sweep; TMPL-6.1 done; TMPL-4.6 waiting on TMPL-6.6; S19 opens with TMPL-6.2.
+9. [[reference_writing_standard_design]]: why each choice, for the builders of TMPL-6.2 to TMPL-6.6.
 
 ### Blockers
 

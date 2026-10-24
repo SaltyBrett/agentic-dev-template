@@ -1,0 +1,82 @@
+---
+name: The writing standard's design and why
+description: 'Why the writing standard is shaped as it is: voice and audience kept apart, assigned in writing-profile.yaml and never in frontmatter, a file no rule names judged as production, exact phrases and never bare words, a sweep and then whole files rather than changed lines, mechanical findings refused and judgement paused, the formats the gates read moved to ASCII with parsers reading both, and why the humanizer stops for the Chair only over text already in the tree. Read before building or changing any part of TMPL-6.'
+teaches: [2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-021]
+verified: 2026-10-24
+metadata:
+  type: reference
+---
+
+# The writing standard's design and why
+
+> Durable learning. Wikilink: `[[reference_writing_standard_design]]`. The law, once built:
+> `docs/standards/writing_standard_v1.0.md`. The values and the measurements behind them are in
+> decisions 2026-10-24-016 to 2026-10-24-023; this entry explains the choices.
+
+## Voice and audience are separate
+
+A voice is how a document sounds; its audience says whether it may cite development references.
+Kept apart, one voice serves a runbook and a decision log alike, and only the runbook refuses a
+story ID.
+
+## Why a profile and not frontmatter
+
+Most of the template's markdown already carries frontmatter that Claude Code or a gate owns:
+skills, rules, agents, personas, knowledge entries, authorities. An unknown key in a skill fails
+silently ([[reference_claude_code_skills]]), and the knowledge and persona gates refuse keys they do
+not expect. GitHub shows a README's frontmatter to its production reader as a table. So every
+assignment lives in `writing-profile.yaml`, and the gate prints a file's assignment on request.
+
+## Why a file no rule names is production
+
+The audience rule fires only on development references. A development default would let a
+production document in a new folder pass while checking nothing, the green-over-nothing failure
+([[reference_kb_frontmatter_validation]]). The starter profile declares the framework's development
+paths, so a project is born clean, and the updater merges the profile three-way rather than keeping
+it, so a development path a release adds reaches the project.
+
+## Why exact phrases and no bare words
+
+Measured on the template before the lists were set, every hit of a single AI or marketing word was
+legitimate: a browser's audio unlock, Claude Code's harness, an elevated sandbox. Noise is what gets
+a gate switched off. So the tables hold exact phrases, a phrase joins only once seen in an agent's
+writing and leaves at its first false positive, and a project's collisions go in its allow list.
+The tables live in the standard and the gate reads them there, as `story-artifacts` reads the team
+standard ([[reference_story_artifacts]]), so there is no copy to drift.
+
+## Why a sweep then whole files
+
+The coding standard judges changed lines because legacy code is costly to clean
+([[reference_code_review_log]]). Prose is cheap to clean with the humanizer, and the Chair named the
+risk: the off-keyboard characters exist because drift bypassed rules already in place. In a clean
+tree, whole files and changed lines agree on new work. They part on text that entered unjudged, by a
+commit without the hooks, a template update or a first push judged at its tip, which changed lines
+never see again and whole files catch at the next commit.
+
+## Why mechanical refuses and judgement pauses
+
+A mechanical finding has a cheap and certain fix, and its rare real exception is an exact string.
+So it refuses, and the allow list is the only way past: each line is a visible commit and a gate
+change the Chair approves. Tone is taste, so it takes the path a code review finding takes, the
+story pausing until the Chair answers.
+
+## Why the formats move and parsers read both
+
+The headings the gates read (the sprint-status entry, the handoff and kickoff, a persona's
+changelog, an epic) carry U+2014 and would fail the character rule on every new line. They move to
+a hyphen, and the parsers read both forms, because `template_update.py` never writes a project's
+`sprint/` ([[reference_template_update]]), which keeps the old form until the project's own sweep.
+
+## When the humanizer stops for the Chair
+
+A rewrite of text already in the tree changes words someone kept, so the Chair sees each file
+before it is kept. An agent's own draft that the gate refuses is the agent's to fix, as a failing
+test is; stopping there would halt every document story over a comma. A guard holds every code
+span, link and number through a rewrite, so meaning cannot drift unseen.
+
+## Rules
+
+- Assign voice and audience in `writing-profile.yaml`, never in a document's frontmatter.
+- Name a character by its code point in any rule, fixture or entry about it.
+- Add a phrase only on evidence, and remove it at its first false positive.
+- Never loosen a gate for the sweep; settle an append-only conflict with the Chair.
