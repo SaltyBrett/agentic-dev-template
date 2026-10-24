@@ -16,11 +16,11 @@
 
 | Metric | Count |
 |--------|-------|
-| **Total Stories** | 30 |
-| **Not Started** | 2 |
+| **Total Stories** | 33 |
+| **Not Started** | 4 |
 | **In Progress** | 0 |
 | **Blocked** | 0 |
-| **Completed** | 28 |
+| **Completed** | 29 |
 
 ---
 
@@ -88,7 +88,7 @@ that decision 2026-09-23-003 names.
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-3.1 | Design session with the operator: over the library's team (designed in TMPL-1.9, 2026-10-23-003), the artifact each role produces and the gate that judges it, the review-trigger list, the orchestration shape; logged as decisions. Done at S12 with the Chair: the orchestration (2026-10-24-004), the eleven triggers (2026-10-24-005), the role map by story type covering every library persona (2026-10-24-006) | Done | TMPL-2.4 | sprint_management_standard_v1.0.md | 2026-10-22-003 |
-| TMPL-3.2 | Build: the role agents, their skills, the saved workflow, the trigger list as a gate; proof on one project through a story end to end. Scoped at S12 by decisions 2026-10-24-004 to -006: `docs/standards/team_standard_v1.0.md` (the stages, the role map, the eleven triggers), the main-session `/story <ID>` skill, the `story-artifacts` gate over `docs/stories/<ID>/` with its trigger detection, fixtures proved against broken variants, the runbook sections, `AGENTS.md`'s skills table and the README's catalog | Not Started | TMPL-3.1, TMPL-4.2 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-3.2 | Build: the role agents, their skills, the saved workflow, the trigger list as a gate; proof on one project through a story end to end. Scoped at S12 by decisions 2026-10-24-004 to -006: `docs/standards/team_standard_v1.0.md` (the stages, the role map, the eleven triggers), the main-session `/story <ID>` skill, the `story-artifacts` gate over `docs/stories/<ID>/` with its trigger detection, fixtures proved against broken variants, the runbook sections, `AGENTS.md`'s skills table and the README's catalog | Not Started | TMPL-3.1, TMPL-4.3 | doc_control_standard.md | 2026-10-22-003 |
 
 ---
 
@@ -97,7 +97,10 @@ that decision 2026-09-23-003 names.
 | Story ID | Title | Status | Dependencies | Required Standards | PRD Ref |
 |----------|-------|--------|--------------|-------------------|---------|
 | TMPL-4.1 | Design session with a specialized reviewer agent: the core limits as numbers, the per-stack tool-mapping rule, the one judgement page; proved against a known-good and a known-bad codebase before adoption; logged. Done at S13 with the Chair and a reviewer agent: the limits proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas (2026-10-24-007), proved measurement and the mapping rule (2026-10-24-008), the judgement page and the reviewer and auditor briefs (2026-10-24-009); [[reference_coding_standard_calibration]] | Done | TMPL-2.4 | doc_control_standard.md | 2026-10-22-003 |
-| TMPL-4.2 | Build: the core gates as a stack profile in the suite, the `.claude/rules/` page, the reviewer and auditor briefs; proof on one project. Scoped at S13 by decisions 2026-10-24-007 to -009: `docs/standards/coding_standard_v1.0.md`, stack profiles for Rust, Python and TypeScript with pinned tools each proved by its measurement fixture and the recall check, the gate over changed functions (limits, new clones, coverage of new lines, the exceptions file), `.claude/rules/code-quality.md`, `personas/code-reviewer.md`, fixtures proved against broken variants, the runbook sections; the proof on one project | Not Started | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-4.2 | The coding standard's law and judgement layer, from decisions 2026-10-24-007, 2026-10-24-008 and 2026-10-24-009: `docs/standards/coding_standard_v1.0.md` as an authority (the core limits, their scope, the exceptions file `code-exceptions.yaml`, proved measurement, the stack profiles' mapping rule), `.claude/rules/code-quality.md`, `personas/code-reviewer.md`; split at S14 (2026-10-24-010) | Done | TMPL-4.1 | doc_control_standard.md | 2026-10-22-003 |
+| TMPL-4.3 | The gate's language-neutral core and the Python profile: the changed functions found from the diff, the limits of `docs/standards/coding_standard_v1.0.md` §2, the recall check, the exceptions file, the clone check with jscpd, coverage of new lines; the Python profile's pinned tools, its measurer on Python's `ast`, each proved by its fixture; fixtures proved against broken variants; the runbook sections; proved on a scratch copy of Comfy (2026-10-24-008, 2026-10-24-010) | Not Started | TMPL-4.2 | coding_standard_v1.0.md, doc_control_standard.md | 2026-10-24-007 |
+| TMPL-4.4 | The Rust profile: one pinned tool per slot, its measurer proved by the Rust fixture and the recall check; proved on a scratch copy of PocketGames; whether the Rust toolchain is installed on the operator's machine or proved in CI only, the Chair's at the story's start (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
+| TMPL-4.5 | The TypeScript profile: one pinned tool per slot, its measurer proved by the TypeScript fixture and the recall check; proved on fixture code, no project holding TypeScript yet (2026-10-24-010) | Not Started | TMPL-4.3 | coding_standard_v1.0.md | 2026-10-24-008 |
 
 ---
 

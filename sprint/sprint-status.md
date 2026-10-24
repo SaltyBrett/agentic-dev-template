@@ -3,7 +3,7 @@
 **Current Phase:** Template maintenance
 **Current Focus:** v2.1.0 — the agentic development team and the coding standard (v2.0.0 released 2026-10-24)
 **Last Updated:** 2026-10-24
-**Updated By:** S13
+**Updated By:** S14
 
 > **GOVERNED BY** `docs/standards/sprint_management_standard_v1.0.md` (setup, update cadence, sprint boundaries).
 >
@@ -11,6 +11,35 @@
 > update first; older updates are context, not required reading. Keep the last 10 updates visible and
 > archive older ones — `scripts/session_closeout.py --check` enforces the cap. Markdown only (never JSON).
 > Every entry is headed `## S<N> — YYYY-MM-DD — <title>`; the gate reads the session number from it.
+
+---
+
+## S14 — 2026-10-24 — The coding standard written; its build split by stack
+
+**Status:** Run in the S11 conversation at the Chair's request, the Chair remote, every question
+answered in chat; the cold start run through `scripts/session_start.py` as `/clear` would run it:
+identity gate, pull, `session-verify` ("this is S14") and `doc-queue` each exit 0, the journal's
+`start S14` line written; the reads done by hand. Persona `framework-maintainer`. TMPL-4.2 split by
+the Chair and its first part done.
+
+### Done
+
+1. TMPL-4.2 split by the Chair (decision 2026-10-24-010): 4.2 the law and the judgement layer; 4.3
+   the gate's core with the Python profile, proved on Comfy; 4.4 the Rust profile, proved on
+   PocketGames, the Rust toolchain decided at its start; 4.5 the TypeScript profile, proved on
+   fixture code. TMPL-3.2 now waits on 4.3.
+2. TMPL-4.2 done: `docs/standards/coding_standard_v1.0.md` written as the ninth authority, its
+   version log citing decisions 2026-10-24-007 to -009 (the limits, their scope, the exceptions file
+   `code-exceptions.yaml`, proved measurement, the mapping rule); `.claude/rules/code-quality.md`,
+   path-scoped to code, opening with `CONSTITUTION.md` §4A; `personas/code-reviewer.md` in the
+   library from decision 2026-10-24-009's brief; `AGENTS.md`'s governance map and the README's
+   standards list name the standard. Each new file's gate shown to read it: an unquoted persona list
+   item refused as `list`, a rule restating `AGENTS.md` as `rule-restates`, a dead glob as
+   `rule-dead`; the suite exit 0. S4's entry moved to `sprint/archive/sprint-status_2026.md`.
+
+### Blockers
+
+- None.
 
 ---
 
@@ -386,51 +415,6 @@ project's own personas stay in it, and the updater converts a `v1.0.0` project's
    reporting roles and the missing game development roles (decision 2026-10-23-004); thirty new
    personas written into `personas/` from one generator, every one passing the persona lint, and a
    plant of an unquoted `: ` item refused as `list`.
-
-### Blockers
-
-- None.
-
----
-
-## S4 — 2026-10-23 — Procedures as skills; ownership of the new paths
-
-**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
-`session-verify` (PASS); both hook types installed; Claude Code 2.1.308. The skills page was read
-whole (curl, 114 KB) before any build, with the sub-agents page's startup and tool sections. Two
-choices went to the operator, both answered with the recommendation: the forked closeout takes the
-next persona and the session's brief as arguments, and the release and the pristine cut are the
-operator's alone (decision 2026-10-23-001). TMPL-1.4 and TMPL-1.6 done.
-
-### Done
-
-1. TMPL-1.4 — five skills in `.claude/skills/` (closeout forked as `general-purpose` with
-   `background: false`; planning-session and document-production inline; release and pristine-cut
-   the operator's alone). `AGENTS.md`'s procedures section rewritten to list them by path for any
-   agent, the emergency close moved into its closeout bullet; the handoff, sprint and document
-   standards keep the law and point to them; the scaffold's kickoff section 5 points to the
-   closeout skill; [[reference_pristine_cut]] and [[reference_template_versioning]] keep the why.
-   `skill-scan` and its self-test (43 fixtures) with runbook sections; 38 broken variants, each
-   caught, one first written as a no-op and rewritten. Live: plants of a missing hook id and a
-   missing stage each failed `pre-commit run skill-scan --all-files` (exit 1) and a real commit;
-   the one-home grep finds each procedure's command in its skill alone; `claude -p "/closeout …"`
-   in a scratch clone ran as a `general-purpose` subagent, first command `git status --short`,
-   and stopped at the sync it could not get approved, tree untouched
-   ([[reference_claude_code_skills]]).
-2. TMPL-1.6 — ownership decided (decision 2026-10-23-002, made within 2026-10-22-001 and -005):
-   `.claude/agents/` kept for the sync, with a fixture holding its path equal in the gate, the
-   sync, the initializer, the sanitizer and the updater; `.claude/skills/`, `.claude/rules/` and
-   `.claude/settings.json` three-way; the journal, the notes and `.claude/settings.local.json`
-   named as `new_project.LOCAL_STATE`, touched by none of the three. Reading the tree found
-   `settings.local.json` ignored only by the operator's global excludes file; `.gitignore` now
-   carries it, and the initializer's fixture checks with the global file off. A project's
-   `docs/personas/` adopts `v2.0.0` through `dev-resources`, never by conversion in the project.
-   Self-tests 21, 36 and 20; 19 broken variants, each caught, one first written so it never
-   applied and rewritten. Every real `.claude/` path and local file classifies as decided.
-3. After the closeout (ecef26d, its `gates` run green), the operator approved a persona library
-   in the template, inactive, with each project activating what it needs into `.claude/agents/` at
-   its first session (decision 2026-10-23-003). TMPL-1.8 opened ahead of TMPL-1.7, four questions
-   left open for its start, and the S5 pair re-pointed to it.
 
 ### Blockers
 

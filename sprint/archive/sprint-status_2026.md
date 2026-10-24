@@ -4,6 +4,51 @@ Entries moved from `sprint/sprint-status.md` once it held more than ten, oldest 
 
 ---
 
+## S4 — 2026-10-23 — Procedures as skills; ownership of the new paths
+
+**Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and
+`session-verify` (PASS); both hook types installed; Claude Code 2.1.308. The skills page was read
+whole (curl, 114 KB) before any build, with the sub-agents page's startup and tool sections. Two
+choices went to the operator, both answered with the recommendation: the forked closeout takes the
+next persona and the session's brief as arguments, and the release and the pristine cut are the
+operator's alone (decision 2026-10-23-001). TMPL-1.4 and TMPL-1.6 done.
+
+### Done
+
+1. TMPL-1.4 — five skills in `.claude/skills/` (closeout forked as `general-purpose` with
+   `background: false`; planning-session and document-production inline; release and pristine-cut
+   the operator's alone). `AGENTS.md`'s procedures section rewritten to list them by path for any
+   agent, the emergency close moved into its closeout bullet; the handoff, sprint and document
+   standards keep the law and point to them; the scaffold's kickoff section 5 points to the
+   closeout skill; [[reference_pristine_cut]] and [[reference_template_versioning]] keep the why.
+   `skill-scan` and its self-test (43 fixtures) with runbook sections; 38 broken variants, each
+   caught, one first written as a no-op and rewritten. Live: plants of a missing hook id and a
+   missing stage each failed `pre-commit run skill-scan --all-files` (exit 1) and a real commit;
+   the one-home grep finds each procedure's command in its skill alone; `claude -p "/closeout …"`
+   in a scratch clone ran as a `general-purpose` subagent, first command `git status --short`,
+   and stopped at the sync it could not get approved, tree untouched
+   ([[reference_claude_code_skills]]).
+2. TMPL-1.6 — ownership decided (decision 2026-10-23-002, made within 2026-10-22-001 and -005):
+   `.claude/agents/` kept for the sync, with a fixture holding its path equal in the gate, the
+   sync, the initializer, the sanitizer and the updater; `.claude/skills/`, `.claude/rules/` and
+   `.claude/settings.json` three-way; the journal, the notes and `.claude/settings.local.json`
+   named as `new_project.LOCAL_STATE`, touched by none of the three. Reading the tree found
+   `settings.local.json` ignored only by the operator's global excludes file; `.gitignore` now
+   carries it, and the initializer's fixture checks with the global file off. A project's
+   `docs/personas/` adopts `v2.0.0` through `dev-resources`, never by conversion in the project.
+   Self-tests 21, 36 and 20; 19 broken variants, each caught, one first written so it never
+   applied and rewritten. Every real `.claude/` path and local file classifies as decided.
+3. After the closeout (ecef26d, its `gates` run green), the operator approved a persona library
+   in the template, inactive, with each project activating what it needs into `.claude/agents/` at
+   its first session (decision 2026-10-23-003). TMPL-1.8 opened ahead of TMPL-1.7, four questions
+   left open for its start, and the S5 pair re-pointed to it.
+
+### Blockers
+
+- None.
+
+---
+
 ## S3 — 2026-10-22 — Personas as agent files; path-scoped rules
 
 **Status:** Cold start clean: the `SessionStart` hook ran the identity gate (PASS), the pull and

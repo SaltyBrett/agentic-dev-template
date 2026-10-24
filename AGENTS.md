@@ -155,7 +155,7 @@ References do NOT auto-load — you must explicitly Read each file.
 | `personas/` | The persona library the template ships, one agent file each, inactive; it grows by template release |
 | `.claude/agents/` | The project's roster: the personas it activated from the library or drafted itself, each a live agent. A kickoff names one by slug and the `SessionStart` hook injects its prompt |
 | `.claude/skills/` | The procedures, one `SKILL.md` each (below). `scripts/skill_scan.py` keeps every hook id, stage and command a skill names in step with the config |
-| `docs/standards/` | The law the procedures obey: `session_handoff`, `sprint_management`, `secrets_management`, `document_production` |
+| `docs/standards/` | The law the procedures obey: `session_handoff`, `sprint_management`, `secrets_management`, `document_production`, `coding` |
 | `sprint/` | Live state: sprint-status, story-tracker, decision-log, handoffs, recovery |
 | `docs/orchestration/knowledge/` | Accumulated learnings (single source of truth for knowledge) |
 

@@ -24,6 +24,7 @@
 
 | ID | Date | Title | Status |
 |----|------|-------|--------|
+| 2026-10-24-010 | 2026-10-24 | TMPL-4.2 split, larger than one session: 4.2 the standard, the judgement page and the code reviewer; 4.3 the gate's core and the Python profile, proved on Comfy; 4.4 the Rust profile, proved on PocketGames, the Rust toolchain decided there; 4.5 the TypeScript profile, proved on fixture code; TMPL-3.2 waits on 4.3 | APPROVED |
 | 2026-10-24-009 | 2026-10-24 | The coding standard's judgement page (`.claude/rules/code-quality.md`, path-scoped to code, opening with `CONSTITUTION.md` §4A) and its two briefs: the code reviewer, a new library persona, never the implementer; the security audit, `security-engineer`'s brief for the security stage | APPROVED |
 | 2026-10-24-008 | 2026-10-24 | The coding standard's measurement is proved, per language: each stack's profile names one pinned tool per slot, configured to the core numbers and never looser, and a tool counts only once it passes its language's measurement fixture and a recall check on every run; `lizard` 1.17.10 fails Rust and TypeScript | APPROVED |
 | 2026-10-24-007 | 2026-10-24 | The coding standard's core limits, proved against ripgrep, packaging and zod and the Gilded Rose and Tennis katas: per added or edited function, complexity 15, 60 code lines, 5 parameters; no new clones; 80% of new lines covered; tests at complexity 10 and 100 lines; file length a reviewer signal at 500; exceptions recorded, never growing | APPROVED |
@@ -4502,3 +4503,37 @@ stages, in TMPL-3.2
 
 To be built: the page held by the rule gate (`session-closeout-check`'s rule lint), the persona by
 the persona lint, in TMPL-4.2; the audit brief with the stages in TMPL-3.2.
+
+---
+
+## Decision 2026-10-24-010: TMPL-4.2 split into the law, the gate's core, and one story per stack
+
+**Date:** 2026-10-24
+**Made By:** Chair (S14): the split and its order, the Rust toolchain decided at TMPL-4.4
+**Status:** APPROVED
+**Builds:** TMPL-4.2's scope, from decisions 2026-10-24-007 to 2026-10-24-009
+**Affects:** `sprint/story-tracker.md` (TMPL-4.2 rescoped; TMPL-4.3, TMPL-4.4 and TMPL-4.5 opened;
+TMPL-3.2's dependency)
+
+### Context
+
+TMPL-4.2 held the standard, three stack profiles, the gate, the judgement page, the reviewer persona
+and a proof on a project: more than one session, which the sprint standard's session-sized rule
+forbids. The Rust toolchain is not installed on the operator's machine.
+
+### Decision
+
+- **TMPL-4.2:** the law and the judgement layer, `docs/standards/coding_standard_v1.0.md`,
+  `.claude/rules/code-quality.md` and `personas/code-reviewer.md`.
+- **TMPL-4.3:** the gate's language-neutral core (the changed functions from the diff, the limits,
+  the recall check, the exceptions file, the clone check, coverage of new lines) with the Python
+  profile, whose measurer reads Python's own `ast`, so no tokenizer can skip a function; proved on a
+  scratch copy of Comfy.
+- **TMPL-4.4:** the Rust profile, proved on a scratch copy of PocketGames; whether the toolchain is
+  installed locally or proved in CI only is decided at its start.
+- **TMPL-4.5:** the TypeScript profile, proved on fixture code, since no project holds TypeScript.
+- **TMPL-3.2** waits on TMPL-4.3, the first working profile, not on all three.
+
+### Enforcement
+
+`session-closeout-check`'s dependency order over the tracker.
