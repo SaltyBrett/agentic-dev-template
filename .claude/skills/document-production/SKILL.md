@@ -6,8 +6,9 @@ description: 'Produce a Word, Excel, PDF or PowerPoint deliverable in the projec
 # Document production
 
 The values are the law: `docs/standards/document_production_standard_v1.0.md` holds the typography,
-palette, color roles, logo rules, banners, structure, writing mechanics, locked terms and the
-document-type patterns. This skill is how a deliverable is made from them.
+palette, color roles, logo rules, banners, structure, locked terms and the document-type patterns,
+and `docs/standards/writing_standard_v1.0.md` the rules its words obey. This skill is how a
+deliverable is made from them.
 
 1. **Read the standard whole** this session; do not work from memory of it.
 2. **Resolve every value the document needs.** One still a `{{TOKEN}}` or marked [Get from source]
@@ -29,8 +30,10 @@ document-type patterns. This skill is how a deliverable is made from them.
    - the banner its handling rules require, the header logo and the footer (§5, §6);
    - "Page X of Y" on anything over two pages, a revision marker on the cover, a changelog table at
      the end (§6);
-   - no em dashes anywhere: search the document's text for the character (§9);
-   - the locked terms and vendor spellings (§9, §10);
+   - the produced file's text passes the writing standard's mechanical rules as a production
+     document, in the voice its source's profile rule gives: characters, headings, phrases and
+     development references (`docs/standards/writing_standard_v1.0.md`, section 11);
+   - the locked terms and vendor spellings (§10);
    - the type's locked closing line, confirmed current with the user (§7).
 6. **Report** the file's path, the type, the pairing and the starter used, and each deviation from
    the standard with its reason.

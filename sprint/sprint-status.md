@@ -18,7 +18,7 @@
 
 **Status:** Cold start by the `SessionStart` hook: identity gate, pull, `session-verify` ("this is
 S19") and `doc-queue` each exit 0; the reads done by hand. Persona `framework-maintainer`, injected
-by the hook. TMPL-6.2's plan settled with the Chair; the build in progress.
+by the hook. TMPL-6.2 done: its plan settled with the Chair, then the law built and gated.
 
 ### Done
 
@@ -29,6 +29,21 @@ by the hook. TMPL-6.2's plan settled with the Chair; the build in progress.
 2. The README's audience (decision 2026-10-24-025, the Chair's): development in the template alone,
    by a `template:` list the gate applies only where `.project-profile` is absent, so a project's
    README is production; its reader added to TMPL-6.3.
+3. TMPL-6.2, the law: `docs/standards/writing_standard_v1.0.md` at 1.0 (d1c6ef9), eleven sections
+   and the two phrase tables of fifteen rows each; the seven voices in `docs/standards/voices/`;
+   `writing-profile.yaml`, parsing with `rules`, `template`, `default`, `agents` and `allow`. A probe
+   of the standard's own rules found no finding in any new file.
+4. TMPL-6.2, the judgement: `.claude/rules/writing.md`, scoped to `**/*.md`; `personas/editor.md`
+   and `personas/document-reviewer.md` at version 2, their changelog lines in the U+2014 form the
+   persona gate reads. The rule and persona linters, called on broken variants, refused a dead
+   glob, a planted `AGENTS.md` sentence, a body changed at version 1 and a missing changelog item.
+5. TMPL-6.2, the move: section 9 of `docs/standards/document_production_standard_v1.0.md` a
+   pointer and its vendor rule in section 10, at 1.1; the document-production skill's check step
+   runs the writing rules over a produced file; `AGENTS.md`'s governance map and the README's
+   standards table list the writing standard. With TMPL-6.2 Done, removing any one of 014 and 022
+   from the 1.1 row, or 025 from the 1.0 row, makes `doc-authority-scan` report it unrecorded.
+6. [[reference_writing_standard_design]]: why the README is development in the template alone, and
+   why phrases skip code blocks and a list ends with its paragraph.
 
 ### Blockers
 

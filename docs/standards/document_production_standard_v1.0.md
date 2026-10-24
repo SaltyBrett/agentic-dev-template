@@ -1,7 +1,7 @@
 ---
 authority: document production — the house style every Word, Excel, PDF and PowerPoint deliverable obeys
-implements: [2026-09-19-001, 2026-10-23-001]
-verified: 2026-10-23
+implements: [2026-09-19-001, 2026-10-23-001, 2026-10-24-022]
+verified: 2026-10-24
 ---
 
 # Document Production Standard v1.0
@@ -22,9 +22,10 @@ verified: 2026-10-23
 
 # Document Production Style Guide
 
-**What this is.** The complete formatting, typography, color, structure, and writing standard for
+**What this is.** The complete formatting, typography, color, structure and terminology standard for
 producing this project's documents and presentations, so any agent (Claude Code, Codex, or another)
-reproduces the same look and feel. Align it to the project's official brand assets before relying on it.
+reproduces the same look and feel; their words obey `docs/standards/writing_standard_v1.0.md`. Align
+it to the project's official brand assets before relying on it.
 
 **Label key:**
 - **[Brand official]** Taken directly from the project's official brand guidelines. Authoritative.
@@ -179,18 +180,16 @@ template. **[Get from source]**
 
 ## 9. Writing Mechanics (House Style)
 
-Absolute. **[Locked]**
-- **No em dashes anywhere.** Use commas, colons, parentheses, or separate sentences.
-- **Vendor and product names** are spelled exactly as the vendor spells them, including internal capitals. Record the project's recurring ones in the list below and never vary them.
-- **Depersonalized framing** for organizationally sensitive topics: frame gaps as process or system gaps, never as an individual's failure (for example, an implementation shortfall is an implementation and process-alignment gap, not someone's mistake).
-- **Direct, structured, executive-ready prose:** enough to act on, no filler, no padded caveats, clear recommendation and decision logic.
-- **Consistency over cleverness:** once a term or convention is locked, it holds across every downstream artifact.
+The writing rules are in `docs/standards/writing_standard_v1.0.md`: its character rule holds the
+em-dash line, its `business` voice the prose rules and its rules page consistency over cleverness
+(decision 2026-10-24-022). The vendor spelling rule is in section 10.
 
 ---
 
 ## 10. Locked Terminology and Phrases
 
 Reuse exactly where they apply. **[Locked]**
+- **Vendor and product names** are spelled exactly as the vendor spells them, including internal capitals. Record the project's recurring ones in this list and never vary them.
 - "manually keyed" for manual data entry, in preference to "hand-entered" or "manual entry."
 - "Why it matters:" as a recurring labeled lead-in.
 - A single agreed name for the destination of record in data narratives (for example "Data Warehouse"), used consistently rather than varied for style.
@@ -269,4 +268,5 @@ With those in hand, this guide plus the official brand values should let the new
 
 | Version | Date | Decision | Summary | Commit |
 |---------|------|----------|---------|--------|
+| 1.1 | 2026-10-24 | 2026-10-24-022, 2026-10-24-014 | Section 9's writing rules moved to `docs/standards/writing_standard_v1.0.md`, section 9 a pointer to it; the vendor spelling rule moved into section 10 (TMPL-6.2) | pending |
 | 1.0 | 2026-10-23 | 2026-10-23-011, 2026-10-22-002, 2026-10-23-001 | Marked as the authority for document production (TMPL-2.3); reflects the procedure moved to the document-production skill. The changelog table it replaces is in git | 515f1a5 |

@@ -1,7 +1,7 @@
 ---
 name: The writing standard's design and why
 description: 'Why the writing standard is shaped as it is: voice and audience kept apart, assigned in writing-profile.yaml and never in frontmatter, a file no rule names judged as production, exact phrases and never bare words, a sweep and then whole files rather than changed lines, mechanical findings refused and judgement paused, the formats the gates read moved to ASCII with parsers reading both, and why the humanizer stops for the Chair only over text already in the tree. Read before building or changing any part of TMPL-6.'
-teaches: [2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-021]
+teaches: [2026-10-24-017, 2026-10-24-018, 2026-10-24-019, 2026-10-24-020, 2026-10-24-021, 2026-10-24-025]
 verified: 2026-10-24
 metadata:
   type: reference
@@ -34,6 +34,25 @@ production document in a new folder pass while checking nothing, the green-over-
 ([[reference_kb_frontmatter_validation]]). The starter profile declares the framework's development
 paths, so a project is born clean, and the updater merges the profile three-way rather than keeping
 it, so a development path a release adds reaches the project.
+
+## Why the README is development in the template alone
+
+The template's `writing-profile.yaml` is also the starter every project is born with, and the
+updater carries it into a project at adoption, so a rule the template needs for itself reaches every
+project. The template's `README.md` is written for an adopter of a development framework, whose
+product vocabulary (S1, the Chair, `sprint/`) is the audience rule's list; a project's README is
+written for its users. A development rule everywhere would leave a project's README unjudged, and
+allow-list entries would exempt those strings everywhere and need emptying at birth. So the
+`template:` list holds rules the gate applies only where `.project-profile` is absent, inert in a
+project, and nothing rewrites the profile at birth or at an update.
+
+## Why phrases skip code blocks and a list ends with its paragraph
+
+A custom voice's sample sits in a fenced block and is the Chair's own words, which no rewrite may
+change, so phrase matching skips code blocks as well as code spans; the character rule still judges
+both. Markdown here is wrapped near 100 columns, so a phrase may cross a line break, and closing a
+list cannot mean ending a line: `and more` at the end of a wrapped line would flag "and more
+complex".
 
 ## Why exact phrases and no bare words
 
