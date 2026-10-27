@@ -1,0 +1,113 @@
+# The gate suite, run by GitHub on every push and pull request.
+#
+# Git hooks are per-clone: a clone that never ran the install command commits with no gate at all,
+# and nothing in the repository can detect that. This workflow is the backstop — the same suite,
+# the same scripts, run where the clone's hook state does not matter.
+#
+# Two stages, because `pre-commit run --all-files` covers the pre-commit stage only: the commit-msg
+# gate is run over every commit the push or pull request carries.
+name: gates
+
+on:
+  push:
+  pull_request:
+
+# The runner image and the actions' majors are pinned, as the template pins its tools, so CI changes
+# only by a commit; each action is a major that declares Node 24.
+jobs:
+  gates:
+    runs-on: ubuntu-26.04
+    # Read-only: the provenance check reads which pull request each pushed commit came from.
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0    # the whole history: the range steps below read it
+
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - run: pip install pre-commit
+
+      - name: Pre-commit-stage gates
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      # `range` is BASE..HEAD for the coding standard's diff; `revs` names the same commits for
+      # `git rev-list`, which refuses a tree as BASE.
+      - name: The commits this push or pull request carries
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          BASE_REF: ${{ github.base_ref }}
+          REF: ${{ github.ref }}
+          DEFAULT: ${{ github.event.repository.default_branch }}
+        run: |
+          set -eu
+          # Where `before` is unknown (a new repository, a new branch, a force-push), never the tip
+          # alone: the default branch's whole history, from the empty tree, or for any other ref the
+          # commits the default branch lacks.
+          empty=$(git hash-object -t tree /dev/null)
+          if [ "$EVENT" = "pull_request" ]; then
+            base="origin/$BASE_REF"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            base="$BEFORE"              # a normal push: exactly the commits it carried
+          elif [ "$REF" = "refs/heads/$DEFAULT" ]; then
+            base="$empty"
+          else
+            new=$(git rev-list --boundary HEAD --not "origin/$DEFAULT")
+            if [ -z "$new" ]; then
+              base="HEAD"               # a branch or tag at a commit the default branch holds
+            else
+              base=$(printf '%s\n' "$new" | sed -n 's/^-//p' | head -n 1)
+              [ -n "$base" ] || base="$empty"    # a history unrelated to the default branch
+            fi
+          fi
+          if [ "$(git cat-file -t "$base")" = tree ]; then revs="HEAD"; else revs="$base..HEAD"; fi
+          echo "range=$base..HEAD" >> "$GITHUB_OUTPUT"
+          echo "revs=$revs" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+      # The team's workflow: every commit a push brings to a protected branch
+      # is a merged pull request's own commit, records, a release or a birth. The clone's pre-push
+      # hook, run again here over the push's range, asks GitHub about each pull request; GitHub's
+      # branch protection is unavailable on a private repository on the current plan, so this turns
+      # the run red instead. It runs in a project, which `.template-version` marks.
+      - name: Each commit on a protected branch a merged pull request or a record
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && hashFiles('.template-*') != ''
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+          REF: ${{ github.ref }}
+          GH_TOKEN: ${{ github.token }}
+        run: pre-commit run branch-push --hook-stage pre-push --from-ref "$BASE" --to-ref HEAD --remote-branch "$REF" --local-branch "$REF"
+
+      # The coding standard over the same range, its audit included; in a repository without
+      # code-profile.yaml it says the standard is not adopted and passes.
+      - name: Coding standard over the commits this push or pull request carries
+        env:
+          CODE_STANDARD_RANGE: ${{ steps.range.outputs.range }}
+        run: pre-commit run code-standard-range --hook-stage manual --all-files
+
+      - name: Commit-msg-stage gate over every commit in this push or pull request
+        env:
+          REVS: ${{ steps.range.outputs.revs }}
+        run: |
+          set -eu
+          commits=$(git rev-list "$REVS")     # an assignment, so a failing list fails the step
+          set -- $commits
+          echo "checking $# commit message(s) in $REVS"
+          for sha in "$@"; do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            echo "--- $(git log -1 --format='%h %s' "$sha")"
+            pre-commit run --hook-stage commit-msg --commit-msg-filename /tmp/msg --all-files
+          done
+

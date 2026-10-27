@@ -1,0 +1,20 @@
+# Normalize line endings: store text as LF in the repo, convert on checkout.
+# Keeps diffs clean across Windows/macOS/Linux and every generated project.
+* text=auto eol=lf
+
+# Binary assets — never normalize or diff as text.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.xlsx binary
+*.docx binary
+*.pptx binary
+
+# Append-only logs: parallel story branches each add rows, and git keeps both sides' lines instead of
+# a conflict. Applies to merges made by git; GitHub's own merge reports a
+# conflict instead, which `scripts/story_branch.py finish` avoids by merging the base in first.
+docs/orchestration/knowledge/INDEX.md merge=union
+sprint/decision-log.md merge=union
+docs/code_review_log.md merge=union

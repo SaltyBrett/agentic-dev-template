@@ -1,0 +1,8 @@
+# Portable execution boundary — no sandbox identity; user-reviewed approvals.
+#
+# Intentionally do not set sandbox_mode here. If the operator's user-level
+# configuration already runs without a sandbox, preserve it. If a managed session
+# exposes a read-only/workspace-write sandbox boundary, repository instructions
+# require escalation before every local command so it runs as the existing operator.
+approval_policy = "untrusted"
+approvals_reviewer = "user"

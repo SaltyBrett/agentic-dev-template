@@ -1,0 +1,70 @@
+# OS / Editor
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+.idea/
+
+# Excel temp locks
+~$*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Environments / virtualenvs
+.venv/
+venv/
+env/
+.env
+*.env
+.python-version
+
+# Secrets — never commit. See docs/standards/secrets_management_standard_v1.0.md
+*.pem
+*.key
+*.pfx
+*.p12
+.azure/
+profiles.yml
+.user.yml
+credentials.json
+service-account*.json
+
+# Build output and logs
+target/
+dbt_packages/
+logs/
+
+# Local databases / scratch
+*.duckdb
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+nul
+
+# Session journal and working notes: local banking against compaction, never committed. The
+# journal records raw commands; scripts/session_journal.py owns both.
+sprint/recovery/journal.md
+sprint/recovery/WORKING_NOTES.md
+
+# One operator's Claude Code permissions; .claude/settings.json is the shared file. Ignored here,
+# not only by a machine's global excludes.
+.claude/settings.local.json
+
+# Each story's working directory, made by scripts/story_branch.py start.
+.worktrees/

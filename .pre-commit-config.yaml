@@ -1,0 +1,381 @@
+# Tool-neutral drift gate. These git hooks fire identically under any agent (Claude Code, Codex) and
+# under manual `git commit` — they are NOT part of any tool's harness, which is why they are the
+# portable 100% compliance gate the CONSTITUTION relies on. Install once per clone:
+#   pip install pre-commit && pre-commit install
+# which installs the three hook types named below. A hook type not installed leaves every gate of its
+# stage present in config and inert in practice; the session-start report names one missing.
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+repos:
+  - repo: local
+    hooks:
+      # The identity gate's config parser, proved against in-memory fixtures before it is trusted.
+      # The regex it replaced passed a config whose keys sat under an unrelated table, and one no
+      # TOML parser can load. Runs before the gate it validates. Costs milliseconds.
+      - id: agent-execution-identity-selftest
+        name: Execution Identity Parser Self-Test (config boundary is proved, not asserted)
+        entry: python scripts/agent_execution_identity_guard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [tomli]    # fallback for Python < 3.11; 3.11+ uses stdlib tomllib
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: agent-execution-identity
+        name: Agent Execution Identity Gate
+        entry: python scripts/agent_execution_identity_guard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [tomli]    # fallback for Python < 3.11; 3.11+ uses stdlib tomllib
+        stages: [pre-commit]      # a hook with no `stages:` runs at EVERY installed stage — pin it
+        pass_filenames: false
+        always_run: true
+      - id: content-rules-selftest
+        name: Content Rules Self-Test (the content rules reach every file; a banned feature is found)
+        entry: python scripts/banned_feature_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: banned-feature-scan
+        name: Banned Feature Scan (the features a project bans, and the content rules)
+        entry: python scripts/banned_feature_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # Runs BEFORE the freshness gate: that gate parses frontmatter with regexes, so it reports
+      # green on a file no YAML parser can load. Validate the input before trusting the check.
+      - id: kb-frontmatter-selftest
+        name: KB Index Cross-Check Self-Test (Entries section is scoped, not scanned)
+        entry: python scripts/kb_frontmatter_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: kb-frontmatter-scan
+        name: KB Frontmatter Gate (valid YAML, both gates read it alike, every entry indexed)
+        entry: python scripts/kb_frontmatter_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The freshness gate's own parser, proved against in-memory fixtures before it is trusted.
+      # A parser that reads the wrong region stays green while checking nothing; prose cannot
+      # guard that, so the boundary is asserted on every commit. Costs milliseconds.
+      - id: kb-freshness-selftest
+        name: KB Freshness Parser Self-Test (index boundary is proved, not asserted)
+        entry: python scripts/kb_freshness_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: kb-freshness-scan
+        name: KB Freshness Gate (no mandatory-read doc teaches a stale decision)
+        entry: python scripts/kb_freshness_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The freshness rule generalized from knowledge entries to every authoritative document, and
+      # the direction it could not see: a decision whose `**Affects:**` names a document is recorded
+      # in that document's version log or queued as an open story, and nothing else passes. Self-test
+      # first, since a reader that misses a section reads as nothing to record.
+      - id: doc-authority-selftest
+        name: Document Authority Self-Test (every rule fails its broken fixture; a crash is a failure)
+        entry: python scripts/doc_authority_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: doc-authority-scan
+        name: Document Authority Gate (a decision naming an authority is recorded in it or queued)
+        entry: python scripts/doc_authority_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # authority frontmatter is parsed, never matched
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The writer's queue: a story marked `Queued: S<N>` is drained by S<N+1>. Run at cold start by
+      # the SessionStart hook, never on a commit, since its verdict depends on the session at work
+      # and a drain is the next session's job.
+      - id: doc-queue
+        name: Doc Queue (a change queued for the technical writer is drained within one session)
+        entry: python scripts/doc_authority_scan.py --queue
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # authority frontmatter is parsed, never matched
+        stages: [manual]          # run: pre-commit run doc-queue --hook-stage manual --all-files --verbose
+        pass_filenames: false
+        always_run: true
+      # A session ends with a verified handoff pair, and the pair lives one session. The
+      # end-of-session protocol was prose; this is the control. Self-test first, then the
+      # per-commit state check. The two manual-stage hooks are invoked by the agent at session
+      # end (`--closeout`, which also archives older pairs) and at the next cold start
+      # (`--verify`); `stages: [manual]` keeps them out of every commit.
+      - id: session-closeout-selftest
+        name: Session Closeout Self-Test (linters discriminate; rotation keeps two pairs)
+        entry: python scripts/session_closeout.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-closeout-check
+        name: Session State Gate (handoff pairs, personas, tracker counts, entry cap, brain cap)
+        entry: python scripts/session_closeout.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-closeout
+        name: Session Closeout (archive older pairs; verify the pair for the next session)
+        entry: python scripts/session_closeout.py --closeout
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML
+        stages: [manual]          # run: pre-commit run session-closeout --hook-stage manual --all-files
+                                  # (--all-files stops pre-commit stashing unstaged edits first)
+        pass_filenames: false
+        always_run: true
+      - id: session-verify
+        name: Session Verify (the previous session closed out; the tree is clean)
+        entry: python scripts/session_closeout.py --verify
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # agent frontmatter is YAML
+        stages: [manual]          # run: pre-commit run session-verify --hook-stage manual --all-files
+                                  # (without the flag the stash hides an unstaged edit: a dirty tree passes)
+        pass_filenames: false
+        always_run: true
+      # The issue log holds every issue from filing to resolution, each entry in its template's
+      # form, its status borne out by the stories it names. A project
+      # with no log has no issues and passes.
+      - id: issue-log-selftest
+        name: Issue Log Self-Test (the template's form, each status rule, the law read from the standard)
+        entry: python scripts/issue_log.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: issue-log
+        name: Issue Log Gate (entries in the template's form, the index in step, statuses borne out by the tracker)
+        entry: python scripts/issue_log.py --check
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The Claude Code session hooks (.claude/settings.json) are context and ergonomics, not
+      # enforcement, but each script is proved here before it is trusted: the journal keeps
+      # concurrent lines whole and its files ignored, the start report fits the context cap and
+      # never judges a mid-session tree, the stop check refuses an unbanked turn once and never
+      # wedges one, the ceiling refuses a spawn or a skill above the
+      # session's model and effort.
+      - id: session-journal-selftest
+        name: Session Journal Self-Test (concurrent lines stay whole; journal and notes are ignored)
+        entry: python scripts/session_journal.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-start-selftest
+        name: Session Start Self-Test (fits the context cap; compaction runs no gate)
+        entry: python scripts/session_start.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the roster fixtures parse personas; the live hook needs none
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: session-stop-selftest
+        name: Session Stop Self-Test (an unbanked turn is refused once, never wedged)
+        entry: python scripts/session_stop.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: subagent-ceiling-selftest
+        name: Subagent Ceiling Self-Test (no spawn or skill above the session's model and effort)
+        entry: python scripts/subagent_ceiling.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The project initializer rewrites files, so its guards are proved before it is trusted:
+      # that `${{ secrets.X }}` and `{{PLACEHOLDER}}` survive a token fill, and that the
+      # decision log and knowledge base appear in no mutating list.
+      - id: new-project-selftest
+        name: New Project Initializer Self-Test (never clears the decision log)
+        entry: python scripts/new_project.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the self-test judges the born README with the writing gate
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The updater carries a derived project to a newer release; its ownership map is the
+      # initializer's inverse and the fixtures cross-check the two. It never runs on a commit
+      # here — only its self-test does, so a project can trust the copy it fetches.
+      - id: template-update-selftest
+        name: Template Update Self-Test (ownership map is the initializer's inverse; merges by key)
+        entry: python scripts/template_update.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The gate-suite runbook (docs/governance/gate_suite_runbook.md) describes this file, and
+      # a page that describes the suite is what the next reader consults instead of it. The
+      # hook ids are read here with a YAML parser; the page must hold one section per id, in
+      # this order, each naming the stage the hook declares.
+      - id: gate-runbook-selftest
+        name: Gate Runbook Self-Test (sections are scoped to H2s; an unreadable config never reads as empty)
+        entry: python scripts/gate_runbook_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: gate-runbook
+        name: Gate Runbook Gate (every hook has a section, every section names a hook, order and stage agree)
+        entry: python scripts/gate_runbook_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # A procedure's one home is its skill, and a skill names hooks,
+      # stages and scripts that drift as this file does. The check reads this config with the
+      # runbook gate's reader and refuses every frontmatter Claude Code would load silently wrong.
+      - id: skill-scan-selftest
+        name: Skill Scan Self-Test (commands are read from code; a bad hook, stage or flag fails)
+        entry: python scripts/skill_scan.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the module imports yaml at load time
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: skill-scan
+        name: Skill Scan (every skill parses, names real hooks, stages and scripts, and AGENTS.md lists it)
+        entry: python scripts/skill_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # possible only because language is python, not system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The coding standard (docs/standards/coding_standard_v1.0.md): the code a change adds or edits,
+      # in a project that adopted it with code-profile.yaml. It advises and documents and never forces
+      # a code change: a finding pauses the commit only until docs/code_review_log.md holds it with the
+      # Chair's response. Its tools are pinned here, in the hook's own
+      # environment, tree-sitter-rust and tree-sitter-typescript the measurers' parsers; jscpd and typescript 5.9.3 run
+      # through npx, pinned in the script.
+      - id: code-standard-selftest
+        name: Coding Standard Self-Test (every rule fails its broken fixture; the gate meets its own limits)
+        entry: python scripts/code_standard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml, tree-sitter==0.26.0, tree-sitter-rust==0.24.2, tree-sitter-typescript==0.23.2]   # the profile is YAML; the Rust and TypeScript measurers' parsers
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: code-standard
+        name: Coding Standard Gate (the staged change's code measured; each finding in the review log)
+        entry: python scripts/code_standard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml, ruff==0.6.9, mypy==1.11.2, pip-audit==2.7.3, tree-sitter==0.26.0, tree-sitter-rust==0.24.2, tree-sitter-typescript==0.23.2]
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: code-standard-range
+        name: Coding Standard Gate over a range (CI; CODE_STANDARD_RANGE=BASE..HEAD)
+        entry: python scripts/code_standard.py --range-from-env
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml, ruff==0.6.9, mypy==1.11.2, pip-audit==2.7.3, tree-sitter==0.26.0, tree-sitter-rust==0.24.2, tree-sitter-typescript==0.23.2]
+        stages: [manual]          # run: CODE_STANDARD_RANGE=<base>..<head> pre-commit run code-standard-range --hook-stage manual --all-files
+        pass_filenames: false
+        always_run: true
+      # The agentic team's handoffs (docs/standards/team_standard_v1.0.md): every story's artifacts in
+      # docs/stories/<ID>/, the role map and the triggers read from the standard itself, so a project's
+      # additions are judged by its own copy.
+      - id: story-artifacts-selftest
+        name: Story Artifacts Self-Test (every rule fails its broken fixture; the law is read, never assumed)
+        entry: python scripts/story_artifacts.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # an artifact's frontmatter is YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: story-artifacts
+        name: Story Artifacts Gate (each story's handoffs in order, its roles, criteria, triggers and findings)
+        entry: python scripts/story_artifacts.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # parsed, never matched
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The writing standard (docs/standards/writing_standard_v1.0.md): every markdown file git tracks
+      # but the closed records, judged whole in the voice and audience writing-profile.yaml gives it,
+      # the character and phrase tables read from the standard itself.
+      - id: writing-standard-selftest
+        name: Writing Standard Self-Test (every rule fails its broken fixture; the law is read, never assumed)
+        entry: python scripts/writing_standard.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the profile and the voices' frontmatter are YAML
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: writing-standard
+        name: Writing Standard Gate (characters, headings, phrases and development references, whole files)
+        entry: python scripts/writing_standard.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # parsed, never matched
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # The humanizer's mechanical half: the certain fixes, an editor's proposals applied, the guard
+      # on meaning. The /humanize skill runs it by hand; its self-test runs on every commit.
+      - id: humanize-selftest
+        name: Humanize Self-Test (every certain fix, proposal and guard rule fails its broken fixture)
+        entry: python scripts/humanize.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        additional_dependencies: [pyyaml]   # the gate it imports reads the profile and the voices
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      # commit-msg stage: the message does not exist yet when pre-commit-stage hooks fire.
+      - id: commit-attribution
+        name: Commit Attribution Gate (no AI attribution in commit messages)
+        entry: python scripts/commit_attribution_scan.py
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [commit-msg]
+        pass_filenames: true      # receives the commit message file path as its one argument
+        always_run: true
+      # The team's branch and merge workflow: a protected branch takes the
+      # shared records alone, a story branch its own work, and story work reaches a protected branch
+      # only as a merged pull request. GitHub refuses branch protection on a private repository on
+      # the current plan, so these hooks, the push check run again by CI, are the control.
+      - id: story-branch-selftest
+        name: Story Branch Self-Test (each branch rule, the push and provenance checks, start's preconditions)
+        entry: python scripts/story_branch.py --self-test
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      - id: branch-policy
+        name: Branch Policy (records on a protected branch, a story's own work on its branch)
+        entry: python scripts/story_branch.py --policy
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [commit-msg]
+        pass_filenames: true      # receives the commit message file path as its one argument
+        always_run: true
+      - id: branch-push
+        name: Branch Push (a protected branch receives records, releases, births and merged pull requests alone)
+        entry: python scripts/story_branch.py --push
+        language: python          # pre-commit provisions the interpreter (portable: macOS, Linux, Windows)
+        stages: [pre-push]        # CI runs it too, over the push's range: see .github/workflows/gates.yml
+        pass_filenames: false
+        always_run: true
+
+  # Secret scanning. GitHub runs it free on PUBLIC repos only — a private repo on a free
+  # personal account gets nothing, so this is the ONLY secret control on this repository.
+  # `stages:` is mandatory here: gitleaks' upstream manifest declares none, and a hook
+  # without one runs at every installed stage — it would scan twice per commit.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+        stages: [pre-commit]
